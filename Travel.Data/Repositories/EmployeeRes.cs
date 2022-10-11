@@ -31,7 +31,7 @@ namespace Travel.Data.Repositories
             CreateUpdateEmployeeViewModel employee = new CreateUpdateEmployeeViewModel();
             try
             {
-      
+
                 var id = PrCommon.GetString("idEmployee", frmData);
                 if (!String.IsNullOrEmpty(id))
                 {
@@ -251,20 +251,20 @@ namespace Travel.Data.Repositories
                     keywords.KwIsActive = true;
 
                 }
-               
+
                 //var listEmp = _db.Employees.FromSqlRaw("[SearchEmployees] {0}, {1}, {2}, {3}, {4}, {5}", kwId, kwName, kwEmail, kwPhone, kwRoleId, kwIsActive).ToList();
                 var listEmp = new List<Employee>();
                 if (keywords.KwRoleId.Count > 0)
                 {
-                    listEmp =  (from x in _db.Employees
-                     where x.IsDelete == false &&
-                                     x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
-                                     x.NameEmployee.ToLower().Contains(keywords.KwName) &&
-                                     x.Email.ToLower().Contains(keywords.KwEmail) &&
-                                     x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                     x.IsActive == keywords.KwIsActive && 
-                                     keywords.KwRoleId.Contains(x.RoleId)
-                     select x).ToList();
+                    listEmp = (from x in _db.Employees
+                               where x.IsDelete == false &&
+                                               x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
+                                               x.NameEmployee.ToLower().Contains(keywords.KwName) &&
+                                               x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                               x.IsActive == keywords.KwIsActive &&
+                                               keywords.KwRoleId.Contains(x.RoleId)
+                               select x).ToList();
                 }
                 else
                 {
@@ -298,7 +298,41 @@ namespace Travel.Data.Repositories
                 res.Notification.Type = "Error";
                 return res;
             }
+        }
 
+        public Response Restore(CreateUpdateEmployeeViewModel input)
+        {
+            try
+            {
+                Employee employee = new Employee();
+                employee = Mapper.MapCreateEmployee(input);
+
+                var check = _db.Roles.Find(employee.IdEmployee);
+                if (check != null)
+                {
+                    _db.Roles.Find(employee.IdEmployee).IsDelete = false;
+                    _db.SaveChanges();
+
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Restore thành công !";
+                    res.Notification.Type = "Success";
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không tìm thấy !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
         }
     }
 }
