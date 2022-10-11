@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32630.194
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelApi", "TravelApi\TravelApi.csproj", "{1AE001EC-E3DE-4547-BFDE-BBB3EE3DA666}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TravelApi", "TravelApi\TravelApi.csproj", "{1AE001EC-E3DE-4547-BFDE-BBB3EE3DA666}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Travel.Shared", "Travel.Shared\Travel.Shared.csproj", "{0CA9A85C-2BB1-4006-9F48-F9CE9C7F8641}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Travel.Shared", "Travel.Shared\Travel.Shared.csproj", "{0CA9A85C-2BB1-4006-9F48-F9CE9C7F8641}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Travel.Context", "Travel.Context\Travel.Context.csproj", "{D4C4C21D-DB84-4E80-BBD2-F650396ED4F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Travel.Context", "Travel.Context\Travel.Context.csproj", "{D4C4C21D-DB84-4E80-BBD2-F650396ED4F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Travel.Data", "Travel.Data\Travel.Data.csproj", "{E627FF44-2B40-4CEF-A1AA-968CAB12B62A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Travel.Data", "Travel.Data\Travel.Data.csproj", "{E627FF44-2B40-4CEF-A1AA-968CAB12B62A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

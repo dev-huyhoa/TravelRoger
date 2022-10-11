@@ -114,5 +114,18 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("restore-employess")]
+        public object Restore([FromBody] JObject frmData)
+        {
+            var result = employee.CheckBeforeSave(frmData, ref message);
+            if (message == null)
+            {
+                res = employee.Restore(result);
+            }
+            return Ok(res);
+        }
     }
 }
