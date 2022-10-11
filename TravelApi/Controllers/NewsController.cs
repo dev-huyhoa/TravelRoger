@@ -25,11 +25,11 @@ namespace TravelApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("UploadBanner")]
-        public object UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files)
+        public object UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files, string name)
         {
             try
             {
-                res.Notification = news.UploadBanner(frmdata, files);
+                res.Notification = news.UploadBanner(frmdata, files, name);
 
                 return Ok(res);
             }
@@ -53,6 +53,15 @@ namespace TravelApi.Controllers
             {
                 return Ok(res);
             }
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("gets-banner")]
+        public object GetBanner()
+        {
+            res = news.GetBanner();
+            return Ok(res);
         }
     }
 }
