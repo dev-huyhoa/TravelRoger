@@ -26,5 +26,17 @@ namespace Travel.Shared.Ultilities
             Expired = 0,
             Valid = 1,
         }
+        public enum ApproveStatus
+        {
+            Waiting = 0,
+            Approved = 1,
+            Refused = 2
+        }
+        public enum TourStatus
+        {
+            Normal = 0,
+            Promotion = 1,
+            Refused = 2
+        }
     }
 }

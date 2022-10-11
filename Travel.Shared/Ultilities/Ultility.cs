@@ -30,6 +30,18 @@ namespace Travel.Shared.Ultilities
         }
 
         #region String Handle
+        public static string GenerateId(string phraseName )
+        {
+            string[] words = phraseName.Split(' ');
+            var resultString = new StringBuilder();
+            foreach (var word in words)
+            {
+                resultString.Append(word.Substring(0, 1).ToUpper());
+            }
+            resultString.Append("-");
+            resultString.Append(ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now));
+            return resultString.ToString();
+        }
         public static string removeVietnameseSign(string content)
         {
             string temp = "";
@@ -124,6 +136,20 @@ namespace Travel.Shared.Ultilities
         public static DateTime GetDateZeroTime(DateTime date)
         {
             return new DateTime(date.Year, date.Month, date.Day, 0, 0, 1);
+        }
+        public static long ConvertDatetimeToUnixTimeStampMiliSecond(DateTime date)
+        {
+            try
+            {
+                var dateTimeOffset = new DateTimeOffset(date);
+                var unixDateTime = dateTimeOffset.ToUnixTimeMilliseconds();
+                return unixDateTime;
+            }
+            catch
+            {
+                return 0;
+            }
+
         }
         #endregion
 
