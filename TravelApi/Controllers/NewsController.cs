@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace TravelApi.Controllers
     {
         private INews news;
         private Response res;
+        private Notification message;
+
         public NewsController(INews _news)
         {
             news = _news;
@@ -63,5 +66,21 @@ namespace TravelApi.Controllers
             res = news.GetBanner();
             return Ok(res);
         }
+
+
+        //[HttpPost]
+        //[Authorize]
+        //[Route("delete-banner")]
+        //public object Delete([FromBody] JObject frmData)
+        //{
+
+        //    //var result = news. .CheckBeforeSave(frmData, ref message);
+        //    //if (message == null)
+        //    //{
+        //    //    res = employee.Update(result);
+        //    //}
+        //    //return Ok(res);
+        //    return res;
+        //}
     }
 }

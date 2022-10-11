@@ -10,6 +10,7 @@ using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel;
 
 namespace Travel.Data.Repositories
 {
@@ -101,7 +102,42 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-        // code ở đây
 
+        //public Response DeleteBanner(DeleteBannerViewModel input)
+        //{
+        //    try
+        //    {
+        //        Banner banner = new Banner();
+               
+        //        var check = _db.Banners.Find(banner.IdBanner);
+        //        if (check != null)
+        //        {
+        //            _db.Banners.Update(banner);
+        //            _db.SaveChanges();
+        //            res.Notification.DateTime = DateTime.Now;
+        //            res.Notification.Messenge = "Sửa thành công !";
+        //            res.Notification.Type = "Success";
+        //        }
+        //        else
+        //        {
+        //            res.Notification.DateTime = DateTime.Now;
+        //            res.Notification.Messenge = "Không tìm thấy !";
+        //            res.Notification.Type = "Warning";
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        res.Notification.DateTime = DateTime.Now;
+        //        res.Notification.Description = e.Message;
+        //        res.Notification.Messenge = "Có lỗi xảy ra !";
+        //        res.Notification.Type = "Error";
+        //    }
+        //    return res;
+        //}
+
+        public CreateUpdateEmployeeViewModel CheckBeforeSave(JObject frmData, ref Notification _message)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

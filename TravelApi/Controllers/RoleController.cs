@@ -82,7 +82,20 @@ namespace TravelApi.Controllers
             {
                 res = role.Restore(result);
             }
+            return Ok(res);
+        }
 
+
+        [HttpPost]
+        [Authorize]
+        [Route("delete-role")]
+        public object Delete([FromBody] JObject frmData)
+        {
+            var result = role.CheckBeforSave(frmData, ref message);
+            if (message == null)
+            {
+                res = role.Delete(result);
+            }
             return Ok(res);
         }
     }
