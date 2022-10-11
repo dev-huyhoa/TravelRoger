@@ -150,12 +150,23 @@ namespace Travel.Data.Repositories
             {
                 Role role = new Role();
                 role = Mapper.MapCreateRole(input);
-                _db.Update(role);
-                _db.SaveChanges();
+                var check = _db.Roles.Find(role.IdRole);
+                if (check != null)
+                {
+                    _db.Roles.Find(role.IdRole).NameRole = role.NameRole;
+                    _db.Roles.Find(role.IdRole).Description = role.Description;
+                    _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Sửa thành công !";
+                    res.Notification.Type = "Success";
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không tìm thấy !";
+                    res.Notification.Type = "Warning";
+                }
                 return res;
             }
             catch (Exception e)
