@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace Travel.Data.Interfaces
 {
    public  interface ITourRes
     {
+        CreateTourViewModel CheckBeforSave(JObject frmData, ref Notification _message);
         Response Create(CreateTourViewModel input);
 
     }

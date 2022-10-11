@@ -28,10 +28,8 @@ namespace Travel.Data.Repositories
         public CreateTourViewModel CheckBeforSave(JObject frmData, ref Notification _message)
         {
             CreateTourViewModel tour = new CreateTourViewModel();
-
             try
             {
-
                 var tourName = PrCommon.GetString("NameTour", frmData);
                 if (String.IsNullOrEmpty(tourName))
                 {
@@ -77,7 +75,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                Tour tour = new Tour();
+                Tour tour = 
                 tour = Mapper.MapCreateTour(input);
                 _db.Tour.Add(tour);
                 _db.SaveChanges();
