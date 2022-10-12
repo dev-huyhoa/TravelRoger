@@ -6,7 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Shared.ViewModels.Travel;
-
+using Travel.Shared.ViewModels.Travel.TourVM;
+using Travel.Shared.Ultilities;
 namespace Travel.Shared.Ultilities
 {
     public static class Mapper
@@ -16,6 +17,24 @@ namespace Travel.Shared.Ultilities
         {
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
+                cfg.CreateMap<CreateTourViewModel, Tour>()
+                .ForMember(dto => dto.IdTour, opt => opt.MapFrom(src => src.IdTour))
+                .ForMember(dto => dto.NameTour, opt => opt.MapFrom(src => src.NameTour))
+                .ForMember(dto => dto.Thumbsnail, opt => opt.MapFrom(src => src.Thumbsnail))
+                .ForMember(dto => dto.FromPlace, opt => opt.MapFrom(src => src.FromPlace))
+                .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.ToPlace))
+                .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => 10))
+                .ForMember(dto => dto.ApproveStatus, opt => opt.MapFrom(src => Enums.ApproveStatus.Waiting))
+                .ForMember(dto => dto.Status, opt => opt.MapFrom(src =>
+                 Enums.TourStatus.Normal))
+                .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src =>
+                Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
+                .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
+                .ForMember(dto => dto.IsActive, opt => opt.MapFrom(src => false))
+
+                ;
+
+
                 // Create
                 cfg.CreateMap<CreateUpdateEmployeeViewModel, Employee>()
                           .ForMember(dto => dto.IdEmployee, opt => opt.MapFrom(src => src.IdEmployee))
@@ -77,6 +96,10 @@ namespace Travel.Shared.Ultilities
         public static Employee MapCreateEmployee(CreateUpdateEmployeeViewModel data)
         {
             return _mapper.Map<CreateUpdateEmployeeViewModel, Employee>(data);
+        }
+        public static Tour MapCreateTour(CreateTourViewModel data)
+        {
+            return _mapper.Map<CreateTourViewModel, Tour>(data);
         }
     }
 }

@@ -42,8 +42,11 @@ namespace TravelApi.Extensions
                .AddScoped<ILocation, LocationRes>();
             services
                 .AddScoped<INews, NewsRes>();
-            return services
+            services
                 .AddScoped<IAuthentication, AuthenticationRes>();
+            services
+          .AddScoped<ITourRes, TourRes>();
+            return services;
 
         }
 

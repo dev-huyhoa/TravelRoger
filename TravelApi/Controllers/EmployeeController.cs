@@ -119,13 +119,26 @@ namespace TravelApi.Controllers
         {
 
             var result = employee.CheckBeforeSave(frmData, ref message);
-            if (message != null)
+            if (message == null)
             {
                 res = employee.Update(result);
             }
             else
             {
                 res.Notification = message;
+            }
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("restore-employess")]
+        public object Restore([FromBody] JObject frmData)
+        {
+            var result = employee.CheckBeforeSave(frmData, ref message);
+            if (message == null)
+            {
+                res = employee.Restore(result);
             }
             return Ok(res);
         }

@@ -12,5 +12,6 @@ namespace Travel.Context.Models
         public string NameBanner { get; set; }
         public int Total { get; set; }
         public bool IsActive { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

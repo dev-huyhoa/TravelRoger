@@ -55,7 +55,7 @@ namespace TravelApi.Controllers
             else
             {
                 res.Notification = message;
-            }
+               }
             
             return Ok(res);
         }

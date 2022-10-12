@@ -267,13 +267,29 @@ namespace Travel.Data.Repositories
             try
             {
                 Employee employee = Mapper.MapCreateEmployee(input);
-                _db.Employees.Update(employee);
-                _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công";
-                res.Notification.Type = "Success";
-                return res;
 
+                var check = _db.Employees.Find(employee.IdEmployee);
+                if (check != null)
+                {
+                    _db.Employees.Find(employee.IdEmployee).NameEmployee = employee.NameEmployee;
+                    _db.Employees.Find(employee.IdEmployee).Email = employee.Email;
+                    _db.Employees.Find(employee.IdEmployee).Birthday = employee.Birthday;
+                    _db.Employees.Find(employee.IdEmployee).Image = employee.Image;
+                    _db.Employees.Find(employee.IdEmployee).Phone = employee.Phone;
+                    _db.Employees.Find(employee.IdEmployee).RoleId = employee.RoleId;
+                    _db.SaveChanges();
+
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Sửa thành công !";
+                    res.Notification.Type = "Success";               
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không tìm thấy !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
             }
             catch (Exception e)
             {
@@ -355,7 +371,7 @@ namespace Travel.Data.Repositories
                     keywords.KwIsActive = true;
 
                 }
-               
+
                 //var listEmp = _db.Employees.FromSqlRaw("[SearchEmployees] {0}, {1}, {2}, {3}, {4}, {5}", kwId, kwName, kwEmail, kwPhone, kwRoleId, kwIsActive).ToList();
                 var listEmp = new List<Employee>();
                 if (keywords.KwRoleId.Count > 0)
@@ -402,7 +418,69 @@ namespace Travel.Data.Repositories
                 res.Notification.Type = "Error";
                 return res;
             }
+        }
 
+        public Response Restore(CreateUpdateEmployeeViewModel input)
+        {
+            try
+            {
+                Employee employee = new Employee();
+                employee = Mapper.MapCreateEmployee(input);
+
+                var check = _db.Roles.Find(employee.IdEmployee);
+                if (check != null)
+                {
+                    _db.Roles.Find(employee.IdEmployee).IsDelete = false;
+                    _db.SaveChanges();
+
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Restore thành công !";
+                    res.Notification.Type = "Success";
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không tìm thấy !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response ViewDelete()
+        {
+            try
+            {
+                var listEmployee = (from x in _db.Employees where x.IsDelete == true select x).ToList();
+                var result = Mapper.MapEmployee(listEmployee);
+                if (result.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
         }
     }
 }

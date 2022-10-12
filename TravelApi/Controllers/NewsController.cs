@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace TravelApi.Controllers
     {
         private INews news;
         private Response res;
+        private Notification message;
+
         public NewsController(INews _news)
         {
             news = _news;
@@ -25,11 +28,11 @@ namespace TravelApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("UploadBanner")]
-        public object UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files)
+        public object UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files, string name)
         {
             try
             {
-                res.Notification = news.UploadBanner(frmdata, files);
+                res.Notification = news.UploadBanner(frmdata, files, name);
 
                 return Ok(res);
             }
@@ -54,5 +57,30 @@ namespace TravelApi.Controllers
                 return Ok(res);
             }
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("gets-banner")]
+        public object GetBanner()
+        {
+            res = news.GetBanner();
+            return Ok(res);
+        }
+
+
+        //[HttpPost]
+        //[Authorize]
+        //[Route("delete-banner")]
+        //public object Delete([FromBody] JObject frmData)
+        //{
+
+        //    //var result = news. .CheckBeforeSave(frmData, ref message);
+        //    //if (message == null)
+        //    //{
+        //    //    res = employee.Update(result);
+        //    //}
+        //    //return Ok(res);
+        //    return res;
+        //}
     }
 }
