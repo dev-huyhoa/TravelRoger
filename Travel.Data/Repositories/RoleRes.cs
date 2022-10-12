@@ -222,5 +222,85 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
+        public Response Search(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var isDelete = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.IsDelete = Boolean.Parse(isDelete);
+                }     
+
+                var kwNameRole = PrCommon.GetString("nameRole", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwNameRole))
+                {
+                    keywords.KwRoleName = kwNameRole.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwRoleName = "";
+
+                }
+
+                var kwDescription = PrCommon.GetString("description", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwDescription))
+                {
+                    keywords.KwDescription = kwDescription.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwDescription = "";
+
+                }
+
+                var kwRoleId = PrCommon.GetString("idRole", frmData);
+                keywords.KwRoleId = PrCommon.getListInt(kwRoleId, ',', false);
+
+
+
+                var listRole = new List<Role>();
+                if (keywords.KwRoleId.Count > 0)
+                {
+                    listRole = (from x in _db.Roles
+                               where x.IsDelete == keywords.IsDelete &&
+                                               x.NameRole.ToLower().Contains(keywords.KwRoleName) &&
+                                               x.Description.ToLower().Contains(keywords.KwDescription)
+                                             
+                               select x).ToList();
+                }
+                else
+                {
+                    listRole = (from x in _db.Roles
+                               where x.IsDelete == keywords.IsDelete &&
+                                               x.NameRole.ToLower().Contains(keywords.KwRoleName) &&
+                                               x.Description.ToLower().Contains(keywords.KwDescription)
+                               select x).ToList();
+                }
+                var result = Mapper.MapRole(listRole);
+                if (listRole.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
     }
 }

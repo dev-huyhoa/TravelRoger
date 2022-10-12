@@ -17,5 +17,6 @@ namespace Travel.Data.Interfaces
         Response Update(CreateUpdateRoleViewModel input);
         Response Delete(CreateUpdateRoleViewModel input);
         Response Restore(CreateUpdateRoleViewModel input);
+        Response Search(JObject frmData);
     }
 }

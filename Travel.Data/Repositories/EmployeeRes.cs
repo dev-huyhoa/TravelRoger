@@ -493,11 +493,11 @@ namespace Travel.Data.Repositories
                 var check = _db.Employees.Find(employee.IdEmployee);
                 if (check != null)
                 {
-                    _db.Roles.Find(employee.IdEmployee).IsDelete = true;
+                    _db.Employees.Find(employee.IdEmployee).IsDelete = true;
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Restore thành công !";
+                    res.Notification.Messenge = "Delete thành công !";
                     res.Notification.Type = "Success";
                 }
                 else

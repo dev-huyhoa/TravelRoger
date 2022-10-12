@@ -76,7 +76,14 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-
+        [HttpPost]
+        [Authorize]
+        [Route("search-role")]
+        public object SearchRole([FromBody] JObject frmData)
+        {
+            res = role.Search(frmData);
+            return Ok(res);
+        }
 
         [HttpPost]
         [Authorize]

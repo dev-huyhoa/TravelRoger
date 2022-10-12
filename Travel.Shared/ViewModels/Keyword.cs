@@ -18,5 +18,6 @@ namespace Travel.Shared.ViewModels
         public string KwRoleName { get; set; }
         public string KwStatus { get; set; }
         public bool KwIsActive { get; set; }
+        public string KwDescription { get; set; }
     }
 }
