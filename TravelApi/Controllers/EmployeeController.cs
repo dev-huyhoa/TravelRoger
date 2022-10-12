@@ -31,9 +31,18 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("gets-employee")]
-        public object GetsEmployee()
+        public object Gets()
         {
             res =  employee.Gets();
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("gets-delete-employee")]
+        public object GetsDelete()
+        {
+            res = employee.GetsDelete();
             return Ok(res);
         }
 
@@ -96,6 +105,10 @@ namespace TravelApi.Controllers
             {
                 res = employee.Create(result);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
 
@@ -109,6 +122,10 @@ namespace TravelApi.Controllers
             if (message != null)
             {
                 res = employee.Update(result);
+            }
+            else
+            {
+                res.Notification = message;
             }
             return Ok(res);
         }

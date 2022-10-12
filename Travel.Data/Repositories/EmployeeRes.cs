@@ -31,29 +31,46 @@ namespace Travel.Data.Repositories
             CreateUpdateEmployeeViewModel employee = new CreateUpdateEmployeeViewModel();
             try
             {
-      
+                int error = 0;
                 var id = PrCommon.GetString("idEmployee", frmData);
                 if (!String.IsNullOrEmpty(id))
                 {
                     employee.IdEmployee = Guid.Parse(id);
+                }
+                else
+                {
+                    error++;
                 }
 
 
                 var name = PrCommon.GetString("nameEmployee", frmData);
                 if (!String.IsNullOrEmpty(name))
                 {
-                    employee.NameEmployee = name;
+                    employee.NameEmployee = name.Trim();
+                }
+                else
+                {
+                    error++;
                 }
 
                 var email = PrCommon.GetString("email", frmData);
                 if (!String.IsNullOrEmpty(email))
                 {
-                    employee.Email = email;
+                    employee.Email = email.Trim();
                 }
+                else
+                {
+                    error++;
+                }
+
                 var phone = PrCommon.GetString("Phone", frmData);
                 if (!String.IsNullOrEmpty(phone))
                 {
-                    employee.Phone = phone;
+                    employee.Phone = phone.Trim();
+                }
+                else
+                {
+                    error++;
                 }
 
                 var birthday = PrCommon.GetString("birthday", frmData);
@@ -61,17 +78,49 @@ namespace Travel.Data.Repositories
                 {
                     employee.Birthday = long.Parse(birthday);
                 }
+                else
+                {
+                    error++;
+                }
+
+                var address = PrCommon.GetString("address", frmData);
+                if (!String.IsNullOrEmpty(address))
+                {
+                    employee.Address = address.Trim();
+                }
+                else
+                {
+                    error++;
+                }
+
+                var gender = PrCommon.GetString("gender", frmData);
+                if (!String.IsNullOrEmpty(birthday))
+                {
+                    employee.Gender = Boolean.Parse(gender);
+                }
+                else
+                {
+                    error++;
+                }
 
                 var image = PrCommon.GetString("image", frmData);
                 if (!String.IsNullOrEmpty(image))
                 {
-                    employee.Image = image;
+                    employee.Image = image.Trim();
+                }
+                else
+                {
+                    error++;
                 }
 
                 var roleid = PrCommon.GetString("roleId", frmData);
                 if (!String.IsNullOrEmpty(roleid))
                 {
                     employee.RoleId = roleid.ToEnum<TitleRole>();
+                }
+                else
+                {
+                    error++;
                 }
                 //res.KwId = PrCommon.GetString("KwId", frmData);
                 //res.KwName = PrCommon.GetString("KwName", frmData);
@@ -81,6 +130,14 @@ namespace Travel.Data.Repositories
                 //res.KwRoleId = PrCommon.GetString("KwRoleId", frmData);
                 //res.KwIsActive = PrCommon.GetString("KwIsActive", frmData);
 
+                if (error > 0)
+                {
+                    message.DateTime = DateTime.Now;
+                    message.Messenge = "Dữ liệu không hợp lệ !";
+                    message.Type = "Error";
+
+                    _message = message;
+                }
                 return employee;
             }
             catch (Exception e)
@@ -111,6 +168,47 @@ namespace Travel.Data.Repositories
                 #endregion
 
                 var listEmp = (from x in _db.Employees where x.IsDelete == false orderby x.Role select x).ToList();
+                var result = Mapper.MapEmployee(listEmp);
+
+                if (listEmp.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response GetsDelete()
+        {
+            try
+            {
+
+
+                #region đo tốc độ EF và linq
+                //var stopWatch4 = Stopwatch.StartNew();
+                //var result5 = _db.Employees.ToList();
+                //var b4 = stopWatch4.Elapsed;
+
+                //var stopWatch5 = Stopwatch.StartNew();
+                //var result6 = (from x in _db.Employees select x).ToList();
+                //var b5 = stopWatch5.Elapsed;
+                #endregion
+
+                var listEmp = (from x in _db.Employees where x.IsDelete == true orderby x.Role select x).ToList();
                 var result = Mapper.MapEmployee(listEmp);
 
                 if (listEmp.Count() > 0)
@@ -194,6 +292,12 @@ namespace Travel.Data.Repositories
             {
                 Keywords keywords = new Keywords();
 
+                var isDelete = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.IsDelete = Boolean.Parse(isDelete);
+                }
+
                 var kwId = PrCommon.GetString("idEmployee", frmData);
                 if (!String.IsNullOrEmpty(kwId))
                 {
@@ -257,7 +361,7 @@ namespace Travel.Data.Repositories
                 if (keywords.KwRoleId.Count > 0)
                 {
                     listEmp =  (from x in _db.Employees
-                     where x.IsDelete == false &&
+                     where x.IsDelete == keywords.IsDelete &&
                                      x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
                                      x.NameEmployee.ToLower().Contains(keywords.KwName) &&
                                      x.Email.ToLower().Contains(keywords.KwEmail) &&
@@ -269,7 +373,7 @@ namespace Travel.Data.Repositories
                 else
                 {
                     listEmp = (from x in _db.Employees
-                               where x.IsDelete == false &&
+                               where x.IsDelete == keywords.IsDelete &&
                                                x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
                                                x.NameEmployee.ToLower().Contains(keywords.KwName) &&
                                                x.Email.ToLower().Contains(keywords.KwEmail) &&

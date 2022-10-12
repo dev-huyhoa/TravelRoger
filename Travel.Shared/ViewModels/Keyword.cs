@@ -8,6 +8,7 @@ namespace Travel.Shared.ViewModels
 {
     public class Keywords
     {
+        public bool IsDelete { get; set; }
         public string Keyword { get; set; }
         public string KwName { get; set; }
         public string KwId { get; set; }

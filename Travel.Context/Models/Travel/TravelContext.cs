@@ -246,9 +246,9 @@ namespace Travel.Context.Models.Travel
             {
                 entity.HasKey(e => e.IdEmployee);
                 entity.Property(e => e.NameEmployee).HasMaxLength(100).IsRequired(true); 
-                entity.Property(e => e.Email).HasDefaultValue(0);
                 entity.Property(e => e.Email).IsRequired(true).HasMaxLength(100);
                 entity.Property(e => e.Password).HasMaxLength(255);
+                entity.Property(e => e.Address).HasMaxLength(255);
                 entity.Property(e => e.AccessToken).HasMaxLength(550);
                 entity.Property(e => e.Phone).HasMaxLength(15).IsRequired(true);
                 entity.Property(e => e.Image).HasMaxLength(100).IsRequired(true);
@@ -323,7 +323,7 @@ namespace Travel.Context.Models.Travel
             {
                 entity.HasKey(e => e.IdFile);
                 entity.Property(e => e.NameFile).HasMaxLength(100).IsRequired(true);
-                entity.Property(e => e.FileExtension).HasMaxLength(10);
+                entity.Property(e => e.FileExtension).HasMaxLength(5);
                 entity.Property(e => e.FilePath).HasMaxLength(150);
             }); 
             modelBuilder.Entity<Image>(entity =>
