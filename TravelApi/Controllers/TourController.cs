@@ -17,28 +17,28 @@ namespace TravelApi.Controllers
     [ApiController]
     public class TourController : ControllerBase
     {
-        private readonly ITourRes _tourRes;
+        private readonly ITour _tourRes;
         private Notification message;
         private Response res;
-        public TourController(ITourRes tourRes)
+        public TourController(ITour tourRes)
         {
             _tourRes = tourRes;
             res = new Response();
         }
+
         [HttpPost]
         [Authorize]
         [Route("create-tour")]
         public object Create([FromBody] JObject frmData)
         {
-            message = new();
+            message = null;
             var result = _tourRes.CheckBeforSave(frmData, ref message);
-            if (message != null)
+            if (message == null)
             {
                 res = _tourRes.Create(result);
             }
             return Ok(res);
         }
-
         // GET api/<TourController>/5
         [HttpGet("{id}")]
         public string Get(int id)
