@@ -162,9 +162,6 @@ namespace Travel.Context.Models.Travel
             {
                 entity.HasKey(e => e.IdTourDetail);
 
-                entity.HasOne<CostTour>(e => e.CostTour)
-                  .WithOne(e => e.TourDetails)
-                  .HasForeignKey<CostTour>(e => e.TourDetailId);
 
                 entity.Property(e => e.Description).HasMaxLength(300);
                 entity.Property(e => e.TourId).HasMaxLength(450);
@@ -173,6 +170,10 @@ namespace Travel.Context.Models.Travel
             modelBuilder.Entity<CostTour>(entity =>
             {
                 entity.HasKey(e => e.IdCostTour);
+
+                entity.HasOne<TourDetail>(e => e.TourDetails)
+                 .WithMany(e => e.CostTours)
+                 .HasForeignKey(e => e.TourDetailId);
 
                 entity.HasOne<Place>(e => e.Place)
                   .WithMany(e => e.CostTours)
@@ -304,6 +305,10 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.FromPlace).HasMaxLength(100);
                 entity.Property(e => e.ToPlace).HasMaxLength(100);
                 entity.Property(e => e.ApproveStatus).HasMaxLength(100);
+
+                entity.HasOne<TourDetail>(e => e.TourDetail)
+                .WithOne(e => e.Tour)
+                .HasForeignKey<TourDetail>(e => e.TourId);
             });
             modelBuilder.Entity<Promotion>(entity =>
             {

@@ -21,6 +21,7 @@ namespace Travel.Context.Models
         public bool IsActive { get; set; }
         public string Thumbsnail { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
+        public virtual TourDetail TourDetail { get; set; }
 
     }
 }

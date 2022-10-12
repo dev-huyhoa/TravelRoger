@@ -14,7 +14,7 @@ using Travel.Shared.ViewModels.Travel.TourVM;
 
 namespace Travel.Data.Repositories
 {
-    public class TourRes : ITourRes
+    public class TourRes : ITour
     {
         private readonly TravelContext _db;
         private Notification message;
@@ -30,6 +30,7 @@ namespace Travel.Data.Repositories
             CreateTourViewModel tour = new CreateTourViewModel();
             try
             {
+
                 var tourName = PrCommon.GetString("NameTour", frmData);
                 if (String.IsNullOrEmpty(tourName))
                 {
@@ -44,16 +45,24 @@ namespace Travel.Data.Repositories
                 var fromPlace = PrCommon.GetString("fromPlace", frmData);
                 if (String.IsNullOrEmpty(thumbSnail))
                 {
+
                 }
                 var toPlace = PrCommon.GetString("toPlace", frmData);
                 if (String.IsNullOrEmpty(thumbSnail))
                 {
                 }
+                var description = PrCommon.GetString("description", frmData);
+                if (String.IsNullOrEmpty(description))
+                {
+                }
+                var vat = PrCommon.GetString("vat", frmData) ?? "0";
                 // map data
                 tour.NameTour = tourName;
                 tour.Thumbsnail = thumbSnail;
                 tour.FromPlace = fromPlace;
                 tour.ToPlace = toPlace;
+                tour.Description = description;
+                tour.VAT = Convert.ToInt16(vat);
                 // generate ID
                 tour.IdTour = Ultility.GenerateId(tourName);
 
@@ -66,7 +75,6 @@ namespace Travel.Data.Repositories
                 message.Description = e.Message;
                 message.Messenge = "Có lỗi xảy ra !";
                 message.Type = "Error";
-
                 _message = message;
                 return tour;
             }
@@ -77,6 +85,8 @@ namespace Travel.Data.Repositories
             {
                 Tour tour = 
                 tour = Mapper.MapCreateTour(input);
+                TourDetail tourDetail = Mapper.MapCreateTourDetails(input);
+                tour.TourDetail = tourDetail; 
                 _db.Tour.Add(tour);
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;

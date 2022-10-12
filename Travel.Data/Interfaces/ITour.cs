@@ -9,7 +9,7 @@ using Travel.Shared.ViewModels.Travel.TourVM;
 
 namespace Travel.Data.Interfaces
 {
-   public  interface ITourRes
+   public  interface ITour
     {
         CreateTourViewModel CheckBeforSave(JObject frmData, ref Notification _message);
         Response Create(CreateTourViewModel input);
