@@ -15,6 +15,7 @@ namespace Travel.Context.Models
         public string Address { get; set; }
         public string Password { get; set; }
         public long Birthday { get; set; }
+        public bool Gender { get; set; }
         public long CreateDate { get; set; }
         public string AccessToken { get; set; }
         public int Point { get; set; }

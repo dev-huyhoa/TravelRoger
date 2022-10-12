@@ -8,6 +8,8 @@ using Travel.Context.Models;
 using Travel.Shared.ViewModels.Travel;
 using Travel.Shared.ViewModels.Travel.TourVM;
 using Travel.Shared.Ultilities;
+using Travel.Shared.ViewModels.Travel.CustomerVM;
+
 namespace Travel.Shared.Ultilities
 {
     public static class Mapper
@@ -69,7 +71,27 @@ namespace Travel.Shared.Ultilities
                          .ForMember(dto => dto.RoleDescription, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Role.Description) ? "" : src.Role.Description))
                          .ForMember(dto => dto.IdRole, opt => opt.MapFrom(src => src.RoleId))
                          .ForMember(dto => dto.RoleName, opt => opt.MapFrom(src => src.Role.NameRole));
-                
+
+                cfg.CreateMap<Customer, CustomerViewModel>()
+                         .ForMember(dto => dto.IdCustomer, opt => opt.MapFrom(src => src.IdCustomer))
+                         .ForMember(dto => dto.NameCustomer, otp => otp.MapFrom(src => src.NameCustomer))
+                         .ForMember(dto => dto.Phone, otp => otp.MapFrom(src => src.Phone))
+                         .ForMember(dto => dto.Email, otp => otp.MapFrom(src => src.Email))
+                         .ForMember(dto => dto.Address, otp => otp.MapFrom(src => src.Address))
+                         .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password))
+                         .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
+                         .ForMember(dto => dto.Birthday, otp => otp.MapFrom(src => src.Birthday))
+                         .ForMember(dto => dto.CreateDate, otp => otp.MapFrom(src => src.CreateDate))
+                         .ForMember(dto => dto.Point, otp => otp.MapFrom(src => src.Point));
+
+                cfg.CreateMap<Customer, CreateCustomerViewModel>()
+                        .ForMember(dto => dto.NameCustomer, otp => otp.MapFrom(src => src.NameCustomer))
+                        .ForMember(dto => dto.Phone, otp => otp.MapFrom(src => src.Phone))
+                        .ForMember(dto => dto.Email, otp => otp.MapFrom(src => src.Email))
+                        .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
+                        .ForMember(dto => dto.Address, otp => otp.MapFrom(src => src.Address))
+                        .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password));
+
             });
             _mapper = mapperConfiguration.CreateMapper();
         }
@@ -100,6 +122,14 @@ namespace Travel.Shared.Ultilities
         public static Tour MapCreateTour(CreateTourViewModel data)
         {
             return _mapper.Map<CreateTourViewModel, Tour>(data);
+        }
+        public static Customer MapCreateCustomer(CreateCustomerViewModel data)
+        {
+            return _mapper.Map<CreateCustomerViewModel, Customer>(data);
+        }
+        public static Customer MapCustomer(CustomerViewModel data)
+        {
+            return _mapper.Map<CustomerViewModel, Customer>(data);
         }
     }
 }
