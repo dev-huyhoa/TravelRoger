@@ -19,6 +19,7 @@ namespace Travel.Data.Interfaces
         Response Create(CreateUpdateEmployeeViewModel input);
         Response Search(JObject frmData);
         Response Restore(CreateUpdateEmployeeViewModel input);
-        
+        Response Delete(CreateUpdateEmployeeViewModel input);
+
     }
 }
