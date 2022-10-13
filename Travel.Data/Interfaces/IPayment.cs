@@ -9,9 +9,11 @@ using Travel.Shared.ViewModels.Travel;
 
 namespace Travel.Data.Interfaces
 {
-    public interface ISchedule
+    public interface IPayment
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
-        Response Create(CreateScheduleViewModel input);
+        Response Gets();
+        Response Create(CreatePaymentViewModel input);
+        //Response Update(CreateUpdatePaymentViewModel input);
     }
 }

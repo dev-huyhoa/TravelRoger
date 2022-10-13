@@ -9,6 +9,7 @@ using Travel.Shared.ViewModels.Travel;
 using Travel.Shared.ViewModels.Travel.TourVM;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels.Travel.CustomerVM;
+using Travel.Shared.ViewModels;
 
 namespace Travel.Shared.Ultilities
 {
@@ -72,6 +73,10 @@ namespace Travel.Shared.Ultilities
                 .ForMember(dto => dto.Profit, opt => opt.MapFrom(src => 0))
                 .ForMember(dto => dto.TotalCostTour, opt => opt.MapFrom(src => 0))
                 .ForMember(dto => dto.Vat, opt => opt.MapFrom(src => src.VAT));
+                cfg.CreateMap<CreatePaymentViewModel, Payment>()
+                           .ForMember(dto => dto.IdPayment, otp => otp.MapFrom(src => src.IdPayment))
+                           .ForMember(dto => dto.NamePayment, otp => otp.MapFrom(src => src.NamePayment))
+                           .ForMember(dto => dto.Type, otp => otp.MapFrom(src => src.Type));
 
 
                 // Create
@@ -156,6 +161,34 @@ namespace Travel.Shared.Ultilities
                      .ForMember(dto => dto.NameWard, opt => opt.MapFrom(src => src.NameWard))
                      .ForMember(dto => dto.IdDistrict, opt => opt.MapFrom(src => src.DistrictId))
                      .ForMember(dto => dto.DistrictName, opt => opt.MapFrom(src => src.District.NameDistrict));
+
+                cfg.CreateMap<CreateCarViewModel, Car>()
+                       .ForMember(dto => dto.IdCar, opt => opt.MapFrom(src => src.IdCar))
+                       .ForMember(dto => dto.LiscensePlate, opt => opt.MapFrom(src => src.LiscensePlate))
+                       .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
+                       .ForMember(dto => dto.NameDriver, opt => opt.MapFrom(src => src.NameDriver))
+                       .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone));
+
+                cfg.CreateMap<Car, CarViewModel>()
+                       .ForMember(dto => dto.IdCar, opt => opt.MapFrom(src => src.IdCar))
+                       .ForMember(dto => dto.LiscensePlate, opt => opt.MapFrom(src => src.LiscensePlate))
+                       .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
+                       .ForMember(dto => dto.NameDriver, opt => opt.MapFrom(src => src.NameDriver))
+                       .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone));
+
+                cfg.CreateMap<CreatePromotionViewModel, Promotion>()
+                       .ForMember(dto => dto.IdPromotion, opt => opt.MapFrom(src => src.IdPromotion))
+                       .ForMember(dto => dto.Value, opt => opt.MapFrom(src => src.Value))
+
+                       .ForMember(dto => dto.ToDate, opt => opt.MapFrom(src => src.ToDate))
+                       .ForMember(dto => dto.FromDate, opt => opt.MapFrom(src => src.FromDate));
+
+                cfg.CreateMap<Promotion, PromotionViewModel>()
+                       .ForMember(dto => dto.IdPromotion, opt => opt.MapFrom(src => src.IdPromotion))
+                       .ForMember(dto => dto.Value, opt => opt.MapFrom(src => src.Value))
+
+                       .ForMember(dto => dto.ToDate, opt => opt.MapFrom(src => src.ToDate))
+                        .ForMember(dto => dto.FromDate, opt => opt.MapFrom(src => src.FromDate));
             });
             _mapper = mapperConfiguration.CreateMapper();
         }
@@ -166,6 +199,20 @@ namespace Travel.Shared.Ultilities
         public static List<RoleViewModel> MapRole(List<Role> data)
         {
             return _mapper.Map<List<Role>, List<RoleViewModel>>(data);
+        }
+
+
+        public static PaymentViewModel MapPayment(Payment data)
+        {
+            return _mapper.Map<Payment, PaymentViewModel>(data);
+        }
+        public static List<PaymentViewModel> MapPayment(List<Payment> data)
+        {
+            return _mapper.Map<List<Payment>, List<PaymentViewModel>>(data);
+        }
+        public static Payment MapCreatePayment(CreatePaymentViewModel data)
+        {
+            return _mapper.Map<CreatePaymentViewModel, Payment>(data);
         }
         public static EmployeeViewModel MapEmployee(Employee data)
         {
@@ -229,5 +276,32 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<List<Ward>, List<WardViewModel>>(data);
         }
+
+        public static Car MapCreateCar(CreateCarViewModel data)
+        {
+            return _mapper.Map<CreateCarViewModel, Car>(data);
+        }
+        public static List<CarViewModel> MapCar(List<Car> data)
+        {
+            return _mapper.Map<List<Car>, List<CarViewModel>>(data);
+        }
+        public static Car MapCar(CarViewModel data)
+        {
+            return _mapper.Map<CarViewModel, Car>(data);
+        }
+
+        public static Promotion MapCreatePromotion(CreatePromotionViewModel data)
+        {
+            return _mapper.Map<CreatePromotionViewModel, Promotion>(data);
+        }
+        public static List<PromotionViewModel> MapPromotion(List<Promotion> data)
+        {
+            return _mapper.Map<List<Promotion>, List<PromotionViewModel>>(data);
+        }
+        public static Promotion MapPromotion(PromotionViewModel data)
+        {
+            return _mapper.Map<PromotionViewModel, Promotion>(data);
+        }
+
     }
 }
