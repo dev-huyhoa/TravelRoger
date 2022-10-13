@@ -16,14 +16,15 @@ namespace Travel.Context.Models
         public float FinalPrice { get; set; }
         public float QuantityAdult { get; set; }
         public float QuantityBaby { get; set; }
-        public float MinCapacity { get; set; }
+        public int MinCapacity { get; set; }
+        public int MaxCapacity { get; set; }
         public float QuantityChild { get; set; }
-        public string IdTour { get; set; }
-        public Guid IdCar { get; set; }
-        public int IdPromotion { get; set; }
-        public  Guid IdEmployee { get; set; }
+        public string TourId { get; set; }
+        public Guid CarId { get; set; }
+        public int PromotionId { get; set; }
+        public  Guid EmployeeId { get; set; }
         public virtual Car Cars { get; set; }
-        public virtual ICollection<Promotion> Promotions { get; set; }
+        public virtual Promotion Promotions { get; set; }
         public virtual Tour Tour { get; set; }
         public virtual ICollection<Timeline> Timelines { get; set; }
         public virtual Employee Employee { get; set; }

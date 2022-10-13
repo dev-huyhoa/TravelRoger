@@ -6,8 +6,16 @@ using System.Threading.Tasks;
 
 namespace Travel.Shared.Ultilities
 {
-    public  class Enums
+    public class Enums
     {
+
+        public enum StatusSchedule
+        {
+            Free = 0, // tour đang rảnh
+            Busy = 1, // hết chỗ
+            Going = 2, // tour đang đi
+            Finished = 3, // tour đã hoàn thành tour
+        }
         public enum StatusCar
         {
             Broken = -1, // xe đang hư
@@ -22,7 +30,8 @@ namespace Travel.Shared.Ultilities
             TourManager = 3,
             TourBookingManager = 4,
         }
-        public  enum StatusContract{
+        public enum StatusContract
+        {
             Expired = 0,
             Valid = 1,
         }

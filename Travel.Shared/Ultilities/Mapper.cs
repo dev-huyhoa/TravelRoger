@@ -19,7 +19,24 @@ namespace Travel.Shared.Ultilities
         {
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-
+                // create schedule
+                cfg.CreateMap<CreateScheduleViewModel, Schedule>()
+               .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule))
+               .ForMember(dto => dto.DepartureDate, opt => opt.MapFrom(src => src.DepartureDate))
+               .ForMember(dto => dto.BeginDate, opt => opt.MapFrom(src => src.EndDate))
+               .ForMember(dto => dto.TimePromotion, opt => opt.MapFrom(src => src.TimePromotion))
+               .ForMember(dto => dto.FinalPrice, opt => opt.MapFrom(src => src.FinalPrice))
+               .ForMember(dto => dto.QuantityAdult, opt => opt.MapFrom(src => 0))
+               .ForMember(dto => dto.QuantityBaby, opt => opt.MapFrom(src => 0))
+               .ForMember(dto => dto.QuantityChild, opt => opt.MapFrom(src => 0))
+               .ForMember(dto => dto.MinCapacity, opt => opt.MapFrom(src => 30))
+               .ForMember(dto => dto.MaxCapacity, opt => opt.MapFrom(src => 45))
+               .ForMember(dto => dto.Status, opt => opt.MapFrom(src => Enums.StatusSchedule.Free))
+               .ForMember(dto => dto.TourId, opt => opt.MapFrom(src => src.TourId))
+               .ForMember(dto => dto.CarId, opt => opt.MapFrom(src => src.CarId))
+               .ForMember(dto => dto.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
+               .ForMember(dto => dto.PromotionId, opt => opt.MapFrom(src => src.PromotionId))
+               ;
                 //create
                 cfg.CreateMap<CreateTourViewModel, Tour>()
                 .ForMember(dto => dto.IdTour, opt => opt.MapFrom(src => src.IdTour))
@@ -145,6 +162,10 @@ namespace Travel.Shared.Ultilities
         public static Tour MapCreateTour(CreateTourViewModel data)
         {
             return _mapper.Map<CreateTourViewModel, Tour>(data);
+        }
+        public static Schedule MapCreateSchedule(CreateScheduleViewModel data)
+        {
+            return _mapper.Map<CreateScheduleViewModel, Schedule>(data);
         }
         public static TourDetail MapCreateTourDetails(CreateTourViewModel data)
         {

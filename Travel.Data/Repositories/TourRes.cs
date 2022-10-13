@@ -31,14 +31,14 @@ namespace Travel.Data.Repositories
             try
             {
 
-                var tourName = PrCommon.GetString("NameTour", frmData);
+                var tourName = PrCommon.GetString("nameTour", frmData);
                 if (String.IsNullOrEmpty(tourName))
                 {
                 }
                 if (isExistName(tourName))
                 {
                 }
-                var thumbSnail = PrCommon.GetString("Thumbsnail", frmData);
+                var thumbSnail = PrCommon.GetString("thumbsnail", frmData);
                 if (String.IsNullOrEmpty(thumbSnail))
                 {
                 }

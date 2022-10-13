@@ -7,9 +7,9 @@ using Travel.Context.Models;
 
 namespace Travel.Shared.ViewModels.Travel
 {
-    public class CreateUpdateScheduleViewModel
+    public class CreateScheduleViewModel
     {
-        private string id;
+        private string idSchedule;
         private long departureDate;
         private long beginDate;
         private long endDate;
@@ -17,15 +17,17 @@ namespace Travel.Shared.ViewModels.Travel
         private float finalPrice;
         private float quantityAdult;
         private float quantityBaby;
-        private float minCapacity;
+        private int minCapacity;
+        private int maxCapacity;
         private float quantityChild;
         private int status;
 
-        private string idTour;
-        private Guid idCar;
-        private Guid idEmployee;
+        private string tourId;
+        private Guid carId;
+        private Guid employeeId;
+        private Guid promotionId;
 
-        public string Id { get => id; set => id = value; }
+        public string IdSchedule { get => idSchedule; set => idSchedule = value; }
         public long DepartureDate { get => departureDate; set => departureDate = value; }
         public long BeginDate { get => beginDate; set => beginDate = value; }
         public long EndDate { get => endDate; set => endDate = value; }
@@ -33,12 +35,14 @@ namespace Travel.Shared.ViewModels.Travel
         public float FinalPrice { get => finalPrice; set => finalPrice = value; }
         public float QuantityAdult { get => quantityAdult; set => quantityAdult = value; }
         public float QuantityBaby { get => quantityBaby; set => quantityBaby = value; }
-        public float MinCapacity { get => minCapacity; set => minCapacity = value; }
         public float QuantityChild { get => quantityChild; set => quantityChild = value; }
         public int Status { get => status; set => status = value; }
-        public string IdTour { get => idTour; set => idTour = value; }
-        public Guid IdCar { get => idCar; set => idCar = value; }
-        public Guid IdEmployee { get => idEmployee; set => idEmployee = value; }
-      
+     
+        public int MinCapacity { get => minCapacity; set => minCapacity = value; }
+        public int MaxCapacity { get => maxCapacity; set => maxCapacity = value; }
+        public string TourId { get => tourId; set => tourId = value; }
+        public Guid CarId { get => carId; set => carId = value; }
+        public Guid EmployeeId { get => employeeId; set => employeeId = value; }
+        public Guid PromotionId { get => promotionId; set => promotionId = value; }
     }
 }
