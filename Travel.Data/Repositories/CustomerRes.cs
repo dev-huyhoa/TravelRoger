@@ -10,6 +10,7 @@ using Travel.Shared.ViewModels.Travel.CustomerVM;
 using Travel.Shared.Ultilities;
 using PrUtility;
 using Travel.Context.Models.Travel;
+using Travel.Context.Models;
 
 namespace Travel.Data.Repositories
 {
@@ -35,6 +36,16 @@ namespace Travel.Data.Repositories
                 if (!String.IsNullOrEmpty(name))
                 {
                     customer.NameCustomer = name.Trim();
+                }
+                else
+                {
+                    error++;
+                }
+
+                var point = PrCommon.GetString("point", frmData);
+                if (!String.IsNullOrEmpty(point))
+                {
+                    customer.Phone = point.Trim();
                 }
                 else
                 {
@@ -137,12 +148,58 @@ namespace Travel.Data.Repositories
 
         public Response Create(CreateCustomerViewModel input)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Customer customer = Mapper.MapCreateCustomer(input);
+                customer.IdCustomer = Guid.NewGuid();
+                customer.Point = 0;
+                customer.IsDelete = false;
+                _db.Customers.Add(customer);
+                _db.SaveChanges();
+
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Thêm thành công !";
+                res.Notification.Type = "Success";
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+
+            }
         }
 
         public Response Gets()
         {
-            throw new NotImplementedException();
+            try
+            {          
+                var listCus = (from x in _db.Customers where x.IsDelete == false select x).ToList();
+                var result = Mapper.MapCustomer(listCus);
+
+                if (listCus.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
         }
     }
 }

@@ -101,15 +101,18 @@ namespace Travel.Shared.Ultilities
                          .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password))
                          .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
                          .ForMember(dto => dto.Birthday, otp => otp.MapFrom(src => src.Birthday))
-                         .ForMember(dto => dto.CreateDate, otp => otp.MapFrom(src => src.CreateDate))
+                        .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => src.CreateDate))
                          .ForMember(dto => dto.Point, otp => otp.MapFrom(src => src.Point));
 
-                cfg.CreateMap<Customer, CreateCustomerViewModel>()
+                cfg.CreateMap<CreateCustomerViewModel, Customer >()
+                        //.ForMember(dto => dto., opt => opt.MapFrom(src => src.IdTour))
                         .ForMember(dto => dto.NameCustomer, otp => otp.MapFrom(src => src.NameCustomer))
                         .ForMember(dto => dto.Phone, otp => otp.MapFrom(src => src.Phone))
                         .ForMember(dto => dto.Email, otp => otp.MapFrom(src => src.Email))
                         .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
                         .ForMember(dto => dto.Address, otp => otp.MapFrom(src => src.Address))
+                        .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src =>
+                Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
                         .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password));
 
             });
@@ -150,6 +153,10 @@ namespace Travel.Shared.Ultilities
         public static Customer MapCreateCustomer(CreateCustomerViewModel data)
         {
             return _mapper.Map<CreateCustomerViewModel, Customer>(data);
+        }
+        public static List<CustomerViewModel> MapCustomer(List<Customer> data)
+        {
+            return _mapper.Map<List<Customer>, List<CustomerViewModel>>(data);
         }
         public static Customer MapCustomer(CustomerViewModel data)
         {

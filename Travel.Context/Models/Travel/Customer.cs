@@ -21,5 +21,6 @@ namespace Travel.Context.Models
         public int Point { get; set; }
         public string FbToken { get; set; }
         public string GoogleToken { get; set; }
+        public bool IsDelete { get; set; }
     }
 }
