@@ -13,8 +13,7 @@ namespace Travel.Data.Interfaces
     public interface IEmployee
     {
         CreateUpdateEmployeeViewModel CheckBeforeSave(JObject frmData, ref Notification _message);
-        Response Gets();
-        Response GetsDelete();
+        Response Gets(JObject frmData);
         Response Update(CreateUpdateEmployeeViewModel input);
         Response Create(CreateUpdateEmployeeViewModel input);
         Response Search(JObject frmData);

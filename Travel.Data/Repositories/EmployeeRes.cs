@@ -151,12 +151,16 @@ namespace Travel.Data.Repositories
                 return employee;
             }
         }
-        public Response Gets()
+        public Response Gets(JObject frmData)
         {
             try
             {
-
-
+                var isDelete = false;
+                var check = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(check))
+                {
+                    isDelete = Boolean.Parse(check);
+                }
                 #region đo tốc độ EF và linq
                 //var stopWatch4 = Stopwatch.StartNew();
                 //var result5 = _db.Employees.ToList();
@@ -167,7 +171,7 @@ namespace Travel.Data.Repositories
                 //var b5 = stopWatch5.Elapsed;
                 #endregion
 
-                var listEmp = (from x in _db.Employees where x.IsDelete == false orderby x.Role select x).ToList();
+                var listEmp = (from x in _db.Employees where x.IsDelete == isDelete orderby x.Role select x).ToList();
                 var result = Mapper.MapEmployee(listEmp);
 
                 if (listEmp.Count() > 0)
@@ -192,46 +196,6 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsDelete()
-        {
-            try
-            {
-
-
-                #region đo tốc độ EF và linq
-                //var stopWatch4 = Stopwatch.StartNew();
-                //var result5 = _db.Employees.ToList();
-                //var b4 = stopWatch4.Elapsed;
-
-                //var stopWatch5 = Stopwatch.StartNew();
-                //var result6 = (from x in _db.Employees select x).ToList();
-                //var b5 = stopWatch5.Elapsed;
-                #endregion
-
-                var listEmp = (from x in _db.Employees where x.IsDelete == true orderby x.Role select x).ToList();
-                var result = Mapper.MapEmployee(listEmp);
-
-                if (listEmp.Count() > 0)
-                {
-                    res.Content = result;
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
-                return res;
-            }
-            catch (Exception e)
-            {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
-            }
-        }
         public Response Create(CreateUpdateEmployeeViewModel input)
         {
             try

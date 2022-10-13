@@ -28,21 +28,12 @@ namespace TravelApi.Controllers
             res = new Response();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         [Route("gets-employee")]
-        public object Gets()
+        public object Gets([FromBody] JObject frmData)
         {
-            res =  employee.Gets();
-            return Ok(res);
-        }
-
-        [HttpGet]
-        [Authorize]
-        [Route("gets-delete-employee")]
-        public object GetsDelete()
-        {
-            res = employee.GetsDelete();
+            res =  employee.Gets(frmData);
             return Ok(res);
         }
 
