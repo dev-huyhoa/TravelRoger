@@ -137,8 +137,8 @@ namespace Travel.Shared.Ultilities
                        .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => src.IdProvince))
                        .ForMember(dto => dto.NameProvince, opt => opt.MapFrom(src => src.NameProvince));
 
-                cfg.CreateMap<CreateProvinceViewModel, Province>()
-                      .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => Guid.NewGuid()))
+                cfg.CreateMap<CreateUpdateProvinceViewModel, Province>()
+                      .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => src.IdProvince != Guid.Empty ? src.IdProvince : Guid.NewGuid()))
                       .ForMember(dto => dto.NameProvince, opt => opt.MapFrom(src => src.NameProvince));
 
                 cfg.CreateMap<UpdateProvinceViewModel, Province>()
@@ -212,9 +212,9 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map< List<Province>, List<ProvinceViewModel>>(data);
         }
-        public static Province MapCreateProvince(CreateProvinceViewModel data)
+        public static Province MapCreateProvince(CreateUpdateProvinceViewModel data)
         {
-            return _mapper.Map<CreateProvinceViewModel, Province>(data);
+            return _mapper.Map<CreateUpdateProvinceViewModel, Province>(data);
         }
         public static Province MapUpdateProvince(UpdateProvinceViewModel data)
         {
