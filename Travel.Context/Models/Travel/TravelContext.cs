@@ -42,6 +42,8 @@ namespace Travel.Context.Models.Travel
         public DbSet<File> Files { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Timeline> Timelines { get; set; }
+
+        public DbSet<Car> Cars { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Seed();
