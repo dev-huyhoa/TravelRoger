@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Travel.Shared.ViewModels.Travel
 {
-    public class CreateUpdateProvinceViewModel
+    public class CreateProvinceViewModel
     {
         private Guid idProvince;
         private string nameProvince;
