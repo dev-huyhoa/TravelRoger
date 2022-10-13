@@ -272,17 +272,18 @@ namespace Travel.Context.Models.Travel
             {
                 entity.HasKey(e => e.IdSchedule);
                 entity.Property(e => e.IdSchedule).HasMaxLength(50);
-                entity.HasOne<Car>(e => e.Cars)
+                entity.HasOne(e => e.Cars)
                  .WithMany(d => d.Schedules)
-                 .HasForeignKey(e => e.IdCar);
-
+                 .HasForeignKey(e => e.CarId);
                 entity.HasOne(e => e.Employee)
                .WithMany(d => d.Schedules)
-               .HasForeignKey(e => e.IdEmployee);
-
-                entity.HasOne<Tour>(e => e.Tour)
+               .HasForeignKey(e => e.EmployeeId);
+                entity.HasOne(e => e.Tour)
                .WithMany(d => d.Schedules)
-               .HasForeignKey(e => e.IdTour);
+               .HasForeignKey(e => e.TourId);
+                entity.HasOne(e => e.Promotions)
+                .WithMany(e => e.Schedules)
+                .HasForeignKey(e => e.PromotionId);
             });
 
             modelBuilder.Entity<Timeline>(entity =>
@@ -313,9 +314,6 @@ namespace Travel.Context.Models.Travel
             modelBuilder.Entity<Promotion>(entity =>
             {
                 entity.HasKey(e => e.IdPromotion);
-                entity.HasOne<Schedule>(e => e.Schedules)
-               .WithMany(d => d.Promotions)
-               .HasForeignKey(e => e.IdSchedule);
             });
             modelBuilder.Entity<Role>(entity =>
             {

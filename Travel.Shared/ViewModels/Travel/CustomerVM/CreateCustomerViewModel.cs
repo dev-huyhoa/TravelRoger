@@ -15,7 +15,6 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         private bool gender;
         private string password;
         private long birthday;
-
         public string NameCustomer { get => nameCustomer; set => nameCustomer = value; }
         public string Phone { get => phone; set => phone = value; }
         public string Email { get => email; set => email = value; }

@@ -19,7 +19,24 @@ namespace Travel.Shared.Ultilities
         {
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
-
+                // create schedule
+                cfg.CreateMap<CreateScheduleViewModel, Schedule>()
+               .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule))
+               .ForMember(dto => dto.DepartureDate, opt => opt.MapFrom(src => src.DepartureDate))
+               .ForMember(dto => dto.BeginDate, opt => opt.MapFrom(src => src.EndDate))
+               .ForMember(dto => dto.TimePromotion, opt => opt.MapFrom(src => src.TimePromotion))
+               .ForMember(dto => dto.FinalPrice, opt => opt.MapFrom(src => src.FinalPrice))
+               .ForMember(dto => dto.QuantityAdult, opt => opt.MapFrom(src => 0))
+               .ForMember(dto => dto.QuantityBaby, opt => opt.MapFrom(src => 0))
+               .ForMember(dto => dto.QuantityChild, opt => opt.MapFrom(src => 0))
+               .ForMember(dto => dto.MinCapacity, opt => opt.MapFrom(src => 30))
+               .ForMember(dto => dto.MaxCapacity, opt => opt.MapFrom(src => 45))
+               .ForMember(dto => dto.Status, opt => opt.MapFrom(src => Enums.StatusSchedule.Free))
+               .ForMember(dto => dto.TourId, opt => opt.MapFrom(src => src.TourId))
+               .ForMember(dto => dto.CarId, opt => opt.MapFrom(src => src.CarId))
+               .ForMember(dto => dto.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
+               .ForMember(dto => dto.PromotionId, opt => opt.MapFrom(src => src.PromotionId))
+               ;
                 //create
                 cfg.CreateMap<CreateTourViewModel, Tour>()
                 .ForMember(dto => dto.IdTour, opt => opt.MapFrom(src => src.IdTour))
@@ -101,15 +118,18 @@ namespace Travel.Shared.Ultilities
                          .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password))
                          .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
                          .ForMember(dto => dto.Birthday, otp => otp.MapFrom(src => src.Birthday))
-                         .ForMember(dto => dto.CreateDate, otp => otp.MapFrom(src => src.CreateDate))
+                        .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => src.CreateDate))
                          .ForMember(dto => dto.Point, otp => otp.MapFrom(src => src.Point));
 
-                cfg.CreateMap<Customer, CreateCustomerViewModel>()
+                cfg.CreateMap<CreateCustomerViewModel, Customer >()
+                        //.ForMember(dto => dto., opt => opt.MapFrom(src => src.IdTour))
                         .ForMember(dto => dto.NameCustomer, otp => otp.MapFrom(src => src.NameCustomer))
                         .ForMember(dto => dto.Phone, otp => otp.MapFrom(src => src.Phone))
                         .ForMember(dto => dto.Email, otp => otp.MapFrom(src => src.Email))
                         .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
                         .ForMember(dto => dto.Address, otp => otp.MapFrom(src => src.Address))
+                        .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src =>
+                Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
                         .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password));
 
 
@@ -167,6 +187,10 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<CreateTourViewModel, Tour>(data);
         }
+        public static Schedule MapCreateSchedule(CreateScheduleViewModel data)
+        {
+            return _mapper.Map<CreateScheduleViewModel, Schedule>(data);
+        }
         public static TourDetail MapCreateTourDetails(CreateTourViewModel data)
         {
             return _mapper.Map<CreateTourViewModel, TourDetail>(data);
@@ -174,6 +198,10 @@ namespace Travel.Shared.Ultilities
         public static Customer MapCreateCustomer(CreateCustomerViewModel data)
         {
             return _mapper.Map<CreateCustomerViewModel, Customer>(data);
+        }
+        public static List<CustomerViewModel> MapCustomer(List<Customer> data)
+        {
+            return _mapper.Map<List<Customer>, List<CustomerViewModel>>(data);
         }
         public static Customer MapCustomer(CustomerViewModel data)
         {

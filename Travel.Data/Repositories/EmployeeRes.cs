@@ -113,7 +113,7 @@ namespace Travel.Data.Repositories
                     error++;
                 }
 
-                var roleid = PrCommon.GetString("roleId", frmData);
+                var roleid = PrCommon.GetString("idRole", frmData);
                 if (!String.IsNullOrEmpty(roleid))
                 {
                     employee.RoleId = roleid.ToEnum<TitleRole>();
