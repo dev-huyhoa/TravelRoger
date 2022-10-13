@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
@@ -26,9 +27,8 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
-        public CreateScheduleViewModel CheckBeforSave(JObject frmData, ref Notification _message)
+        public string CheckBeforSave(JObject frmData, ref Notification _message,bool isUpdate)
         {
-            CreateScheduleViewModel schedule = new CreateScheduleViewModel();
             try
             {
 
@@ -65,20 +65,31 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(timePromotion))
                 {
                 }
-             
-                schedule.TourId = tourId;
-                schedule.CarId = Guid.Parse(carId);
-                schedule.EmployeeId = Guid.Parse(employeeId);
-                schedule.PromotionId = Guid.Parse(promotionId);
-                schedule.DepartureDate = Convert.ToInt32(departureDate);
-                schedule.BeginDate = Convert.ToInt32(beginDate);
-
-                schedule.EndDate = Convert.ToInt32(endDate);
-                schedule.TimePromotion = Convert.ToInt32(timePromotion);
-
-                schedule.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
-
-                return schedule;
+                if (isUpdate)
+                {
+                    CreateScheduleViewModel updateObj = new CreateScheduleViewModel();
+                    updateObj.TourId = tourId;
+                    updateObj.CarId = Guid.Parse(carId);
+                    updateObj.EmployeeId = Guid.Parse(employeeId);
+                    updateObj.PromotionId =Convert.ToInt32(promotionId);
+                    updateObj.DepartureDate = Convert.ToInt32(departureDate);
+                    updateObj.BeginDate = Convert.ToInt32(beginDate);
+                    updateObj.EndDate = Convert.ToInt32(endDate);
+                    updateObj.TimePromotion = Convert.ToInt32(timePromotion);
+                    updateObj.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
+                    return JsonSerializer.Serialize(updateObj);
+                }
+                CreateScheduleViewModel createObj = new CreateScheduleViewModel();
+                createObj.TourId = tourId;
+                createObj.CarId = Guid.Parse(carId);
+                createObj.EmployeeId = Guid.Parse(employeeId);
+                createObj.PromotionId = Convert.ToInt32(promotionId);
+                createObj.DepartureDate = Convert.ToInt32(departureDate);
+                createObj.BeginDate = Convert.ToInt32(beginDate);
+                createObj.EndDate = Convert.ToInt32(endDate);
+                createObj.TimePromotion = Convert.ToInt32(timePromotion);
+                createObj.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
+                return JsonSerializer.Serialize(createObj);
             }
             catch (Exception e)
             {
@@ -87,7 +98,7 @@ namespace Travel.Data.Repositories
                 message.Messenge = "Có lỗi xảy ra !";
                 message.Type = "Error";
                 _message = message;
-                return schedule;
+                return null;
             }
         }
 

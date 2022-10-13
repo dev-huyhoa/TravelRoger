@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
@@ -25,9 +26,8 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
-        public CreateTourViewModel CheckBeforSave(JObject frmData, ref Notification _message)
+        public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
-            CreateTourViewModel tour = new CreateTourViewModel();
             try
             {
 
@@ -56,18 +56,33 @@ namespace Travel.Data.Repositories
                 {
                 }
                 var vat = PrCommon.GetString("vat", frmData) ?? "0";
+                if (isUpdate)
+                {
+                    // map data
+                    UpdateTourViewModel objUpdate = new UpdateTourViewModel();
+                    objUpdate.NameTour = "tentoatuspa";
+                    objUpdate.Thumbsnail = thumbSnail;
+                    objUpdate.FromPlace = fromPlace;
+                    objUpdate.ToPlace = toPlace;
+                    objUpdate.Description = description;
+                    objUpdate.VAT = Convert.ToInt16(vat);
+                    // generate ID
+                    objUpdate.IdTour = Ultility.GenerateId(tourName);
+                    return JsonSerializer.Serialize(objUpdate);
+                }
                 // map data
-                tour.NameTour = tourName;
-                tour.Thumbsnail = thumbSnail;
-                tour.FromPlace = fromPlace;
-                tour.ToPlace = toPlace;
-                tour.Description = description;
-                tour.VAT = Convert.ToInt16(vat);
+                CreateTourViewModel obj = new CreateTourViewModel();
+
+                obj.NameTour = tourName;
+                obj.Thumbsnail = thumbSnail;
+                obj.FromPlace = fromPlace;
+                obj.ToPlace = toPlace;
+                obj.Description = description;
+                obj.VAT = Convert.ToInt16(vat);
                 // generate ID
-                tour.IdTour = Ultility.GenerateId(tourName);
+                obj.IdTour = Ultility.GenerateId(tourName);
 
-
-                return tour;
+                return JsonSerializer.Serialize(obj);
             }
             catch (Exception e)
             {
@@ -76,17 +91,17 @@ namespace Travel.Data.Repositories
                 message.Messenge = "Có lỗi xảy ra !";
                 message.Type = "Error";
                 _message = message;
-                return tour;
+                return null;
             }
         }
         public Response Create(CreateTourViewModel input)
         {
             try
             {
-                Tour tour = 
+                Tour tour =
                 tour = Mapper.MapCreateTour(input);
                 TourDetail tourDetail = Mapper.MapCreateTourDetails(input);
-                tour.TourDetail = tourDetail; 
+                tour.TourDetail = tourDetail;
                 _db.Tour.Add(tour);
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
@@ -108,10 +123,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                string nameTour = Ultility.removeVietnameseSign(input.ToLower());
                 var tour =
                     (from x in _db.Tour
-                     where Ultility.removeVietnameseSign(x.NameTour).ToLower() == nameTour select x).FirstOrDefault();
+                     where x.NameTour.ToLower() == input.ToLower()
+                     select x).FirstOrDefault();
                 if (tour != null)
                 {
                     return true;
