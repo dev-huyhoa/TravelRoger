@@ -4,49 +4,46 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
-using Travel.Shared.ViewModels.Travel;
 
 namespace TravelApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : Controller
+    public class CarController : ControllerBase
     {
-        private IPayment pay;
+        private ICars car;
         private Notification message;
         private Response res;
-        public PaymentController(IPayment _pay)
+        public CarController(ICars _car)
         {
-            pay = _pay;
+            car = _car;
             res = new Response();
         }
-        
+
         [HttpGet]
-        [AllowAnonymous]
-        [Route("get-payment")]
-        public object GetPayment()
+        [Authorize]
+        [Route("gets-car")]
+        public object Gets()
         {
-            res = pay.Gets();
+            res = car.Gets();
             return Ok(res);
         }
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("create-payment")]
+        [Route("create-car")]
         public object Create([FromBody] JObject frmData)
         {
 
-            message = null;
-            var result = pay.CheckBeforSave(frmData, ref message, false);
+            var result = car.CheckBeforeSave(frmData, ref message);
             if (message == null)
             {
-                var createObj = JsonSerializer.Deserialize<CreatePaymentViewModel>(result);
-                res = pay.Create(createObj);
+                res = car.Create(result);
             }
+
             return Ok(res);
         }
     }

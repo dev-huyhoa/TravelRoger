@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Travel.Shared.ViewModels.Travel
 {
-   public class CreateUpdatePaymentViewModel
+    public class UpdatePaymentViewModel : CreatePaymentViewModel
+    {
+
+    }
+    public class CreatePaymentViewModel
     {
 
         private string idPayment;

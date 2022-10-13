@@ -8,44 +8,42 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
-using Travel.Shared.ViewModels.Travel;
 
 namespace TravelApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : Controller
+    public class PromotionController : ControllerBase
     {
-        private IPayment pay;
+        private IPromotions promotion;
         private Notification message;
         private Response res;
-        public PaymentController(IPayment _pay)
+        public PromotionController(IPromotions _promotion)
         {
-            pay = _pay;
+            promotion = _promotion;
             res = new Response();
         }
-        
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("get-payment")]
-        public object GetPayment()
-        {
-            res = pay.Gets();
-            return Ok(res);
-        }
+
+        //[HttpGet]
+        //[Authorize]
+        //[Route("gets-promotion")]
+        //public object Gets()
+        //{
+        //    res = promotion.Gets();
+        //    return Ok(res);
+        //}
 
         [HttpPost]
-        [AllowAnonymous]
-        [Route("create-payment")]
+        [Authorize]
+        [Route("create-promotion")]
         public object Create([FromBody] JObject frmData)
         {
-
             message = null;
-            var result = pay.CheckBeforSave(frmData, ref message, false);
+            var result = promotion.CheckBeforSave(frmData, ref message, false);
             if (message == null)
             {
-                var createObj = JsonSerializer.Deserialize<CreatePaymentViewModel>(result);
-                res = pay.Create(createObj);
+                var createObj = JsonSerializer.Deserialize<CreatePromotionViewModel>(result);
+                res = promotion.Create(createObj);
             }
             return Ok(res);
         }

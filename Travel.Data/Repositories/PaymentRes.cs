@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
@@ -25,28 +26,40 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
-        public CreateUpdatePaymentViewModel CheckBeforSave(JObject frmData, ref Notification _message)
-        {
-            CreateUpdatePaymentViewModel payment = new CreateUpdatePaymentViewModel();
+      
 
+        public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false)
+        {
             try
             {
                 var idPay = PrCommon.GetString("idPayment", frmData);
                 if (!String.IsNullOrEmpty(idPay))
                 {
-                    payment.IdPayment = idPay;
+                 //   payment.IdPayment = idPay;
                 }
                 var namePay = PrCommon.GetString("namePayment", frmData);
                 if (!String.IsNullOrEmpty(namePay))
                 {
-                    payment.IdPayment = namePay;
+                   // payment.IdPayment = namePay;
                 }
                 var type = PrCommon.GetString("type", frmData);
                 if (!String.IsNullOrEmpty(type))
                 {
-                    payment.IdPayment = type;
+                   // payment.IdPayment = type;
                 }
-                return payment;
+                if (isUpdate)
+                {
+                    CreatePaymentViewModel updateObj = new CreatePaymentViewModel();
+                    updateObj.IdPayment = idPay;
+                    updateObj.NamePayment = namePay;
+                    updateObj.Type = type;
+                    return JsonSerializer.Serialize(updateObj);
+                }
+                CreatePaymentViewModel createObj = new CreatePaymentViewModel();
+                createObj.IdPayment = idPay;
+                createObj.NamePayment = namePay;
+                createObj.Type = type;
+                return JsonSerializer.Serialize(createObj);
             }
             catch (Exception e)
             {
@@ -54,18 +67,17 @@ namespace Travel.Data.Repositories
                 message.Description = e.Message;
                 message.Messenge = "Có lỗi xảy ra !";
                 message.Type = "Error";
-
                 _message = message;
-                return payment;
+                return null;
             }
         }
 
-        public Response Create(CreateUpdatePaymentViewModel input)
+        public Response Create(CreatePaymentViewModel input)
         {
             try
             {
                 Payment pay = new Payment();
-               pay = Mapper.MapCreatePayment(input);
+                pay = Mapper.MapCreatePayment(input);
 
                 _db.Payment.Add(pay);
                 _db.SaveChanges();
@@ -85,6 +97,9 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
+
+
 
         public Response Gets()
         {
@@ -114,30 +129,30 @@ namespace Travel.Data.Repositories
             };
         }
 
-        public Response Update(CreateUpdatePaymentViewModel input)
-        {
-            try
-            {
-                Payment pay = new Payment();
-                pay = Mapper.MapCreatePayment(input);
+        //public Response Update(CreateUpdatePaymentViewModel input)
+        //{
+        //    try
+        //    {
+        //        Payment pay = new Payment();
+        //        pay = Mapper.MapCreatePayment(input);
 
-                _db.Payment.Update(pay);
-                _db.SaveChanges();
+        //        _db.Payment.Update(pay);
+        //        _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
-            }
-            catch (Exception e)
-            {
+        //        res.Notification.DateTime = DateTime.Now;
+        //        res.Notification.Messenge = "Sửa thành công !";
+        //        res.Notification.Type = "Success";
+        //        return res;
+        //    }
+        //    catch (Exception e)
+        //    {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
-            }
-        }
+        //        res.Notification.DateTime = DateTime.Now;
+        //        res.Notification.Description = e.Message;
+        //        res.Notification.Messenge = "Có lỗi xảy ra !";
+        //        res.Notification.Type = "Error";
+        //        return res;
+        //    }
+        //}
     }
 }
