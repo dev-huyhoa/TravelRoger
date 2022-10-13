@@ -7,8 +7,7 @@ namespace Travel.Context.Models
 {
     public class Timeline
     {
-
-        public string IdTimeline { get; set; }
+        public Guid IdTimeline { get; set; }
         public string Description { get; set; }
         public long FromTime { get; set; }
         public long ToTime { get; set; }
