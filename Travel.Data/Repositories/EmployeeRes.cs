@@ -391,10 +391,10 @@ namespace Travel.Data.Repositories
                 Employee employee = new Employee();
                 employee = Mapper.MapCreateEmployee(input);
 
-                var check = _db.Roles.Find(employee.IdEmployee);
+                var check = _db.Roles.Find(employee.RoleId);
                 if (check != null)
                 {
-                    _db.Roles.Find(employee.IdEmployee).IsDelete = false;
+                    _db.Employees.Find(employee.IdEmployee).IsDelete = false;
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
