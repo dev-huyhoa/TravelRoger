@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
+using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 
 namespace Travel.Data.Repositories
@@ -23,7 +25,7 @@ namespace Travel.Data.Repositories
         }
 
 
-        public Province SetDataProvince(JObject frmData, ref Notification _message)
+        public Province CheckBeforeSaveProvince(JObject frmData, ref Notification _message)
         {
             Province province = new Province();
             try
@@ -49,7 +51,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public District SetDataDistrict(JObject frmData, ref Notification _message)
+        public District CheckBeforeSaveDistrict(JObject frmData, ref Notification _message)
         {
             District district = new District();
             try
@@ -81,7 +83,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Ward SetDataWard(JObject frmData, ref Notification _message)
+        public Ward CheckBeforeSaveWard(JObject frmData, ref Notification _message)
         {
             Ward ward = new Ward();
             try
@@ -113,12 +115,13 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetProvinces()
+        public Response GetsProvince()
         {
             try
             {
-                var result = _db.Provinces.ToList();
+                var listProvince = (from x in _db.Provinces select x).ToList();
 
+                var result = Mapper.MapProvince(listProvince);
                 if (result.Count() > 0)
                 {
                     res.Content = result;
@@ -141,12 +144,12 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetDistrict(District district)
+        public Response GetsDistrict()
         {
             try
             {
-                var result = _db.Districts.Where(x => x.ProvinceId == district.ProvinceId);
-
+                var listDistrict = (from x in _db.Districts select x).ToList();
+                var result = Mapper.MapDistrict(listDistrict);
                 if (result.Count() > 0)
                 {
                     res.Content = result;
@@ -169,12 +172,12 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetWard(Ward ward)
+        public Response GetsWard()
         {
             try
             {
-                var result = _db.Wards.Where(x => x.DistrictId == ward.DistrictId);
-
+                var listWard = (from x in _db.Wards select x).ToList();
+                var result = Mapper.MapWard(listWard);
                 if (result.Count() > 0)
                 {
                     res.Content = result;
@@ -197,11 +200,210 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response InsertProvince(Province province)
+        public Response SearchProvince(JObject frmData)
         {
             try
             {
-                province.IdProvince = Guid.NewGuid();
+                Keywords keywords = new Keywords();
+
+                var kwId = PrCommon.GetString("idProvince", frmData);
+                if (!String.IsNullOrEmpty(kwId))
+                {
+                    keywords.KwId = kwId.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwId = "";
+
+                }
+
+                var kwName = PrCommon.GetString("nameProvince", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwName))
+                {
+                    keywords.KwName = kwName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+
+                }
+
+                var listProvince = new List<Province>();
+                listProvince = (from x in _db.Provinces
+                           where x.IdProvince.ToString().ToLower().Contains(keywords.KwId) &&
+                                  x.NameProvince.ToLower().Contains(keywords.KwName)
+                           select x).ToList();
+                var result = Mapper.MapProvince(listProvince);
+                if (listProvince.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response SearchDistrict(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var kwId = PrCommon.GetString("idDistrict", frmData);
+                if (!String.IsNullOrEmpty(kwId))
+                {
+                    keywords.KwId = kwId.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwId = "";
+
+                }
+
+                var kwName = PrCommon.GetString("nameDistrict", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwName))
+                {
+                    keywords.KwName = kwName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+
+                }
+
+
+                var kwIdProvince = PrCommon.GetString("idProvince", frmData);
+
+                keywords.KwIdProvince = PrCommon.getListString(kwIdProvince, ',', false);
+
+                var listDistrict = new List<District>();
+                if (keywords.KwIdProvince.Count > 0)
+                {
+                    listDistrict = (from x in _db.Districts
+                                    where x.IdDistrict.ToString().ToLower().Contains(keywords.KwId) &&
+                                           x.NameDistrict.ToLower().Contains(keywords.KwName) &&
+                                            keywords.KwIdProvince.Contains(x.ProvinceId.ToString())
+                                    select x).ToList();
+                }
+                else
+                {
+                    listDistrict = (from x in _db.Districts
+                                    where x.IdDistrict.ToString().ToLower().Contains(keywords.KwId) &&
+                                           x.NameDistrict.ToLower().Contains(keywords.KwName)
+                                    select x).ToList();
+                }
+                var result = Mapper.MapDistrict(listDistrict);
+                if (listDistrict.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response SearchWard(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var kwId = PrCommon.GetString("idWard", frmData);
+                if (!String.IsNullOrEmpty(kwId))
+                {
+                    keywords.KwId = kwId.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwId = "";
+
+                }
+
+                var kwName = PrCommon.GetString("nameWard", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwName))
+                {
+                    keywords.KwName = kwName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+
+                }
+
+
+                var kwIdDistrict = PrCommon.GetString("idDistrict", frmData);
+
+                keywords.KwIdDistrict = PrCommon.getListString(kwIdDistrict, ',', false);
+
+                var listWard = new List<Ward>();
+                if (keywords.KwIdDistrict.Count > 0)
+                {
+                    listWard = (from x in _db.Wards
+                                    where x.IdWard.ToString().ToLower().Contains(keywords.KwId) &&
+                                           x.NameWard.ToLower().Contains(keywords.KwName) &&
+                                            keywords.KwIdDistrict.Contains(x.DistrictId.ToString())
+                                    select x).ToList();
+                }
+                else
+                {
+                    listWard = (from x in _db.Wards
+                                where x.IdWard.ToString().ToLower().Contains(keywords.KwId) &&
+                                           x.NameWard.ToLower().Contains(keywords.KwName)
+                                    select x).ToList();
+                }
+                var result = Mapper.MapWard(listWard);
+                if (listWard.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response CreateProvince(Province province)
+        {
+            try
+            {
                 _db.Provinces.Add(province);
                 _db.SaveChanges();
 
@@ -220,7 +422,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response InsertDistrict(District district)
+        public Response CreateDistrict(District district)
         {
             try
             {
@@ -243,7 +445,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response InsertWard(Ward ward)
+        public Response CreateWard(Ward ward)
         {
             try
             {
@@ -270,22 +472,12 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var check = _db.Provinces.Find(province.IdProvince);
-                if (check != null)
-                {
-                    _db.Provinces.Find(province.IdProvince).NameProvince = province.NameProvince;
-                    _db.SaveChanges();
+                _db.Provinces.Update(province);
+                _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Sửa thành công !";
-                    res.Notification.Type = "Success";
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
-                }
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Sửa thành công !";
+                res.Notification.Type = "Success";
 
                 return res;
             }
@@ -303,23 +495,12 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var check = _db.Districts.Find(district.IdDistrict);
-                if (check != null)
-                {
-                    _db.Districts.Find(district.IdDistrict).NameDistrict = district.NameDistrict;
-                    _db.Districts.Find(district.IdDistrict).ProvinceId = district.ProvinceId;
-                    _db.SaveChanges();
+                _db.Districts.Update(district);
+                _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Sửa thành công !";
-                    res.Notification.Type = "Success";
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
-                }
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Sửa thành công !";
+                res.Notification.Type = "Success";
 
                 return res;
             }
@@ -337,23 +518,12 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var check = _db.Wards.Find(ward.IdWard);
-                if (check != null)
-                {
-                    _db.Wards.Find(ward.IdWard).NameWard = ward.NameWard;
-                    _db.Wards.Find(ward.IdWard).DistrictId = ward.DistrictId;
-                    _db.SaveChanges();
+                _db.Wards.Update(ward);
+                _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Sửa thành công !";
-                    res.Notification.Type = "Success";
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
-                }
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Sửa thành công !";
+                res.Notification.Type = "Success";
 
                 return res;
             }

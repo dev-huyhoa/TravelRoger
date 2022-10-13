@@ -34,59 +34,68 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-province")]
-        public  object GetProvince()
+        [Route("gets-province")]
+        public  object GetsProvince()
         {
        
-            res = location.GetProvinces();
+            res = location.GetsProvince();
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("gets-district")]
+        public object GetsDistrict()
+        {
+            res = location.GetsDistrict();
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("gets-ward")]
+        public object GetsWard()
+        {
+            res = location.GetsWard();
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-province")]
+        public object SearchProvince([FromBody] JObject frmData)
+        {
+            res = location.SearchProvince(frmData);
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-district")]
+        public object SearchDistrict([FromBody] JObject frmData)
+        {
+            res = location.SearchDistrict(frmData);
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-ward")]
+        public object SearchWard([FromBody] JObject frmData)
+        {
+            res = location.SearchWard(frmData);
             return Ok(res);
         }
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("get-district")]
-        public object GetDistrict([FromBody] JObject frmData)
+        [Route("create-province")]
+        public object CreateProvince([FromBody] JObject frmData)
         {
-            var district = location.SetDataDistrict(frmData, ref message);
+            var province = location.CheckBeforeSaveProvince(frmData, ref message);
             if (message == null)
             {
-                res = location.GetDistrict(district);
-            }
-            else
-            {
-                res.Notification = message;
-               }
-            
-            return Ok(res);
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("get-ward")]
-        public object GetWard([FromBody] JObject frmData)
-        {
-            var ward = location.SetDataWard(frmData, ref message);
-            if (message == null)
-            {
-                res = location.GetWard(ward);
-            }
-            else
-            {
-                res.Notification = message;
-            }
-            return Ok(res);
-        }
-
-
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("insert-province")]
-        public object InsertProvince([FromBody] JObject frmData)
-        {
-            var province = location.SetDataProvince(frmData, ref message);
-            if (message == null)
-            {
-                res = location.InsertProvince(province);
+                res = location.CreateProvince(province);
                 _messageHub.Clients.All.Insert();
             }
             else
@@ -98,13 +107,13 @@ namespace TravelApi.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("insert-district")]
-        public object InsertDistrict([FromBody] JObject frmData)
+        [Route("create-district")]
+        public object CreateDistrict([FromBody] JObject frmData)
         {
-            var district = location.SetDataDistrict(frmData, ref message);
+            var district = location.CheckBeforeSaveDistrict(frmData, ref message);
             if (message == null)
             {
-                res = location.InsertDistrict(district);
+                res = location.CreateDistrict(district);
             }
             else
             {
@@ -115,13 +124,13 @@ namespace TravelApi.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("insert-ward")]
-        public object InsertWard([FromBody] JObject frmData)
+        [Route("create-ward")]
+        public object CreateWard([FromBody] JObject frmData)
         {
-            var ward = location.SetDataWard(frmData, ref message);
+            var ward = location.CheckBeforeSaveWard(frmData, ref message);
             if (message == null)
             {
-                res = location.InsertWard(ward);
+                res = location.CreateWard(ward);
             }
             else
             {
@@ -135,7 +144,7 @@ namespace TravelApi.Controllers
         [Route("update-province")]
         public object UpdateProvince([FromBody] JObject frmData)
         {
-            var province = location.SetDataProvince(frmData, ref message);
+            var province = location.CheckBeforeSaveProvince(frmData, ref message);
             if (message == null)
             {
                 res = location.UpdateProvince(province);
@@ -152,7 +161,7 @@ namespace TravelApi.Controllers
         [Route("update-district")]
         public object UpdateDistrict([FromBody] JObject frmData)
         {
-            var district = location.SetDataDistrict(frmData, ref message);
+            var district = location.CheckBeforeSaveDistrict(frmData, ref message);
             if (message == null)
             {
                 res = location.UpdateDistrict(district);
@@ -169,7 +178,7 @@ namespace TravelApi.Controllers
         [Route("update-ward")]
         public object UpdateWard([FromBody] JObject frmData)
         {
-            var ward = location.SetDataWard(frmData, ref message);
+            var ward = location.CheckBeforeSaveWard(frmData, ref message);
             if (message == null)
             {
                 res = location.UpdateWard(ward);
@@ -186,7 +195,7 @@ namespace TravelApi.Controllers
         [Route("DeleteProvince")]
         public object DeleteProvince([FromBody] JObject frmData)
         {
-            var province = location.SetDataProvince(frmData, ref message);
+            var province = location.CheckBeforeSaveProvince(frmData, ref message);
             if (message == null)
             {
                 res = location.DeleteProvince(province);
@@ -203,7 +212,7 @@ namespace TravelApi.Controllers
         [Route("DeleteDistrict")]
         public object DeleteDistrict([FromBody] JObject frmData)
         {
-            var district = location.SetDataDistrict(frmData, ref message);
+            var district = location.CheckBeforeSaveDistrict(frmData, ref message);
             if (message == null)
             {
                 res = location.DeleteDistrict(district);
@@ -220,7 +229,7 @@ namespace TravelApi.Controllers
         [Route("DeleteWard")]
         public object DeleteWard([FromBody] JObject frmData)
         {
-            var ward = location.SetDataWard(frmData, ref message);
+            var ward = location.CheckBeforeSaveWard(frmData, ref message);
             if (message == null)
             {
                 res = location.DeleteWard(ward);

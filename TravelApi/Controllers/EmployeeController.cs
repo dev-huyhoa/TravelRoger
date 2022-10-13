@@ -31,9 +31,9 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("gets-employee")]
-        public object Gets([FromBody] JObject frmData)
+        public object GetsEmployee([FromBody] JObject frmData)
         {
-            res =  employee.Gets(frmData);
+            res =  employee.GetsEmployee(frmData);
             return Ok(res);
         }
 
@@ -42,7 +42,7 @@ namespace TravelApi.Controllers
         [Route("search-employee")]
         public object SearchEmployee([FromBody] JObject frmData)
         {
-            res = employee.Search(frmData);
+            res = employee.SearchEmployee(frmData);
             return Ok(res);
         }
         //[HttpPost]
@@ -89,12 +89,12 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("create-employee")]
-        public object Create([FromBody] JObject frmData)
+        public object CreateEmployee([FromBody] JObject frmData)
         {
             var result = employee.CheckBeforeSave(frmData, ref message);
             if(message == null)
             {
-                res = employee.Create(result);
+                res = employee.CreateEmployee(result);
             }
             else
             {
@@ -106,13 +106,13 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("update-employee")]
-        public object Update([FromBody] JObject frmData)
+        public object UpdateEmployee([FromBody] JObject frmData)
         {
 
             var result = employee.CheckBeforeSave(frmData, ref message);
             if (message == null)
             {
-                res = employee.Update(result);
+                res = employee.UpdateEmployee(result);
             }
             else
             {
@@ -123,13 +123,13 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("delete-employee")]
-        public object Delete([FromBody] JObject frmData)
+        public object DeleteEmployee([FromBody] JObject frmData)
         {
 
             var result = employee.CheckBeforeSave(frmData, ref message);
             if (message == null)
             {
-                res = employee.Delete(result);
+                res = employee.DeleteEmployee(result);
             }
             else
             {
@@ -140,12 +140,12 @@ namespace TravelApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("restore-employess")]
-        public object Restore([FromBody] JObject frmData)
+        public object RestoreEmployee([FromBody] JObject frmData)
         {
             var result = employee.CheckBeforeSave(frmData, ref message);
             if (message == null)
             {
-                res = employee.Restore(result);
+                res = employee.RestoreEmployee(result);
             }
             return Ok(res);
         }

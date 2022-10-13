@@ -11,15 +11,18 @@ namespace Travel.Data.Interfaces
 {
     public interface ILocation
     {
-        Province SetDataProvince(JObject frmData, ref Notification _message);
-        District SetDataDistrict(JObject frmData, ref Notification _message);
-        Ward SetDataWard(JObject frmData, ref Notification _message);
-        Response GetProvinces();
-        Response GetDistrict(District district);
-        Response GetWard(Ward ward);
-        Response InsertProvince(Province province);
-        Response InsertDistrict(District district);
-        Response InsertWard(Ward ward);
+        Province CheckBeforeSaveProvince(JObject frmData, ref Notification _message);
+        District CheckBeforeSaveDistrict(JObject frmData, ref Notification _message);
+        Ward CheckBeforeSaveWard(JObject frmData, ref Notification _message);
+        Response GetsProvince();
+        Response GetsDistrict();
+        Response GetsWard();
+        Response SearchProvince(JObject frmData);
+        Response SearchDistrict(JObject frmData);
+        Response SearchWard(JObject frmData);
+        Response CreateProvince(Province province);
+        Response CreateDistrict(District district);
+        Response CreateWard(Ward ward);
         Response UpdateProvince(Province province);
         Response UpdateDistrict(District district);
         Response UpdateWard(Ward ward);

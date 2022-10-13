@@ -13,12 +13,12 @@ namespace Travel.Data.Interfaces
     public interface IEmployee
     {
         CreateUpdateEmployeeViewModel CheckBeforeSave(JObject frmData, ref Notification _message);
-        Response Gets(JObject frmData);
-        Response Update(CreateUpdateEmployeeViewModel input);
-        Response Create(CreateUpdateEmployeeViewModel input);
-        Response Search(JObject frmData);
-        Response Restore(CreateUpdateEmployeeViewModel input);
-        Response Delete(CreateUpdateEmployeeViewModel input);
+        Response GetsEmployee(JObject frmData);
+        Response UpdateEmployee(CreateUpdateEmployeeViewModel input);
+        Response CreateEmployee(CreateUpdateEmployeeViewModel input);
+        Response SearchEmployee(JObject frmData);
+        Response RestoreEmployee(CreateUpdateEmployeeViewModel input);
+        Response DeleteEmployee(CreateUpdateEmployeeViewModel input);
 
     }
 }

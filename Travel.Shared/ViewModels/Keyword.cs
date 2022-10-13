@@ -14,8 +14,10 @@ namespace Travel.Shared.ViewModels
         public string KwId { get; set; }
         public string KwPhone { get; set; }
         public string KwEmail { get; set; }
-        public List<int> KwRoleId { get; set; }
-        public string KwRoleName { get; set; }
+        public List<int> KwIdRole { get; set; }
+        public List<string> KwIdProvince { get; set; }
+        public List<string> KwIdDistrict { get; set; }
+        public List<string> KwIdWard { get; set; }
         public string KwStatus { get; set; }
         public bool KwIsActive { get; set; }
         public string KwDescription { get; set; }

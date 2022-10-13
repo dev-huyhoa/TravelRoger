@@ -112,6 +112,30 @@ namespace Travel.Shared.Ultilities
                         .ForMember(dto => dto.Address, otp => otp.MapFrom(src => src.Address))
                         .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password));
 
+
+                cfg.CreateMap<Province, ProvinceViewModel>()
+                       .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => src.IdProvince))
+                       .ForMember(dto => dto.NameProvince, opt => opt.MapFrom(src => src.NameProvince));
+
+                cfg.CreateMap<CreateProvinceViewModel, Province>()
+                      .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => Guid.NewGuid()))
+                      .ForMember(dto => dto.NameProvince, opt => opt.MapFrom(src => src.NameProvince));
+
+                cfg.CreateMap<UpdateProvinceViewModel, Province>()
+                    .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => src.IdProvince))
+                    .ForMember(dto => dto.NameProvince, opt => opt.MapFrom(src => src.NameProvince));
+
+                cfg.CreateMap<District, DistrictViewModel>()
+                      .ForMember(dto => dto.IdDistrict, opt => opt.MapFrom(src => src.IdDistrict))
+                      .ForMember(dto => dto.NameDistrict, opt => opt.MapFrom(src => src.NameDistrict))
+                      .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => src.ProvinceId))
+                      .ForMember(dto => dto.ProvinceName, opt => opt.MapFrom(src => src.Province.NameProvince));
+
+                cfg.CreateMap<Ward, WardViewModel>()
+                     .ForMember(dto => dto.IdWard, opt => opt.MapFrom(src => src.IdWard))
+                     .ForMember(dto => dto.NameWard, opt => opt.MapFrom(src => src.NameWard))
+                     .ForMember(dto => dto.IdDistrict, opt => opt.MapFrom(src => src.DistrictId))
+                     .ForMember(dto => dto.DistrictName, opt => opt.MapFrom(src => src.District.NameDistrict));
             });
             _mapper = mapperConfiguration.CreateMapper();
         }
@@ -154,6 +178,28 @@ namespace Travel.Shared.Ultilities
         public static Customer MapCustomer(CustomerViewModel data)
         {
             return _mapper.Map<CustomerViewModel, Customer>(data);
+        }
+
+        public static List<ProvinceViewModel> MapProvince(List<Province> data)
+        {
+            return _mapper.Map< List<Province>, List<ProvinceViewModel>>(data);
+        }
+        public static Province MapCreateProvince(CreateProvinceViewModel data)
+        {
+            return _mapper.Map<CreateProvinceViewModel, Province>(data);
+        }
+        public static Province MapUpdateProvince(UpdateProvinceViewModel data)
+        {
+            return _mapper.Map<UpdateProvinceViewModel, Province>(data);
+        }
+        public static List<DistrictViewModel> MapDistrict(List<District> data)
+        {
+            return _mapper.Map<List<District>, List<DistrictViewModel>>(data);
+        }
+
+        public static List<WardViewModel> MapWard(List<Ward> data)
+        {
+            return _mapper.Map<List<Ward>, List<WardViewModel>>(data);
         }
     }
 }

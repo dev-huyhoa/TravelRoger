@@ -12,11 +12,11 @@ namespace Travel.Data.Interfaces
     public interface IRole
     {
         CreateUpdateRoleViewModel CheckBeforSave(JObject frmData, ref Notification _message);
-        Response Gets();
-        Response Create(CreateUpdateRoleViewModel input);
-        Response Update(CreateUpdateRoleViewModel input);
-        Response Delete(CreateUpdateRoleViewModel input);
-        Response Restore(CreateUpdateRoleViewModel input);
-        Response Search(JObject frmData);
+        Response GetsRole();
+        Response CreateRole(CreateUpdateRoleViewModel input);
+        Response UpdateRole(CreateUpdateRoleViewModel input);
+        Response DeleteRole(CreateUpdateRoleViewModel input);
+        Response RestoreRole(CreateUpdateRoleViewModel input);
+        Response SearchRole(JObject frmData);
     }
 }

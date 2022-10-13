@@ -64,7 +64,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Gets()
+        public Response GetsRole()
         {
             try
             {
@@ -92,7 +92,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Create(CreateUpdateRoleViewModel input)
+        public Response CreateRole(CreateUpdateRoleViewModel input)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-        public Response Update(CreateUpdateRoleViewModel input)
+        public Response UpdateRole(CreateUpdateRoleViewModel input)
         {
 
             try
@@ -152,7 +152,7 @@ namespace Travel.Data.Repositories
 
         }
 
-        public Response Restore(CreateUpdateRoleViewModel input)
+        public Response RestoreRole(CreateUpdateRoleViewModel input)
         {
 
             try
@@ -189,7 +189,7 @@ namespace Travel.Data.Repositories
 
         }
 
-        public Response Delete(CreateUpdateRoleViewModel input)
+        public Response DeleteRole(CreateUpdateRoleViewModel input)
         {
             try
             {
@@ -223,7 +223,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Search(JObject frmData)
+        public Response SearchRole(JObject frmData)
         {
             try
             {
@@ -235,14 +235,14 @@ namespace Travel.Data.Repositories
                     keywords.IsDelete = Boolean.Parse(isDelete);
                 }     
 
-                var kwNameRole = PrCommon.GetString("nameRole", frmData).Trim();
-                if (!String.IsNullOrEmpty(kwNameRole))
+                var kwName = PrCommon.GetString("nameRole", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwName))
                 {
-                    keywords.KwRoleName = kwNameRole.Trim().ToLower();
+                    keywords.KwName = kwName.Trim().ToLower();
                 }
                 else
                 {
-                    keywords.KwRoleName = "";
+                    keywords.KwName = "";
 
                 }
 
@@ -257,17 +257,17 @@ namespace Travel.Data.Repositories
 
                 }
 
-                var kwRoleId = PrCommon.GetString("idRole", frmData);
-                keywords.KwRoleId = PrCommon.getListInt(kwRoleId, ',', false);
+                var kwIdRole = PrCommon.GetString("idRole", frmData);
+                keywords.KwIdRole = PrCommon.getListInt(kwIdRole, ',', false);
 
 
 
                 var listRole = new List<Role>();
-                if (keywords.KwRoleId.Count > 0)
+                if (keywords.KwIdRole.Count > 0)
                 {
                     listRole = (from x in _db.Roles
                                where x.IsDelete == keywords.IsDelete &&
-                                               x.NameRole.ToLower().Contains(keywords.KwRoleName) &&
+                                               x.NameRole.ToLower().Contains(keywords.KwName) &&
                                                x.Description.ToLower().Contains(keywords.KwDescription)
                                              
                                select x).ToList();
@@ -276,7 +276,7 @@ namespace Travel.Data.Repositories
                 {
                     listRole = (from x in _db.Roles
                                where x.IsDelete == keywords.IsDelete &&
-                                               x.NameRole.ToLower().Contains(keywords.KwRoleName) &&
+                                               x.NameRole.ToLower().Contains(keywords.KwName) &&
                                                x.Description.ToLower().Contains(keywords.KwDescription)
                                select x).ToList();
                 }

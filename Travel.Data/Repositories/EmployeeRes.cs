@@ -151,7 +151,7 @@ namespace Travel.Data.Repositories
                 return employee;
             }
         }
-        public Response Gets(JObject frmData)
+        public Response GetsEmployee(JObject frmData)
         {
             try
             {
@@ -196,7 +196,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Create(CreateUpdateEmployeeViewModel input)
+        public Response CreateEmployee(CreateUpdateEmployeeViewModel input)
         {
             try
             {
@@ -226,7 +226,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Update(CreateUpdateEmployeeViewModel input)
+        public Response UpdateEmployee(CreateUpdateEmployeeViewModel input)
         {
             try
             {
@@ -266,7 +266,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Search(JObject frmData)
+        public Response SearchEmployee(JObject frmData)
         {
             try
             {
@@ -322,8 +322,8 @@ namespace Travel.Data.Repositories
 
                 }
 
-                var kwRoleId = PrCommon.GetString("idRole", frmData);
-                keywords.KwRoleId = PrCommon.getListInt(kwRoleId, ',', false);
+                var kwIdRole = PrCommon.GetString("idRole", frmData);
+                keywords.KwIdRole = PrCommon.getListInt(kwIdRole, ',', false);
 
                 var kwIsActive = PrCommon.GetString("isActive", frmData);
                 if (!String.IsNullOrEmpty(kwId))
@@ -338,7 +338,7 @@ namespace Travel.Data.Repositories
 
                 //var listEmp = _db.Employees.FromSqlRaw("[SearchEmployees] {0}, {1}, {2}, {3}, {4}, {5}", kwId, kwName, kwEmail, kwPhone, kwRoleId, kwIsActive).ToList();
                 var listEmp = new List<Employee>();
-                if (keywords.KwRoleId.Count > 0)
+                if (keywords.KwIdRole.Count > 0)
                 {
                     listEmp =  (from x in _db.Employees
                      where x.IsDelete == keywords.IsDelete &&
@@ -347,7 +347,7 @@ namespace Travel.Data.Repositories
                                      x.Email.ToLower().Contains(keywords.KwEmail) &&
                                      x.Phone.ToLower().Contains(keywords.KwPhone) &&
                                      x.IsActive == keywords.KwIsActive && 
-                                     keywords.KwRoleId.Contains(x.RoleId)
+                                     keywords.KwIdRole.Contains(x.RoleId)
                      select x).ToList();
                 }
                 else
@@ -384,7 +384,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Restore(CreateUpdateEmployeeViewModel input)
+        public Response RestoreEmployee(CreateUpdateEmployeeViewModel input)
         {
             try
             {
@@ -419,35 +419,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response ViewDelete()
-        {
-            try
-            {
-                var listEmployee = (from x in _db.Employees where x.IsDelete == true select x).ToList();
-                var result = Mapper.MapEmployee(listEmployee);
-                if (result.Count() > 0)
-                {
-                    res.Content = result;
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
-                return res;
-            }
-            catch (Exception e)
-            {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
-            }
-        }
-
-        public Response Delete(CreateUpdateEmployeeViewModel input)
+        public Response DeleteEmployee(CreateUpdateEmployeeViewModel input)
         {
             try
             {

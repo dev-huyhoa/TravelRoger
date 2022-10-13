@@ -26,9 +26,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("gets-role")]
-        public object Gets()
+        public object GetsRole()
         {
-            res = role.Gets();
+            res = role.GetsRole();
             return Ok(res);
         }
 
@@ -36,13 +36,13 @@ namespace TravelApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("create-role")]
-        public object Create([FromBody] JObject frmData)
+        public object CreateRole([FromBody] JObject frmData)
         {
 
             var result = role.CheckBeforSave(frmData, ref message);
             if (message == null)
             {
-              res = role.Create(result);
+              res = role.CreateRole(result);
             }
             
             return Ok(res);
@@ -51,13 +51,13 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("update-role")]
-        public object Update([FromBody] JObject frmData)
+        public object UpdateRole([FromBody] JObject frmData)
         {
 
             var result = role.CheckBeforSave(frmData, ref message);
             if (message == null)
             {
-                res = role.Update(result);
+                res = role.UpdateRole(result);
             }
 
             return Ok(res);
@@ -66,13 +66,13 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("restore-role")]
-        public object Restore([FromBody] JObject frmData)
+        public object RestoreRole([FromBody] JObject frmData)
         {
 
             var result = role.CheckBeforSave(frmData, ref message);
             if (message == null)
             {
-                res = role.Restore(result);
+                res = role.RestoreRole(result);
             }
             return Ok(res);
         }
@@ -81,19 +81,19 @@ namespace TravelApi.Controllers
         [Route("search-role")]
         public object SearchRole([FromBody] JObject frmData)
         {
-            res = role.Search(frmData);
+            res = role.SearchRole(frmData);
             return Ok(res);
         }
 
         [HttpPost]
         [Authorize]
         [Route("delete-role")]
-        public object Delete([FromBody] JObject frmData)
+        public object DeleteRole([FromBody] JObject frmData)
         {
             var result = role.CheckBeforSave(frmData, ref message);
             if (message == null)
             {
-                res = role.Delete(result);
+                res = role.DeleteRole(result);
             }
             return Ok(res);
         }
