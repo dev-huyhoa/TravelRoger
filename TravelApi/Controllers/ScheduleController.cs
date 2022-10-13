@@ -4,9 +4,11 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,14 +29,15 @@ namespace TravelApi.Controllers
 
         [HttpPost]
         [Authorize]
-        [Route("create-tour")]
+        [Route("create-schedule")]
         public object Create([FromBody] JObject frmData)
         {
             message = null;
-            var result = _schedule.CheckBeforSave(frmData, ref message);
+            var result = _schedule.CheckBeforSave(frmData, ref message, false);
             if (message == null)
             {
-                res = _schedule.Create(result);
+                var createObj = JsonSerializer.Deserialize<CreateScheduleViewModel>(result);
+                res = _schedule.Create(createObj);
             }
             return Ok(res);
         }

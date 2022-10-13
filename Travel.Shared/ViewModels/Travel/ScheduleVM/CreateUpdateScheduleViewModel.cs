@@ -7,6 +7,10 @@ using Travel.Context.Models;
 
 namespace Travel.Shared.ViewModels.Travel
 {
+    public class UpdateScheduleViewModel : CreateScheduleViewModel
+    {
+
+    }
     public class CreateScheduleViewModel
     {
         private string idSchedule;
@@ -25,7 +29,7 @@ namespace Travel.Shared.ViewModels.Travel
         private string tourId;
         private Guid carId;
         private Guid employeeId;
-        private Guid promotionId;
+        private int promotionId;
 
         public string IdSchedule { get => idSchedule; set => idSchedule = value; }
         public long DepartureDate { get => departureDate; set => departureDate = value; }
@@ -43,6 +47,6 @@ namespace Travel.Shared.ViewModels.Travel
         public string TourId { get => tourId; set => tourId = value; }
         public Guid CarId { get => carId; set => carId = value; }
         public Guid EmployeeId { get => employeeId; set => employeeId = value; }
-        public Guid PromotionId { get => promotionId; set => promotionId = value; }
+        public int PromotionId { get => promotionId; set => promotionId = value; }
     }
 }
