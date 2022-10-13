@@ -24,10 +24,7 @@ namespace TravelApi.Controllers
             pay = _pay;
             res = new Response();
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+        
         [HttpGet]
         [AllowAnonymous]
         [Route("get-payment")]
