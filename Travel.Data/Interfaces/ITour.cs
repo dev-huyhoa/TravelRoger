@@ -11,7 +11,7 @@ namespace Travel.Data.Interfaces
 {
    public  interface ITour
     {
-        CreateTourViewModel CheckBeforSave(JObject frmData, ref Notification _message);
+        string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Create(CreateTourViewModel input);
 
     }
