@@ -11,9 +11,9 @@ namespace Travel.Data.Interfaces
 {
     public interface IPayment
     {
-        CreateUpdatePaymentViewModel CheckBeforSave(JObject frmData, ref Notification _message);
+        string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Gets();
-        Response Create(CreateUpdatePaymentViewModel input);
-        Response Update(CreateUpdatePaymentViewModel input);
+        Response Create(CreatePaymentViewModel input);
+        //Response Update(CreateUpdatePaymentViewModel input);
     }
 }

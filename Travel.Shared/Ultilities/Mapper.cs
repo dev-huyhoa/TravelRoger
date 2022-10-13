@@ -72,7 +72,7 @@ namespace Travel.Shared.Ultilities
                 .ForMember(dto => dto.Profit, opt => opt.MapFrom(src => 0))
                 .ForMember(dto => dto.TotalCostTour, opt => opt.MapFrom(src => 0))
                 .ForMember(dto => dto.Vat, opt => opt.MapFrom(src => src.VAT));
-                cfg.CreateMap<CreateUpdatePaymentViewModel, Payment>()
+                cfg.CreateMap<CreatePaymentViewModel, Payment>()
                            .ForMember(dto => dto.IdPayment, otp => otp.MapFrom(src => src.IdPayment))
                            .ForMember(dto => dto.NamePayment, otp => otp.MapFrom(src => src.NamePayment))
                            .ForMember(dto => dto.Type, otp => otp.MapFrom(src => src.Type));
@@ -181,9 +181,9 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<List<Payment>, List<PaymentViewModel>>(data);
         }
-        public static Payment MapCreatePayment(CreateUpdatePaymentViewModel data)
+        public static Payment MapCreatePayment(CreatePaymentViewModel data)
         {
-            return _mapper.Map<CreateUpdatePaymentViewModel, Payment>(data);
+            return _mapper.Map<CreatePaymentViewModel, Payment>(data);
         }
         public static EmployeeViewModel MapEmployee(Employee data)
         {

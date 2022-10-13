@@ -4,9 +4,11 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel;
 
 namespace TravelApi.Controllers
 {
@@ -41,12 +43,13 @@ namespace TravelApi.Controllers
         public object Create([FromBody] JObject frmData)
         {
 
-            var result = pay.CheckBeforSave(frmData, ref message);
+            message = null;
+            var result = pay.CheckBeforSave(frmData, ref message, false);
             if (message == null)
             {
-                res = pay.Create(result);
+                var createObj = JsonSerializer.Deserialize<CreatePaymentViewModel>(result);
+                res = pay.Create(createObj);
             }
-
             return Ok(res);
         }
     }
