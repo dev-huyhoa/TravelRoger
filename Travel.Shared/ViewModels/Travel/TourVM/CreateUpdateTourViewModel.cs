@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Travel.Shared.ViewModels.Travel.TourVM
 {
+    public class UpdateTourViewModel : CreateTourViewModel
+    {
+        
+    }
     public class CreateTourViewModel
     {
         private string idTour;
