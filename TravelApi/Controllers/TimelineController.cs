@@ -22,7 +22,6 @@ namespace TravelApi.Controllers
             res = new Response();
         }
 
-
         [HttpPost]
         [Authorize]
         [Route("create-timeline")]

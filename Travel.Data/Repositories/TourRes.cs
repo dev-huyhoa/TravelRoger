@@ -102,6 +102,7 @@ namespace Travel.Data.Repositories
                 tour = Mapper.MapCreateTour(input);
                 TourDetail tourDetail = Mapper.MapCreateTourDetails(input);
                 tour.TourDetail = tourDetail;
+                tour.IsDelete = false;
                 _db.Tour.Add(tour);
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
@@ -119,6 +120,35 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
+        public Response Get()
+        {
+            try
+            {
+                var list = (from x in _db.Tour where x.IsDelete == false select x).ToList();
+                var result = Mapper.MapTour(list);
+                if (list.Count()>0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
         private bool isExistName(string input)
         {
             try
