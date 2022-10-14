@@ -12,6 +12,7 @@ namespace Travel.Data.Interfaces
     public interface ISchedule
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
+        Response Get();
         Response Create(CreateScheduleViewModel input);
     }
 }

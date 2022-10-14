@@ -19,7 +19,7 @@ namespace Travel.Shared.ViewModels.Travel
         private float finalPrice;
         private float quantityAdult;
         private float quantityBaby;
-        private float minCapacity;
+        private int minCapacity;
         private int maxCapacity;
         private float quantityChild;
 
@@ -36,7 +36,7 @@ namespace Travel.Shared.ViewModels.Travel
         private int promotionId;
         private int valuePromotion;
 
-        private ICollection<Promotion> promotions;
+        private Promotion promotions;
         private ICollection<Timeline> timelines;
 
         public string IdSchedule { get => idSchedule; set => idSchedule = value; }
@@ -48,7 +48,7 @@ namespace Travel.Shared.ViewModels.Travel
         public float FinalPrice { get => finalPrice; set => finalPrice = value; }
         public float QuantityAdult { get => quantityAdult; set => quantityAdult = value; }
         public float QuantityBaby { get => quantityBaby; set => quantityBaby = value; }
-        public float MinCapacity { get => minCapacity; set => minCapacity = value; }
+        public int MinCapacity { get => minCapacity; set => minCapacity = value; }
         public int MaxCapacity { get => maxCapacity; set => maxCapacity = value; }
         public float QuantityChild { get => quantityChild; set => quantityChild = value; }
         public string TourId { get => tourId; set => tourId = value; }
@@ -59,7 +59,7 @@ namespace Travel.Shared.ViewModels.Travel
         public Guid EmployeeId { get => employeeId; set => employeeId = value; }
         public string NameEmployee { get => nameEmployee; set => nameEmployee = value; }
         public int PromotionId { get => promotionId; set => promotionId = value; }
-        public ICollection<Promotion> Promotions { get => promotions; set => promotions = value; }
+        public Promotion Promotions { get => promotions; set => promotions = value; }
         public ICollection<Timeline> Timelines { get => timelines; set => timelines = value; }
         public int ValuePromotion { get => valuePromotion; set => valuePromotion = value; }
     }

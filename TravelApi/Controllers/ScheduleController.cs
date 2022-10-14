@@ -41,11 +41,14 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        // GET api/<ScheduleController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        
+        [HttpGet()]
+        [Authorize]
+        [Route("gets-schedule")]
+        public object Get()
         {
-            return "value";
+            res = _schedule.Get();
+            return Ok(res);
         }
 
         // POST api/<ScheduleController>
