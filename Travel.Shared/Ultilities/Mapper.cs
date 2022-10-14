@@ -13,7 +13,7 @@ using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.DistrictVM;
 using Travel.Shared.ViewModels.Travel.WardVM;
 using Travel.Shared.ViewModels.Travel.CostTourVM;
-
+using Travel.Shared.ViewModels.Travel.TourBookingVM;
 
 namespace Travel.Shared.Ultilities
 {
@@ -24,6 +24,30 @@ namespace Travel.Shared.Ultilities
         {
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
+
+                // create tourbooking
+                cfg.CreateMap<CreateTourBookingViewModel, Tourbooking>()
+                   .ForMember(dto => dto.IdTourbooking, opt => opt.MapFrom(src => src.IdTourBooking))
+                   .ForMember(dto => dto.NameCustomer, opt => opt.MapFrom(src => src.NameCustomer))
+                   .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
+                   .ForMember(dto => dto.Email, opt => opt.MapFrom(src => src.Email))
+                   .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
+                   .ForMember(dto => dto.NameContact, opt => opt.MapFrom(src => src.NameContact))
+                   .ForMember(dto => dto.DateBooking, opt => opt.MapFrom(src => src.DateBooking))
+                   .ForMember(dto => dto.LastDate, opt => opt.MapFrom(src => src.LastDate))
+                   .ForMember(dto => dto.Vat, opt => opt.MapFrom(src => src.Vat))
+                   .ForMember(dto => dto.Pincode, opt => opt.MapFrom(src => src.Pincode))
+                   .ForMember(dto => dto.VoucherCode, opt => opt.MapFrom(src => src.VoucherCode))
+                   .ForMember(dto => dto.BookingNo, opt => opt.MapFrom(src => src.BookingNo))
+                   .ForMember(dto => dto.IsCalled, opt => opt.MapFrom(src => src.IsCalled))
+                   .ForMember(dto => dto.Deposit, opt => opt.MapFrom(src => src.Deposit))
+                   .ForMember(dto => dto.RemainPrice, opt => opt.MapFrom(src => src.RemainPrice))
+                   .ForMember(dto => dto.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice))
+                   .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
+                   .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
+
+
+
                 // create schedule
                 cfg.CreateMap<CreateScheduleViewModel, Schedule>()
                .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule))
@@ -497,13 +521,21 @@ namespace Travel.Shared.Ultilities
             return _mapper.Map<CreateTimeLineViewModel, Timeline>(data);
         }
 
+        public static Tourbooking MapCreateTourBooking(CreateTourBookingViewModel data)
+        {
+            return _mapper.Map<CreateTourBookingViewModel, Tourbooking>(data);
+        }
 
 
 
+        // create tourbooking
+        public static List<TourBookingViewModel> MapTourBooking(List<Tourbooking> data)
+        {
+            return _mapper.Map<List<Tourbooking>,List<TourBookingViewModel> >(data);
+        }
 
+        // Create  cost
 
-
-        // Create 
         public static CostTour MapCreateCost(CreateCostViewModel data)
         {
             return _mapper.Map<CreateCostViewModel, CostTour>(data);

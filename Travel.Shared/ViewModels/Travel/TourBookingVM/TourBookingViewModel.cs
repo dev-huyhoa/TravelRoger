@@ -9,12 +9,12 @@ namespace Travel.Shared.ViewModels.Travel
 {
     public class TourBookingViewModel
     {
-        private string id;
-        private string customerName; 
+        private string idTourBooking;
+        private string nameCustomer;
         private string address;
         private string email;
         private string phone;
-        private string contactName;
+        private string nameContact;
 
         private long dateBooking;
         private long lastDate;
@@ -35,19 +35,18 @@ namespace Travel.Shared.ViewModels.Travel
 
         public ICollection<Payment> Payment { get; set; }
         public TourbookingDetails TourbookingDetails { get; set; }
-
-        public string Id { get => id; set => id = value; }
-        public string CustomerName { get => customerName; set => customerName = value; }
-        public string ContactName { get => contactName; set => contactName = value; }
+        public string IdTourBooking { get => idTourBooking; set => idTourBooking = value; }
+        public string NameCustomer { get => nameCustomer; set => nameCustomer = value; }
+        public string Address { get => address; set => address = value; }
+        public string Email { get => email; set => email = value; }
         public string Phone { get => phone; set => phone = value; }
-        public string BookingNo { get => bookingNo; set => bookingNo = value; }
-        public string Pincode { get => pincode; set => pincode = value; }
+        public string NameContact { get => nameContact; set => nameContact = value; }
         public long DateBooking { get => dateBooking; set => dateBooking = value; }
         public long LastDate { get => lastDate; set => lastDate = value; }
         public double Vat { get => vat; set => vat = value; }
-        public string Address { get => address; set => address = value; }
-        public string Email { get => email; set => email = value; }
+        public string Pincode { get => pincode; set => pincode = value; }
         public string VoucherCode { get => voucherCode; set => voucherCode = value; }
+        public string BookingNo { get => bookingNo; set => bookingNo = value; }
         public bool IsCalled { get => isCalled; set => isCalled = value; }
         public float Deposit { get => deposit; set => deposit = value; }
         public float RemainPrice { get => remainPrice; set => remainPrice = value; }
