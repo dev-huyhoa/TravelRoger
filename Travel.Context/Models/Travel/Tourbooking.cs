@@ -9,6 +9,7 @@ namespace Travel.Context.Models
     public class Tourbooking
     {
         public string IdTourbooking{get;set;}
+        public int PaymentId { get; set; }
         public string NameCustomer { get;set;}
         public string NameContact { get;set;}
         public string Phone{get;set;}
@@ -26,7 +27,7 @@ namespace Travel.Context.Models
         public float  TotalPrice{get;set;}
         public string ModifyBy{get;set;}
         public long   ModifyDate{get;set;}
-        public virtual ICollection<Payment> Payment { get; set; }
+        public virtual Payment Payment { get; set; }
         public virtual TourbookingDetails TourbookingDetails { get; set; }
 
     }
