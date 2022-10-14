@@ -54,7 +54,8 @@ namespace TravelApi.Extensions
             .AddScoped<ICars, CarRes>();
             services
             .AddScoped<ITimeLine, TimeLineRes>();
-
+            services
+          .AddScoped<ICostTour, CostTourRes>();
             return services;
         
 

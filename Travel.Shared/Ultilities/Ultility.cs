@@ -311,12 +311,19 @@ namespace Travel.Shared.Ultilities
         }
 
 
+
+        #region Number Handle
         public static int RandomNumber(int min, int max)
         {
             Random random = new Random();
             return random.Next(min, max);
         }
-
+        public static bool IsNumber( this string Strnumber)
+        {
+            double n;
+            return double.TryParse(Strnumber, out n);
+        }
+        #endregion
         public static long FormatDateToInt(string datetime, string type)
         {
             // Type DDMMYYYY - day month year
