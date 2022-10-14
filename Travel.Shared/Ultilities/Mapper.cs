@@ -38,6 +38,31 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
                .ForMember(dto => dto.PromotionId, opt => opt.MapFrom(src => src.PromotionId))
                ;
+
+                //View
+                cfg.CreateMap<Schedule, ScheduleViewModel>()
+                .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule))
+               .ForMember(dto => dto.DepartureDate, opt => opt.MapFrom(src => src.DepartureDate))
+               .ForMember(dto => dto.BeginDate, opt => opt.MapFrom(src => src.EndDate))
+               .ForMember(dto => dto.TimePromotion, opt => opt.MapFrom(src => src.TimePromotion))
+               .ForMember(dto => dto.FinalPrice, opt => opt.MapFrom(src => src.FinalPrice))
+               .ForMember(dto => dto.QuantityAdult, opt => opt.MapFrom(src => src.QuantityAdult))
+               .ForMember(dto => dto.QuantityBaby, opt => opt.MapFrom(src => src.QuantityBaby))
+               .ForMember(dto => dto.QuantityChild, opt => opt.MapFrom(src => src.QuantityChild))
+               .ForMember(dto => dto.MinCapacity, opt => opt.MapFrom(src => src.MinCapacity))
+               .ForMember(dto => dto.MaxCapacity, opt => opt.MapFrom(src => src.MaxCapacity))
+               .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
+               .ForMember(dto => dto.TourId, opt => opt.MapFrom(src => src.TourId))
+               .ForMember(dto => dto.CarId, opt => opt.MapFrom(src => src.CarId))
+               .ForMember(dto => dto.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
+               .ForMember(dto => dto.PromotionId, opt => opt.MapFrom(src => src.PromotionId))
+               .ForMember(dto => dto.NameTour, opt => opt.MapFrom(src => src.Tour.NameTour))
+               .ForMember(dto => dto.LiscensePlate, opt => opt.MapFrom(src => src.Car.LiscensePlate))
+               .ForMember(dto => dto.NameDriver, opt => opt.MapFrom(src => src.Car.NameDriver))
+               .ForMember(dto => dto.NameEmployee, opt => opt.MapFrom(src => src.Employee.NameEmployee))
+               .ForMember(dto => dto.ValuePromotion, opt => opt.MapFrom(src => src.Promotions.Value))
+               ;
+
                 //create
                 cfg.CreateMap<CreateTourViewModel, Tour>()
                 .ForMember(dto => dto.IdTour, opt => opt.MapFrom(src => src.IdTour))
@@ -277,6 +302,12 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<CreateScheduleViewModel, Schedule>(data);
         }
+
+        public static List<ScheduleViewModel> MapSchedule(List<Schedule> data)
+        {
+            return _mapper.Map<List<Schedule>, List<ScheduleViewModel>> (data);
+        }
+
         public static TourDetail MapCreateTourDetails(CreateTourViewModel data)
         {
             return _mapper.Map<CreateTourViewModel, TourDetail>(data);

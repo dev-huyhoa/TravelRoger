@@ -9,7 +9,7 @@ namespace Travel.Shared.ViewModels.Travel
 {
     public class ScheduleViewModel
     {
-        private string id;
+        private string idSchedule;
         private long departureDate;
         private long beginDate;
         private long endDate;
@@ -20,24 +20,26 @@ namespace Travel.Shared.ViewModels.Travel
         private float quantityAdult;
         private float quantityBaby;
         private float minCapacity;
+        private int maxCapacity;
         private float quantityChild;
 
-        private string idTour;
+        private string tourId;
         private string nameTour;
 
-        private Guid idCar;
+        private Guid carId;
         private string liscensePlate;
         private string nameDriver;
 
-        private Guid idEmployee;
+        private Guid employeeId;
         private string nameEmployee;
 
-        private int idPromotion;
+        private int promotionId;
+        private int valuePromotion;
 
         private ICollection<Promotion> promotions;
         private ICollection<Timeline> timelines;
 
-        public string Id { get => id; set => id = value; }
+        public string IdSchedule { get => idSchedule; set => idSchedule = value; }
         public long DepartureDate { get => departureDate; set => departureDate = value; }
         public long BeginDate { get => beginDate; set => beginDate = value; }
         public long EndDate { get => endDate; set => endDate = value; }
@@ -47,16 +49,18 @@ namespace Travel.Shared.ViewModels.Travel
         public float QuantityAdult { get => quantityAdult; set => quantityAdult = value; }
         public float QuantityBaby { get => quantityBaby; set => quantityBaby = value; }
         public float MinCapacity { get => minCapacity; set => minCapacity = value; }
+        public int MaxCapacity { get => maxCapacity; set => maxCapacity = value; }
         public float QuantityChild { get => quantityChild; set => quantityChild = value; }
-        public string IdTour { get => idTour; set => idTour = value; }
+        public string TourId { get => tourId; set => tourId = value; }
         public string NameTour { get => nameTour; set => nameTour = value; }
-        public Guid IdCar { get => idCar; set => idCar = value; }
+        public Guid CarId { get => carId; set => carId = value; }
         public string LiscensePlate { get => liscensePlate; set => liscensePlate = value; }
-        public Guid IdEmployee { get => idEmployee; set => idEmployee = value; }
-        public string NameEmployee { get => nameEmployee; set => nameEmployee = value; }
         public string NameDriver { get => nameDriver; set => nameDriver = value; }
+        public Guid EmployeeId { get => employeeId; set => employeeId = value; }
+        public string NameEmployee { get => nameEmployee; set => nameEmployee = value; }
+        public int PromotionId { get => promotionId; set => promotionId = value; }
         public ICollection<Promotion> Promotions { get => promotions; set => promotions = value; }
         public ICollection<Timeline> Timelines { get => timelines; set => timelines = value; }
-        public int IdPromotion { get => idPromotion; set => idPromotion = value; }
+        public int ValuePromotion { get => valuePromotion; set => valuePromotion = value; }
     }
 }
