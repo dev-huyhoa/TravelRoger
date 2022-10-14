@@ -43,10 +43,13 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
         // GET api/<TourController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-tour")]
+        public object GetTimeline()
         {
-            return "value";
+            res = _tourRes.Get();
+            return Ok(res);
         }
 
         // POST api/<TourController>

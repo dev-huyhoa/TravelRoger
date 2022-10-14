@@ -54,6 +54,25 @@ namespace Travel.Shared.Ultilities
                 .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
                 .ForMember(dto => dto.IsActive, opt => opt.MapFrom(src => false))
                 ;
+                //view
+                cfg.CreateMap<Tour, TourViewModel>()
+                   .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.IdTour))
+                   .ForMember(dto => dto.TourName, opt => opt.MapFrom(src => src.NameTour))
+                   .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
+                   .ForMember(dto => dto.TourName, opt => opt.MapFrom(src => src.NameTour))
+                   .ForMember(dto => dto.Thumbsnail, opt => opt.MapFrom(src => src.Thumbsnail))
+                   .ForMember(dto => dto.FromPlace, opt => opt.MapFrom(src => src.FromPlace))
+                   .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.ToPlace))
+                   .ForMember(dto => dto.ApproveStatus, opt => opt.MapFrom(src => src.ApproveStatus))
+                   .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
+                    .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => src.CreateDate))
+                   .ForMember(dto => dto.IsActive, opt => opt.MapFrom(src => src.IsActive))
+                   .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => src.IsDelete))
+                   .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
+                   .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
+
+
+
 
                 //create
                 cfg.CreateMap<CreateTourViewModel, TourDetail>()
@@ -249,6 +268,10 @@ namespace Travel.Shared.Ultilities
         public static Tour MapCreateTour(CreateTourViewModel data)
         {
             return _mapper.Map<CreateTourViewModel, Tour>(data);
+        }
+         public static List<TourViewModel> MapTour(List<Tour> data)
+        {
+            return _mapper.Map<List<Tour>, List<TourViewModel>>(data);
         }
         public static Schedule MapCreateSchedule(CreateScheduleViewModel data)
         {
