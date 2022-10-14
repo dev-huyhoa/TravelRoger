@@ -45,7 +45,7 @@ namespace TravelApi.Controllers
         // GET api/<TourController>/5
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-tour")]
+        [Route("gets-tour")]
         public object GetTimeline()
         {
             res = _tourRes.Get();
