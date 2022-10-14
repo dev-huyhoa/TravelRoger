@@ -51,8 +51,12 @@ namespace TravelApi.Extensions
             services
          .AddScoped<ISchedule, ScheduleRes>();
             services
-         .AddScoped<ICars, CarRes>();
+            .AddScoped<ICars, CarRes>();
+            services
+            .AddScoped<ITimeLine, TimeLineRes>();
+
             return services;
+        
 
         }
 

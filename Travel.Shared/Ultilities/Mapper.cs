@@ -189,6 +189,22 @@ namespace Travel.Shared.Ultilities
 
                        .ForMember(dto => dto.ToDate, opt => opt.MapFrom(src => src.ToDate))
                         .ForMember(dto => dto.FromDate, opt => opt.MapFrom(src => src.FromDate));
+
+
+                cfg.CreateMap<CreateTimeLineViewModel, Timeline>()
+                                  .ForMember(dto => dto.Description, otp => otp.MapFrom(src => src.Description))
+                                  .ForMember(dto => dto.FromTime, otp => otp.MapFrom(src => src.FromTime))
+                                   .ForMember(dto => dto.ToTime, opt => opt.MapFrom(src => src.ToTime))
+                                   .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule));
+
+                cfg.CreateMap<Timeline, TimeLineViewModel>()
+                        .ForMember(dto => dto.IdTimeLine, otp => otp.MapFrom(src => src.IdTimeline))
+                        .ForMember(dto => dto.Description, otp => otp.MapFrom(src => src.Description))
+                        .ForMember(dto => dto.FromTime, otp => otp.MapFrom(src => src.FromTime))
+                        .ForMember(dto => dto.ToTime, opt => opt.MapFrom(src => src.ToTime))
+                        .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
+                        .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+                        .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule));
             });
             _mapper = mapperConfiguration.CreateMapper();
         }
@@ -301,6 +317,18 @@ namespace Travel.Shared.Ultilities
         public static Promotion MapPromotion(PromotionViewModel data)
         {
             return _mapper.Map<PromotionViewModel, Promotion>(data);
+        }
+        public static List<TimeLineViewModel> MapTimeLine(List<Timeline> data)
+        {
+            return _mapper.Map<List<Timeline>, List<TimeLineViewModel>>(data);
+        }
+        public static TimeLineViewModel MapTimeLine(Timeline data)
+        {
+            return _mapper.Map<Timeline, TimeLineViewModel>(data);
+        }
+        public static Timeline MapCreateTimeline(CreateTimeLineViewModel data)
+        {
+            return _mapper.Map<CreateTimeLineViewModel, Timeline>(data);
         }
 
     }
