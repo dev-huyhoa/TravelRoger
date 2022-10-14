@@ -7,9 +7,11 @@ using PrUtility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel;
 using TravelApi.Hubs;
 
 namespace TravelApi.Controllers
@@ -92,10 +94,12 @@ namespace TravelApi.Controllers
         [Route("create-province")]
         public object CreateProvince([FromBody] JObject frmData)
         {
-            var province = location.CheckBeforeSaveProvince(frmData, ref message);
+            message = null;
+            var result = location.CheckBeforeSaveProvince(frmData, ref message, false);
             if (message == null)
             {
-                res = location.CreateProvince(province);
+                var createObj = JsonSerializer.Deserialize<CreateProvinceViewModel>(result);
+                res = location.CreateProvince(createObj);
                 _messageHub.Clients.All.Insert();
             }
             else
@@ -144,10 +148,12 @@ namespace TravelApi.Controllers
         [Route("update-province")]
         public object UpdateProvince([FromBody] JObject frmData)
         {
-            var province = location.CheckBeforeSaveProvince(frmData, ref message);
+            message = null;
+            var result = location.CheckBeforeSaveProvince(frmData, ref message, true);
             if (message == null)
             {
-                res = location.UpdateProvince(province);
+                var updateObj = JsonSerializer.Deserialize<UpdateProvinceViewModel>(result);
+                res = location.UpdateProvince(updateObj);
             }
             else
             {
@@ -192,18 +198,10 @@ namespace TravelApi.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("DeleteProvince")]
+        [Route("delete-province")]
         public object DeleteProvince([FromBody] JObject frmData)
         {
-            var province = location.CheckBeforeSaveProvince(frmData, ref message);
-            if (message == null)
-            {
-                res = location.DeleteProvince(province);
-            }
-            else
-            {
-                res.Notification = message;
-            }
+            res = location.DeleteProvince(frmData);
             return Ok(res);
         }
 

@@ -9,6 +9,7 @@ using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel;
 
 namespace Travel.Data.Repositories
 {
@@ -25,19 +26,31 @@ namespace Travel.Data.Repositories
         }
 
 
-        public Province CheckBeforeSaveProvince(JObject frmData, ref Notification _message)
+        public string CheckBeforeSaveProvince(JObject frmData, ref Notification _message, bool isUpdate)
         {
-            Province province = new Province();
             try
             {
-                var id = PrCommon.GetString("IdProvince", frmData);
-                if (!String.IsNullOrEmpty(id))
+                var idProvince = PrCommon.GetString("idProvince", frmData);
+                if (String.IsNullOrEmpty(idProvince))
                 {
-                    province.IdProvince = Guid.Parse(PrCommon.GetString("IdProvince", frmData));
+                }
+                var nameProvince = PrCommon.GetString("nameProvince", frmData);
+                if (String.IsNullOrEmpty(nameProvince))
+                {
+
                 }
 
-                province.NameProvince = PrCommon.GetString("nameProvince", frmData);
-                return province;
+                if (isUpdate)
+                {
+                    UpdateProvinceViewModel objUpdate = new UpdateProvinceViewModel();
+                    objUpdate.IdProvince = Guid.Parse(idProvince);
+                    objUpdate.NameProvince = nameProvince;
+                    return JsonSerializer.Serialize(objUpdate);
+                }
+
+                CreateProvinceViewModel objCreate = new CreateProvinceViewModel();
+                objCreate.NameProvince = nameProvince;
+                return JsonSerializer.Serialize(objCreate);
             }
             catch (Exception e)
             {
@@ -47,7 +60,7 @@ namespace Travel.Data.Repositories
                 message.Type = "Error";
 
                 _message = message;
-                return province;
+                return string.Empty;
             }
         }
 
@@ -119,7 +132,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listProvince = (from x in _db.Provinces select x).ToList();
+                var listProvince = (from x in _db.Provinces orderby x.NameProvince select x).ToList();
 
                 var result = Mapper.MapProvince(listProvince);
                 if (result.Count() > 0)
@@ -148,7 +161,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listDistrict = (from x in _db.Districts select x).ToList();
+                var listDistrict = (from x in _db.Districts orderby x.Province.NameProvince, x.NameDistrict select x).ToList();
                 var result = Mapper.MapDistrict(listDistrict);
                 if (result.Count() > 0)
                 {
@@ -176,7 +189,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listWard = (from x in _db.Wards select x).ToList();
+                var listWard = (from x in _db.Wards orderby x.District.NameDistrict, x.NameWard select x).ToList();
                 var result = Mapper.MapWard(listWard);
                 if (result.Count() > 0)
                 {
@@ -230,9 +243,10 @@ namespace Travel.Data.Repositories
 
                 var listProvince = new List<Province>();
                 listProvince = (from x in _db.Provinces
-                           where x.IdProvince.ToString().ToLower().Contains(keywords.KwId) &&
-                                  x.NameProvince.ToLower().Contains(keywords.KwName)
-                           select x).ToList();
+                                where x.IdProvince.ToString().ToLower().Contains(keywords.KwId) &&
+                                      x.NameProvince.ToLower().Contains(keywords.KwName)
+                                orderby x.NameProvince
+                                select x).ToList();
                 var result = Mapper.MapProvince(listProvince);
                 if (listProvince.Count() > 0)
                 {
@@ -296,6 +310,7 @@ namespace Travel.Data.Repositories
                                     where x.IdDistrict.ToString().ToLower().Contains(keywords.KwId) &&
                                            x.NameDistrict.ToLower().Contains(keywords.KwName) &&
                                             keywords.KwIdProvince.Contains(x.ProvinceId.ToString())
+                                    orderby x.Province.NameProvince, x.NameDistrict
                                     select x).ToList();
                 }
                 else
@@ -303,6 +318,7 @@ namespace Travel.Data.Repositories
                     listDistrict = (from x in _db.Districts
                                     where x.IdDistrict.ToString().ToLower().Contains(keywords.KwId) &&
                                            x.NameDistrict.ToLower().Contains(keywords.KwName)
+                                    orderby x.Province.NameProvince, x.NameDistrict
                                     select x).ToList();
                 }
                 var result = Mapper.MapDistrict(listDistrict);
@@ -365,17 +381,19 @@ namespace Travel.Data.Repositories
                 if (keywords.KwIdDistrict.Count > 0)
                 {
                     listWard = (from x in _db.Wards
-                                    where x.IdWard.ToString().ToLower().Contains(keywords.KwId) &&
-                                           x.NameWard.ToLower().Contains(keywords.KwName) &&
-                                            keywords.KwIdDistrict.Contains(x.DistrictId.ToString())
-                                    select x).ToList();
+                                where x.IdWard.ToString().ToLower().Contains(keywords.KwId) &&
+                                      x.NameWard.ToLower().Contains(keywords.KwName) &&
+                                      keywords.KwIdDistrict.Contains(x.DistrictId.ToString())
+                                orderby x.District.NameDistrict, x.NameWard
+                                select x).ToList();
                 }
                 else
                 {
                     listWard = (from x in _db.Wards
                                 where x.IdWard.ToString().ToLower().Contains(keywords.KwId) &&
-                                           x.NameWard.ToLower().Contains(keywords.KwName)
-                                    select x).ToList();
+                                      x.NameWard.ToLower().Contains(keywords.KwName)
+                                orderby x.District.NameDistrict, x.NameWard
+                                select x).ToList();
                 }
                 var result = Mapper.MapWard(listWard);
                 if (listWard.Count() > 0)
@@ -400,10 +418,11 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CreateProvince(Province province)
+        public Response CreateProvince(CreateProvinceViewModel input)
         {
             try
             {
+                var province = Mapper.MapCreateProvince(input);
                 _db.Provinces.Add(province);
                 _db.SaveChanges();
 
@@ -468,10 +487,11 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateProvince(Province province)
+        public Response UpdateProvince(UpdateProvinceViewModel input)
         {
             try
             {
+                var province = Mapper.MapUpdateProvince(input);
                 _db.Provinces.Update(province);
                 _db.SaveChanges();
 
@@ -536,11 +556,12 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-        public Response DeleteProvince(Province province)
+        public Response DeleteProvince(JObject frmData)
         {
             try
             {
-                var check = _db.Provinces.Find(province.IdProvince);
+                var idProvince = PrCommon.GetString("idProvince", frmData);
+                var check = _db.Provinces.Find(Guid.Parse(idProvince));
                 if (check != null)
                 {
                     _db.Provinces.Remove(check);

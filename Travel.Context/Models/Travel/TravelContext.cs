@@ -274,7 +274,7 @@ namespace Travel.Context.Models.Travel
             {
                 entity.HasKey(e => e.IdSchedule);
                 entity.Property(e => e.IdSchedule).HasMaxLength(50);
-                entity.HasOne(e => e.Cars)
+                entity.HasOne(e => e.Car)
                  .WithMany(d => d.Schedules)
                  .HasForeignKey(e => e.CarId);
                 entity.HasOne(e => e.Employee)

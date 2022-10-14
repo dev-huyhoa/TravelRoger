@@ -48,6 +48,10 @@ namespace TravelApi.Extensions
           .AddScoped<ITour, TourRes>();
             services
            .AddScoped<ICustomer, CustomerRes>();
+            services
+         .AddScoped<ISchedule, ScheduleRes>();
+            services
+         .AddScoped<ICars, CarRes>();
             return services;
 
         }

@@ -23,7 +23,7 @@ namespace Travel.Context.Models
         public Guid CarId { get; set; }
         public int PromotionId { get; set; }
         public  Guid EmployeeId { get; set; }
-        public virtual Car Cars { get; set; }
+        public virtual Car Car { get; set; }
         public virtual Promotion Promotions { get; set; }
         public virtual Tour Tour { get; set; }
         public virtual ICollection<Timeline> Timelines { get; set; }

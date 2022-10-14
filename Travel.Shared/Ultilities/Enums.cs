@@ -8,7 +8,12 @@ namespace Travel.Shared.Ultilities
 {
     public class Enums
     {
-
+        public enum TypeService
+        {
+            Hotel = 1,
+            Restaurant = 2,
+            Place = 3,
+        }
         public enum StatusSchedule
         {
             Free = 0, // tour đang rảnh
