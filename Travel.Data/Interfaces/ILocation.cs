@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using Travel.Shared.ViewModels.Travel.DistrictVM;
+using Travel.Shared.ViewModels.Travel.WardVM;
 
 namespace Travel.Data.Interfaces
 {
     public interface ILocation
     {
         string CheckBeforeSaveProvince(JObject frmData, ref Notification _message, bool isUpdate);
-        District CheckBeforeSaveDistrict(JObject frmData, ref Notification _message);
-        Ward CheckBeforeSaveWard(JObject frmData, ref Notification _message);
+        string CheckBeforeSaveDistrict(JObject frmData, ref Notification _message, bool isUpdate);
+        string CheckBeforeSaveWard(JObject frmData, ref Notification _message, bool isUpdate);
         Response GetsProvince();
         Response GetsDistrict();
         Response GetsWard();
@@ -22,13 +24,13 @@ namespace Travel.Data.Interfaces
         Response SearchDistrict(JObject frmData);
         Response SearchWard(JObject frmData);
         Response CreateProvince(CreateProvinceViewModel province);
-        Response CreateDistrict(District district);
-        Response CreateWard(Ward ward);
+        Response CreateDistrict(CreateDistrictViewModel district);
+        Response CreateWard(CreateWardViewModel ward);
         Response UpdateProvince(UpdateProvinceViewModel province);
-        Response UpdateDistrict(District district);
-        Response UpdateWard(Ward ward);
+        Response UpdateDistrict(UpdateDistrictViewModel district);
+        Response UpdateWard(UpdateWardViewModel ward);
         Response DeleteProvince(JObject frmData);
-        Response DeleteDistrict(District district);
-        Response DeleteWard(Ward ward);
+        Response DeleteDistrict(JObject frmData);
+        Response DeleteWard(JObject frmData);
     }
 }
