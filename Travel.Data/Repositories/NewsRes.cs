@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
+using PrUtility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,31 +29,29 @@ namespace Travel.Data.Repositories
             res = new Response();
         }
 
-        public Notification UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files, string name)
+        public Notification UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files)
         {
             try
             {
-                string nameBanner = frmdata["nameBanner"];
                 if (files.Count > 0)
                 {
-                    //JObject frmData = JObject.Parse(frmdata["data"]);
+                    JObject frmData = JObject.Parse(frmdata["data"]);
                     var Id = Guid.NewGuid();
-                    var isActive = true;
-                    var isDelete = false;
-                    banner.NameBanner = nameBanner;
+                    banner.NameBanner = PrCommon.GetString("name", frmData);
                     banner.IdBanner = Id;
-                    banner.IsActive = isActive;
-                    banner.IsDelete = isDelete;
+                    banner.IsActive = true;
+                    banner.IsDelete = false;
+                    banner.Total = files.Count;
                     _db.Banners.Add(banner);
                     _db.SaveChanges();
-                    int i = 0;
+                    int err = 0;
                     foreach (var file in files)
                     {
                         var image = Ultility.WriteFile(file, "Banners", Id, ref _message);
                         if (_message != null)
                         {
-                            i++;
-                            message.Messenge = _message.Messenge + " (" + i + ")";
+                            err++;
+                            message.Messenge = _message.Messenge + " (" + err + ")";
                         }
                         else
                         {
@@ -135,9 +134,5 @@ namespace Travel.Data.Repositories
         //    return res;
         //}
 
-        public CreateUpdateEmployeeViewModel CheckBeforeSave(JObject frmData, ref Notification _message)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

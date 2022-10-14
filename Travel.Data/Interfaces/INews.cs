@@ -13,9 +13,7 @@ namespace Travel.Data.Interfaces
 {
     public interface INews
     {
-        CreateUpdateEmployeeViewModel CheckBeforeSave(JObject frmData, ref Notification _message);
-
-        Notification UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files, string name);
+        Notification UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files);
         Response GetBanner();
         //Response DeleteBanner(DeleteBannerViewModel input);
     }

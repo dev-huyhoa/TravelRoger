@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,13 @@ namespace Travel.Data.Interfaces
 {
     public interface IEmployee
     {
-        CreateUpdateEmployeeViewModel CheckBeforeSave(JObject frmData, ref Notification _message);
+        string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate);
         Response GetsEmployee(JObject frmData);
-        Response UpdateEmployee(CreateUpdateEmployeeViewModel input);
-        Response CreateEmployee(CreateUpdateEmployeeViewModel input);
+        Response UpdateEmployee(UpdateEmployeeViewModel input);
+        Response CreateEmployee(CreateEmployeeViewModel input);
         Response SearchEmployee(JObject frmData);
-        Response RestoreEmployee(CreateUpdateEmployeeViewModel input);
-        Response DeleteEmployee(CreateUpdateEmployeeViewModel input);
+        Response RestoreEmployee(JObject frmData);
+        Response DeleteEmployee(JObject frmData);
 
     }
 }

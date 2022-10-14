@@ -10,6 +10,8 @@ using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using Travel.Shared.ViewModels.Travel.DistrictVM;
+using Travel.Shared.ViewModels.Travel.WardVM;
 
 namespace Travel.Data.Repositories
 {
@@ -64,25 +66,37 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public District CheckBeforeSaveDistrict(JObject frmData, ref Notification _message)
+        public string CheckBeforeSaveDistrict(JObject frmData, ref Notification _message, bool isUpdate)
         {
-            District district = new District();
             try
             {
-                var id = PrCommon.GetString("Id", frmData);
-                if (!String.IsNullOrEmpty(id))
+                var idDistrict = PrCommon.GetString("idDistrict", frmData);
+                if (String.IsNullOrEmpty(idDistrict))
                 {
-                    district.IdDistrict = Guid.Parse(PrCommon.GetString("IdDistrict", frmData));
                 }
 
-                var provinceId = PrCommon.GetString("ProvinceId", frmData);
-                if (!String.IsNullOrEmpty(provinceId))
+                var nameDistrict = PrCommon.GetString("nameDistrict", frmData);
+                if (String.IsNullOrEmpty(nameDistrict))
                 {
-                    district.ProvinceId = Guid.Parse(provinceId);
                 }
 
-                district.NameDistrict = PrCommon.GetString("Name", frmData);
-                return district;
+                var idProvince = PrCommon.GetString("idProvince", frmData);
+                if (String.IsNullOrEmpty(idProvince))
+                {
+                }
+                if (isUpdate)
+                {
+                    UpdateDistrictViewModel objUpdate = new UpdateDistrictViewModel();
+                    objUpdate.IdDistrict = Guid.Parse(idDistrict);
+                    objUpdate.NameDistrict = nameDistrict;
+                    objUpdate.IdProvince = Guid.Parse(idProvince);
+                    return JsonSerializer.Serialize(objUpdate);
+                }
+
+                CreateDistrictViewModel objCreate = new CreateDistrictViewModel();
+                objCreate.NameDistrict = nameDistrict;
+                objCreate.IdProvince = Guid.Parse(idProvince);
+                return JsonSerializer.Serialize(objCreate);
             }
             catch (Exception e)
             {
@@ -92,29 +106,41 @@ namespace Travel.Data.Repositories
                 message.Type = "Error";
 
                 _message = message;
-                return district;
+                return string.Empty;
             }
         }
 
-        public Ward CheckBeforeSaveWard(JObject frmData, ref Notification _message)
+        public string CheckBeforeSaveWard(JObject frmData, ref Notification _message, bool isUpdate)
         {
-            Ward ward = new Ward();
             try
             {
-                var id = PrCommon.GetString("Id", frmData);
-                if (!String.IsNullOrEmpty(id))
+                var idWard = PrCommon.GetString("idWard", frmData);
+                if (String.IsNullOrEmpty(idWard))
                 {
-                    ward.IdWard = Guid.Parse(PrCommon.GetString("Id", frmData));
                 }
 
-                var districtId = PrCommon.GetString("DistrictId", frmData);
-                if (!String.IsNullOrEmpty(districtId))
+                var nameWard = PrCommon.GetString("nameWard", frmData);
+                if (String.IsNullOrEmpty(nameWard))
                 {
-                    ward.DistrictId = Guid.Parse(districtId);
                 }
 
-                ward.NameWard = PrCommon.GetString("NameWard", frmData);
-                return ward;
+                var idDistrict = PrCommon.GetString("idDistrict", frmData);
+                if (String.IsNullOrEmpty(idDistrict))
+                {
+                }
+                if (isUpdate)
+                {
+                    UpdateWardViewModel objUpdate = new UpdateWardViewModel();
+                    objUpdate.IdWard = Guid.Parse(idWard);
+                    objUpdate.NameWard = nameWard;
+                    objUpdate.IdDistrict = Guid.Parse(idDistrict);
+                    return JsonSerializer.Serialize(objUpdate);
+                }
+
+                CreateWardViewModel objCreate = new CreateWardViewModel();
+                objCreate.NameWard = nameWard;
+                objCreate.IdDistrict = Guid.Parse(idDistrict);
+                return JsonSerializer.Serialize(objCreate);
             }
             catch (Exception e)
             {
@@ -124,7 +150,7 @@ namespace Travel.Data.Repositories
                 message.Type = "Error";
 
                 _message = message;
-                return ward;
+                return string.Empty;
             }
         }
 
@@ -441,11 +467,11 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CreateDistrict(District district)
+        public Response CreateDistrict(CreateDistrictViewModel input)
         {
             try
             {
-                district.IdDistrict = Guid.NewGuid();
+                var district = Mapper.MapCreateDistrict(input);
                 _db.Districts.Add(district);
                 _db.SaveChanges();
 
@@ -464,11 +490,11 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CreateWard(Ward ward)
+        public Response CreateWard(CreateWardViewModel input)
         {
             try
             {
-                ward.IdWard = Guid.NewGuid();
+                var ward = Mapper.MapCreateWard(input);
                 _db.Wards.Add(ward);
                 _db.SaveChanges();
 
@@ -511,10 +537,11 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateDistrict(District district)
+        public Response UpdateDistrict(UpdateDistrictViewModel input)
         {
             try
             {
+                var district = Mapper.MapUpdateDistrict(input);
                 _db.Districts.Update(district);
                 _db.SaveChanges();
 
@@ -534,10 +561,11 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateWard(Ward ward)
+        public Response UpdateWard(UpdateWardViewModel input)
         {
             try
             {
+                var ward = Mapper.MapUpdateWard(input);
                 _db.Wards.Update(ward);
                 _db.SaveChanges();
 
@@ -590,11 +618,12 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response DeleteDistrict(District district)
+        public Response DeleteDistrict(JObject frmData)
         {
             try
             {
-                var check = _db.Districts.Find(district.IdDistrict);
+                var idDistrict = PrCommon.GetString("idDistrict", frmData);
+                var check = _db.Districts.Find(Guid.Parse(idDistrict));
                 if (check != null)
                 {
                     _db.Districts.Remove(check);
@@ -623,11 +652,12 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response DeleteWard(Ward ward)
+        public Response DeleteWard(JObject frmData)
         {
             try
             {
-                var check = _db.Wards.Find(ward.IdWard);
+                var idWard = PrCommon.GetString("idWard", frmData);
+                var check = _db.Wards.Find(Guid.Parse(idWard));
                 if (check != null)
                 {
                     _db.Wards.Remove(check);

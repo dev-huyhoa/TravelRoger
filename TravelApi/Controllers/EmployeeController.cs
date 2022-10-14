@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
@@ -45,56 +46,18 @@ namespace TravelApi.Controllers
             res = employee.SearchEmployee(frmData);
             return Ok(res);
         }
-        //[HttpPost]
-        //[Authorize]
-        //[Route("create-employees")]
-        //public object Create([FromBody] JObject frmData)
-        //{
-
-        //   var result = employee.CheckBeforeSave(frmData, ref message);
-        //    if (message != null)
-        //    {
-        //        res = employee.GetEmployees();
-        //    }
-        //    return Ok(res);
-        //}
-        //[HttpGet]
-        //[Authorize]
-        //[Route("create-data")]
-        //public object Create()
-        //{
-        //    for (int i = 0; i <= 500; i++)
-        //    {
-        //        Employee newobj = new Employee();
-        //        newobj.IdEmployee = Guid.NewGuid();
-        //        newobj.NameEmployee = "Anh" + i.ToString();
-        //        newobj.Email = "Teoteo@gmail.com";
-        //        newobj.Password = "123";
-        //        newobj.Birthday = 123;
-        //        newobj.Image = "123";
-        //        newobj.Phone = "123123123";
-        //        newobj.RoleId = 2;
-        //        newobj.CreateDate = 123;
-        //        newobj.AccessToken = "123";
-        //        newobj.ModifyBy = "123";
-        //        newobj.ModifyDate = 123123;
-        //        newobj.IsDelete = false;
-        //        newobj.IsActive = false;
-        //        _db.Employees.Add(newobj);
-        //    }
-        //    _db.SaveChanges();
-        //    return Ok("succcccc");
-        //}
 
         [HttpPost]
         [Authorize]
         [Route("create-employee")]
-        public object CreateEmployee([FromBody] JObject frmData)
+        public object CreateEmployee(IFormCollection frmdata, IFormFile file)
         {
-            var result = employee.CheckBeforeSave(frmData, ref message);
-            if(message == null)
+            message = null;
+            var result = employee.CheckBeforeSave(frmdata, file, ref message, false);
+            if (message == null)
             {
-                res = employee.CreateEmployee(result);
+                var createObj = JsonSerializer.Deserialize<CreateEmployeeViewModel>(result);
+                res = employee.CreateEmployee(createObj);
             }
             else
             {
@@ -104,15 +67,16 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize] 
         [Route("update-employee")]
-        public object UpdateEmployee([FromBody] JObject frmData)
+        public object UpdateEmployee(IFormCollection frmdata, IFormFile file)
         {
-
-            var result = employee.CheckBeforeSave(frmData, ref message);
+            message = null;
+            var result = employee.CheckBeforeSave(frmdata, file, ref message, true);
             if (message == null)
             {
-                res = employee.UpdateEmployee(result);
+                var updateObj = JsonSerializer.Deserialize<UpdateEmployeeViewModel>(result);
+                res = employee.UpdateEmployee(updateObj);
             }
             else
             {
@@ -126,15 +90,7 @@ namespace TravelApi.Controllers
         public object DeleteEmployee([FromBody] JObject frmData)
         {
 
-            var result = employee.CheckBeforeSave(frmData, ref message);
-            if (message == null)
-            {
-                res = employee.DeleteEmployee(result);
-            }
-            else
-            {
-                res.Notification = message;
-            }
+            res = employee.DeleteEmployee(frmData);
             return Ok(res);
         }
         [HttpPost]
@@ -142,11 +98,7 @@ namespace TravelApi.Controllers
         [Route("restore-employess")]
         public object RestoreEmployee([FromBody] JObject frmData)
         {
-            var result = employee.CheckBeforeSave(frmData, ref message);
-            if (message == null)
-            {
-                res = employee.RestoreEmployee(result);
-            }
+            res = employee.RestoreEmployee(frmData);
             return Ok(res);
         }
     }

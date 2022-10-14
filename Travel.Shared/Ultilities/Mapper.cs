@@ -10,7 +10,10 @@ using Travel.Shared.ViewModels.Travel.TourVM;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels.Travel.CustomerVM;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel.DistrictVM;
+using Travel.Shared.ViewModels.Travel.WardVM;
 using Travel.Shared.ViewModels.Travel.CostTourVM;
+
 
 namespace Travel.Shared.Ultilities
 {
@@ -39,6 +42,31 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
                .ForMember(dto => dto.PromotionId, opt => opt.MapFrom(src => src.PromotionId))
                ;
+
+                //View
+                cfg.CreateMap<Schedule, ScheduleViewModel>()
+                .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule))
+               .ForMember(dto => dto.DepartureDate, opt => opt.MapFrom(src => src.DepartureDate))
+               .ForMember(dto => dto.BeginDate, opt => opt.MapFrom(src => src.EndDate))
+               .ForMember(dto => dto.TimePromotion, opt => opt.MapFrom(src => src.TimePromotion))
+               .ForMember(dto => dto.FinalPrice, opt => opt.MapFrom(src => src.FinalPrice))
+               .ForMember(dto => dto.QuantityAdult, opt => opt.MapFrom(src => src.QuantityAdult))
+               .ForMember(dto => dto.QuantityBaby, opt => opt.MapFrom(src => src.QuantityBaby))
+               .ForMember(dto => dto.QuantityChild, opt => opt.MapFrom(src => src.QuantityChild))
+               .ForMember(dto => dto.MinCapacity, opt => opt.MapFrom(src => src.MinCapacity))
+               .ForMember(dto => dto.MaxCapacity, opt => opt.MapFrom(src => src.MaxCapacity))
+               .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
+               .ForMember(dto => dto.TourId, opt => opt.MapFrom(src => src.TourId))
+               .ForMember(dto => dto.CarId, opt => opt.MapFrom(src => src.CarId))
+               .ForMember(dto => dto.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
+               .ForMember(dto => dto.PromotionId, opt => opt.MapFrom(src => src.PromotionId))
+               .ForMember(dto => dto.NameTour, opt => opt.MapFrom(src => src.Tour.NameTour))
+               .ForMember(dto => dto.LiscensePlate, opt => opt.MapFrom(src => src.Car.LiscensePlate))
+               .ForMember(dto => dto.NameDriver, opt => opt.MapFrom(src => src.Car.NameDriver))
+               .ForMember(dto => dto.NameEmployee, opt => opt.MapFrom(src => src.Employee.NameEmployee))
+               .ForMember(dto => dto.ValuePromotion, opt => opt.MapFrom(src => src.Promotions.Value))
+               ;
+
                 //create
                 cfg.CreateMap<CreateTourViewModel, Tour>()
                 .ForMember(dto => dto.IdTour, opt => opt.MapFrom(src => src.IdTour))
@@ -98,16 +126,50 @@ namespace Travel.Shared.Ultilities
                            .ForMember(dto => dto.NamePayment, otp => otp.MapFrom(src => src.NamePayment))
                            .ForMember(dto => dto.Type, otp => otp.MapFrom(src => src.Type));
 
+                cfg.CreateMap<Employee, EmployeeViewModel>()
+                                       .ForMember(dto => dto.IdEmployee, opt => opt.MapFrom(src => src.IdEmployee))
+                                       .ForMember(dto => dto.NameEmployee, opt => opt.MapFrom(src => src.NameEmployee))
+                                       .ForMember(dto => dto.Birthday, opt => opt.MapFrom(src => src.Birthday))
+                                       .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => src.CreateDate))
+                                       .ForMember(dto => dto.Email, opt => opt.MapFrom(src => src.Email))
+                                       .ForMember(dto => dto.Image, opt => opt.MapFrom(src => src.Image))
+                                       .ForMember(dto => dto.IsActive, opt => opt.MapFrom(src => src.IsActive))
+                                       .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => src.IsDelete))
+                                       .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
+                                       .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+                                       .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
+                                       .ForMember(dto => dto.RoleDescription, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Role.Description) ? "" : src.Role.Description))
+                                       .ForMember(dto => dto.IdRole, opt => opt.MapFrom(src => src.RoleId))
+                                       .ForMember(dto => dto.RoleName, opt => opt.MapFrom(src => src.Role.NameRole))
+                                       .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
+                                       .ForMember(dto => dto.Gender, opt => opt.MapFrom(src => src.Gender));
 
-                // Create
-                cfg.CreateMap<CreateUpdateEmployeeViewModel, Employee>()
+                cfg.CreateMap<CreateEmployeeViewModel, Employee>()
                           .ForMember(dto => dto.IdEmployee, opt => opt.MapFrom(src => src.IdEmployee))
                           .ForMember(dto => dto.NameEmployee, opt => opt.MapFrom(src => src.NameEmployee))
                           .ForMember(dto => dto.Email, opt => opt.MapFrom(src => src.Email))
                           .ForMember(dto => dto.Birthday, opt => opt.MapFrom(src => src.Birthday))
                           .ForMember(dto => dto.Image, opt => opt.MapFrom(src => src.Image))
                           .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
-                          .ForMember(dto => dto.RoleId, opt => opt.MapFrom(src => src.RoleId));
+                          .ForMember(dto => dto.RoleId, opt => opt.MapFrom(src => src.RoleId))
+                          .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
+                          .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
+                          .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
+                          .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
+                          .ForMember(dto => dto.Gender, opt => opt.MapFrom(src => src.Gender));
+
+                cfg.CreateMap<UpdateEmployeeViewModel, Employee>()
+                          .ForMember(dto => dto.IdEmployee, opt => opt.MapFrom(src => src.IdEmployee))
+                          .ForMember(dto => dto.NameEmployee, opt => opt.MapFrom(src => src.NameEmployee))
+                          .ForMember(dto => dto.Email, opt => opt.MapFrom(src => src.Email))
+                          .ForMember(dto => dto.Birthday, opt => opt.MapFrom(src => src.Birthday))
+                          .ForMember(dto => dto.Image, opt => opt.MapFrom(src => src.Image))
+                          .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
+                          .ForMember(dto => dto.RoleId, opt => opt.MapFrom(src => src.RoleId))
+                          .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
+                          .ForMember(dto => dto.Gender, opt => opt.MapFrom(src => src.Gender))
+                          .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
+                          .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)));
 
                 cfg.CreateMap<CreateUpdateRoleViewModel, Role>()
                        .ForMember(dto => dto.IdRole, opt => opt.MapFrom(src => src.IdRole))
@@ -118,21 +180,7 @@ namespace Travel.Shared.Ultilities
                           .ForMember(dto => dto.IdRole, opt => opt.MapFrom(src => src.IdRole))
                           .ForMember(dto => dto.NameRole, opt => opt.MapFrom(src => src.NameRole))
                           .ForMember(dto => dto.Description, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Description) ? "" : src.Description));
-                cfg.CreateMap<Employee, EmployeeViewModel>()
-                         .ForMember(dto => dto.IdEmployee, opt => opt.MapFrom(src => src.IdEmployee))
-                         .ForMember(dto => dto.NameEmployee, opt => opt.MapFrom(src => src.NameEmployee))
-                         .ForMember(dto => dto.Birthday, opt => opt.MapFrom(src => src.Birthday))
-                         .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => src.CreateDate))
-                         .ForMember(dto => dto.Email, opt => opt.MapFrom(src => src.Email))
-                         .ForMember(dto => dto.Image, opt => opt.MapFrom(src => src.Image))
-                         .ForMember(dto => dto.IsActive, opt => opt.MapFrom(src => src.IsActive))
-                         .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => src.IsDelete))
-                         .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
-                         .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
-                         .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
-                         .ForMember(dto => dto.RoleDescription, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Role.Description) ? "" : src.Role.Description))
-                         .ForMember(dto => dto.IdRole, opt => opt.MapFrom(src => src.RoleId))
-                         .ForMember(dto => dto.RoleName, opt => opt.MapFrom(src => src.Role.NameRole));
+              
 
                 cfg.CreateMap<Customer, CustomerViewModel>()
                          .ForMember(dto => dto.IdCustomer, opt => opt.MapFrom(src => src.IdCustomer))
@@ -153,8 +201,7 @@ namespace Travel.Shared.Ultilities
                         .ForMember(dto => dto.Email, otp => otp.MapFrom(src => src.Email))
                         .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
                         .ForMember(dto => dto.Address, otp => otp.MapFrom(src => src.Address))
-                        .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src =>
-                Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
+                        .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
                         .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password));
 
 
@@ -176,11 +223,31 @@ namespace Travel.Shared.Ultilities
                       .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => src.ProvinceId))
                       .ForMember(dto => dto.ProvinceName, opt => opt.MapFrom(src => src.Province.NameProvince));
 
+                cfg.CreateMap<CreateDistrictViewModel, District>()
+                .ForMember(dto => dto.IdDistrict, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dto => dto.NameDistrict, opt => opt.MapFrom(src => src.NameDistrict))
+                .ForMember(dto => dto.ProvinceId, opt => opt.MapFrom(src => src.IdProvince));
+
+                cfg.CreateMap<UpdateDistrictViewModel, District>()
+                    .ForMember(dto => dto.IdDistrict, opt => opt.MapFrom(src => src.IdDistrict))
+                    .ForMember(dto => dto.NameDistrict, opt => opt.MapFrom(src => src.NameDistrict))
+                    .ForMember(dto => dto.ProvinceId, opt => opt.MapFrom(src => src.IdProvince));
+
                 cfg.CreateMap<Ward, WardViewModel>()
                      .ForMember(dto => dto.IdWard, opt => opt.MapFrom(src => src.IdWard))
                      .ForMember(dto => dto.NameWard, opt => opt.MapFrom(src => src.NameWard))
                      .ForMember(dto => dto.IdDistrict, opt => opt.MapFrom(src => src.DistrictId))
                      .ForMember(dto => dto.DistrictName, opt => opt.MapFrom(src => src.District.NameDistrict));
+
+                cfg.CreateMap<CreateWardViewModel, Ward>()
+                .ForMember(dto => dto.IdWard, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dto => dto.NameWard, opt => opt.MapFrom(src => src.NameWard))
+                .ForMember(dto => dto.DistrictId, opt => opt.MapFrom(src => src.IdDistrict));
+
+                cfg.CreateMap<UpdateWardViewModel, Ward>()
+                    .ForMember(dto => dto.IdWard, opt => opt.MapFrom(src => src.IdWard))
+                    .ForMember(dto => dto.NameWard, opt => opt.MapFrom(src => src.NameWard))
+                    .ForMember(dto => dto.DistrictId, opt => opt.MapFrom(src => src.IdDistrict));
 
                 cfg.CreateMap<CreateCarViewModel, Car>()
                        .ForMember(dto => dto.IdCar, opt => opt.MapFrom(src => src.IdCar))
@@ -299,6 +366,16 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<Employee, EmployeeViewModel>(data);
         }
+       
+        public static Role MapCreateRole(CreateUpdateRoleViewModel data)
+        {
+            return _mapper.Map<CreateUpdateRoleViewModel,Role>(data);
+        }
+        public static Employee MapCreateEmployee(CreateEmployeeViewModel data)
+        {
+            return _mapper.Map<CreateEmployeeViewModel, Employee>(data);
+        }
+
         public static List<EmployeeViewModel> MapEmployee(List<Employee> data)
         {
             return _mapper.Map<List<Employee>, List<EmployeeViewModel>>(data);
@@ -307,9 +384,9 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<CreateUpdateRoleViewModel, Role>(data);
         }
-        public static Employee MapCreateEmployee(CreateUpdateEmployeeViewModel data)
+        public static Employee MapUpdateEmployee(UpdateEmployeeViewModel data)
         {
-            return _mapper.Map<CreateUpdateEmployeeViewModel, Employee>(data);
+            return _mapper.Map<UpdateEmployeeViewModel, Employee>(data);
         }
         public static Tour MapCreateTour(CreateTourViewModel data)
         {
@@ -323,6 +400,12 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<CreateScheduleViewModel, Schedule>(data);
         }
+
+        public static List<ScheduleViewModel> MapSchedule(List<Schedule> data)
+        {
+            return _mapper.Map<List<Schedule>, List<ScheduleViewModel>> (data);
+        }
+
         public static TourDetail MapCreateTourDetails(CreateTourViewModel data)
         {
             return _mapper.Map<CreateTourViewModel, TourDetail>(data);
@@ -357,9 +440,27 @@ namespace Travel.Shared.Ultilities
             return _mapper.Map<List<District>, List<DistrictViewModel>>(data);
         }
 
+        public static District MapCreateDistrict(CreateDistrictViewModel data)
+        {
+            return _mapper.Map<CreateDistrictViewModel, District>(data);
+        }
+        public static District MapUpdateDistrict(UpdateDistrictViewModel data)
+        {
+            return _mapper.Map<UpdateDistrictViewModel, District>(data);
+        }
+
         public static List<WardViewModel> MapWard(List<Ward> data)
         {
             return _mapper.Map<List<Ward>, List<WardViewModel>>(data);
+        }
+
+        public static Ward MapCreateWard(CreateWardViewModel data)
+        {
+            return _mapper.Map<CreateWardViewModel, Ward>(data);
+        }
+        public static Ward MapUpdateWard(UpdateWardViewModel data)
+        {
+            return _mapper.Map<UpdateWardViewModel, Ward>(data);
         }
 
         public static Car MapCreateCar(CreateCarViewModel data)

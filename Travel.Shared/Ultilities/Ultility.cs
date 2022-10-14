@@ -181,9 +181,9 @@ namespace Travel.Shared.Ultilities
                 }
 
 
-                var date = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                var date = ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now).ToString();
 
-                string pathDate = Path.Combine(pathId, FormatDateToInt(date, "YYYYMMDD").ToString());
+                string pathDate = Path.Combine(pathId, date);
                 if (!Directory.Exists(pathDate))
                 {
                     Directory.CreateDirectory(pathDate);
@@ -195,7 +195,7 @@ namespace Travel.Shared.Ultilities
 
                 string fullpath = Path.Combine(pathDate, fileName);
 
-                string serverPath = "/Uploads/" + type + "/" + Id + "/" + FormatDateToInt(date, "YYYYMMDD").ToString() + "/" + fileName;
+                string serverPath = "/Uploads/" + type + "/" + Id + "/" + date + "/" + fileName;
                 if (Directory.Exists(fullpath))
                 {
                     System.IO.File.Delete(fullpath);
@@ -205,6 +205,7 @@ namespace Travel.Shared.Ultilities
                 {
                     file.CopyTo(stream);
                 }
+
                 image.IdImage = Guid.NewGuid();
                 image.NameImage = fileName;
                 image.Extension = str[1];

@@ -102,6 +102,34 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response Get()
+        {
+            try
+            {
+                var list = (from x in _db.Schedules select x).ToList();
+                var result = Mapper.MapSchedule(list);
+                if (list.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
         public Response Create(CreateScheduleViewModel input)
         {
             try

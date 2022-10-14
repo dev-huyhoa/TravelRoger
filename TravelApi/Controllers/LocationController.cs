@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using Travel.Shared.ViewModels.Travel.DistrictVM;
+using Travel.Shared.ViewModels.Travel.WardVM;
 using TravelApi.Hubs;
 
 namespace TravelApi.Controllers
@@ -72,7 +74,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         [Route("search-district")]
         public object SearchDistrict([FromBody] JObject frmData)
         {
@@ -81,7 +83,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         [Route("search-ward")]
         public object SearchWard([FromBody] JObject frmData)
         {
@@ -110,14 +112,17 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [Route("create-district")]
         public object CreateDistrict([FromBody] JObject frmData)
         {
-            var district = location.CheckBeforeSaveDistrict(frmData, ref message);
+            message = null;
+            var result = location.CheckBeforeSaveDistrict(frmData, ref message, false);
             if (message == null)
             {
-                res = location.CreateDistrict(district);
+                var createObj = JsonSerializer.Deserialize<CreateDistrictViewModel>(result);
+                res = location.CreateDistrict(createObj);
+                _messageHub.Clients.All.Insert();
             }
             else
             {
@@ -127,14 +132,17 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [Route("create-ward")]
         public object CreateWard([FromBody] JObject frmData)
         {
-            var ward = location.CheckBeforeSaveWard(frmData, ref message);
+            message = null;
+            var result = location.CheckBeforeSaveWard(frmData, ref message, false);
             if (message == null)
             {
-                res = location.CreateWard(ward);
+                var createObj = JsonSerializer.Deserialize<CreateWardViewModel>(result);
+                res = location.CreateWard(createObj);
+                _messageHub.Clients.All.Insert();
             }
             else
             {
@@ -144,7 +152,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [Route("update-province")]
         public object UpdateProvince([FromBody] JObject frmData)
         {
@@ -163,14 +171,16 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [Route("update-district")]
         public object UpdateDistrict([FromBody] JObject frmData)
         {
-            var district = location.CheckBeforeSaveDistrict(frmData, ref message);
+            message = null;
+            var result = location.CheckBeforeSaveDistrict(frmData, ref message, true);
             if (message == null)
             {
-                res = location.UpdateDistrict(district);
+                var updateObj = JsonSerializer.Deserialize<UpdateDistrictViewModel>(result);
+                res = location.UpdateDistrict(updateObj);
             }
             else
             {
@@ -180,14 +190,16 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [Route("update-ward")]
         public object UpdateWard([FromBody] JObject frmData)
         {
-            var ward = location.CheckBeforeSaveWard(frmData, ref message);
+            message = null;
+            var result = location.CheckBeforeSaveWard(frmData, ref message, true);
             if (message == null)
             {
-                res = location.UpdateWard(ward);
+                var updateObj = JsonSerializer.Deserialize<UpdateWardViewModel>(result);
+                res = location.UpdateWard(updateObj);
             }
             else
             {
@@ -197,7 +209,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [Route("delete-province")]
         public object DeleteProvince([FromBody] JObject frmData)
         {
@@ -206,36 +218,20 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        [Route("DeleteDistrict")]
+        [Authorize]
+        [Route("delete-district")]
         public object DeleteDistrict([FromBody] JObject frmData)
         {
-            var district = location.CheckBeforeSaveDistrict(frmData, ref message);
-            if (message == null)
-            {
-                res = location.DeleteDistrict(district);
-            }
-            else
-            {
-                res.Notification = message;
-            }
+            res = location.DeleteDistrict(frmData);
             return Ok(res);
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        [Route("DeleteWard")]
+        [Authorize]
+        [Route("delete-ward")]
         public object DeleteWard([FromBody] JObject frmData)
         {
-            var ward = location.CheckBeforeSaveWard(frmData, ref message);
-            if (message == null)
-            {
-                res = location.DeleteWard(ward);
-            }
-            else
-            {
-                res.Notification = message;
-            }
+            res = location.DeleteWard(frmData);
             return Ok(res);
         }
     }

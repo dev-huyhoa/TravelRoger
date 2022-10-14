@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
@@ -26,119 +28,108 @@ namespace Travel.Data.Repositories
             res = new Response();
         }
         // validate vd create
-        public CreateUpdateEmployeeViewModel CheckBeforeSave(JObject frmData, ref Notification _message) // hàm đăng nhập  sử cho create update delete
+        public string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate) // hàm đăng nhập  sử cho create update delete
         {
-            CreateUpdateEmployeeViewModel employee = new CreateUpdateEmployeeViewModel();
             try
             {
-                int error = 0;
-                var id = PrCommon.GetString("idEmployee", frmData);
-                if (!String.IsNullOrEmpty(id))
+                JObject frmData = JObject.Parse(frmdata["data"]);
+                if (frmData != null)
                 {
-                    employee.IdEmployee = Guid.Parse(id);
-                }
-                else
-                {
-                    error++;
-                }
+                    var idEmployee = PrCommon.GetString("idEmployee", frmData);
+                    if (String.IsNullOrEmpty(idEmployee))
+                    {
+                        idEmployee = Guid.NewGuid().ToString();
+                    }
+
+                    var nameEmployee = PrCommon.GetString("nameEmployee", frmData);
+                    if (String.IsNullOrEmpty(nameEmployee))
+                    {
+                    }
+
+                    var email = PrCommon.GetString("email", frmData);
+                    if (String.IsNullOrEmpty(email))
+                    {
+                    }
 
 
-                var name = PrCommon.GetString("nameEmployee", frmData);
-                if (!String.IsNullOrEmpty(name))
-                {
-                    employee.NameEmployee = name.Trim();
-                }
-                else
-                {
-                    error++;
-                }
+                    var phone = PrCommon.GetString("Phone", frmData);
+                    if (String.IsNullOrEmpty(phone))
+                    {
+                    }
 
-                var email = PrCommon.GetString("email", frmData);
-                if (!String.IsNullOrEmpty(email))
-                {
-                    employee.Email = email.Trim();
-                }
-                else
-                {
-                    error++;
-                }
+                    var idRole = PrCommon.GetString("idRole", frmData);
+                    if (String.IsNullOrEmpty(idRole))
+                    {
+                    }
 
-                var phone = PrCommon.GetString("Phone", frmData);
-                if (!String.IsNullOrEmpty(phone))
-                {
-                    employee.Phone = phone.Trim();
-                }
-                else
-                {
-                    error++;
-                }
+                   
 
-                var birthday = PrCommon.GetString("birthday", frmData);
-                if (!String.IsNullOrEmpty(birthday))
-                {
-                    employee.Birthday = long.Parse(birthday);
-                }
-                else
-                {
-                    error++;
-                }
+                    var birthday = PrCommon.GetString("birthday", frmData);
+                    if (String.IsNullOrEmpty(birthday))
+                    {
+                    }
 
-                var address = PrCommon.GetString("address", frmData);
-                if (!String.IsNullOrEmpty(address))
-                {
-                    employee.Address = address.Trim();
-                }
-                else
-                {
-                    error++;
-                }
 
-                var gender = PrCommon.GetString("gender", frmData);
-                if (!String.IsNullOrEmpty(birthday))
-                {
-                    employee.Gender = Boolean.Parse(gender);
-                }
-                else
-                {
-                    error++;
-                }
+                    var address = PrCommon.GetString("address", frmData);
+                    if (String.IsNullOrEmpty(address))
+                    {
+                    }
 
-                var image = PrCommon.GetString("image", frmData);
-                if (!String.IsNullOrEmpty(image))
-                {
-                    employee.Image = image.Trim();
-                }
-                else
-                {
-                    error++;
-                }
+                    var gender = PrCommon.GetString("gender", frmData);
+                    if (String.IsNullOrEmpty(birthday))
+                    {
+                    }
 
-                var roleid = PrCommon.GetString("idRole", frmData);
-                if (!String.IsNullOrEmpty(roleid))
-                {
-                    employee.RoleId = roleid.ToEnum<TitleRole>();
-                }
-                else
-                {
-                    error++;
-                }
-                //res.KwId = PrCommon.GetString("KwId", frmData);
-                //res.KwName = PrCommon.GetString("KwName", frmData);
-                //res.KwEmail = PrCommon.GetString("KwEmail", frmData);
-                //res.KwPhone = PrCommon.GetString("KwPhone", frmData);
-                //res.KwRoleName = PrCommon.GetString("KwRoleName", frmData);
-                //res.KwRoleId = PrCommon.GetString("KwRoleId", frmData);
-                //res.KwIsActive = PrCommon.GetString("KwIsActive", frmData);
 
-                if (error > 0)
-                {
-                    message.DateTime = DateTime.Now;
-                    message.Messenge = "Dữ liệu không hợp lệ !";
-                    message.Type = "Error";
+                    var image = PrCommon.GetString("image", frmData);
+                    if (String.IsNullOrEmpty(image))
+                    {
+                    }
 
-                    _message = message;
+                    var modifyBy = PrCommon.GetString("modifyBy", frmData);
+                    if (String.IsNullOrEmpty(modifyBy))
+                    {
+                    }
+
+                    if (file != null)
+                    {
+                        image = Ultility.WriteFile(file, "Employee", Guid.Parse(idEmployee), ref _message).FilePath;
+                        if (_message != null)
+                        {
+                            message = _message;
+                        }
+                    }
+
+                    if (isUpdate)
+                    {
+                        UpdateEmployeeViewModel objUpdate = new UpdateEmployeeViewModel();
+                        objUpdate.IdEmployee = Guid.Parse(idEmployee);
+                        objUpdate.NameEmployee = nameEmployee;
+                        objUpdate.Phone = phone;
+                        objUpdate.Email = email;
+                        objUpdate.Address = address;
+                        objUpdate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(birthday));
+                        objUpdate.RoleId = (TitleRole)int.Parse(idRole);
+                        objUpdate.Image = image;
+                        objUpdate.ModifyBy = modifyBy;
+                        return JsonSerializer.Serialize(objUpdate);
+                    }
+
+                    CreateEmployeeViewModel objCreate = new CreateEmployeeViewModel();
+                    objCreate.IdEmployee = Guid.Parse(idEmployee);
+                    objCreate.NameEmployee = nameEmployee;
+                    objCreate.Phone = phone;
+                    objCreate.Email = email;
+                    objCreate.Address = address;
+                    objCreate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(birthday));
+                    objCreate.RoleId = (TitleRole)int.Parse(idRole);
+                    objCreate.Image = image;
+                    objCreate.ModifyBy = modifyBy;
+                    return JsonSerializer.Serialize(objCreate);
+
+                   
                 }
-                return employee;
+                return string.Empty;
             }
             catch (Exception e)
             {
@@ -148,7 +139,7 @@ namespace Travel.Data.Repositories
                 message.Type = "Error";
 
                 _message = message;
-                return employee;
+                return string.Empty;
             }
         }
         public Response GetsEmployee(JObject frmData)
@@ -196,14 +187,11 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CreateEmployee(CreateUpdateEmployeeViewModel input)
+        public Response CreateEmployee(CreateEmployeeViewModel input)
         {
             try
             {
                 Employee employee = Mapper.MapCreateEmployee(input);
-
-                employee.IdEmployee = Guid.NewGuid();
-                employee.CreateDate = 202204101007;
                 employee.IsActive = true;
                 employee.Password = "3244185981728979115075721453575112";
 
@@ -226,33 +214,16 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateEmployee(CreateUpdateEmployeeViewModel input)
+        public Response UpdateEmployee(UpdateEmployeeViewModel input)
         {
             try
             {
                 Employee employee = Mapper.MapCreateEmployee(input);
-
-                var check = _db.Employees.Find(employee.IdEmployee);
-                if (check != null)
-                {
-                    _db.Employees.Find(employee.IdEmployee).NameEmployee = employee.NameEmployee;
-                    _db.Employees.Find(employee.IdEmployee).Email = employee.Email;
-                    _db.Employees.Find(employee.IdEmployee).Birthday = employee.Birthday;
-                    _db.Employees.Find(employee.IdEmployee).Image = employee.Image;
-                    _db.Employees.Find(employee.IdEmployee).Phone = employee.Phone;
-                    _db.Employees.Find(employee.IdEmployee).RoleId = employee.RoleId;
-                    _db.SaveChanges();
-
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Sửa thành công !";
-                    res.Notification.Type = "Success";               
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
-                }
+                _db.Employees.Update(employee);
+                _db.SaveChanges();
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Sửa thành công !";
+                res.Notification.Type = "Success";
                 return res;
             }
             catch (Exception e)
@@ -326,40 +297,67 @@ namespace Travel.Data.Repositories
                 keywords.KwIdRole = PrCommon.getListInt(kwIdRole, ',', false);
 
                 var kwIsActive = PrCommon.GetString("isActive", frmData);
-                if (!String.IsNullOrEmpty(kwId))
+                if (!String.IsNullOrEmpty(kwIsActive))
                 {
                     keywords.KwIsActive = Boolean.Parse(kwIsActive);
                 }
-                else
-                {
-                    keywords.KwIsActive = true;
 
-                }
 
                 //var listEmp = _db.Employees.FromSqlRaw("[SearchEmployees] {0}, {1}, {2}, {3}, {4}, {5}", kwId, kwName, kwEmail, kwPhone, kwRoleId, kwIsActive).ToList();
                 var listEmp = new List<Employee>();
                 if (keywords.KwIdRole.Count > 0)
                 {
-                    listEmp =  (from x in _db.Employees
-                     where x.IsDelete == keywords.IsDelete &&
-                                     x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
-                                     x.NameEmployee.ToLower().Contains(keywords.KwName) &&
-                                     x.Email.ToLower().Contains(keywords.KwEmail) &&
-                                     x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                     x.IsActive == keywords.KwIsActive && 
-                                     keywords.KwIdRole.Contains(x.RoleId)
-                     select x).ToList();
+                    if (!string.IsNullOrEmpty(kwIsActive))
+                    {
+                        listEmp = (from x in _db.Employees
+                                   where x.IsDelete == keywords.IsDelete &&
+                                                   x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
+                                                   x.NameEmployee.ToLower().Contains(keywords.KwName) &&
+                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                   x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                   x.IsActive == keywords.KwIsActive &&
+                                                   keywords.KwIdRole.Contains(x.RoleId)
+                                   orderby x.RoleId
+                                   select x).ToList();
+                    }
+                    else
+                    {
+                        listEmp = (from x in _db.Employees
+                                  where x.IsDelete == keywords.IsDelete &&
+                                                  x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
+                                                  x.NameEmployee.ToLower().Contains(keywords.KwName) &&
+                                                  x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                  x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                  keywords.KwIdRole.Contains(x.RoleId)
+                                   orderby x.RoleId
+                                   select x).ToList();
+                    }
                 }
                 else
                 {
-                    listEmp = (from x in _db.Employees
-                               where x.IsDelete == keywords.IsDelete &&
-                                               x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
-                                               x.NameEmployee.ToLower().Contains(keywords.KwName) &&
-                                               x.Email.ToLower().Contains(keywords.KwEmail) &&
-                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                               x.IsActive == keywords.KwIsActive
-                               select x).ToList();
+                    if (!string.IsNullOrEmpty(kwIsActive))
+                    {
+                        listEmp = (from x in _db.Employees
+                                   where x.IsDelete == keywords.IsDelete &&
+                                                   x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
+                                                   x.NameEmployee.ToLower().Contains(keywords.KwName) &&
+                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                   x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                   x.IsActive == keywords.KwIsActive
+                                   orderby x.RoleId
+                                   select x).ToList();
+                    }
+                    else
+                    {
+                        listEmp = (from x in _db.Employees
+                                   where x.IsDelete == keywords.IsDelete &&
+                                                   x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
+                                                   x.NameEmployee.ToLower().Contains(keywords.KwName) &&
+                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                   x.Phone.ToLower().Contains(keywords.KwPhone)
+                                   orderby x.RoleId
+                                   select x).ToList();
+                    }
                 }
                 var result = Mapper.MapEmployee(listEmp);
                 if (listEmp.Count() > 0)
@@ -384,21 +382,20 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response RestoreEmployee(CreateUpdateEmployeeViewModel input)
+        public Response RestoreEmployee(JObject frmData)
         {
             try
             {
-                Employee employee = new Employee();
-                employee = Mapper.MapCreateEmployee(input);
+                var idEmployee = PrCommon.GetString("idEmployee", frmData);
 
-                var check = _db.Roles.Find(employee.RoleId);
+                var check = _db.Employees.Find(Guid.Parse(idEmployee));
                 if (check != null)
                 {
-                    _db.Employees.Find(employee.IdEmployee).IsDelete = false;
+                    check.IsDelete = false;
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Restore thành công !";
+                    res.Notification.Messenge = "Khôi phục thành công !";
                     res.Notification.Type = "Success";
                 }
                 else
@@ -419,21 +416,20 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response DeleteEmployee(CreateUpdateEmployeeViewModel input)
+        public Response DeleteEmployee(JObject frmData)
         {
             try
             {
-                Employee employee = new Employee();
-                employee = Mapper.MapCreateEmployee(input);
+                var idEmployee = PrCommon.GetString("idEmployee", frmData);
 
-                var check = _db.Employees.Find(employee.IdEmployee);
+                var check = _db.Employees.Find(Guid.Parse(idEmployee));
                 if (check != null)
                 {
-                    _db.Employees.Find(employee.IdEmployee).IsDelete = true;
+                    check.IsDelete = true;
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Delete thành công !";
+                    res.Notification.Messenge = "Xóa thành công !";
                     res.Notification.Type = "Success";
                 }
                 else
