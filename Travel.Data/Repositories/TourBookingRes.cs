@@ -137,7 +137,7 @@ namespace Travel.Data.Repositories
             {
                 var ListTourBooking = _db.Tourbookings.ToList();
                 var result = Mapper.MapTourBooking(ListTourBooking);
-                if (result.Count() > 0)
+                if (ListTourBooking.Count() > 0)
                 {
                     res.Content = result;
                 }
