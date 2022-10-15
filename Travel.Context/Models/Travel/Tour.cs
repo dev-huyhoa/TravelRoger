@@ -20,6 +20,8 @@ namespace Travel.Context.Models
         public bool IsDelete { get; set; }
         public bool IsActive { get; set; }
         public string Thumbsnail { get; set; }
+        public float PriceAdult { get; set; }
+        public float PriceAdultPromotion { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual TourDetail TourDetail { get; set; }
 

@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Travel.Context.Models;
+using Travel.Shared.ViewModels.Travel.TourVM;
 
 namespace Travel.Shared.ViewModels.Travel
 {
     public class TourViewModel
     {
-        private string id;
+        private string idTour;
         private string tourName;
         private double rating;
         private string thumbsnail;
@@ -27,9 +28,14 @@ namespace Travel.Shared.ViewModels.Travel
         private bool isDelete;
         private bool isActive;
 
-        private ICollection<Schedule> schedules;
 
-        public string Id { get => id; set => id = value; }
+        // client
+        private float priceAdult;
+        private float priceAdultPromotion;
+
+        private TourDetailViewModel tourDetail;
+
+
         public string TourName { get => tourName; set => tourName = value; }
         public double Rating { get => rating; set => rating = value; }
         public string Thumbsnail { get => thumbsnail; set => thumbsnail = value; }
@@ -42,6 +48,9 @@ namespace Travel.Shared.ViewModels.Travel
         public long ModifyDate { get => modifyDate; set => modifyDate = value; }
         public bool IsDelete { get => isDelete; set => isDelete = value; }
         public bool IsActive { get => isActive; set => isActive = value; }
-        public ICollection<Schedule> Schedules { get => schedules; set => schedules = value; }
+        public string IdTour { get => idTour; set => idTour = value; }
+        public float PriceAdult { get => priceAdult; set => priceAdult = value; }
+        public float PriceAdultPromotion { get => priceAdultPromotion; set => priceAdultPromotion = value; }
+        public TourDetailViewModel TourDetail { get => tourDetail; set => tourDetail = value; }
     }
 }

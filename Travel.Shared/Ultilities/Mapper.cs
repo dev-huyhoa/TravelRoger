@@ -122,6 +122,8 @@ namespace Travel.Shared.Ultilities
                 .ForMember(dto => dto.FromPlace, opt => opt.MapFrom(src => src.FromPlace))
                 .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.ToPlace))
                 .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => 10))
+                .ForMember(dto => dto.PriceAdult, opt => opt.MapFrom(src => 0))
+                .ForMember(dto => dto.PriceAdultPromotion, opt => opt.MapFrom(src => 0))
                 .ForMember(dto => dto.ApproveStatus, opt => opt.MapFrom(src => Enums.ApproveStatus.Waiting))
                 .ForMember(dto => dto.Status, opt => opt.MapFrom(src =>
                  Enums.TourStatus.Normal))
@@ -130,10 +132,29 @@ namespace Travel.Shared.Ultilities
                 .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
                 .ForMember(dto => dto.IsActive, opt => opt.MapFrom(src => false))
                 ;
+                // view tour detail
+                cfg.CreateMap<TourDetail, TourDetailViewModel>()
+                .ForMember(dto => dto.IdTourDetail, opt => opt.MapFrom(src => src.IdTourDetail))
+                .ForMember(dto => dto.TourId, opt => opt.MapFrom(src => src.TourId))
+                .ForMember(dto => dto.CostTourId, opt => opt.MapFrom(src => src.CostTourId))
+                .ForMember(dto => dto.PriceChild, opt => opt.MapFrom(src => src.PriceChild))
+                .ForMember(dto => dto.PriceBaby, opt => opt.MapFrom(src => src.PriceBaby))
+                .ForMember(dto => dto.PriceAdult, opt => opt.MapFrom(src => src.PriceAdult))
+                .ForMember(dto => dto.PriceChildPromotion, opt => opt.MapFrom(src => src.PriceChildPromotion))
+                .ForMember(dto => dto.PriceBabyPromotion, opt => opt.MapFrom(src => src.PriceBabyPromotion))
+                 .ForMember(dto => dto.PriceAdultPromotion, opt => opt.MapFrom(src => src.PriceAdultPromotion))
+                .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dto => dto.QuantityBooked, opt => opt.MapFrom(src => src.QuantityBooked))
+                .ForMember(dto => dto.IsPromotion, opt => opt.MapFrom(src => src.IsPromotion))
+                .ForMember(dto => dto.TotalCostTour, opt => opt.MapFrom(src => src.TotalCostTour))
+                .ForMember(dto => dto.Profit, opt => opt.MapFrom(src => src.Profit))
+                .ForMember(dto => dto.Vat, opt => opt.MapFrom(src => src.Vat))
+                .ForMember(dto => dto.FinalPrice, opt => opt.MapFrom(src => src.FinalPrice))
+                ;
+
                 //view
                 cfg.CreateMap<Tour, TourViewModel>()
-                   .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.IdTour))
-                   .ForMember(dto => dto.TourName, opt => opt.MapFrom(src => src.NameTour))
+                   .ForMember(dto => dto.IdTour, opt => opt.MapFrom(src => src.IdTour))
                    .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
                    .ForMember(dto => dto.TourName, opt => opt.MapFrom(src => src.NameTour))
                    .ForMember(dto => dto.Thumbsnail, opt => opt.MapFrom(src => src.Thumbsnail))
@@ -145,14 +166,18 @@ namespace Travel.Shared.Ultilities
                    .ForMember(dto => dto.IsActive, opt => opt.MapFrom(src => src.IsActive))
                    .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => src.IsDelete))
                    .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
-                   .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
+                   .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+                   .ForMember(dto => dto.PriceAdult, opt => opt.MapFrom(src => src.PriceAdult))
+                   .ForMember(dto => dto.PriceAdultPromotion, opt => opt.MapFrom(src => src.PriceAdultPromotion))
+
+                   ;
 
 
 
 
                 //create
                 cfg.CreateMap<CreateTourViewModel, TourDetail>()
-                .ForMember(dto => dto.IdTourDetail, opt => opt.MapFrom(src => $"{Ultility.GenerateId(src.NameTour)}-Details"))
+                .ForMember(dto => dto.IdTourDetail, opt => opt.MapFrom(src => $"{src.IdTour}-Details"))
                 .ForMember(dto => dto.TourId, opt => opt.MapFrom(src => src.IdTour))
                 .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dto => dto.DisplayPrice, opt => opt.MapFrom(src => 0))
@@ -436,6 +461,10 @@ namespace Travel.Shared.Ultilities
             return _mapper.Map<List<Role>, List<RoleViewModel>>(data);
         }
 
+        public static List<TourDetailViewModel> MapTourDetail(List<TourDetail> data)
+        {
+            return _mapper.Map<List<TourDetail>, List<TourDetailViewModel>>(data);
+        }
 
         public static PaymentViewModel MapPayment(Payment data)
         {
