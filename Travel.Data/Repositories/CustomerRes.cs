@@ -136,17 +136,10 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Gets(JObject frmData)
+        public Response Gets()
         {
             try
-            {
-                var isDelete = false;
-                var check = PrCommon.GetString("isDelete", frmData);
-                if (!String.IsNullOrEmpty(check))
-                {
-                    isDelete = Boolean.Parse(check);
-                }
-
+            {                       
                 var listCus = (from x in _db.Customers where x.IsDelete == false select x).ToList();
                 var result = Mapper.MapCustomer(listCus);
 

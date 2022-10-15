@@ -44,9 +44,9 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("gets-customer")]
-        public object GetsEmployee([FromBody] JObject frmData)
+        public object GetsEmployee()
         {
-            res = customer.Gets(frmData);
+            res = customer.Gets();
             return Ok(res);
         }
     }

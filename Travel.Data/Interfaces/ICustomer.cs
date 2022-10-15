@@ -13,7 +13,7 @@ namespace Travel.Data.Interfaces
     public interface ICustomer
     {
         string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate);
-        Response Gets(JObject frmData);
+        Response Gets();
         Response Create(CreateCustomerViewModel input);
 
     }
