@@ -27,6 +27,7 @@ namespace Travel.Context.Models
         public virtual Promotion Promotions { get; set; }
         public virtual Tour Tour { get; set; }
         public virtual ICollection<Timeline> Timelines { get; set; }
+        public virtual ICollection<Tourbooking> TourBookings { get; set; }
         public virtual Employee Employee { get; set; }
         
     }

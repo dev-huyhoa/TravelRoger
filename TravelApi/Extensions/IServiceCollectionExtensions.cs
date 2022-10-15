@@ -56,6 +56,10 @@ namespace TravelApi.Extensions
             .AddScoped<ITimeLine, TimeLineRes>();
             services
           .AddScoped<ICostTour, CostTourRes>();
+            services
+          .AddScoped<IService, ServiceRes>();
+            services
+   .AddScoped<ITourBooking, TourBookingRes>();
             return services;
         
 
