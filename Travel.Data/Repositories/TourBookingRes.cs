@@ -31,79 +31,47 @@ namespace Travel.Data.Repositories
             try
             {
                 var idTourBooking = PrCommon.GetString("idTourBooking", frmData);
-                if (!String.IsNullOrEmpty(idTourBooking))
+                if (String.IsNullOrEmpty(idTourBooking))
+                {
+                    //   payment.IdPayment = idPay;
+                }
+                var scheduleId = PrCommon.GetString("scheduleId", frmData);
+                if (String.IsNullOrEmpty(scheduleId))
+                {
+                    //   payment.IdPayment = idPay;
+                }
+                var paymentId = PrCommon.GetString("paymentId", frmData);
+                if (String.IsNullOrEmpty(paymentId))
                 {
                     //   payment.IdPayment = idPay;
                 }
                 var nameCustomer = PrCommon.GetString("nameCustomer", frmData);
-                if (!String.IsNullOrEmpty(nameCustomer))
+                if (String.IsNullOrEmpty(nameCustomer))
                 {
                     // payment.IdPayment = namePay;
                 }
                 var address = PrCommon.GetString("address", frmData);
-                if (!String.IsNullOrEmpty(address))
+                if (String.IsNullOrEmpty(address))
                 {
                     // payment.IdPayment = type;
                 }
                 var email = PrCommon.GetString("email", frmData);
-                if (!String.IsNullOrEmpty(email))
+                if (String.IsNullOrEmpty(email))
                 {   }
                 var phone = PrCommon.GetString("phone", frmData);
-                if (!String.IsNullOrEmpty(phone))
+                if (String.IsNullOrEmpty(phone))
                 { }     
 
                 var nameContact = PrCommon.GetString("nameContact", frmData);
-                if (!String.IsNullOrEmpty(nameContact))
+                if (String.IsNullOrEmpty(nameContact))
                 { }
-
-                var dateBooking = PrCommon.GetString("dateBooking", frmData);
-                if (!String.IsNullOrEmpty(dateBooking))
-                { }
-
-                var lastDate = PrCommon.GetString("lastDate", frmData);
-                if (!String.IsNullOrEmpty(lastDate))
-                { }
-
                 var vat = PrCommon.GetString("vat", frmData);
-                if (!String.IsNullOrEmpty(vat))
+                if (String.IsNullOrEmpty(vat))
                 { }
-
                 var pincode = PrCommon.GetString("pincode", frmData);
-                if (!String.IsNullOrEmpty(pincode))
+                if (String.IsNullOrEmpty(pincode))
                 { }
-
-                var voucherCode = PrCommon.GetString("voucherCode", frmData);
-                if (!String.IsNullOrEmpty(voucherCode))
-                { }
-
-                var bookingNo = PrCommon.GetString("bookingNo", frmData);
-                if (!String.IsNullOrEmpty(bookingNo))
-                { }
-
-                var isCalled = PrCommon.GetString("isCalled", frmData);
-                if (!String.IsNullOrEmpty(isCalled))
-                { }
-
-                var deposit = PrCommon.GetString("deposit", frmData);
-                if (!String.IsNullOrEmpty(deposit))
-                { }
-
-                var remainPrice = PrCommon.GetString("remainPrice", frmData);
-                if (!String.IsNullOrEmpty(remainPrice))
-                { }
-
-                var totalPrice = PrCommon.GetString("deposit", frmData);
-                if (!String.IsNullOrEmpty(deposit))
-                { }
-
-                var modifyBy = PrCommon.GetString("modifyBy", frmData);
-                if (!String.IsNullOrEmpty(modifyBy))
-                { }
-
-                var modifyDate = PrCommon.GetString("modifyDate", frmData);
-                if (!String.IsNullOrEmpty(modifyDate))
-                { }
-                if (isUpdate)
+              if (isUpdate)
                 {
                     CreateTourBookingViewModel updateObj = new CreateTourBookingViewModel();
                     updateObj.IdTourBooking = idTourBooking;
@@ -112,39 +80,20 @@ namespace Travel.Data.Repositories
                     updateObj.Email = email;
                     updateObj.Phone = phone;
                     updateObj.NameContact = nameCustomer;
-                    updateObj.DateBooking = Convert.ToInt32(dateBooking); 
-                    updateObj.LastDate = Convert.ToInt32(lastDate); 
-                    updateObj.Vat = Convert.ToInt32(vat);
+                    updateObj.Vat = Convert.ToInt16(vat);
                     updateObj.Pincode = pincode;
-                    updateObj.VoucherCode = voucherCode;
-                    updateObj.BookingNo = bookingNo;
-                    updateObj.IsCalled =  Convert.ToBoolean(isCalled);
-                    updateObj.Deposit =  Convert.ToInt32(deposit);
-                    updateObj.RemainPrice = Convert.ToInt32(remainPrice);
-                    updateObj.TotalPrice = Convert.ToInt32(totalPrice);
-                    updateObj.ModifyBy = modifyBy;
-                    updateObj.ModifyDate =  Convert.ToInt32(modifyDate);
                     return JsonSerializer.Serialize(updateObj);
                 }
                 CreateTourBookingViewModel createObj = new CreateTourBookingViewModel();
-                createObj.IdTourBooking = idTourBooking;
+                createObj.ScheduleId = scheduleId;
+                createObj.PaymentId = Convert.ToInt16(paymentId);
                 createObj.NameCustomer = nameCustomer;
                 createObj.Address = address;
                 createObj.Email = email;
                 createObj.Phone = phone;
                 createObj.NameContact = nameCustomer;
-                createObj.DateBooking = Convert.ToInt32(dateBooking);
-                createObj.LastDate = Convert.ToInt32(lastDate);
-                createObj.Vat = Convert.ToInt32(vat);
+                createObj.Vat = Convert.ToInt16(vat);
                 createObj.Pincode = pincode;
-                createObj.VoucherCode = voucherCode;
-                createObj.BookingNo = bookingNo;
-                createObj.IsCalled = Convert.ToBoolean(isCalled);
-                createObj.Deposit = Convert.ToInt32(deposit);
-                createObj.RemainPrice = Convert.ToInt32(remainPrice);
-                createObj.TotalPrice = Convert.ToInt32(totalPrice);
-                createObj.ModifyBy = modifyBy;
-                createObj.ModifyDate = Convert.ToInt32(modifyDate);
                 return JsonSerializer.Serialize(createObj);
             }
             catch (Exception e)

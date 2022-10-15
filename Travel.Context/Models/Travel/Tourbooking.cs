@@ -10,6 +10,11 @@ namespace Travel.Context.Models
     {
         public string IdTourbooking{get;set;}
         public int PaymentId { get; set; }
+        public Guid CustomerId { get; set; }
+
+        public string ScheduleId { get; set; }
+
+
         public string NameCustomer { get;set;}
         public string NameContact { get;set;}
         public string Phone{get;set;}
@@ -21,12 +26,16 @@ namespace Travel.Context.Models
         public string Address{get;set;}
         public string Email{get;set;}
         public string VoucherCode{get;set;}
+        public int ValuePromotion { get; set; }
         public bool   IsCalled{get;set;}
         public float  Deposit{get;set;}
         public float  RemainPrice{get;set;}
         public float  TotalPrice{get;set;}
+        public float TotalPricePromotion { get; set; }
         public string ModifyBy{get;set;}
         public long   ModifyDate{get;set;}
+        public virtual Schedule Schedule { get; set; }
+
         public virtual Payment Payment { get; set; }
         public virtual TourbookingDetails TourbookingDetails { get; set; }
 
