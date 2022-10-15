@@ -74,6 +74,14 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+        [HttpGet()]
+        [AllowAnonymous]
+        [Route("gets-place")]
+        public object GetPlace()
+        {
+            res = _serviceRes.GetPlace();
+            return Ok(res);
+        }
         [HttpPost]
         [Authorize]
         [Route("create-place")]

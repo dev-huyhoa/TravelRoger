@@ -29,6 +29,16 @@ namespace Travel.Shared.ViewModels.Travel.ServiceVM
             public float SingleRoomPrice { get => singleRoomPrice; set => singleRoomPrice = value; }
             public float DoubleRoomPrice { get => doubleRoomPrice; set => doubleRoomPrice = value; }
         }
+        public class PlaceViewModel : ParentProperty
+        {
+            private Guid idPlace;        
+          //  private string namePlace;    
+            private float priceTicket;
+
+            public Guid IdPlace { get => idPlace; set => idPlace = value; }
+           // public string NamePlace { get => namePlace; set => namePlace = value; }
+            public float PriceTicket { get => priceTicket; set => priceTicket = value; }
+        }
         public class ParentProperty
         {
             private Guid contractId;
