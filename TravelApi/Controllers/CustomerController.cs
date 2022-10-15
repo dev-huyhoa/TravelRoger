@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel.CustomerVM;
 
 namespace TravelApi.Controllers
 {
@@ -22,12 +25,14 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("create-customer")]
-        public object Create([FromBody] JObject frmData)
+        public object Create(IFormCollection frmdata, IFormFile file)
         {
-            var result = customer.CheckBeforeSave(frmData, ref message);
+            message = null;
+            var result = customer.CheckBeforeSave(frmdata, file, ref message, false);
             if (message == null)
             {
-                res = customer.Create(result);
+                var createObj = JsonSerializer.Deserialize<CreateCustomerViewModel>(result);
+                res = customer.Create(createObj);
             }
             else
             {
@@ -36,12 +41,12 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         [Route("gets-customer")]
-        public object Gets()
+        public object GetsEmployee([FromBody] JObject frmData)
         {
-            res = customer.Gets();
+            res = customer.Gets(frmData);
             return Ok(res);
         }
     }

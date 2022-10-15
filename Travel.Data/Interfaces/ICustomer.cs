@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,8 @@ namespace Travel.Data.Interfaces
 {
     public interface ICustomer
     {
-        CreateCustomerViewModel CheckBeforeSave(JObject frmData, ref Notification _message);
-        Response Gets();
+        string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate);
+        Response Gets(JObject frmData);
         Response Create(CreateCustomerViewModel input);
 
     }
