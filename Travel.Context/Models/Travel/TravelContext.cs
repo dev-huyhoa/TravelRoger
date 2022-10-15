@@ -108,8 +108,18 @@ namespace Travel.Context.Models.Travel
                 entity.HasKey(e => e.IdTourbookingDetails);
                 entity.Property(e => e.IdTourbookingDetails).HasMaxLength(30);
 
-                entity.Property(e => e.Pincode).HasMaxLength(10);
-                entity.Property(e => e.TourBookingId).HasMaxLength(30);
+
+                entity.HasOne(e => e.Restaurant)
+                .WithMany(e => e.TourBookingDetails)
+                .HasForeignKey(e => e.RestaurantId);
+
+                entity.HasOne(e => e.Place)
+                .WithMany(e => e.TourBookingDetails)
+                .HasForeignKey(e => e.PlaceId);
+
+                entity.HasOne(e => e.Hotel)
+                .WithMany(e => e.TourBookingDetails)
+                .HasForeignKey(e => e.HotelId);
             });
 
             modelBuilder.Entity<Province>(entity =>

@@ -8,6 +8,19 @@ namespace Travel.Shared.Ultilities
 {
     public class Enums
     {
+        public enum StatusBooking
+        {
+            Pending = -2, // đã huỷu và đang chờ hoàn tiền
+            Refunded = -1, // đã hoàn tiền
+
+            Paying = 1, // Đã đặt tour nhưng chưa thanh toán
+            Deposit = 2, // Đã đặt tour và có đặt cọc
+
+            Paid = 3, //  Đã thanh toán hết
+            Cancel = 4, // Hủy tour
+            Finished = 5, // Tour đã hoàn thành
+
+        }
         public enum TypeService
         {
             Hotel = 1,

@@ -27,6 +27,19 @@ namespace Travel.Shared.Ultilities
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
 
+                // create tourbooking details
+
+                cfg.CreateMap<CreateBookingDetailViewModel, TourbookingDetails>()
+                   .ForMember(dto => dto.IsCalled, opt => opt.MapFrom(src => false))
+                   .ForMember(dto => dto.CallDate, opt => opt.MapFrom(src => 0))
+                   .ForMember(dto => dto.Baby, opt => opt.MapFrom(src => src.Baby))
+                   .ForMember(dto => dto.Child, opt => opt.MapFrom(src =>src.Child))
+                   .ForMember(dto => dto.Adult, opt => opt.MapFrom(src => src.Adult == 0 ? 1 : src.Adult))
+                   .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
+                   .ForMember(dto => dto.HotelId, opt => opt.MapFrom(src => src.HotelId))
+                   .ForMember(dto => dto.RestaurantId, opt => opt.MapFrom(src => src.RestaurantId))
+                   .ForMember(dto => dto.PlaceId, opt => opt.MapFrom(src => src.PlaceId))
+                   ;
                 // create tourbooking
                 cfg.CreateMap<CreateTourBookingViewModel, Tourbooking>()
                    .ForMember(dto => dto.IdTourbooking, opt => opt.MapFrom(src => $"TRB-{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}"))
@@ -681,7 +694,11 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<CreateTourBookingViewModel, Tourbooking>(data);
         }
-
+        // create tourbookingDetail
+        public static TourbookingDetails MapCreateTourBookingDetail(CreateBookingDetailViewModel data)
+        {
+            return _mapper.Map<CreateBookingDetailViewModel, TourbookingDetails>(data);
+        }
 
         // Create  cost
         public static CostTour MapCreateCost(CreateCostViewModel data)

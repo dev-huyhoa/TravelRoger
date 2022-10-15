@@ -25,6 +25,8 @@ namespace Travel.Shared.ViewModels.Travel.TourBookingVM
         private double vat;
         private string pincode;
         private string voucherCode;
+        private CreateBookingDetailViewModel bookingDetails;
+
 
 
         public string IdTourBooking { get => idTourBooking; set => idTourBooking = value; }
@@ -38,5 +40,6 @@ namespace Travel.Shared.ViewModels.Travel.TourBookingVM
         public string VoucherCode { get => voucherCode; set => voucherCode = value; }
         public string ScheduleId { get => scheduleId; set => scheduleId = value; }
         public int PaymentId { get => paymentId; set => paymentId = value; }
+        public CreateBookingDetailViewModel BookingDetails { get => bookingDetails; set => bookingDetails = value; }
     }
 }

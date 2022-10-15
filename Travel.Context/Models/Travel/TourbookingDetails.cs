@@ -12,11 +12,15 @@ namespace Travel.Context.Models
         public int    Baby{get;set;}
         public int    Child{get;set;}
         public int    Adult{get;set;}
-        public string Pincode{get;set;}
         public int    Status{get;set;}
         public bool   IsCalled{get;set;}
         public long   CallDate{get;set;}
-        public string TourBookingId{get;set;}
+        public Guid HotelId { get; set; }
+        public Guid RestaurantId { get; set; }
+        public Guid PlaceId { get; set; }
+        public virtual Hotel Hotel { get; set; }
+        public virtual Restaurant Restaurant { get; set; }
+        public virtual Place Place { get; set; }
         public virtual Tourbooking Tourbooking { get; set; }
 
     }

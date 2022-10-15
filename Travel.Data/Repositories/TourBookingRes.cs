@@ -35,6 +35,50 @@ namespace Travel.Data.Repositories
                 {
                     //   payment.IdPayment = idPay;
                 }
+
+
+                var baby = PrCommon.GetString("baby", frmData);
+                if (String.IsNullOrEmpty(baby))
+                {
+                    //   payment.IdPayment = idPay;
+                }
+
+                var child = PrCommon.GetString("child", frmData);
+                if (String.IsNullOrEmpty(child))
+                {
+                    //   payment.IdPayment = idPay;
+                }
+
+                var adult = PrCommon.GetString("adult", frmData);
+                if (String.IsNullOrEmpty(adult))
+                {
+                    //   payment.IdPayment = idPay;
+                }
+
+                var status = PrCommon.GetString("status", frmData);
+                if (String.IsNullOrEmpty(status))
+                {
+                    //   payment.IdPayment = idPay;
+                }
+                var hotelId = PrCommon.GetString("hotelId", frmData);
+                if (String.IsNullOrEmpty(hotelId))
+                {
+                    //   payment.IdPayment = idPay;
+                }
+                var restaurantId = PrCommon.GetString("restaurantId", frmData);
+                if (String.IsNullOrEmpty(restaurantId))
+                {
+                    //   payment.IdPayment = idPay;
+                }
+                var placeId = PrCommon.GetString("placeId", frmData);
+                if (String.IsNullOrEmpty(placeId))
+                {
+                    //   payment.IdPayment = idPay;
+                }
+
+
+
+
                 var scheduleId = PrCommon.GetString("scheduleId", frmData);
                 if (String.IsNullOrEmpty(scheduleId))
                 {
@@ -71,6 +115,8 @@ namespace Travel.Data.Repositories
                 var pincode = PrCommon.GetString("pincode", frmData);
                 if (String.IsNullOrEmpty(pincode))
                 { }
+
+
               if (isUpdate)
                 {
                     CreateTourBookingViewModel updateObj = new CreateTourBookingViewModel();
@@ -84,7 +130,16 @@ namespace Travel.Data.Repositories
                     updateObj.Pincode = pincode;
                     return JsonSerializer.Serialize(updateObj);
                 }
-                CreateTourBookingViewModel createObj = new CreateTourBookingViewModel();
+                CreateBookingDetailViewModel createDetailObj = new CreateBookingDetailViewModel();
+                createDetailObj.Baby = Convert.ToInt16(baby);
+                createDetailObj.Child = Convert.ToInt16(child);
+                createDetailObj.Adult = Convert.ToInt16(adult);
+                createDetailObj.Status = (Enums.StatusBooking)(Convert.ToInt16(status));
+                createDetailObj.HotelId = Guid.Parse(hotelId);
+                createDetailObj.RestaurantId = Guid.Parse(restaurantId);
+                createDetailObj.PlaceId = Guid.Parse(placeId);
+
+                  CreateTourBookingViewModel createObj = new CreateTourBookingViewModel();
                 createObj.ScheduleId = scheduleId;
                 createObj.PaymentId = Convert.ToInt16(paymentId);
                 createObj.NameCustomer = nameCustomer;
@@ -94,6 +149,7 @@ namespace Travel.Data.Repositories
                 createObj.NameContact = nameCustomer;
                 createObj.Vat = Convert.ToInt16(vat);
                 createObj.Pincode = pincode;
+                createObj.BookingDetails = createDetailObj;
                 return JsonSerializer.Serialize(createObj);
             }
             catch (Exception e)
@@ -113,6 +169,8 @@ namespace Travel.Data.Repositories
             {
                 Tourbooking tourbooking =
                 tourbooking = Mapper.MapCreateTourBooking(input);
+                TourbookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
+                tourbooking.TourbookingDetails = tourBookingDetail;
                 _db.Tourbookings.Add(tourbooking);
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;

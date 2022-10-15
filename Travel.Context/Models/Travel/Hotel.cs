@@ -22,5 +22,7 @@ namespace Travel.Context.Models
         public string ModifyBy { get; set; }
         public long ModifyDate { get; set; }
         public virtual ICollection<CostTour> CostTours { get; set; }
+        public virtual ICollection<TourbookingDetails> TourBookingDetails { get; set; }
+
     }
 }
