@@ -41,10 +41,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("gets-customer")]
-        public object GetsEmployee()
+        public object GetCustomer()
         {
             res = customer.Gets();
             return Ok(res);
