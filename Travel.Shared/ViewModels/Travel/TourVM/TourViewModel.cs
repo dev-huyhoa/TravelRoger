@@ -34,7 +34,7 @@ namespace Travel.Shared.ViewModels.Travel
         private float priceAdultPromotion;
 
         private TourDetailViewModel tourDetail;
-
+        private ICollection<ScheduleViewModel> schedules;
 
         public string TourName { get => tourName; set => tourName = value; }
         public double Rating { get => rating; set => rating = value; }
@@ -52,5 +52,6 @@ namespace Travel.Shared.ViewModels.Travel
         public float PriceAdult { get => priceAdult; set => priceAdult = value; }
         public float PriceAdultPromotion { get => priceAdultPromotion; set => priceAdultPromotion = value; }
         public TourDetailViewModel TourDetail { get => tourDetail; set => tourDetail = value; }
+        public ICollection<ScheduleViewModel> Schedules { get => schedules; set => schedules = value; }
     }
 }
