@@ -154,6 +154,34 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response GetHotel()
+        {
+            try
+            {
+                var list = (from x in _db.Hotels select x).ToList();
+                var result = Mapper.MapHotel(list);
+                if (list.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
         public Response CreateHotel(CreateHotelViewModel input)
         {
             try
@@ -190,6 +218,33 @@ namespace Travel.Data.Repositories
             return res;
         }
 
+        public Response GetRestaurant()
+        {
+            try
+            {
+                var list = (from x in _db.Restaurants select x).ToList();
+                var result = Mapper.MapRestaurant(list);
+                if (list.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
         public Response CreateRestaurant(CreateRestaurantViewModel input)
         {
             Restaurant restaurant

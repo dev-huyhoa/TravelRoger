@@ -27,6 +27,15 @@ namespace TravelApi.Controllers
             res = new Response();
         }
 
+        [HttpGet()]
+        [Authorize]
+        [Route("gets-hotel")]
+        public object GetHotel()
+        {
+            res = _serviceRes.GetHotel();
+            return Ok(res);
+        }
+
         [HttpPost]
         [Authorize]
         [Route("create-hotel")]
@@ -39,6 +48,15 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreateHotelViewModel>(result);
                 res = _serviceRes.CreateHotel(createObj);
             }
+            return Ok(res);
+        }
+
+        [HttpGet()]
+        [Authorize]
+        [Route("gets-restaurant")]
+        public object GetRestaurant()
+        {
+            res = _serviceRes.GetRestaurant();
             return Ok(res);
         }
         [HttpPost]
