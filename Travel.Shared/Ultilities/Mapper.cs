@@ -395,7 +395,15 @@ namespace Travel.Shared.Ultilities
 
 
 
-
+                cfg.CreateMap<Place, PlaceViewModel>()
+                       .ForMember(dto => dto.IdPlace, opt => opt.MapFrom(src => src.IdPlace))
+                          .ForMember(dto => dto.PriceTicket, opt => opt.MapFrom(src => src.PriceTicket))
+                               .ForMember(dto => dto.ContractId, opt => opt.MapFrom(src => src.ContractId))
+                          .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => ""))
+                         .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => 0))
+                         .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
+                         .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
+                         .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.NamePlace));
                 // create 
 
                 // create Place
@@ -505,7 +513,10 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<List<TourDetail>, List<TourDetailViewModel>>(data);
         }
-
+        public static List<PlaceViewModel> MapPlace(List<Place> data)
+        {
+            return _mapper.Map<List<Place>, List<PlaceViewModel>>(data);
+        }
         public static PaymentViewModel MapPayment(Payment data)
         {
             return _mapper.Map<Payment, PaymentViewModel>(data);
