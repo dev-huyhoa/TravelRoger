@@ -8,13 +8,17 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
 {
     public class CreateCustomerViewModel
     {
+        private Guid idCustomer;
         private string nameCustomer;
         private string phone;
         private string email;
         private string address;
         private bool gender;
-        private string password;
+        private string password;     
         private long birthday;
+
+
+        public Guid IdCustomer { get => idCustomer; set => idCustomer = value; }
         public string NameCustomer { get => nameCustomer; set => nameCustomer = value; }
         public string Phone { get => phone; set => phone = value; }
         public string Email { get => email; set => email = value; }

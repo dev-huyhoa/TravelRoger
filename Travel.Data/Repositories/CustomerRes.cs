@@ -11,6 +11,8 @@ using Travel.Shared.Ultilities;
 using PrUtility;
 using Travel.Context.Models.Travel;
 using Travel.Context.Models;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace Travel.Data.Repositories
 {
@@ -26,124 +28,85 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
-        public CreateCustomerViewModel CheckBeforeSave(JObject frmData, ref Notification _message)
+
+        public string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate)
         {
-            CreateCustomerViewModel customer = new CreateCustomerViewModel();
             try
             {
-                int error = 0;
-                var name = PrCommon.GetString("nameCustomer", frmData);
-                if (!String.IsNullOrEmpty(name))
+                JObject frmData = JObject.Parse(frmdata["data"]);
+                if (frmData != null)
                 {
-                    customer.NameCustomer = name.Trim();
-                }
-                else
-                {
-                    error++;
-                }
+                    var idCustomer = PrCommon.GetString("idCustomer", frmData);
+                    if (String.IsNullOrEmpty(idCustomer))
+                    {
+                        idCustomer = Guid.NewGuid().ToString();
+                    }
 
-                var point = PrCommon.GetString("point", frmData);
-                if (!String.IsNullOrEmpty(point))
-                {
-                    customer.Phone = point.Trim();
-                }
-                else
-                {
-                    error++;
-                }
+                    var nameCustomer = PrCommon.GetString("nameEmployee", frmData);
+                    if (String.IsNullOrEmpty(nameCustomer))
+                    {
+                    }
 
-                var phone = PrCommon.GetString("phone", frmData);
-                if (!String.IsNullOrEmpty(phone))
-                {
-                    customer.Phone = phone.Trim();
-                }
-                else
-                {
-                    error++;
-                }
-
-                var email = PrCommon.GetString("email", frmData);
-                if (!String.IsNullOrEmpty(email))
-                {
-                    customer.Email = email.Trim();
-                }
-                else
-                {
-                    error++;
-                }
+                    var email = PrCommon.GetString("email", frmData);
+                    if (String.IsNullOrEmpty(email))
+                    {
+                    }
 
 
-                var address = PrCommon.GetString("address", frmData);
-                if (!String.IsNullOrEmpty(address))
-                {
-                    customer.Address = address.Trim();
-                }
-                else
-                {
-                    error++;
-                }
+                    var phone = PrCommon.GetString("phone", frmData);
+                    if (String.IsNullOrEmpty(phone))
+                    {
+                    }
+                    var birthday = PrCommon.GetString("birthday", frmData);
+                    if (String.IsNullOrEmpty(birthday))
+                    {
+                    }
 
-                var birthday = PrCommon.GetString("birthday", frmData);
-                if (!String.IsNullOrEmpty(birthday))
-                {
-                    customer.Birthday = long.Parse(birthday);
-                }
-                else
-                {
-                    error++;
-                }
 
-                var password = PrCommon.GetString("password", frmData);
-                if (!String.IsNullOrEmpty(password))
-                {
-                    customer.Password = password.Trim();
-                }
-                else
-                {
-                    error++;
-                }
+                    var address = PrCommon.GetString("address", frmData);
+                    if (String.IsNullOrEmpty(address))
+                    {
+                    }
 
-                if (error > 0)
-                {
-                    message.DateTime = DateTime.Now;
-                    message.Messenge = "Dữ liệu không hợp lệ !";
-                    message.Type = "Error";
+                    var password = PrCommon.GetString("password", frmData);
+                    if (String.IsNullOrEmpty(password))
+                    {
+                    }
 
-                    _message = message;
+                    var gender = PrCommon.GetString("gender", frmData);
+                    if (String.IsNullOrEmpty(gender))
+                    {
+                    }
+
+                    var modifyBy = PrCommon.GetString("modifyBy", frmData);
+                    if (String.IsNullOrEmpty(modifyBy))
+                    {
+                    }
+
+                    if (isUpdate)
+                    {
+                    }
+                        CreateCustomerViewModel objCreate = new CreateCustomerViewModel();
+                        objCreate.IdCustomer = Guid.Parse(idCustomer);
+                        objCreate.NameCustomer = nameCustomer;
+                        objCreate.Phone = phone;
+                        objCreate.Email = email;
+                        objCreate.Address = address;
+                        objCreate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(birthday));
+                        return JsonSerializer.Serialize(objCreate);
+                    }
+                    return string.Empty;
                 }
-
-                var gender = PrCommon.GetString("gender", frmData);
-                if (!String.IsNullOrEmpty(gender))
-                {
-                    customer.Gender = Boolean.Parse(gender);
-                }
-                else
-                {
-                    error++;
-                }
-
-                if (error > 0)
-                {
-                    message.DateTime = DateTime.Now;
-                    message.Messenge = "Dữ liệu không hợp lệ !";
-                    message.Type = "Error";
-
-                    _message = message;
-                }
-                return customer;
-
-            }
             catch (Exception e)
             {
-
                 message.DateTime = DateTime.Now;
                 message.Description = e.Message;
                 message.Messenge = "Có lỗi xảy ra !";
                 message.Type = "Error";
 
                 _message = message;
-                 return customer;
-            }
+                return string.Empty;
+            }     
         }
 
         public Response Create(CreateCustomerViewModel input)
@@ -173,10 +136,17 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Gets()
+        public Response Gets(JObject frmData)
         {
             try
-            {          
+            {
+                var isDelete = false;
+                var check = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(check))
+                {
+                    isDelete = Boolean.Parse(check);
+                }
+
                 var listCus = (from x in _db.Customers where x.IsDelete == false select x).ToList();
                 var result = Mapper.MapCustomer(listCus);
 
@@ -201,5 +171,6 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
     }
 }

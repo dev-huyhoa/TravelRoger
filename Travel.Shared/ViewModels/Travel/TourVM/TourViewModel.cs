@@ -27,8 +27,6 @@ namespace Travel.Shared.ViewModels.Travel
         private bool isDelete;
         private bool isActive;
 
-        private ICollection<Schedule> schedules;
-
         public string Id { get => id; set => id = value; }
         public string TourName { get => tourName; set => tourName = value; }
         public double Rating { get => rating; set => rating = value; }
@@ -42,6 +40,5 @@ namespace Travel.Shared.ViewModels.Travel
         public long ModifyDate { get => modifyDate; set => modifyDate = value; }
         public bool IsDelete { get => isDelete; set => isDelete = value; }
         public bool IsActive { get => isActive; set => isActive = value; }
-        public ICollection<Schedule> Schedules { get => schedules; set => schedules = value; }
     }
 }

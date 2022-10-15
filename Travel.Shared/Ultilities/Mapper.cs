@@ -242,7 +242,7 @@ namespace Travel.Shared.Ultilities
                          .ForMember(dto => dto.Point, otp => otp.MapFrom(src => src.Point));
 
                 cfg.CreateMap<CreateCustomerViewModel, Customer>()
-                        //.ForMember(dto => dto., opt => opt.MapFrom(src => src.IdTour))
+                        .ForMember(dto => dto.IdCustomer, otp => otp.MapFrom(src => src.IdCustomer))
                         .ForMember(dto => dto.NameCustomer, otp => otp.MapFrom(src => src.NameCustomer))
                         .ForMember(dto => dto.Phone, otp => otp.MapFrom(src => src.Phone))
                         .ForMember(dto => dto.Email, otp => otp.MapFrom(src => src.Email))
@@ -250,7 +250,6 @@ namespace Travel.Shared.Ultilities
                         .ForMember(dto => dto.Address, otp => otp.MapFrom(src => src.Address))
                         .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
                         .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password));
-
 
                 cfg.CreateMap<Province, ProvinceViewModel>()
                        .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => src.IdProvince))
