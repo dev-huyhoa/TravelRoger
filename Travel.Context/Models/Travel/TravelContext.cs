@@ -261,7 +261,7 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Address).HasMaxLength(255);
                 entity.Property(e => e.AccessToken).HasMaxLength(550);
                 entity.Property(e => e.Phone).HasMaxLength(15).IsRequired(true);
-                entity.Property(e => e.Image).HasMaxLength(100).IsRequired(true);
+                entity.Property(e => e.Image).HasMaxLength(255).IsRequired(true);
                 entity.Property(e => e.ModifyBy).HasMaxLength(50);
                 entity.HasOne(e => e.Role)
                 .WithMany(e => e.Employees)
