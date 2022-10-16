@@ -52,6 +52,15 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("gets-tour-waiting")]
+        public object GetWaiting()
+        {
+            res = _tourRes.GetWaiting();
+            return Ok(res);
+        }
+
         // POST api/<TourController>
         [HttpPost]
         public void Post([FromBody] string value)

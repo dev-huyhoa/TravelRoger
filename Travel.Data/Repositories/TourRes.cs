@@ -125,21 +125,40 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.Tour where x.IsDelete == false select x).ToList();
+                var list = (from x in _db.Tour where x.IsDelete == false 
+                            where x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) select x).ToList();
                 var result = Mapper.MapTour(list);
                 if (list.Count()>0)
                 {
                     res.Content = result;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
                 return res;
             }
             catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response GetWaiting()
+        {
+            try
+            {
+             
+                var list = (from x in _db.Tour where(x.IsDelete == false)
+                            where(x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting)) select x ).ToList();
+                var result = Mapper.MapTour(list);
+                if (list.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                return res;
+            }
+            catch(Exception e)
             {
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Description = e.Message;
