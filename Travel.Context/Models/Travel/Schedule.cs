@@ -13,6 +13,7 @@ namespace Travel.Context.Models
         public long EndDate { get; set; }
         public long TimePromotion { get; set; }
         public int Status { get; set; }
+        public int Approve { get; set; }
         public float FinalPrice { get; set; }
         public float QuantityAdult { get; set; }
         public float QuantityBaby { get; set; }

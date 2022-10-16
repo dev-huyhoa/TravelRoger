@@ -27,6 +27,18 @@ namespace TravelApi.Controllers
             res = new Response();
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
         [HttpGet()]
         [Authorize]
         [Route("gets-hotel")]
@@ -35,6 +47,33 @@ namespace TravelApi.Controllers
             res = _serviceRes.GetHotel();
             return Ok(res);
         }
+        [HttpGet()]
+        [Authorize]
+        [Route("gets-hotel-waiting")]
+        public object GetHotelWaiting()
+        {
+            res = _serviceRes.GetWaitingHotel();
+            return Ok(res);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         [HttpPost]
         [Authorize]
@@ -50,6 +89,33 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         [HttpGet()]
         [Authorize]

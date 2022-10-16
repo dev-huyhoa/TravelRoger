@@ -154,11 +154,21 @@ namespace Travel.Data.Repositories
             }
         }
 
+
+
+
+
+
+
+
+
         public Response GetHotel()
         {
             try
             {
-                var list = (from x in _db.Hotels select x).ToList();
+                var list = (from x in _db.Hotels where x.Approve
+                            == Convert.ToInt16(Enums.ApproveStatus.Approved)
+                            select x).ToList();
                 var result = Mapper.MapHotel(list);
                 if (list.Count() > 0)
                 {
@@ -181,6 +191,7 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
 
         public Response CreateHotel(CreateHotelViewModel input)
         {
@@ -228,12 +239,7 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
+        
                 return res;
             }
             catch (Exception e)
@@ -267,11 +273,28 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-                else
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response GetWaitingHotel()
+        {
+            try
+            {
+                var listWaiting = (from x in _db.Hotels where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                var result = Mapper.MapHotel(listWaiting);
+
+                if (listWaiting.Count() > 0)
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
+                    res.Content = result;
                 }
                 return res;
             }

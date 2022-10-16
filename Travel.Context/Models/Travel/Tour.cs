@@ -12,7 +12,7 @@ namespace Travel.Context.Models
         public double Rating { get; set; }
         public string FromPlace { get; set; }
         public string ToPlace { get; set; }
-        public string ApproveStatus { get; set; }
+        public int ApproveStatus { get; set; }
         public int Status { get; set; }
         public long CreateDate { get; set; }
         public string ModifyBy { get; set; }

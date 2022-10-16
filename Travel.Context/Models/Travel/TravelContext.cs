@@ -326,7 +326,6 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Thumbsnail).HasMaxLength(150);
                 entity.Property(e => e.FromPlace).HasMaxLength(100);
                 entity.Property(e => e.ToPlace).HasMaxLength(100);
-                entity.Property(e => e.ApproveStatus).HasMaxLength(100);
 
                 entity.HasOne<TourDetail>(e => e.TourDetail)
                 .WithOne(e => e.Tour)

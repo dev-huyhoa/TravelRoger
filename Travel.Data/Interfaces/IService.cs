@@ -13,6 +13,7 @@ namespace Travel.Data.Interfaces
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, Shared.Ultilities.Enums.TypeService type, bool isUpdate = false);
         Response GetHotel();
+        Response GetWaitingHotel();
         Response CreateHotel(CreateHotelViewModel input);
         Response GetRestaurant();
         Response CreateRestaurant(CreateRestaurantViewModel input);

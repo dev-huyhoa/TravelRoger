@@ -101,6 +101,9 @@ namespace TravelApi
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
+
+
+            // signal R
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
                 endpoints.MapHub<TravelHub>("/travelhub");

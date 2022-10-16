@@ -102,7 +102,7 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateProvinceViewModel>(result);
                 res = location.CreateProvince(createObj);
-                _messageHub.Clients.All.Insert();
+
             }
             else
             {

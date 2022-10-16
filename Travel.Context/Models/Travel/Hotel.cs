@@ -15,6 +15,7 @@ namespace Travel.Context.Models
         public string Phone { get; set; }
         public string Address { get; set; }
         public int Star { get; set; }
+        public int Approve { get; set; }
         public float SingleRoomPrice { get; set; }
         public float DoubleRoomPrice { get; set; }
         public int QuantityDBR { get; set; }

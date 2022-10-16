@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using TravelApi.Hubs;
 
 namespace TravelApi.Controllers
 {
@@ -23,9 +25,12 @@ namespace TravelApi.Controllers
         private IEmployee employee;
         private Notification message;
         private Response res;
-        public EmployeeController(IEmployee _employee)
+        private IHubContext<TravelHub, ITravelHub> _messageHub;
+        public EmployeeController(IEmployee _employee,
+                 IHubContext<TravelHub, ITravelHub> messageHub)
         {
             employee = _employee;
+            _messageHub = messageHub;
             res = new Response();
         }
 
@@ -58,6 +63,7 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateEmployeeViewModel>(result);
                 res = employee.CreateEmployee(createObj);
+                _messageHub.Clients.All.Insert();
             }
             else
             {
@@ -65,6 +71,8 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+
+
 
         [HttpPost]
         [Authorize] 
