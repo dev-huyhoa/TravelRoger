@@ -254,6 +254,28 @@ namespace Travel.Data.Repositories
             res.Notification.Type = "Success";
             return res;
         }
+        public Response GetWaitingRestaurant()
+        {
+            try
+            {
+                var listWaiting = (from x in _db.Restaurants where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                var result = Mapper.MapRestaurant(listWaiting);
+
+                if (listWaiting.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
 
         public Response GetPlace()
         {

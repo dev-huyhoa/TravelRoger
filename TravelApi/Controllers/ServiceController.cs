@@ -122,7 +122,14 @@ namespace TravelApi.Controllers
 
 
 
-
+        [HttpGet()]
+        [Authorize]
+        [Route("gets-restaurant-waiting")]
+        public object GetWaitingRestaurant()
+        {
+            res = _serviceRes.GetWaitingRestaurant();
+            return Ok(res);
+        }
 
         [HttpGet()]
         [Authorize]
