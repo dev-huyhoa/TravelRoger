@@ -29,6 +29,7 @@ namespace Travel.Data.Repositories
 
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
+            CreatePromotionViewModel promotion = new CreatePromotionViewModel();
             try
             {
 
@@ -39,6 +40,15 @@ namespace Travel.Data.Repositories
                 //if (isExistName(tourName))
                 //{
                 //}
+                var idPromotion = PrCommon.GetString("idPromotion", frmData);
+                if (!String.IsNullOrEmpty(idPromotion))
+                {
+                    promotion.IdPromotion = Guid.Parse(idPromotion);
+                }
+                else
+                {
+                    
+                }
                 var value = PrCommon.GetString("value", frmData);
                 if (String.IsNullOrEmpty(value))
                 {
@@ -93,33 +103,33 @@ namespace Travel.Data.Repositories
             }
         }
 
-        //public Response Gets()
-        //{
-        //    try
-        //    {
-        //        var listPromotion = (from x in _db.Promotions select x).ToList();
-        //        var result = Mapper.MapPromotion(listPromotion);
-        //        if (result.Count() > 0)
-        //        {
-        //            res.Content = result;
-        //        }
-        //        else
-        //        {
-        //            res.Notification.DateTime = DateTime.Now;
-        //            res.Notification.Messenge = "Không có dữ liệu trả về !";
-        //            res.Notification.Type = "Warning";
-        //        }
-        //        return res;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        res.Notification.DateTime = DateTime.Now;
-        //        res.Notification.Description = e.Message;
-        //        res.Notification.Messenge = "Có lỗi xảy ra !";
-        //        res.Notification.Type = "Error";
-        //        return res;
-        //    }
-        //}
+        public Response Gets()
+        {
+            try
+            {
+                var listPromotion = (from x in _db.Promotions select x).ToList();
+                var result = Mapper.MapPromotion(listPromotion);
+                if (result.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
 
         public Response Create(CreatePromotionViewModel input)
         {

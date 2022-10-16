@@ -12,7 +12,7 @@ namespace Travel.Data.Interfaces
     public interface IPromotions
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate);
-        //Response Gets();
+        Response Gets();
         Response Create(CreatePromotionViewModel input);
 
 

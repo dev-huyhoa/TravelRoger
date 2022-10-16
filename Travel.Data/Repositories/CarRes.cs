@@ -32,48 +32,62 @@ namespace Travel.Data.Repositories
             try
             {
                 int error = 0;
-                var id = PrCommon.GetString("nameCar", frmData);
-                if (!String.IsNullOrEmpty(id))
+                var idCar = PrCommon.GetString("idCar", frmData); 
+                if (!String.IsNullOrEmpty(idCar))  
                 {
-                    car.IdCar = Guid.Parse(id);
+                    car.IdCar = Guid.Parse(idCar);
                 }
                 else
                 {
                     error++;
                 }
 
-                var name = PrCommon.GetString("nameCar", frmData);
-                if (!String.IsNullOrEmpty(name))
+                var nameDriver = PrCommon.GetString("nameDriver", frmData);
+                if (!String.IsNullOrEmpty(nameDriver))
                 {
-                    car.NameDriver = name.Trim();
+                    car.NameDriver = nameDriver.Trim();
                 }
                 else
                 {
                     error++;
                 }
 
+                var amountSeat = PrCommon.GetString("amountSeat", frmData);
+                if (!String.IsNullOrEmpty(amountSeat))
                 {
-                    error++;
-                }
-
-                var liscenseplate = PrCommon.GetString("nameCar", frmData);
-                if (!String.IsNullOrEmpty(name))
-                {
-                    car.LiscensePlate = name.Trim();
+                    //car.AmountSeat = amountSeat.Trim();
                 }
                 else
                 {
                     error++;
                 }
 
+                var liscenseplate = PrCommon.GetString("liscenseplate", frmData);
+                if (!String.IsNullOrEmpty(liscenseplate))
+                {
+                    car.LiscensePlate = liscenseplate.Trim();
+                }
+                else
                 {
                     error++;
                 }
+
+           
 
                 var phone = PrCommon.GetString("Phone", frmData);
                 if (!String.IsNullOrEmpty(phone))
                 {
                     car.Phone = phone.Trim();
+                }
+                else
+                {
+                    error++;
+                }
+
+                var status = PrCommon.GetString("status", frmData);
+                if (!String.IsNullOrEmpty(status))
+                {
+                    //car.Status = status.Trim();
                 }
                 else
                 {

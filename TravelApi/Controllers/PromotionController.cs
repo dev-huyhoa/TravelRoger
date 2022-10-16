@@ -24,14 +24,14 @@ namespace TravelApi.Controllers
             res = new Response();
         }
 
-        //[HttpGet]
-        //[Authorize]
-        //[Route("gets-promotion")]
-        //public object Gets()
-        //{
-        //    res = promotion.Gets();
-        //    return Ok(res);
-        //}
+        [HttpGet]
+        [Authorize]
+        [Route("gets-promotion")]
+        public object Gets()
+        {
+            res = promotion.Gets();
+            return Ok(res);
+        }
 
         [HttpPost]
         [Authorize]
