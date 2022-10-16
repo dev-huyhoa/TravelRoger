@@ -72,10 +72,10 @@ namespace Travel.Data.Repositories
                     updateObj.CarId = Guid.Parse(carId);
                     updateObj.EmployeeId = Guid.Parse(employeeId);
                     updateObj.PromotionId =Convert.ToInt32(promotionId);
-                    updateObj.DepartureDate = Convert.ToInt32(departureDate);
-                    updateObj.BeginDate = Convert.ToInt32(beginDate);
-                    updateObj.EndDate = Convert.ToInt32(endDate);
-                    updateObj.TimePromotion = Convert.ToInt32(timePromotion);
+                    updateObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(departureDate));
+                    updateObj.BeginDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(beginDate));
+                    updateObj.EndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(endDate));
+                    updateObj.TimePromotion = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(timePromotion));
                     updateObj.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                     return JsonSerializer.Serialize(updateObj);
                 }
@@ -84,10 +84,10 @@ namespace Travel.Data.Repositories
                 createObj.CarId = Guid.Parse(carId);
                 createObj.EmployeeId = Guid.Parse(employeeId);
                 createObj.PromotionId = Convert.ToInt32(promotionId);
-                createObj.DepartureDate = Convert.ToInt32(departureDate);
-                createObj.BeginDate = Convert.ToInt32(beginDate);
-                createObj.EndDate = Convert.ToInt32(endDate);
-                createObj.TimePromotion = Convert.ToInt32(timePromotion);
+                createObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(departureDate));
+                createObj.BeginDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(beginDate));
+                createObj.EndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(endDate));
+                createObj.TimePromotion = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(timePromotion));
                 createObj.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                 return JsonSerializer.Serialize(createObj);
             }
