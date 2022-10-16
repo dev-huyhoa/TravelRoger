@@ -17,6 +17,7 @@ namespace Travel.Data.Interfaces
         Response CreateHotel(CreateHotelViewModel input);
         Response GetRestaurant();
         Response CreateRestaurant(CreateRestaurantViewModel input);
+        Response GetWaitingHPlace();
         Response GetPlace();
         Response CreatePlace(CreatePlaceViewModel input);
 

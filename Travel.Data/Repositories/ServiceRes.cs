@@ -154,14 +154,6 @@ namespace Travel.Data.Repositories
             }
         }
 
-
-
-
-
-
-
-
-
         public Response GetHotel()
         {
             try
@@ -291,6 +283,29 @@ namespace Travel.Data.Repositories
             {
                 var listWaiting = (from x in _db.Hotels where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
                 var result = Mapper.MapHotel(listWaiting);
+
+                if (listWaiting.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response GetWaitingHPlace()
+        {
+            try
+            {
+                var listWaiting = (from x in _db.Places where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                var result = Mapper.MapPlace(listWaiting);
 
                 if (listWaiting.Count() > 0)
                 {

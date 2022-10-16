@@ -55,7 +55,14 @@ namespace TravelApi.Controllers
             res = _serviceRes.GetWaitingHotel();
             return Ok(res);
         }
-
+        [HttpGet()]
+        [Authorize]
+        [Route("gets-place-waiting")]
+        public object GetPlaceWaiting()
+        {
+            res = _serviceRes.GetWaitingHPlace();
+            return Ok(res);
+        }
 
 
 
