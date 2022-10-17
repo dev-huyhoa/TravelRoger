@@ -23,7 +23,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         [Route("create-customer")]
         public object Create(IFormCollection frmdata, IFormFile file)
         {

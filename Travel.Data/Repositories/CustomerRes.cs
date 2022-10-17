@@ -42,7 +42,7 @@ namespace Travel.Data.Repositories
                         idCustomer = Guid.NewGuid().ToString();
                     }
 
-                    var nameCustomer = PrCommon.GetString("nameEmployee", frmData);
+                    var nameCustomer = PrCommon.GetString("nameCustomer", frmData);
                     if (String.IsNullOrEmpty(nameCustomer))
                     {
                     }
@@ -93,6 +93,7 @@ namespace Travel.Data.Repositories
                         objCreate.Email = email;
                         objCreate.Address = address;
                         objCreate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(birthday));
+                        objCreate.Password = Ultility.Encryption(password);
                         return JsonSerializer.Serialize(objCreate);
                     }
                     return string.Empty;
