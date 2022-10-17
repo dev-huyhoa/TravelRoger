@@ -281,7 +281,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.Places select x).ToList();
+                var list = (from x in _db.Places where x.Approve == Convert.ToInt16(ApproveStatus.Approved) select x).ToList();
                 var result = Mapper.MapPlace(list);
                 if (list.Count() > 0)
                 {
