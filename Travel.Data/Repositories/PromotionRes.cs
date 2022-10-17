@@ -43,12 +43,9 @@ namespace Travel.Data.Repositories
                 var idPromotion = PrCommon.GetString("idPromotion", frmData);
                 if (!String.IsNullOrEmpty(idPromotion))
                 {
-                    promotion.IdPromotion = Guid.Parse(idPromotion);
-                }
-                else
-                {
                     
                 }
+               
                 var value = PrCommon.GetString("value", frmData);
                 if (String.IsNullOrEmpty(value))
                 {
@@ -81,14 +78,11 @@ namespace Travel.Data.Repositories
                 //// map data
                 CreatePromotionViewModel obj = new CreatePromotionViewModel();
 
-                ////obj.NameTour = tourName;
-                //obj.Value = value;
-                //obj.ToDate = toDate;
-                //obj.FromDate = fromDate;
-                ////obj.Description = description;
-                ////obj.VAT = Convert.ToInt16(vat);
-                //// generate ID
-                //obj.IdPromotion = Ultility.GenerateId(promotion);
+             
+                obj.Value = Convert.ToInt16(value);
+                obj.ToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(toDate));
+                obj.FromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(fromDate));
+                obj.IdPromotion = Convert.ToInt16(idPromotion); 
 
                 return JsonSerializer.Serialize(obj);
             }

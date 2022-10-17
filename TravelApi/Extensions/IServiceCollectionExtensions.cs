@@ -60,6 +60,8 @@ namespace TravelApi.Extensions
           .AddScoped<IService, ServiceRes>();
             services
    .AddScoped<ITourBooking, TourBookingRes>();
+            services
+                .AddScoped<IPromotions, PromotionRes>();
             return services;
         
 
