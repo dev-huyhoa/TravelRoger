@@ -34,12 +34,12 @@ namespace TravelApi.Controllers
             res = new Response();
         }
 
-        [HttpPost]
+        [HttpGet("{id}")]
         [Authorize]
         [Route("gets-employee")]
-        public object GetsEmployee([FromBody] JObject frmData)
+        public object GetsEmployee(bool isDelete)
         {
-            res =  employee.GetsEmployee(frmData);
+            res =  employee.GetsEmployee(isDelete);
             return Ok(res);
         }
 
@@ -63,7 +63,7 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateEmployeeViewModel>(result);
                 res = employee.CreateEmployee(createObj);
-                _messageHub.Clients.All.Insert();
+                _messageHub.Clients.All.Init();
             }
             else
             {
@@ -85,6 +85,7 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateEmployeeViewModel>(result);
                 res = employee.UpdateEmployee(updateObj);
+                _messageHub.Clients.All.Init();
             }
             else
             {
@@ -92,21 +93,23 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpPost]
+        [HttpGet("{id}")]
         [Authorize]
         [Route("delete-employee")]
-        public object DeleteEmployee([FromBody] JObject frmData)
+        public object DeleteEmployee(Guid idEmployee)
         {
 
-            res = employee.DeleteEmployee(frmData);
+            res = employee.DeleteEmployee(idEmployee);
+            _messageHub.Clients.All.Init();
             return Ok(res);
         }
-        [HttpPost]
+        [HttpGet("{id}")]
         [AllowAnonymous]
         [Route("restore-employess")]
-        public object RestoreEmployee([FromBody] JObject frmData)
+        public object RestoreEmployee(Guid idEmployee)
         {
-            res = employee.RestoreEmployee(frmData);
+            res = employee.RestoreEmployee(idEmployee);
+            _messageHub.Clients.All.Init();
             return Ok(res);
         }
     }

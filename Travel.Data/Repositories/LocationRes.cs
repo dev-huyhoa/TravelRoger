@@ -80,8 +80,8 @@ namespace Travel.Data.Repositories
                 {
                 }
 
-                var idProvince = PrCommon.GetString("idProvince", frmData);
-                if (String.IsNullOrEmpty(idProvince))
+                var provinceId = PrCommon.GetString("provinceId", frmData);
+                if (String.IsNullOrEmpty(provinceId))
                 {
                 }
                 if (isUpdate)
@@ -89,13 +89,13 @@ namespace Travel.Data.Repositories
                     UpdateDistrictViewModel objUpdate = new UpdateDistrictViewModel();
                     objUpdate.IdDistrict = Guid.Parse(idDistrict);
                     objUpdate.NameDistrict = nameDistrict;
-                    objUpdate.IdProvince = Guid.Parse(idProvince);
+                    objUpdate.IdProvince = Guid.Parse(provinceId);
                     return JsonSerializer.Serialize(objUpdate);
                 }
 
                 CreateDistrictViewModel objCreate = new CreateDistrictViewModel();
                 objCreate.NameDistrict = nameDistrict;
-                objCreate.IdProvince = Guid.Parse(idProvince);
+                objCreate.IdProvince = Guid.Parse(provinceId);
                 return JsonSerializer.Serialize(objCreate);
             }
             catch (Exception e)
@@ -124,8 +124,8 @@ namespace Travel.Data.Repositories
                 {
                 }
 
-                var idDistrict = PrCommon.GetString("idDistrict", frmData);
-                if (String.IsNullOrEmpty(idDistrict))
+                var districtId = PrCommon.GetString("districtId", frmData);
+                if (String.IsNullOrEmpty(districtId))
                 {
                 }
                 if (isUpdate)
@@ -133,13 +133,13 @@ namespace Travel.Data.Repositories
                     UpdateWardViewModel objUpdate = new UpdateWardViewModel();
                     objUpdate.IdWard = Guid.Parse(idWard);
                     objUpdate.NameWard = nameWard;
-                    objUpdate.IdDistrict = Guid.Parse(idDistrict);
+                    objUpdate.IdDistrict = Guid.Parse(districtId);
                     return JsonSerializer.Serialize(objUpdate);
                 }
 
                 CreateWardViewModel objCreate = new CreateWardViewModel();
                 objCreate.NameWard = nameWard;
-                objCreate.IdDistrict = Guid.Parse(idDistrict);
+                objCreate.IdDistrict = Guid.Parse(districtId);
                 return JsonSerializer.Serialize(objCreate);
             }
             catch (Exception e)
@@ -165,12 +165,7 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
+
                 return res;
             }
             catch (Exception e)
@@ -193,12 +188,7 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
+
                 return res;
             }
             catch (Exception e)
@@ -221,12 +211,7 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
+
                 return res;
             }
             catch (Exception e)
@@ -278,12 +263,7 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
+
                 return res;
             }
             catch (Exception e)
@@ -325,7 +305,7 @@ namespace Travel.Data.Repositories
                 }
 
 
-                var kwIdProvince = PrCommon.GetString("idProvince", frmData);
+                var kwIdProvince = PrCommon.GetString("provinceId", frmData);
 
                 keywords.KwIdProvince = PrCommon.getListString(kwIdProvince, ',', false);
 
@@ -352,12 +332,7 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
+
                 return res;
             }
             catch (Exception e)
@@ -399,7 +374,7 @@ namespace Travel.Data.Repositories
                 }
 
 
-                var kwIdDistrict = PrCommon.GetString("idDistrict", frmData);
+                var kwIdDistrict = PrCommon.GetString("districtId", frmData);
 
                 keywords.KwIdDistrict = PrCommon.getListString(kwIdDistrict, ',', false);
 
@@ -426,12 +401,7 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
+
                 return res;
             }
             catch (Exception e)
@@ -584,26 +554,19 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-        public Response DeleteProvince(JObject frmData)
+        public Response DeleteProvince(Guid idProvince)
         {
             try
             {
-                var idProvince = PrCommon.GetString("idProvince", frmData);
-                var check = _db.Provinces.Find(Guid.Parse(idProvince));
-                if (check != null)
+                var province = _db.Provinces.Find(idProvince);
+                if (province != null)
                 {
-                    _db.Provinces.Remove(check);
+                    _db.Provinces.Remove(province);
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
                     res.Notification.Messenge = "Xóa thành công !";
                     res.Notification.Type = "Success";
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
                 }
 
                 return res;
@@ -618,26 +581,19 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response DeleteDistrict(JObject frmData)
+        public Response DeleteDistrict(Guid idDistrict)
         {
             try
             {
-                var idDistrict = PrCommon.GetString("idDistrict", frmData);
-                var check = _db.Districts.Find(Guid.Parse(idDistrict));
-                if (check != null)
+                var district = _db.Districts.Find(idDistrict);
+                if (district != null)
                 {
-                    _db.Districts.Remove(check);
+                    _db.Districts.Remove(district);
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
                     res.Notification.Messenge = "Xóa thành công !";
                     res.Notification.Type = "Success";
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
                 }
 
                 return res;
@@ -652,26 +608,19 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response DeleteWard(JObject frmData)
+        public Response DeleteWard(Guid idWard)
         {
             try
             {
-                var idWard = PrCommon.GetString("idWard", frmData);
-                var check = _db.Wards.Find(Guid.Parse(idWard));
-                if (check != null)
+                var ward = _db.Wards.Find(idWard);
+                if (ward != null)
                 {
-                    _db.Wards.Remove(check);
+                    _db.Wards.Remove(ward);
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
                     res.Notification.Messenge = "Xóa thành công !";
                     res.Notification.Type = "Success";
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
                 }
 
                 return res;

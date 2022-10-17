@@ -6,13 +6,17 @@ using System.Threading.Tasks;
 
 namespace Travel.Shared.ViewModels.Travel
 {
-    public class CreateUpdateRoleViewModel
+    public class UpdateRoleViewModel: CreateRoleViewModel
+    {
+       
+    }
+    public class CreateRoleViewModel
     {
         private int idRole;
-        private string roleName;
+        private string nameRole;
         private string description;
 
-        public string RoleName { get => roleName; set => roleName = value; }
+        public string NameRole { get => nameRole; set => nameRole = value; }
         public string Description { get => description; set => description = value; }
         public int IdRole { get => idRole; set => idRole = value; }
     }

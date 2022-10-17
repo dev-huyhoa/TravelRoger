@@ -102,7 +102,7 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateProvinceViewModel>(result);
                 res = location.CreateProvince(createObj);
-
+                _messageHub.Clients.All.Init();
             }
             else
             {
@@ -122,7 +122,7 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateDistrictViewModel>(result);
                 res = location.CreateDistrict(createObj);
-                _messageHub.Clients.All.Insert();
+                _messageHub.Clients.All.Init();
             }
             else
             {
@@ -142,7 +142,7 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateWardViewModel>(result);
                 res = location.CreateWard(createObj);
-                _messageHub.Clients.All.Insert();
+                _messageHub.Clients.All.Init();
             }
             else
             {
@@ -162,6 +162,7 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateProvinceViewModel>(result);
                 res = location.UpdateProvince(updateObj);
+                _messageHub.Clients.All.Init();
             }
             else
             {
@@ -181,6 +182,7 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateDistrictViewModel>(result);
                 res = location.UpdateDistrict(updateObj);
+                _messageHub.Clients.All.Init();
             }
             else
             {
@@ -200,6 +202,7 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateWardViewModel>(result);
                 res = location.UpdateWard(updateObj);
+                _messageHub.Clients.All.Init();
             }
             else
             {
@@ -208,30 +211,33 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpGet("{id}")]
         [Authorize]
         [Route("delete-province")]
-        public object DeleteProvince([FromBody] JObject frmData)
+        public object DeleteProvince(Guid idProvince)
         {
-            res = location.DeleteProvince(frmData);
+            res = location.DeleteProvince(idProvince);
+            _messageHub.Clients.All.Init();
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpGet("{id}")]
         [Authorize]
         [Route("delete-district")]
-        public object DeleteDistrict([FromBody] JObject frmData)
+        public object DeleteDistrict(Guid idDistrict)
         {
-            res = location.DeleteDistrict(frmData);
+            res = location.DeleteDistrict(idDistrict);
+            _messageHub.Clients.All.Init();
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpGet("{id}")]
         [Authorize]
         [Route("delete-ward")]
-        public object DeleteWard([FromBody] JObject frmData)
+        public object DeleteWard(Guid idWard)
         {
-            res = location.DeleteWard(frmData);
+            res = location.DeleteWard(idWard);
+            _messageHub.Clients.All.Init();
             return Ok(res);
         }
     }

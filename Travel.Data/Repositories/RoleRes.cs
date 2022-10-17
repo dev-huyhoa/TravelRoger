@@ -27,30 +27,38 @@ namespace Travel.Data.Repositories
             res = new Response();
         }
 
-        public CreateUpdateRoleViewModel CheckBeforSave(JObject frmData, ref Notification _message)
+        public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
-             CreateUpdateRoleViewModel role = new CreateUpdateRoleViewModel();
-
             try
             {
                 var idRole = PrCommon.GetString("idRole", frmData);
-                if (!String.IsNullOrEmpty(idRole))
+                if (String.IsNullOrEmpty(idRole))
                 {
-                    role.IdRole = Int32.Parse(idRole);
                 }
 
-                var roleName = PrCommon.GetString("NameRole", frmData);
-                if (!String.IsNullOrEmpty(roleName))
+                var nameRole = PrCommon.GetString("nameRole", frmData);
+                if (String.IsNullOrEmpty(nameRole))
                 {
-                    role.RoleName = roleName;
                 }
 
                 var description = PrCommon.GetString("description", frmData);
-                if (!String.IsNullOrEmpty(description))
+                if (String.IsNullOrEmpty(description))
                 {
-                    role.Description = description;
                 }
-                return role;
+                if (isUpdate)
+                {
+                    UpdateRoleViewModel objUpdate = new UpdateRoleViewModel();
+                    objUpdate.IdRole = int.Parse(idRole);
+                    objUpdate.NameRole = nameRole;
+                    objUpdate.Description = description;
+                    return JsonSerializer.Serialize(objUpdate);
+                }
+
+                CreateRoleViewModel objCreate = new CreateRoleViewModel();
+                objCreate.IdRole = int.Parse(idRole);
+                objCreate.NameRole = nameRole;
+                objCreate.Description = description;
+                return JsonSerializer.Serialize(objCreate);
             }
             catch (Exception e) 
             {
@@ -60,15 +68,15 @@ namespace Travel.Data.Repositories
                 message.Type = "Error";
 
                 _message = message;
-                return role;
+                return string.Empty;
             }
         }
 
-        public Response GetsRole()
+        public Response GetsRole(bool isDelete)
         {
             try
             {
-                var listRole= (from x in _db.Roles where x.IsDelete == false select x).ToList();
+                var listRole= (from x in _db.Roles where x.IsDelete == isDelete select x).ToList();
                 var result = Mapper.MapRole(listRole);
                 if (result.Count() > 0)
                 {
@@ -92,7 +100,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CreateRole(CreateUpdateRoleViewModel input)
+        public Response CreateRole(CreateRoleViewModel input)
         {
             try
             {
@@ -115,30 +123,18 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-        public Response UpdateRole(CreateUpdateRoleViewModel input)
+        public Response UpdateRole(UpdateRoleViewModel input)
         {
-
             try
             {
                 Role role = new Role();
                 role = Mapper.MapCreateRole(input);
-                var check = _db.Roles.Find(role.IdRole);
-                if (check != null)
-                {
-                    _db.Roles.Find(role.IdRole).NameRole = role.NameRole;
-                    _db.Roles.Find(role.IdRole).Description = role.Description;
-                    _db.SaveChanges();
+                _db.Roles.Update(role);
+                _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Sửa thành công !";
-                    res.Notification.Type = "Success";
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
-                }
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Sửa thành công !";
+                res.Notification.Type = "Success";
                 return res;
             }
             catch (Exception e)
@@ -152,22 +148,18 @@ namespace Travel.Data.Repositories
 
         }
 
-        public Response RestoreRole(CreateUpdateRoleViewModel input)
+        public Response RestoreRole(int idRole)
         {
-
             try
             {
-                Role role = new Role();
-                role = Mapper.MapCreateRole(input);
-
-                var check = _db.Roles.Find(role.IdRole);
-                if (check != null)
+                var role = _db.Roles.Find(idRole);
+                if (role != null)
                 {
-                    check.IsDelete = false;
+                    role.IsDelete = false;
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Restore thành công !";
+                    res.Notification.Messenge = "Khôi phục thành công !";
                     res.Notification.Type = "Success";
                 }
                 else
@@ -189,16 +181,14 @@ namespace Travel.Data.Repositories
 
         }
 
-        public Response DeleteRole(CreateUpdateRoleViewModel input)
+        public Response DeleteRole(int idRole)
         {
             try
             {
-                Role role = new Role();
-                role = Mapper.MapCreateRole(input);
-                var check = _db.Roles.Find(role.IdRole);
-                if(check != null)
+                var role = _db.Roles.Find(idRole);
+                if(role != null)
                 {
-                    _db.Roles.Find(role.IdRole).IsDelete = true;
+                    role.IsDelete = true;
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
@@ -233,7 +223,13 @@ namespace Travel.Data.Repositories
                 if (!String.IsNullOrEmpty(isDelete))
                 {
                     keywords.IsDelete = Boolean.Parse(isDelete);
-                }     
+                }
+
+                var idRole = PrCommon.GetString("idRole", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.KwId = idRole;
+                }
 
                 var kwName = PrCommon.GetString("nameRole", frmData).Trim();
                 if (!String.IsNullOrEmpty(kwName))
@@ -267,6 +263,7 @@ namespace Travel.Data.Repositories
                 {
                     listRole = (from x in _db.Roles
                                where x.IsDelete == keywords.IsDelete &&
+                                               x.IdRole.ToString().Contains(keywords.KwId) &&
                                                x.NameRole.ToLower().Contains(keywords.KwName) &&
                                                x.Description.ToLower().Contains(keywords.KwDescription)
                                              
@@ -276,6 +273,7 @@ namespace Travel.Data.Repositories
                 {
                     listRole = (from x in _db.Roles
                                where x.IsDelete == keywords.IsDelete &&
+                                               x.IdRole.ToString().Contains(keywords.KwId) &&
                                                x.NameRole.ToLower().Contains(keywords.KwName) &&
                                                x.Description.ToLower().Contains(keywords.KwDescription)
                                select x).ToList();

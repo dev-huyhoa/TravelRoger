@@ -24,6 +24,7 @@ namespace Travel.Shared.ViewModels.Travel
         private string phone;
         private string address;
         private bool gender;
+        private bool isActive;
         private TitleRole roleId;
 
         public Guid IdEmployee { get => idEmployee; set => idEmployee = value; }
@@ -36,5 +37,6 @@ namespace Travel.Shared.ViewModels.Travel
         public string Address { get => address; set => address = value; }
         public bool Gender { get => gender; set => gender = value; }
         public string ModifyBy { get => modifyBy; set => modifyBy = value; }
+        public bool IsActive { get => isActive; set => isActive = value; }
     }
 }

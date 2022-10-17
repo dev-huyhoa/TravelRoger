@@ -14,12 +14,12 @@ namespace Travel.Data.Interfaces
     public interface IEmployee
     {
         string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate);
-        Response GetsEmployee(JObject frmData);
+        Response GetsEmployee(bool isDelete);
         Response UpdateEmployee(UpdateEmployeeViewModel input);
         Response CreateEmployee(CreateEmployeeViewModel input);
         Response SearchEmployee(JObject frmData);
-        Response RestoreEmployee(JObject frmData);
-        Response DeleteEmployee(JObject frmData);
+        Response RestoreEmployee(Guid idEmployee);
+        Response DeleteEmployee(Guid idEmployee);
 
     }
 }

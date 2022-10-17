@@ -225,7 +225,7 @@ namespace Travel.Shared.Ultilities
                                        .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
                                        .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
                                        .ForMember(dto => dto.RoleDescription, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Role.Description) ? "" : src.Role.Description))
-                                       .ForMember(dto => dto.IdRole, opt => opt.MapFrom(src => src.RoleId))
+                                       .ForMember(dto => dto.RoleId, opt => opt.MapFrom(src => src.RoleId))
                                        .ForMember(dto => dto.RoleName, opt => opt.MapFrom(src => src.Role.NameRole))
                                        .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                                        .ForMember(dto => dto.Gender, opt => opt.MapFrom(src => src.Gender));
@@ -257,10 +257,15 @@ namespace Travel.Shared.Ultilities
                           .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
                           .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)));
 
-                cfg.CreateMap<CreateUpdateRoleViewModel, Role>()
+                cfg.CreateMap<CreateRoleViewModel, Role>()
                        .ForMember(dto => dto.IdRole, opt => opt.MapFrom(src => src.IdRole))
-                       .ForMember(dto => dto.NameRole, opt => opt.MapFrom(src => src.RoleName))
+                       .ForMember(dto => dto.NameRole, opt => opt.MapFrom(src => src.NameRole))
                        .ForMember(dto => dto.Description, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Description) ? "" : src.Description));
+
+                cfg.CreateMap<UpdateRoleViewModel, Role>()
+                      .ForMember(dto => dto.IdRole, opt => opt.MapFrom(src => src.IdRole))
+                      .ForMember(dto => dto.NameRole, opt => opt.MapFrom(src => src.NameRole))
+                      .ForMember(dto => dto.Description, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Description) ? "" : src.Description));
 
                 cfg.CreateMap<Role, RoleViewModel>()
                           .ForMember(dto => dto.IdRole, opt => opt.MapFrom(src => src.IdRole))
@@ -305,7 +310,7 @@ namespace Travel.Shared.Ultilities
                 cfg.CreateMap<District, DistrictViewModel>()
                       .ForMember(dto => dto.IdDistrict, opt => opt.MapFrom(src => src.IdDistrict))
                       .ForMember(dto => dto.NameDistrict, opt => opt.MapFrom(src => src.NameDistrict))
-                      .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => src.ProvinceId))
+                      .ForMember(dto => dto.ProvinceId, opt => opt.MapFrom(src => src.ProvinceId))
                       .ForMember(dto => dto.ProvinceName, opt => opt.MapFrom(src => src.Province.NameProvince));
 
                 cfg.CreateMap<CreateDistrictViewModel, District>()
@@ -321,7 +326,7 @@ namespace Travel.Shared.Ultilities
                 cfg.CreateMap<Ward, WardViewModel>()
                      .ForMember(dto => dto.IdWard, opt => opt.MapFrom(src => src.IdWard))
                      .ForMember(dto => dto.NameWard, opt => opt.MapFrom(src => src.NameWard))
-                     .ForMember(dto => dto.IdDistrict, opt => opt.MapFrom(src => src.DistrictId))
+                     .ForMember(dto => dto.DistrictId, opt => opt.MapFrom(src => src.DistrictId))
                      .ForMember(dto => dto.DistrictName, opt => opt.MapFrom(src => src.District.NameDistrict));
 
                 cfg.CreateMap<CreateWardViewModel, Ward>()
@@ -504,10 +509,7 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<Role, RoleViewModel>(data);
         }
-        public static List<RoleViewModel> MapRole(List<Role> data)
-        {
-            return _mapper.Map<List<Role>, List<RoleViewModel>>(data);
-        }
+        
 
         public static List<TourDetailViewModel> MapTourDetail(List<TourDetail> data)
         {
@@ -534,10 +536,21 @@ namespace Travel.Shared.Ultilities
             return _mapper.Map<Employee, EmployeeViewModel>(data);
         }
 
-        public static Role MapCreateRole(CreateUpdateRoleViewModel data)
+        public static List<RoleViewModel> MapRole(List<Role> data)
         {
-            return _mapper.Map<CreateUpdateRoleViewModel, Role>(data);
+            return _mapper.Map<List<Role>, List<RoleViewModel>>(data);
         }
+
+        public static Role MapCreateRole(CreateRoleViewModel data)
+        {
+            return _mapper.Map<CreateRoleViewModel, Role>(data);
+        }
+
+        public static Role MapUpdateRole(UpdateRoleViewModel data)
+        {
+            return _mapper.Map<UpdateRoleViewModel, Role>(data);
+        }
+
         public static Employee MapCreateEmployee(CreateEmployeeViewModel data)
         {
             return _mapper.Map<CreateEmployeeViewModel, Employee>(data);

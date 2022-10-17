@@ -11,12 +11,12 @@ namespace Travel.Shared.ViewModels.Travel
         private Guid idWard;
         private string nameWard;
 
-        private Guid idDistrict;
+        private Guid districtId;
         private string districtName;
 
         public Guid IdWard { get => idWard; set => idWard = value; }
         public string NameWard { get => nameWard; set => nameWard = value; }
-        public Guid IdDistrict { get => idDistrict; set => idDistrict = value; }
+        public Guid DistrictId { get => districtId; set => districtId = value; }
         public string DistrictName { get => districtName; set => districtName = value; }
     }
 }

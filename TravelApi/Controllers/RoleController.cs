@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel;
+using TravelApi.Hubs;
 
 namespace TravelApi.Controllers
 {
@@ -17,18 +21,29 @@ namespace TravelApi.Controllers
         private IRole role;
         private Notification message;
         private Response res;
-        public RoleController(IRole _role)
+        private IHubContext<TravelHub, ITravelHub> _messageHub;
+        public RoleController(IRole _role, IHubContext<TravelHub, ITravelHub> messageHub)
         {
+            _messageHub = messageHub;
             role = _role;
             res = new Response();
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [AllowAnonymous]
         [Route("gets-role")]
-        public object GetsRole()
+        public object GetsRole(bool isDelete)
         {
-            res = role.GetsRole();
+            res = role.GetsRole(isDelete);
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-role")]
+        public object SearchRole([FromBody] JObject frmData)
+        {
+            res = role.SearchRole(frmData);
             return Ok(res);
         }
 
@@ -38,11 +53,13 @@ namespace TravelApi.Controllers
         [Route("create-role")]
         public object CreateRole([FromBody] JObject frmData)
         {
-
-            var result = role.CheckBeforSave(frmData, ref message);
+            message = null;
+            var result = role.CheckBeforSave(frmData, ref message, false);
             if (message == null)
             {
-              res = role.CreateRole(result);
+                var createObj = JsonSerializer.Deserialize<CreateRoleViewModel>(result);
+                res = role.CreateRole(createObj);
+              _messageHub.Clients.All.Init();
             }
             
             return Ok(res);
@@ -54,47 +71,34 @@ namespace TravelApi.Controllers
         public object UpdateRole([FromBody] JObject frmData)
         {
 
-            var result = role.CheckBeforSave(frmData, ref message);
+            message = null;
+            var result = role.CheckBeforSave(frmData, ref message, false);
             if (message == null)
             {
-                res = role.UpdateRole(result);
+                var updateObj = JsonSerializer.Deserialize<UpdateRoleViewModel>(result);
+                res = role.UpdateRole(updateObj);
+                _messageHub.Clients.All.Init();
             }
 
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpGet("{id}")]
         [Authorize]
         [Route("restore-role")]
-        public object RestoreRole([FromBody] JObject frmData)
+        public object RestoreRole(int idRole)
         {
-
-            var result = role.CheckBeforSave(frmData, ref message);
-            if (message == null)
-            {
-                res = role.RestoreRole(result);
-            }
+            res = role.RestoreRole(idRole);
+            _messageHub.Clients.All.Init();
             return Ok(res);
         }
-        [HttpPost]
-        [Authorize]
-        [Route("search-role")]
-        public object SearchRole([FromBody] JObject frmData)
-        {
-            res = role.SearchRole(frmData);
-            return Ok(res);
-        }
-
-        [HttpPost]
+        [HttpGet("{id}")]
         [Authorize]
         [Route("delete-role")]
-        public object DeleteRole([FromBody] JObject frmData)
+        public object DeleteRole(int idRole)
         {
-            var result = role.CheckBeforSave(frmData, ref message);
-            if (message == null)
-            {
-                res = role.DeleteRole(result);
-            }
+            res = role.DeleteRole(idRole);
+            _messageHub.Clients.All.Init();
             return Ok(res);
         }
     }

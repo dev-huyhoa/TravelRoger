@@ -57,8 +57,8 @@ namespace Travel.Data.Repositories
                     {
                     }
 
-                    var idRole = PrCommon.GetString("idRole", frmData);
-                    if (String.IsNullOrEmpty(idRole))
+                    var roleId = PrCommon.GetString("roleId", frmData);
+                    if (String.IsNullOrEmpty(roleId))
                     {
                     }
 
@@ -91,6 +91,11 @@ namespace Travel.Data.Repositories
                     {
                     }
 
+                    var isActive = PrCommon.GetString("isActive", frmData);
+                    if (String.IsNullOrEmpty(isActive))
+                    {
+                    }
+
                     if (file != null)
                     {
                         image = Ultility.WriteFile(file, "Employee", Guid.Parse(idEmployee), ref _message).FilePath;
@@ -108,9 +113,22 @@ namespace Travel.Data.Repositories
                         objUpdate.Phone = phone;
                         objUpdate.Email = email;
                         objUpdate.Address = address;
-                        objUpdate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(birthday));
-                        objUpdate.RoleId = (TitleRole)int.Parse(idRole);
-                        objUpdate.Image = image;
+                        try
+                        {
+                            var date = DateTime.Parse(birthday);
+                            objUpdate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(date);
+                        }
+                        catch (Exception)
+                        {
+                            objUpdate.Birthday = long.Parse(birthday);
+                        }
+                        objUpdate.RoleId = (TitleRole)int.Parse(roleId);
+                        if (!String.IsNullOrEmpty(image))
+                        {
+                            objUpdate.Image = image;
+
+                        }
+                        objUpdate.IsActive = bool.Parse(isActive);
                         objUpdate.ModifyBy = modifyBy;
                         return JsonSerializer.Serialize(objUpdate);
                     }
@@ -121,8 +139,16 @@ namespace Travel.Data.Repositories
                     objCreate.Phone = phone;
                     objCreate.Email = email;
                     objCreate.Address = address;
-                    objCreate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(birthday));
-                    objCreate.RoleId = (TitleRole)int.Parse(idRole);
+                    try
+                    {
+                        var date = DateTime.Parse(birthday);
+                        objCreate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(date);
+                    }
+                    catch (Exception)
+                    {
+                        objCreate.Birthday = long.Parse(birthday);
+                    }
+                    objCreate.RoleId = (TitleRole)int.Parse(roleId);
                     objCreate.Image = image;
                     objCreate.ModifyBy = modifyBy;
                     return JsonSerializer.Serialize(objCreate);
@@ -142,16 +168,16 @@ namespace Travel.Data.Repositories
                 return string.Empty;
             }
         }
-        public Response GetsEmployee(JObject frmData)
+        public Response GetsEmployee(bool isDelete)
         {
             try
             {
-                var isDelete = false;
-                var check = PrCommon.GetString("isDelete", frmData);
-                if (!String.IsNullOrEmpty(check))
-                {
-                    isDelete = Boolean.Parse(check);
-                }
+                //var isDelete = false;
+                //var check = PrCommon.GetString("isDelete", frmData);
+                //if (!String.IsNullOrEmpty(check))
+                //{
+                //    isDelete = Boolean.Parse(check);
+                //}
                 #region đo tốc độ EF và linq
                 //var stopWatch4 = Stopwatch.StartNew();
                 //var result5 = _db.Employees.ToList();
@@ -168,12 +194,6 @@ namespace Travel.Data.Repositories
                 if (listEmp.Count() > 0)
                 {
                     res.Content = result;
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
                 }
                 return res;
             }
@@ -293,7 +313,7 @@ namespace Travel.Data.Repositories
 
                 }
 
-                var kwIdRole = PrCommon.GetString("idRole", frmData);
+                var kwIdRole = PrCommon.GetString("roleId", frmData);
                 keywords.KwIdRole = PrCommon.getListInt(kwIdRole, ',', false);
 
                 var kwIsActive = PrCommon.GetString("isActive", frmData);
@@ -364,12 +384,6 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
                 return res;
             }
             catch (Exception e)
@@ -382,16 +396,14 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response RestoreEmployee(JObject frmData)
+        public Response RestoreEmployee(Guid idEmployee)
         {
             try
             {
-                var idEmployee = PrCommon.GetString("idEmployee", frmData);
-
-                var check = _db.Employees.Find(Guid.Parse(idEmployee));
-                if (check != null)
+                var employee = _db.Employees.Find(idEmployee);
+                if (employee != null)
                 {
-                    check.IsDelete = false;
+                    employee.IsDelete = false;
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
@@ -416,16 +428,14 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response DeleteEmployee(JObject frmData)
+        public Response DeleteEmployee(Guid idEmployee)
         {
             try
             {
-                var idEmployee = PrCommon.GetString("idEmployee", frmData);
-
-                var check = _db.Employees.Find(Guid.Parse(idEmployee));
-                if (check != null)
+                var employee = _db.Employees.Find(idEmployee);
+                if (employee != null)
                 {
-                    check.IsDelete = true;
+                    employee.IsDelete = true;
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;

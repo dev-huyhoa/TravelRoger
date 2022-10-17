@@ -29,8 +29,8 @@ namespace Travel.Data.Interfaces
         Response UpdateProvince(UpdateProvinceViewModel province);
         Response UpdateDistrict(UpdateDistrictViewModel district);
         Response UpdateWard(UpdateWardViewModel ward);
-        Response DeleteProvince(JObject frmData);
-        Response DeleteDistrict(JObject frmData);
-        Response DeleteWard(JObject frmData);
+        Response DeleteProvince(Guid idProvince);
+        Response DeleteDistrict(Guid idDistrict);
+        Response DeleteWard(Guid idWard);
     }
 }

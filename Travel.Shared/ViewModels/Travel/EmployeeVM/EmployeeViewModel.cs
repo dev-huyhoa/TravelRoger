@@ -18,7 +18,7 @@ namespace Travel.Shared.ViewModels.Travel
         private string address;
         private bool gender;
 
-        private TitleRole idRole;
+        private TitleRole roleId;
         private string roleName;
         private string roleDescription;
 
@@ -43,7 +43,7 @@ namespace Travel.Shared.ViewModels.Travel
         public string RoleName { get => roleName; set => roleName = value; }
         public long CreateDate { get => createDate; set => createDate = value; }
         public string RoleDescription { get => roleDescription; set => roleDescription = value; }
-        public TitleRole IdRole { get => idRole; set => idRole = value; }
+        public TitleRole RoleId { get => roleId; set => roleId = value; }
         public Guid IdEmployee { get => idEmployee; set => idEmployee = value; }
         public string NameEmployee { get => nameEmployee; set => nameEmployee = value; }
         public string Address { get => address; set => address = value; }
