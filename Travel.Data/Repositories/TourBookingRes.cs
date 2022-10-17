@@ -125,7 +125,7 @@ namespace Travel.Data.Repositories
                     updateObj.Address = address;
                     updateObj.Email = email;
                     updateObj.Phone = phone;
-                    updateObj.NameContact = nameCustomer;
+                    updateObj.NameContact = nameContact;
                     updateObj.Vat = Convert.ToInt16(vat);
                     updateObj.Pincode = pincode;
                     return JsonSerializer.Serialize(updateObj);
@@ -146,7 +146,7 @@ namespace Travel.Data.Repositories
                 createObj.Address = address;
                 createObj.Email = email;
                 createObj.Phone = phone;
-                createObj.NameContact = nameCustomer;
+                createObj.NameContact = nameContact;
                 createObj.Vat = Convert.ToInt16(vat);
                 createObj.Pincode = pincode;
                 createObj.BookingDetails = createDetailObj;
@@ -174,7 +174,7 @@ namespace Travel.Data.Repositories
                 _db.Tourbookings.Add(tourbooking);
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
+                res.Notification.Messenge = "Đặt tour thành công !";
                 res.Notification.Type = "Success";
                 return res;
             }
