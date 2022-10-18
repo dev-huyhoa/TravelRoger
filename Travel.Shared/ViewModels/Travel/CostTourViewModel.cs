@@ -8,8 +8,8 @@ namespace Travel.Shared.ViewModels.Travel
 {
     public class CostTourViewModel
     {
-        private Guid id;
-        private string idTourDetail;
+        private Guid idCostTour;
+        private string tourDetailId;
         private float breakfast;
         private float water;
         private float feeGas;
@@ -23,21 +23,22 @@ namespace Travel.Shared.ViewModels.Travel
         private bool isHoliday;
         private float totalCostTour;
 
-        private Guid idHotel;
+        private Guid hotelId;
         private string nameHotel;
-        private float priceHotel;
+        private float priceSRHotel;
+        private float priceDBHotel;
 
-        private Guid idRestaurant;
+        private Guid restaurantId;
         private string nameRestaurant;
-        private float priceRestaurant;
+        private float priceComboRestaurant;
 
-        private Guid idPlace;
+        private Guid placeId;
         private string namePlace;
         private float priceTicketPlace;
 
 
-        public Guid Id { get => id; set => id = value; }
-        public string IdTourDetail { get => idTourDetail; set => idTourDetail = value; }
+        public Guid IdCostTour { get => idCostTour; set => idCostTour = value; }
+        public string TourDetailId { get => tourDetailId; set => tourDetailId = value; }
         public float Breakfast { get => breakfast; set => breakfast = value; }
         public float Water { get => water; set => water = value; }
         public float FeeGas { get => feeGas; set => feeGas = value; }
@@ -50,14 +51,15 @@ namespace Travel.Shared.ViewModels.Travel
         public float InsuranceFee { get => insuranceFee; set => insuranceFee = value; }
         public bool IsHoliday { get => isHoliday; set => isHoliday = value; }
         public float TotalCostTour { get => totalCostTour; set => totalCostTour = value; }
-        public Guid IdHotel { get => idHotel; set => idHotel = value; }
+        public Guid HotelId { get => hotelId; set => hotelId = value; }
         public string NameHotel { get => nameHotel; set => nameHotel = value; }
-        public float PriceHotel { get => priceHotel; set => priceHotel = value; }
-        public Guid IdRestaurant { get => idRestaurant; set => idRestaurant = value; }
+        public float PriceSRHotel { get => priceSRHotel; set => priceSRHotel = value; }
+        public Guid RestaurantId { get => restaurantId; set => restaurantId = value; }
         public string NameRestaurant { get => nameRestaurant; set => nameRestaurant = value; }
-        public float PriceRestaurant { get => priceRestaurant; set => priceRestaurant = value; }
-        public Guid IdPlace { get => idPlace; set => idPlace = value; }
+        public float PriceComboRestaurant { get => priceComboRestaurant; set => priceComboRestaurant = value; }
+        public Guid PlaceId { get => placeId; set => placeId = value; }
         public string NamePlace { get => namePlace; set => namePlace = value; }
         public float PriceTicketPlace { get => priceTicketPlace; set => priceTicketPlace = value; }
+        public float PriceDBHotel { get => priceDBHotel; set => priceDBHotel = value; }
     }
 }

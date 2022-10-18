@@ -512,9 +512,35 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.TotalCostTour, opt => opt.MapFrom(src =>
                        (src.Breakfast + src.Water + src.SellCost + src.OtherPrice + src.InsuranceFee) + (src.Depreciation + src.Tolls + (src.FeeGas * src.Distance))
                ))
-
-
                ;
+                //view costtour
+                   cfg.CreateMap<CostTour, CostTourViewModel>()
+               .ForMember(dto => dto.IdCostTour, opt => opt.MapFrom(src => src.IdCostTour))
+               .ForMember(dto => dto.TourDetailId, opt => opt.MapFrom(src => src.TourDetailId))
+               .ForMember(dto => dto.Breakfast, opt => opt.MapFrom(src => src.Breakfast))
+               .ForMember(dto => dto.Water, opt => opt.MapFrom(src => src.Water))
+               .ForMember(dto => dto.FeeGas, opt => opt.MapFrom(src => src.FeeGas))
+               .ForMember(dto => dto.Distance, opt => opt.MapFrom(src => src.Distance))
+               .ForMember(dto => dto.SellCost, opt => opt.MapFrom(src => src.SellCost))
+               .ForMember(dto => dto.Depreciation, opt => opt.MapFrom(src => src.Depreciation))
+               .ForMember(dto => dto.OtherPrice, opt => opt.MapFrom(src => src.OtherPrice))
+               .ForMember(dto => dto.Tolls, opt => opt.MapFrom(src => src.Tolls))
+               .ForMember(dto => dto.CusExpected, opt => opt.MapFrom(src => src.CusExpected))
+               .ForMember(dto => dto.InsuranceFee, opt => opt.MapFrom(src => src.InsuranceFee))
+               .ForMember(dto => dto.IsHoliday, opt => opt.MapFrom(src => src.IsHoliday))
+                    .ForMember(dto => dto.HotelId, opt => opt.MapFrom(src => src.HotelId))
+               .ForMember(dto => dto.RestaurantId, opt => opt.MapFrom(src => src.RestaurantId))
+               .ForMember(dto => dto.PlaceId, opt => opt.MapFrom(src => src.PlaceId))
+               .ForMember(dto => dto.TotalCostTour, opt => opt.MapFrom(src => src.TotalCostTour))
+               .ForMember(dto => dto.NameHotel, opt => opt.MapFrom(src => src.Hotel.NameHotel))
+               .ForMember(dto => dto.PriceSRHotel, opt => opt.MapFrom(src => src.Hotel.SingleRoomPrice))
+               .ForMember(dto => dto.PriceDBHotel, opt => opt.MapFrom(src => src.Hotel.DoubleRoomPrice))
+               .ForMember(dto => dto.NameRestaurant, opt => opt.MapFrom(src => src.Restaurant.NameRestaurant))
+               .ForMember(dto => dto.PriceComboRestaurant, opt => opt.MapFrom(src => src.Restaurant.ComboPrice))
+               .ForMember(dto => dto.NamePlace, opt => opt.MapFrom(src => src.Place.NamePlace))
+               .ForMember(dto => dto.PriceTicketPlace, opt => opt.MapFrom(src => src.Place.PriceTicket))
+               ;
+                
             });
             _mapper = mapperConfiguration.CreateMapper();
         }
@@ -742,6 +768,9 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<CreateCostViewModel, CostTour>(data);
         }
-
+        public static List<CostTourViewModel> MapCost(List<CostTour> data)
+        {
+            return _mapper.Map<List<CostTour>, List<CostTourViewModel>>(data);
+        }
     }
 }

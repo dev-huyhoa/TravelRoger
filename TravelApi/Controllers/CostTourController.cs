@@ -26,11 +26,14 @@ namespace TravelApi.Controllers
             _costTourRes = costTourRes;
             res = new Response();
         }
-        // GET: api/<CostTourController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        
+        [HttpGet()]
+        [Authorize]
+        [Route("gets-cost-tour")]
+        public object Get()
         {
-            return new string[] { "value1", "value2" };
+            res = _costTourRes.Get();
+            return Ok(res);
         }
 
         // GET api/<CostTourController>/5
@@ -43,7 +46,7 @@ namespace TravelApi.Controllers
 
         [HttpPost]
         [Authorize]
-        [Route("create-tour")]
+        [Route("create-cost-tour")]
         public object Create([FromBody] JObject frmData)
         {
             message = null;
