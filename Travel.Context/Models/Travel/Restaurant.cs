@@ -11,6 +11,7 @@ namespace Travel.Context.Models
         public Guid IdRestaurant { get; set; }
         public Guid ContractId { get; set; }
         public string NameRestaurant { get; set; }
+        public float ComboPrice { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
         public int Approve { get; set; }
