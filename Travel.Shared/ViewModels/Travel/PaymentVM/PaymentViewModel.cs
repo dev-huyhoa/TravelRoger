@@ -12,13 +12,13 @@ namespace Travel.Shared.ViewModels.Travel
         private string idPayment;
         private string namePayment;
         private string type;
-        private string tourBookingId;
+  
 
-        public virtual Tourbooking Tourbooking { get; set; }
+       
 
         public string IdPayment { get => idPayment; set => idPayment = value; }
         public string NamePayment { get => namePayment; set => namePayment = value; }
         public string Type { get => type; set => type = value; }
-        public string TourBookingId { get => tourBookingId; set => tourBookingId = value; }
+        
     }
 }
