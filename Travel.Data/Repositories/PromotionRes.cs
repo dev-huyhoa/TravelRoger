@@ -12,6 +12,7 @@ using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using static Travel.Shared.Ultilities.Enums;
 
 namespace Travel.Data.Repositories
 {
@@ -101,8 +102,8 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listPromotion = (from x in _db.Promotions select x).ToList();
-                var result = Mapper.MapPromotion(listPromotion);
+                var list = (from x in _db.Promotions where x.Approve == Convert.ToInt16(ApproveStatus.Approved) select x).ToList();
+                var result = Mapper.MapPromotion(list);
                 if (result.Count() > 0)
                 {
                     res.Content = result;
@@ -149,24 +150,28 @@ namespace Travel.Data.Repositories
             }
         }
 
-        //private bool isExistName(string input)
-        //{
-        //    try
-        //    {
-        //        var tour =
-        //            (from x in _db.Promotions
-        //             where x.Value.ToLower() == input.ToLower()
-        //             select x).FirstOrDefault();
-        //        if (tour != null)
-        //        {
-        //            return true;
-        //        }
-        //        return false;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return false;
-        //    }
-        //}
+        public Response GetWaitingPromotion()
+        {
+            try
+            {
+                var listWaiting = (from x in _db.Promotions where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                var result = Mapper.MapPromotion(listWaiting);
+                if (listWaiting.Count() > 0)
+                {
+                    res.Content = result;
+                }
+
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
     }
 }

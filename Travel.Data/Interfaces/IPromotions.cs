@@ -14,7 +14,7 @@ namespace Travel.Data.Interfaces
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate);
         Response Gets();
         Response Create(CreatePromotionViewModel input);
-
+        Response GetWaitingPromotion();
 
     }
 }

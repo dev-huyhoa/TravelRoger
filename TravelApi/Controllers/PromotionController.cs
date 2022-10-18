@@ -33,6 +33,15 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpGet]
+        [Authorize]
+        [Route("gets-promotion-waiting")]
+        public object GetsWaitingPromotion()
+        {
+            res = promotion.GetWaitingPromotion();
+            return Ok(res);
+        }
+
         [HttpPost]
         [Authorize]
         [Route("create-promotion")]
