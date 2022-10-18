@@ -105,7 +105,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet("{id}")]
         [AllowAnonymous]
-        [Route("restore-employess")]
+        [Route("restore-employee")]
         public object RestoreEmployee(Guid idEmployee)
         {
             res = employee.RestoreEmployee(idEmployee);

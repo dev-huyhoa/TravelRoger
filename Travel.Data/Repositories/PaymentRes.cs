@@ -105,17 +105,11 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listPay = _db.Payment.ToList();
-                var result = Mapper.MapPayment(listPay);
+                var listPayment = (from x in _db.Payment select x).ToList();
+                var result = Mapper.MapPayment(listPayment);
                 if (result.Count() > 0)
                 {
                     res.Content = result;
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
                 }
                 return res;
             }

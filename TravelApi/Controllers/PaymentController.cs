@@ -27,7 +27,7 @@ namespace TravelApi.Controllers
         
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-payment")]
+        [Route("gets-payment")]
         public object GetPayment()
         {
             res = pay.Gets();
