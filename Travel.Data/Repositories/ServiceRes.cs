@@ -225,7 +225,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.Restaurants select x).ToList();
+                var list = (from x in _db.Restaurants where x.Approve == Convert.ToInt16(ApproveStatus.Approved) select x).ToList();
                 var result = Mapper.MapRestaurant(list);
                 if (list.Count() > 0)
                 {
