@@ -59,7 +59,7 @@ namespace Travel.Data.Repositories
 
 
                     var phone = PrCommon.GetString("Phone", frmData);
-                    if (!String.IsNullOrEmpty(phone) && isUpdate == false)
+                    if (!String.IsNullOrEmpty(phone))
                     {
                         var check = CheckPhoneEmployee(phone);
                         if (check.Notification.Type == "Error")
