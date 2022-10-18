@@ -47,14 +47,26 @@ namespace Travel.Data.Repositories
                     }
 
                     var email = PrCommon.GetString("email", frmData);
-                    if (String.IsNullOrEmpty(email))
+                    if (!String.IsNullOrEmpty(email) && isUpdate == false)
                     {
+                       var check = CheckEmailEmployee(email);
+                        if (check.Notification.Type == "Error")
+                        {
+                            _message = check.Notification;
+                            return string.Empty;
+                        }
                     }
 
 
                     var phone = PrCommon.GetString("Phone", frmData);
-                    if (String.IsNullOrEmpty(phone))
+                    if (!String.IsNullOrEmpty(phone) && isUpdate == false)
                     {
+                        var check = CheckPhoneEmployee(phone);
+                        if (check.Notification.Type == "Error")
+                        {
+                            _message = check.Notification;
+                            return string.Empty;
+                        }
                     }
 
                     var roleId = PrCommon.GetString("roleId", frmData);
@@ -447,6 +459,52 @@ namespace Travel.Data.Repositories
                     res.Notification.DateTime = DateTime.Now;
                     res.Notification.Messenge = "Không tìm thấy !";
                     res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response CheckEmailEmployee(string email)
+        {
+            try
+            {
+                var emp = (from x in _db.Employees where x.IsDelete == false && x.Email == email select x).Count();
+                if (emp > 0)
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "[" + email + "] này đã được đăng ký !";
+                    res.Notification.Type = "Error";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response CheckPhoneEmployee(string phone)
+        {
+            try
+            {
+                var emp = (from x in _db.Employees where x.IsDelete == false && x.Phone == phone select x).Count();
+                if (emp > 0)
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "[" + phone + "] này đã được đăng ký !";
+                    res.Notification.Type = "Error";
                 }
                 return res;
             }
