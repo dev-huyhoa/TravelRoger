@@ -14,5 +14,7 @@ namespace Travel.Data.Interfaces
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Get();
         Response Create(CreateScheduleViewModel input);
+        Response Delete(string idSchedule);
+        Response RestoreTour(string idSchedule);
     }
 }

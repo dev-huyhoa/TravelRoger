@@ -177,5 +177,71 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
+
+
+        public Response Delete(string idSchedule)
+        {
+            try
+            {
+                var schedule = _db.Schedules.Find(idSchedule);
+                if (schedule != null)
+                {
+                    schedule.Isdelete = true;
+                    _db.SaveChanges();
+
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Xóa thành công !";
+                    res.Notification.Type = "Success";
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không tìm thấy !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response RestoreTour(string idSchedule)
+        {
+            try
+            {
+                var schedule = _db.Schedules.Find(idSchedule);
+                if (schedule != null)
+                {
+                    schedule.Isdelete = false;
+                    _db.SaveChanges();
+
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Xóa thành công !";
+                    res.Notification.Type = "Success";
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không tìm thấy !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
     }
 }

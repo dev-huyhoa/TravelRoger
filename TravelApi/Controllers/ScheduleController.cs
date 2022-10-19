@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using TravelApi.Hubs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,10 +23,14 @@ namespace TravelApi.Controllers
         private readonly ISchedule _schedule;
         private Notification message;
         private Response res;
-        public ScheduleController(ISchedule schedule)
+        private IHubContext<TravelHub, ITravelHub> _messageHub;
+
+        public ScheduleController(ISchedule schedule, IHubContext<TravelHub, ITravelHub> messageHub)
         {
             _schedule = schedule;
             res = new Response();
+            _messageHub = messageHub;
+
         }
 
         [HttpPost]
@@ -63,10 +69,15 @@ namespace TravelApi.Controllers
         {
         }
 
-        // DELETE api/<ScheduleController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+
+        [HttpGet("{id}")]
+        [Authorize]
+        [Route("delete-schedule")]
+        public object DeleteTour(string idSchedule)
         {
+            res = _schedule.Delete(idSchedule);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
         }
     }
 }
