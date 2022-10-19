@@ -36,7 +36,7 @@ namespace Travel.Shared.ViewModels.Travel
         private int promotionId;
         private int valuePromotion;
 
-        private Promotion promotions;
+        private Tour tour;
         private ICollection<Timeline> timelines;
 
         public string IdSchedule { get => idSchedule; set => idSchedule = value; }
@@ -59,8 +59,8 @@ namespace Travel.Shared.ViewModels.Travel
         public Guid EmployeeId { get => employeeId; set => employeeId = value; }
         public string NameEmployee { get => nameEmployee; set => nameEmployee = value; }
         public int PromotionId { get => promotionId; set => promotionId = value; }
-        public Promotion Promotions { get => promotions; set => promotions = value; }
         public ICollection<Timeline> Timelines { get => timelines; set => timelines = value; }
         public int ValuePromotion { get => valuePromotion; set => valuePromotion = value; }
+        public Tour Tour { get => tour; set => tour = value; }
     }
 }
