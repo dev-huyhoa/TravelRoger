@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using Travel.Context.Models;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.TourVM;
+using TravelApi.Hubs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,10 +24,13 @@ namespace TravelApi.Controllers
         private readonly ITour _tourRes;
         private Notification message;
         private Response res;
-        public TourController(ITour tourRes)
+        private IHubContext<TravelHub, ITravelHub> _messageHub;
+
+        public TourController(ITour tourRes, IHubContext<TravelHub, ITravelHub> messageHub)
         {
             _tourRes = tourRes;
             res = new Response();
+            _messageHub = messageHub;
         }
 
         [HttpPost]
@@ -73,10 +78,25 @@ namespace TravelApi.Controllers
         {
         }
 
-        // DELETE api/<TourController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpGet("{id}")]
+        [Authorize]
+        [Route("delete-tour")]
+        public object DeleteTour(string idTour)
         {
+            res = _tourRes.Delete(idTour);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+
+
+        [HttpGet("{id}")]
+        [Authorize]
+        [Route("restore-tour")]
+        public object RestoreTour(string idTour)
+        {
+            res = _tourRes.RestoreTour(idTour);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
         }
     }
 }
