@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.TourVM;
+using static Travel.Shared.Ultilities.Enums;
 
 namespace Travel.Data.Interfaces
 {
@@ -15,6 +16,7 @@ namespace Travel.Data.Interfaces
         Response Create(CreateTourViewModel input);
         Response Get();
         Response GetWaiting();
+        Response Approve(JObject frmData);
 
     }
 }
