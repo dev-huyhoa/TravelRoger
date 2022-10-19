@@ -69,8 +69,12 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(name))
                 {
                 }
+                var nameContract = PrCommon.GetString("nameContract", frmData);
+                if (String.IsNullOrEmpty(nameContract))
+                {
+                }
 
-                
+
 
 
                 if (isUpdate)
@@ -120,6 +124,7 @@ namespace Travel.Data.Repositories
                         hotelObj.QuantitySR = Convert.ToInt16(quantitySR);
                         hotelObj.SingleRoomPrice = float.Parse(singleRoomPrice);
                         hotelObj.Star = Convert.ToInt16(star);
+                        hotelObj.NameContract = nameContract;
                         return JsonSerializer.Serialize(hotelObj);
 
                     }
@@ -129,6 +134,8 @@ namespace Travel.Data.Repositories
                         restaurantObj.Address = address;
                         restaurantObj.Name = name;
                         restaurantObj.Phone = phone;
+                        restaurantObj.NameContract = nameContract;
+
                         return JsonSerializer.Serialize(restaurantObj);
                     }
                     else
@@ -138,6 +145,8 @@ namespace Travel.Data.Repositories
                         placeObj.Address = address;
                         placeObj.Name = name;
                         placeObj.Phone = phone;
+                        placeObj.NameContract = nameContract;
+
                         return JsonSerializer.Serialize(placeObj);
                     }
                 }
@@ -177,6 +186,28 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+        public Response GetWaitingHotel()
+        {
+            try
+            {
+                var listWaiting = (from x in _db.Hotels where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                var result = Mapper.MapHotel(listWaiting);
+
+                if (listWaiting.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
 
 
         public Response CreateHotel(CreateHotelViewModel input)
@@ -185,6 +216,7 @@ namespace Travel.Data.Repositories
             {
                 Hotel hotel 
                  = Mapper.MapCreateHotel(input);
+                CreateContractViewModel createContractObj = new CreateContractViewModel(); // làm tiếp phần inser file
                 _db.Hotels.Add(hotel);
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
@@ -293,12 +325,13 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetWaitingHotel()
+
+        public Response GetWaitingHPlace()
         {
             try
             {
-                var listWaiting = (from x in _db.Hotels where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
-                var result = Mapper.MapHotel(listWaiting);
+                var listWaiting = (from x in _db.Places where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                var result = Mapper.MapPlace(listWaiting);
 
                 if (listWaiting.Count() > 0)
                 {
@@ -316,21 +349,21 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetWaitingHPlace()
+        public Response CreateContract(CreateContractViewModel input)
         {
             try
             {
-                var listWaiting = (from x in _db.Places where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
-                var result = Mapper.MapPlace(listWaiting);
-
-                if (listWaiting.Count() > 0)
-                {
-                    res.Content = result;
-                }
+                Contract contract = Mapper.MapCreateContract(input);
+                _db.Contracts.Add(contract);
+                _db.SaveChanges();
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Thêm thành công !";
+                res.Notification.Type = "Success";
                 return res;
             }
             catch (Exception e)
             {
+
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Description = e.Message;
                 res.Notification.Messenge = "Có lỗi xảy ra !";

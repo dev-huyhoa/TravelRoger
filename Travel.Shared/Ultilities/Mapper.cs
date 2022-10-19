@@ -27,6 +27,21 @@ namespace Travel.Shared.Ultilities
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {
 
+
+
+                // create contract 
+                cfg.CreateMap<CreateContractViewModel, Contract>()
+             .ForMember(dto => dto.IdContract, opt => opt.MapFrom(src => Guid.NewGuid()))
+             .ForMember(dto => dto.CreateBy, opt => opt.MapFrom(src => src.CreateBy))
+             .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
+             .ForMember(dto => dto.ExpDate, opt => opt.MapFrom(src => src.ExpDate))
+             .ForMember(dto => dto.SignDate, opt => opt.MapFrom(src => src.SignDate))
+             .ForMember(dto => dto.FileId, opt => opt.MapFrom(src => src.FileId))
+             .ForMember(dto => dto.NameContract, opt => opt.MapFrom(src => src.NameContract))
+             .ForMember(dto => dto.ServiceId, opt => opt.MapFrom(src => src.ServiceId))
+             .ForMember(dto => dto.TypeService, opt => opt.MapFrom(src => src.TypeService))
+             ;
+
                 // create tourbooking details
 
                 cfg.CreateMap<CreateBookingDetailViewModel, TourbookingDetails>()
@@ -771,6 +786,10 @@ namespace Travel.Shared.Ultilities
         public static List<CostTourViewModel> MapCost(List<CostTour> data)
         {
             return _mapper.Map<List<CostTour>, List<CostTourViewModel>>(data);
+        }
+        public static Contract MapCreateContract(CreateContractViewModel data)
+        {
+            return _mapper.Map<CreateContractViewModel, Contract>(data);
         }
     }
 }

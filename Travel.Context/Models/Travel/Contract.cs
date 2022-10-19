@@ -19,6 +19,5 @@ namespace Travel.Context.Models
         public long CreateDate { get; set; }
         public string ModifyBy { get; set; }
         public string CreateBy { get; set; }
-        public int Status { get; set; }
     }
 }

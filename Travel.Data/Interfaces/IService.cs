@@ -23,5 +23,6 @@ namespace Travel.Data.Interfaces
         Response GetPlace();
         Response CreatePlace(CreatePlaceViewModel input);
 
+        Response CreateContract(CreateContractViewModel input);
     }
 }

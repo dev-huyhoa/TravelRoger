@@ -21,26 +21,22 @@ namespace Travel.Shared.ViewModels.Travel.ContractVM
     }
     public class CreateContractViewModel
     {
-        private string modifyBy;
-        private long modifyDate;
+
+        private Guid fileId;
         private string createBy;
-        private long createDate;
         private TypeService typeService;
-        private string contractName;
+        private string nameContract;
         private long signDate;
         private long expDate;
-        private Guid idService;
+        private Guid serviceId;
 
-
-        public string ModifyBy { get => modifyBy; set => modifyBy = value; }
-        public long ModifyDate { get => modifyDate; set => modifyDate = value; }
+        public Guid FileId { get => fileId; set => fileId = value; }
         public string CreateBy { get => createBy; set => createBy = value; }
-        public long CreateDate { get => createDate; set => createDate = value; }
-        public string ContractName { get => contractName; set => contractName = value; }
+        public TypeService TypeService { get => typeService; set => typeService = value; }
         public long SignDate { get => signDate; set => signDate = value; }
         public long ExpDate { get => expDate; set => expDate = value; }
-        public Guid IdService { get => idService; set => idService = value; }
-        public TypeService TypeService { get => typeService; set => typeService = value; }
+        public Guid ServiceId { get => serviceId; set => serviceId = value; }
+        public string NameContract { get => nameContract; set => nameContract = value; }
     }
     public class CreatePlaceViewModel : ParentProperty
     {
@@ -79,6 +75,7 @@ namespace Travel.Shared.ViewModels.Travel.ContractVM
         private string phone;
         private string address;
         private string name;
+        private string nameContract;
 
 
         public string ModifyBy { get => modifyBy; set => modifyBy = value; }
@@ -86,5 +83,6 @@ namespace Travel.Shared.ViewModels.Travel.ContractVM
         public string Phone { get => phone; set => phone = value; }
         public string Address { get => address; set => address = value; }
         public string Name { get => name; set => name = value; }
+        public string NameContract { get => nameContract; set => nameContract = value; }
     }
 }
