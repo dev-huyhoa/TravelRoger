@@ -105,6 +105,7 @@ namespace Travel.Data.Repositories
                 tour.IsDelete = false;
                 _db.Tour.Add(tour);
                 _db.SaveChanges();
+                res.Content = tour.TourDetail.IdTourDetail;
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
                 res.Notification.Type = "Success";
