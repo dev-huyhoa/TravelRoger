@@ -148,12 +148,6 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
                 return res;
             }
             catch (Exception e)

@@ -93,16 +93,17 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+
         [HttpGet("{id}")]
         [Authorize]
         [Route("delete-employee")]
         public object DeleteEmployee(Guid idEmployee)
         {
-
             res = employee.DeleteEmployee(idEmployee);
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
+
         [HttpGet("{id}")]
         [AllowAnonymous]
         [Route("restore-employee")]
