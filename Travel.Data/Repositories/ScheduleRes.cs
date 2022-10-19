@@ -106,7 +106,36 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.Schedules select x).ToList();
+                var list = (from s in _db.Schedules
+                            where s.Approve == (int)Enums.ApproveStatus.Waiting
+                            select new Schedule
+                            {
+                                Alias = s.Alias,
+                                Approve = s.Approve,
+                                BeginDate = s.BeginDate,
+                                QuantityAdult = s.QuantityAdult,
+                                QuantityBaby = s.QuantityBaby,
+                                QuantityChild = s.QuantityChild,
+                                CarId = s.CarId,
+                                DepartureDate = s.DepartureDate,
+                                EndDate = s.EndDate,
+                                EmployeeId = s.EmployeeId,
+                                FinalPrice = s.FinalPrice,
+                                IdSchedule = s.IdSchedule,
+                                MaxCapacity = s.MaxCapacity,
+                                MinCapacity = s.MinCapacity,
+                                PromotionId = s.PromotionId,
+                                Status = s.Status,
+                                TourId = s.TourId,
+                                Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
+                                Tour = (from t in _db.Tour where s.TourId == t.IdTour select t).First()
+                            }).ToList();
+                //foreach (var item in listJoin)
+                //{
+                //    item.s.Tour = item.t;
+                //    list.Add(item.s);
+                //}
+
                 var result = Mapper.MapSchedule(list);
                 if (list.Count() > 0)
                 {

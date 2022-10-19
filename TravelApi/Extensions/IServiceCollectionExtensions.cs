@@ -27,7 +27,6 @@ namespace TravelApi.Extensions
             services.AddDbContext<TravelContext>(options =>
             {
                 options
-                .UseLazyLoadingProxies()
                 .UseSqlServer(configuration.GetConnectionString("travelRoverEntities"));
             });
             return services;

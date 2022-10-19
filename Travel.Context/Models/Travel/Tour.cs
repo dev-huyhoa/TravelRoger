@@ -23,8 +23,8 @@ namespace Travel.Context.Models
         public string Thumbsnail { get; set; }
         public float PriceAdult { get; set; }
         public float PriceAdultPromotion { get; set; }
-        public virtual ICollection<Schedule> Schedules { get; set; }
-        public virtual TourDetail TourDetail { get; set; }
+        public ICollection<Schedule> Schedules { get; set; }
+        public TourDetail TourDetail { get; set; }
 
     }
 }

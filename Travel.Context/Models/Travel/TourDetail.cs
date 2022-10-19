@@ -26,8 +26,8 @@ namespace Travel.Context.Models
         public int Profit { get; set; }
         public float Vat { get; set; }
         public float FinalPrice { get; set; }
-        public virtual ICollection<CostTour> CostTours { get; set; }
-        public virtual Tour Tour { get; set; }
+        public ICollection<CostTour> CostTours { get; set; }
+        public Tour Tour { get; set; }
 
     }
 }

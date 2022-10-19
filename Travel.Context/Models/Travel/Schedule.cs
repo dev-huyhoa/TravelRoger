@@ -24,13 +24,13 @@ namespace Travel.Context.Models
         public string TourId { get; set; }
         public Guid CarId { get; set; }
         public int PromotionId { get; set; }
-        public  Guid EmployeeId { get; set; }
-        public virtual Car Car { get; set; }
-        public virtual Promotion Promotions { get; set; }
-        public virtual Tour Tour { get; set; }
-        public virtual ICollection<Timeline> Timelines { get; set; }
-        public virtual ICollection<Tourbooking> TourBookings { get; set; }
-        public virtual Employee Employee { get; set; }
+        public Guid EmployeeId { get; set; }
+        public Car Car { get; set; }
+        public Promotion Promotions { get; set; }
+        public Tour Tour { get; set; }
+        public ICollection<Timeline> Timelines { get; set; }
+        public ICollection<Tourbooking> TourBookings { get; set; }
+        public Employee Employee { get; set; }
         
     }
 }
