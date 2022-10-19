@@ -43,7 +43,7 @@ namespace TravelApi.Controllers
         }
         
         [HttpGet()]
-        [Authorize]
+        [AllowAnonymous]
         [Route("gets-schedule")]
         public object Get()
         {
