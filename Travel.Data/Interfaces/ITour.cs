@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.TourVM;
+using static Travel.Shared.Ultilities.Enums;
 
 namespace Travel.Data.Interfaces
 {
@@ -17,5 +18,7 @@ namespace Travel.Data.Interfaces
         Response GetWaiting();
         Response Delete(string idTour);
         Response RestoreTour(string idTour);
+        Response Approve(JObject frmData);
+
     }
 }

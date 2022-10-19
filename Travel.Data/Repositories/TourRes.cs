@@ -200,6 +200,42 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response Approve(JObject frmData)
+        {
+            try
+            {
+                var id = PrCommon.GetString("idTour", frmData);
+                if (String.IsNullOrEmpty(id))
+                {
+                }
+                var typeApprove = PrCommon.GetString("typeApprove", frmData);
+
+                if (String.IsNullOrEmpty(typeApprove))
+                {
+                }
+                var tour = (from x in _db.Tour where x.IdTour == id select x).First();
+                tour.ApproveStatus = Convert.ToInt16(typeApprove);
+                _db.SaveChanges();
+                res.Content = $"Thao tác {tour.NameTour} thành công";
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+
+
+
+
+
+
+
         public Response RestoreTour(string idTour)
         {
             try

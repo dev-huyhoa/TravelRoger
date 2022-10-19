@@ -58,7 +58,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         [Route("gets-tour-waiting")]
         public object GetWaiting()
         {
@@ -68,10 +68,13 @@ namespace TravelApi.Controllers
 
         // POST api/<TourController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Authorize]
+        [Route("approve-tour")]
+        public object Approve([FromBody] JObject frmData)
         {
+            res = _tourRes.Approve(frmData);
+            return Ok(res);
         }
-
         // PUT api/<TourController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)

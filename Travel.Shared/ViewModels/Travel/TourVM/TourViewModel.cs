@@ -11,7 +11,7 @@ namespace Travel.Shared.ViewModels.Travel
     public class TourViewModel
     {
         private string idTour;
-        private string tourName;
+        private string nameTour;
         private double rating;
         private string thumbsnail;
         private string fromPlace;
@@ -36,7 +36,7 @@ namespace Travel.Shared.ViewModels.Travel
         private TourDetailViewModel tourDetail;
         private ICollection<ScheduleViewModel> schedules;
 
-        public string TourName { get => tourName; set => tourName = value; }
+        public string NameTour { get => nameTour; set => nameTour = value; }
         public double Rating { get => rating; set => rating = value; }
         public string Thumbsnail { get => thumbsnail; set => thumbsnail = value; }
         public string FromPlace { get => fromPlace; set => fromPlace = value; }

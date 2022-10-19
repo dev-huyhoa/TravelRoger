@@ -170,7 +170,7 @@ namespace Travel.Shared.Ultilities
                 cfg.CreateMap<Tour, TourViewModel>()
                    .ForMember(dto => dto.IdTour, opt => opt.MapFrom(src => src.IdTour))
                    .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
-                   .ForMember(dto => dto.TourName, opt => opt.MapFrom(src => src.NameTour))
+                   .ForMember(dto => dto.NameTour, opt => opt.MapFrom(src => src.NameTour))
                    .ForMember(dto => dto.Thumbsnail, opt => opt.MapFrom(src => src.Thumbsnail))
                    .ForMember(dto => dto.FromPlace, opt => opt.MapFrom(src => src.FromPlace))
                    .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.ToPlace))
