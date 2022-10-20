@@ -162,7 +162,25 @@ namespace Travel.Data.Repositories
 
         public Response GetsHistory(Guid idCustomer)
         {
-            return null;
+            try
+            {
+                var list = (from x in _db.Tourbookings where x.CustomerId == idCustomer select x).ToList();
+                var result = Mapper.MapTourBooking(list);
+
+                if (list.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
         }
     }
 }

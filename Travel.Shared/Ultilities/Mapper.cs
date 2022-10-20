@@ -16,6 +16,7 @@ using Travel.Shared.ViewModels.Travel.CostTourVM;
 using Travel.Shared.ViewModels.Travel.TourBookingVM;
 using Travel.Shared.ViewModels.Travel.ContractVM;
 using static Travel.Shared.ViewModels.Travel.ServiceVM.ServiceViewModel;
+using static Travel.Shared.Ultilities.Enums;
 
 namespace Travel.Shared.Ultilities
 {
@@ -46,7 +47,6 @@ namespace Travel.Shared.Ultilities
 
                 cfg.CreateMap<CreateBookingDetailViewModel, TourbookingDetails>()
                    .ForMember(dto => dto.IsCalled, opt => opt.MapFrom(src => false))
-                   .ForMember(dto => dto.CallDate, opt => opt.MapFrom(src => 0))
                    .ForMember(dto => dto.Baby, opt => opt.MapFrom(src => src.Baby))
                    .ForMember(dto => dto.Child, opt => opt.MapFrom(src =>src.Child))
                    .ForMember(dto => dto.Adult, opt => opt.MapFrom(src => src.Adult == 0 ? 1 : src.Adult))
@@ -98,7 +98,19 @@ namespace Travel.Shared.Ultilities
                     .ForMember(dto => dto.RemainPrice, opt => opt.MapFrom(src => src.RemainPrice))
                     .ForMember(dto => dto.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice))
                     .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
-                    .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
+                    .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+
+
+                    .ForMember(dto => dto.PaymentName, opt => opt.MapFrom(src => src.Payment.NamePayment))
+                    .ForMember(dto => dto.PaymentType, opt => opt.MapFrom(src => src.Payment.Type))
+                    .ForMember(dto => dto.Note, opt => opt.MapFrom(src => src.TourbookingDetails.Note))
+                    .ForMember(dto => dto.Baby, opt => opt.MapFrom(src => src.TourbookingDetails.Baby))
+                    .ForMember(dto => dto.Child, opt => opt.MapFrom(src => src.TourbookingDetails.Child))
+                    .ForMember(dto => dto.Adult, opt => opt.MapFrom(src => src.TourbookingDetails.Adult))
+                    .ForMember(dto => dto.Status, opt => opt.MapFrom(src => (StatusBooking)Convert.ToUInt16(src.TourbookingDetails.Status)))
+
+
+                    ;
 
                 // create schedule
                 cfg.CreateMap<CreateScheduleViewModel, Schedule>()
@@ -306,7 +318,6 @@ namespace Travel.Shared.Ultilities
                          .ForMember(dto => dto.Phone, otp => otp.MapFrom(src => src.Phone))
                          .ForMember(dto => dto.Email, otp => otp.MapFrom(src => src.Email))
                          .ForMember(dto => dto.Address, otp => otp.MapFrom(src => src.Address))
-                         .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password))
                          .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
                          .ForMember(dto => dto.Birthday, otp => otp.MapFrom(src => src.Birthday))
                         .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => src.CreateDate))

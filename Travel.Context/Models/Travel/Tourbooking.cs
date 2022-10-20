@@ -33,11 +33,12 @@ namespace Travel.Context.Models
         public float  TotalPrice{get;set;}
         public float TotalPricePromotion { get; set; }
         public string ModifyBy{get;set;}
-        public long   ModifyDate{get;set;}
-        public virtual Schedule Schedule { get; set; }
 
-        public virtual Payment Payment { get; set; }
-        public virtual TourbookingDetails TourbookingDetails { get; set; }
+        public long   ModifyDate{get;set;}
+        public  Schedule Schedule { get; set; }
+
+        public  Payment Payment { get; set; }
+        public  TourbookingDetails TourbookingDetails { get; set; }
 
     }
 }

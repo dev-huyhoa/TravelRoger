@@ -14,7 +14,6 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         private string email;
         private bool gender;
         private string address;
-        private string password;
         private long birthday;
         private long createDate;
         private int point;
@@ -25,7 +24,6 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         public string Phone { get => phone; set => phone = value; }
         public string Email { get => email; set => email = value; }
         public string Address { get => address; set => address = value; }
-        public string Password { get => password; set => password = value; }
         public long Birthday { get => birthday; set => birthday = value; }
         public long CreateDate { get => createDate; set => createDate = value; }
         public int Point { get => point; set => point = value; }
