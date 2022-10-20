@@ -202,6 +202,7 @@ namespace Travel.Data.Repositories
 
                 var listEmp = (from x in _db.Employees 
                                where x.IsDelete == isDelete 
+                               orderby x.RoleId
                                select new Employee 
                 { 
                 CreateDate = x.CreateDate,
