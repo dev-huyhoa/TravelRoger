@@ -15,6 +15,6 @@ namespace Travel.Data.Interfaces
         Response Get();
         Response Create(CreateScheduleViewModel input);
         Response Delete(string idSchedule);
-        Response RestoreTour(string idSchedule);
+        Response RestoreShedule(string idSchedule);
     }
 }

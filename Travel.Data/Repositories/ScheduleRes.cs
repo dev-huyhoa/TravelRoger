@@ -231,7 +231,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response RestoreTour(string idSchedule)
+        public Response RestoreShedule(string idSchedule)
         {
             try
             {
