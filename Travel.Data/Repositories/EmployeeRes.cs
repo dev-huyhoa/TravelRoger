@@ -200,7 +200,29 @@ namespace Travel.Data.Repositories
                 //var b5 = stopWatch5.Elapsed;
                 #endregion
 
-                var listEmp = (from x in _db.Employees where x.IsDelete == isDelete orderby x.Role select x).ToList();
+                var listEmp = (from x in _db.Employees 
+                               where x.IsDelete == isDelete 
+                               select new Employee 
+                { 
+                CreateDate = x.CreateDate,
+                AccessToken = x.AccessToken,
+                Address = x.Address,
+                Birthday = x.Birthday,
+                Email = x.Email,
+                IsDelete = x.IsDelete,
+                Gender = x.Gender,
+                ModifyDate = x.ModifyDate,
+                IdEmployee = x.IdEmployee,
+                Image = x.Image,
+                IsActive = x.IsActive,
+                ModifyBy = x.ModifyBy,
+                NameEmployee = x.NameEmployee,
+                Password = x.Password,
+                Phone = x.Phone,
+                Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                RoleId = x.RoleId,
+                }).ToList();
+
                 var result = Mapper.MapEmployee(listEmp);
 
                 if (listEmp.Count() > 0)
