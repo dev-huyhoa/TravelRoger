@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel;
 using Travel.Shared.ViewModels.Travel.CostTourVM;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -35,12 +36,13 @@ namespace TravelApi.Controllers
             res = _costTourRes.Get();
             return Ok(res);
         }
-
-        // GET api/<CostTourController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        [Authorize]
+        [Route("gets-cost-tour-id-tour-detail")]
+        public object GetGetCostByIdTourDetail(string idTourDetail)
         {
-            return "value";
+            res = _costTourRes.GetCostByIdTourDetail(idTourDetail);
+            return Ok(res);
         }
 
 
@@ -59,11 +61,26 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        // PUT api/<CostTourController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost]
+        [Authorize]
+        [Route("update-cost-tour")]
+        public object Update([FromBody] JObject frmData)
         {
+            message = null;
+            var result = _costTourRes.CheckBeforSave(frmData, ref message, true);
+            if (message == null)
+            {
+                var updateObj = JsonSerializer.Deserialize<UpdateCostViewModel>(result);
+                res = _costTourRes.Update(updateObj);
+            }
+            else
+            {
+                res.Notification = message;
+            }
+            return Ok(res);
         }
+
+   
 
         // DELETE api/<CostTourController>/5
         [HttpDelete("{id}")]

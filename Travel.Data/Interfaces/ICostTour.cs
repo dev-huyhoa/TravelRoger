@@ -15,6 +15,8 @@ namespace Travel.Data.Interfaces
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Create(CreateCostViewModel input);
         Response Get();
+        Response GetCostByIdTourDetail(string idTourDetail);
+        Response Update(UpdateCostViewModel input);
         string UpdateCostHotel(Hotel input);
     }
 }

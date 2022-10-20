@@ -11,6 +11,7 @@ using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel;
 using Travel.Shared.ViewModels.Travel.CostTourVM;
 using Travel.Shared.ViewModels.Travel.TourVM;
 
@@ -31,6 +32,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var idCostTour = PrCommon.GetString("idCostTour", frmData);
+                if (String.IsNullOrEmpty(idCostTour))
+                {
+                }
                 var tourDetailId = PrCommon.GetString("tourDetailId", frmData);
                 if (String.IsNullOrEmpty(tourDetailId))
                 {
@@ -94,7 +99,7 @@ namespace Travel.Data.Repositories
                 {
                     // map data
                     UpdateCostViewModel objUpdate = new UpdateCostViewModel();
-
+                    objUpdate.IdCostTour = Guid.Parse(idCostTour);
                     objUpdate.TourDetailId = tourDetailId;
                     objUpdate.Breakfast = float.Parse(breakfast);
                     objUpdate.Water = float.Parse(water);
@@ -107,6 +112,9 @@ namespace Travel.Data.Repositories
                     objUpdate.CusExpected = Convert.ToInt16(cusExpected);
                     objUpdate.InsuranceFee = float.Parse(insuranceFee);
                     objUpdate.IsHoliday = bool.Parse(isHoliday);
+                    objUpdate.HotelId = Guid.Parse(hotelId);
+                    objUpdate.RestaurantId = Guid.Parse(restaurantId);
+                    objUpdate.PlaceId = Guid.Parse(placeId);
                     return JsonSerializer.Serialize(objUpdate);
                 }
                 // map data
@@ -184,6 +192,59 @@ namespace Travel.Data.Repositories
                 return res;
             }
             catch(Exception e)
+            {
+
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response GetCostByIdTourDetail(string idTourDetail)
+        {
+            try
+            {
+                //var tourdetail = from x in _db.CostTours where x.TourDetailId == idTourDetail select x;
+                var tourdetail = _db.CostTours.Where(x => x.TourDetailId == idTourDetail).FirstOrDefault();
+                var result = Mapper.MapCost(tourdetail);
+                if (result != null)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response Update(UpdateCostViewModel input)
+        {
+            try
+            {
+                CostTour costTour = Mapper.MapUpdateCost(input);
+                _db.CostTours.Update(costTour);
+                _db.SaveChanges();
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Sửa thành công !";
+                res.Notification.Type = "Success";
+                return res;
+            }
+            catch (Exception e)
             {
 
                 res.Notification.DateTime = DateTime.Now;
