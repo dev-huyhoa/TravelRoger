@@ -160,5 +160,9 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response GetsHistory(Guid idCustomer)
+        {
+            return null;
+        }
     }
 }

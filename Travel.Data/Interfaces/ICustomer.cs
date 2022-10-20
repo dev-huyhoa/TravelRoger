@@ -15,6 +15,7 @@ namespace Travel.Data.Interfaces
         string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate);
         Response Gets();
         Response Create(CreateCustomerViewModel input);
+        Response GetsHistory(Guid idCustomer);
 
     }
 }
