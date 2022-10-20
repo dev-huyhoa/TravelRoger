@@ -79,5 +79,16 @@ namespace TravelApi.Controllers
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
+
+
+        [HttpGet("{id}")]
+        [Authorize]
+        [Route("restore-schedule")]
+        public object RestoreSchedule(string idSchedule)
+        {
+            res = _schedule.RestoreShedule(idSchedule);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
     }
 }
