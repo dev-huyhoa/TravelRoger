@@ -128,7 +128,26 @@ namespace Travel.Data.Repositories
                                 Status = s.Status,
                                 TourId = s.TourId,
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
-                                Tour = (from t in _db.Tour where s.TourId == t.IdTour select t).First()
+                                Tour = (from t in _db.Tour where s.TourId == t.IdTour select new Tour { 
+                                    Thumbsnail = t.Thumbsnail,
+                                    ToPlace =t.ToPlace,
+                                    FromPlace = t.FromPlace,
+                                    IdTour = t.IdTour,
+                                    NameTour = t.NameTour,
+                                    Alias =t.Alias,
+                                    ApproveStatus = t.ApproveStatus,
+                                    CreateDate = t.CreateDate,
+                                    IsActive = t.IsActive,
+                                    IsDelete = t.IsDelete,
+                                    ModifyBy = t.ModifyBy,
+                                    ModifyDate = t.ModifyDate,
+                                    PriceAdult = t.PriceAdult,
+                                    PriceAdultPromotion = t.PriceAdultPromotion,
+                                    Rating = t.Rating,
+                                    Status = t.Status,
+                                    TourDetail = (from td in _db.TourDetails where td.TourId == t.IdTour select td).First()
+                                }).First(),
+                                
                             }).ToList();
                 //foreach (var item in listJoin)
                 //{
