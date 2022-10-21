@@ -11,6 +11,7 @@ namespace Travel.Shared.ViewModels.Travel
     {
         private string idSchedule;
         private long departureDate;
+        private long returnDate;
         private long beginDate;
         private long endDate;
         private long timePromotion;
@@ -60,5 +61,6 @@ namespace Travel.Shared.ViewModels.Travel
         public ICollection<Timeline> Timelines { get => timelines; set => timelines = value; }
         public int ValuePromotion { get => valuePromotion; set => valuePromotion = value; }
         public Tour Tour { get => tour; set => tour = value; }
+        public long ReturnDate { get => returnDate; set => returnDate = value; }
     }
 }

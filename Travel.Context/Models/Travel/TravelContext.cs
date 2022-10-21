@@ -120,6 +120,11 @@ namespace Travel.Context.Models.Travel
                 entity.HasOne(e => e.Hotel)
                 .WithMany(e => e.TourBookingDetails)
                 .HasForeignKey(e => e.HotelId);
+
+
+                entity.Property(e => e.Note).HasMaxLength(255);
+
+
             });
 
             modelBuilder.Entity<Province>(entity =>

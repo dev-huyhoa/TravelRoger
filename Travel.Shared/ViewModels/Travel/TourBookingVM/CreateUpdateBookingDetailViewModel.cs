@@ -17,6 +17,7 @@ namespace Travel.Shared.ViewModels.Travel.TourBookingVM
         private int    child ;
         private int    adult ;
         private Ultilities.Enums.StatusBooking status ;
+        private string note;
         private Guid hotelId;
         private Guid restaurantId;
         private Guid placeId;
@@ -30,5 +31,6 @@ namespace Travel.Shared.ViewModels.Travel.TourBookingVM
         public Guid HotelId { get => hotelId; set => hotelId = value; }
         public Guid RestaurantId { get => restaurantId; set => restaurantId = value; }
         public Guid PlaceId { get => placeId; set => placeId = value; }
+        public string Note { get => note; set => note = value; }
     }
 }

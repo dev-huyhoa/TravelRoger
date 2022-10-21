@@ -116,7 +116,7 @@ namespace Travel.Data.Repositories
                 }
                 // map data
                 CreateCostViewModel obj = new CreateCostViewModel();
-
+                obj.IdCostTour = idCostTour;
                 obj.Breakfast = float.Parse(breakfast);
                 obj.Water = float.Parse(water);
                 obj.FeeGas = float.Parse(feeGas);

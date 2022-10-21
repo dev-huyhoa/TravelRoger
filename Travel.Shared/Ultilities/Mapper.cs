@@ -48,7 +48,7 @@ namespace Travel.Shared.Ultilities
                 cfg.CreateMap<CreateBookingDetailViewModel, TourbookingDetails>()
                    .ForMember(dto => dto.IsCalled, opt => opt.MapFrom(src => false))
                    .ForMember(dto => dto.Baby, opt => opt.MapFrom(src => src.Baby))
-                   .ForMember(dto => dto.Child, opt => opt.MapFrom(src =>src.Child))
+                   .ForMember(dto => dto.Child, opt => opt.MapFrom(src => src.Child))
                    .ForMember(dto => dto.Adult, opt => opt.MapFrom(src => src.Adult == 0 ? 1 : src.Adult))
                    .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
                    .ForMember(dto => dto.HotelId, opt => opt.MapFrom(src => src.HotelId))
@@ -71,6 +71,7 @@ namespace Travel.Shared.Ultilities
                    .ForMember(dto => dto.Pincode, opt => opt.MapFrom(src => src.Pincode))
                    .ForMember(dto => dto.VoucherCode, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.VoucherCode) ? src.VoucherCode : ""))
                    .ForMember(dto => dto.BookingNo, opt => opt.MapFrom(src => ""))
+                      .ForMember(dto => dto.ValuePromotion, opt => opt.MapFrom(src => src.ValuePromotion == null ? 0 : src.ValuePromotion))
                    .ForMember(dto => dto.IsCalled, opt => opt.MapFrom(src => false))
                    .ForMember(dto => dto.Deposit, opt => opt.MapFrom(src => 0))
                    .ForMember(dto => dto.RemainPrice, opt => opt.MapFrom(src => 0))
@@ -103,7 +104,7 @@ namespace Travel.Shared.Ultilities
 
 
                     //.ForMember(dto => dto.Note, opt => opt.MapFrom(src => src.TourbookingDetails.Note))
-        
+
 
 
                     ;
@@ -119,6 +120,7 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.QuantityChild, opt => opt.MapFrom(src => 0))
                .ForMember(dto => dto.MinCapacity, opt => opt.MapFrom(src => 30))
                .ForMember(dto => dto.MaxCapacity, opt => opt.MapFrom(src => 45))
+               .ForMember(dto => dto.IsHoliday, opt => opt.MapFrom(src => false))
                .ForMember(dto => dto.Status, opt => opt.MapFrom(src => Enums.StatusSchedule.Free))
                .ForMember(dto => dto.TourId, opt => opt.MapFrom(src => src.TourId))
                .ForMember(dto => dto.CarId, opt => opt.MapFrom(src => src.CarId))
@@ -509,31 +511,31 @@ namespace Travel.Shared.Ultilities
                ))
                ;
                 //view costtour
-                   cfg.CreateMap<CostTour, CostTourViewModel>()
-               .ForMember(dto => dto.IdCostTour, opt => opt.MapFrom(src => src.IdCostTour))
-               .ForMember(dto => dto.Breakfast, opt => opt.MapFrom(src => src.Breakfast))
-               .ForMember(dto => dto.Water, opt => opt.MapFrom(src => src.Water))
-               .ForMember(dto => dto.FeeGas, opt => opt.MapFrom(src => src.FeeGas))
-               .ForMember(dto => dto.Distance, opt => opt.MapFrom(src => src.Distance))
-               .ForMember(dto => dto.SellCost, opt => opt.MapFrom(src => src.SellCost))
-               .ForMember(dto => dto.Depreciation, opt => opt.MapFrom(src => src.Depreciation))
-               .ForMember(dto => dto.OtherPrice, opt => opt.MapFrom(src => src.OtherPrice))
-               .ForMember(dto => dto.Tolls, opt => opt.MapFrom(src => src.Tolls))
-               .ForMember(dto => dto.CusExpected, opt => opt.MapFrom(src => src.CusExpected))
-               .ForMember(dto => dto.InsuranceFee, opt => opt.MapFrom(src => src.InsuranceFee))
-               .ForMember(dto => dto.IsHoliday, opt => opt.MapFrom(src => src.IsHoliday))
-                    .ForMember(dto => dto.HotelId, opt => opt.MapFrom(src => src.HotelId))
-               .ForMember(dto => dto.RestaurantId, opt => opt.MapFrom(src => src.RestaurantId))
-               .ForMember(dto => dto.PlaceId, opt => opt.MapFrom(src => src.PlaceId))
-               .ForMember(dto => dto.TotalCostTour, opt => opt.MapFrom(src => src.TotalCostTour))
-               .ForMember(dto => dto.NameHotel, opt => opt.MapFrom(src => src.Hotel.NameHotel))
-               .ForMember(dto => dto.PriceSRHotel, opt => opt.MapFrom(src => src.Hotel.SingleRoomPrice))
-               .ForMember(dto => dto.PriceDBHotel, opt => opt.MapFrom(src => src.Hotel.DoubleRoomPrice))
-               .ForMember(dto => dto.NameRestaurant, opt => opt.MapFrom(src => src.Restaurant.NameRestaurant))
-               .ForMember(dto => dto.PriceComboRestaurant, opt => opt.MapFrom(src => src.Restaurant.ComboPrice))
-               .ForMember(dto => dto.NamePlace, opt => opt.MapFrom(src => src.Place.NamePlace))
-               .ForMember(dto => dto.PriceTicketPlace, opt => opt.MapFrom(src => src.Place.PriceTicket))
-               ;
+                cfg.CreateMap<CostTour, CostTourViewModel>()
+            .ForMember(dto => dto.IdCostTour, opt => opt.MapFrom(src => src.IdCostTour))
+            .ForMember(dto => dto.Breakfast, opt => opt.MapFrom(src => src.Breakfast))
+            .ForMember(dto => dto.Water, opt => opt.MapFrom(src => src.Water))
+            .ForMember(dto => dto.FeeGas, opt => opt.MapFrom(src => src.FeeGas))
+            .ForMember(dto => dto.Distance, opt => opt.MapFrom(src => src.Distance))
+            .ForMember(dto => dto.SellCost, opt => opt.MapFrom(src => src.SellCost))
+            .ForMember(dto => dto.Depreciation, opt => opt.MapFrom(src => src.Depreciation))
+            .ForMember(dto => dto.OtherPrice, opt => opt.MapFrom(src => src.OtherPrice))
+            .ForMember(dto => dto.Tolls, opt => opt.MapFrom(src => src.Tolls))
+            .ForMember(dto => dto.CusExpected, opt => opt.MapFrom(src => src.CusExpected))
+            .ForMember(dto => dto.InsuranceFee, opt => opt.MapFrom(src => src.InsuranceFee))
+            .ForMember(dto => dto.IsHoliday, opt => opt.MapFrom(src => src.IsHoliday))
+                 .ForMember(dto => dto.HotelId, opt => opt.MapFrom(src => src.HotelId))
+            .ForMember(dto => dto.RestaurantId, opt => opt.MapFrom(src => src.RestaurantId))
+            .ForMember(dto => dto.PlaceId, opt => opt.MapFrom(src => src.PlaceId))
+            .ForMember(dto => dto.TotalCostTour, opt => opt.MapFrom(src => src.TotalCostTour))
+            .ForMember(dto => dto.NameHotel, opt => opt.MapFrom(src => src.Hotel.NameHotel))
+            .ForMember(dto => dto.PriceSRHotel, opt => opt.MapFrom(src => src.Hotel.SingleRoomPrice))
+            .ForMember(dto => dto.PriceDBHotel, opt => opt.MapFrom(src => src.Hotel.DoubleRoomPrice))
+            .ForMember(dto => dto.NameRestaurant, opt => opt.MapFrom(src => src.Restaurant.NameRestaurant))
+            .ForMember(dto => dto.PriceComboRestaurant, opt => opt.MapFrom(src => src.Restaurant.ComboPrice))
+            .ForMember(dto => dto.NamePlace, opt => opt.MapFrom(src => src.Place.NamePlace))
+            .ForMember(dto => dto.PriceTicketPlace, opt => opt.MapFrom(src => src.Place.PriceTicket))
+            ;
 
                 cfg.CreateMap<UpdateCostViewModel, CostTour>()
                 .ForMember(dto => dto.IdCostTour, opt => opt.MapFrom(src => src.IdCostTour))
@@ -561,7 +563,7 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<Role, RoleViewModel>(data);
         }
-        
+
 
         public static List<TourDetailViewModel> MapTourDetail(List<TourDetail> data)
         {
@@ -729,7 +731,7 @@ namespace Travel.Shared.Ultilities
             return _mapper.Map<CreateTimeLineViewModel, Timeline>(data);
         }
 
-      
+
 
         public static List<TourBookingViewModel> MapTourBooking(List<Tourbooking> data)
         {
