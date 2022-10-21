@@ -173,6 +173,7 @@ namespace Travel.Data.Repositories
                 tourbooking.TourbookingDetails = tourBookingDetail;
                 _db.Tourbookings.Add(tourbooking);
                 _db.SaveChanges();
+                res.Content = tourbooking;
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Đặt tour thành công !";
                 res.Notification.Type = "Success";
