@@ -518,18 +518,39 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CheckPhoneEmployee(string phone)
+        public Response CheckPhoneEmployee(string phone, string idEmployee = null)
         {
             try
             {
-                var emp = (from x in _db.Employees where x.IsDelete == false && x.Phone == phone select x).Count();
-                if (emp > 0)
+                if (idEmployee != null) // update
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "[" + phone + "] này đã được đăng ký !";
-                    res.Notification.Type = "Error";
+                    Guid id = Guid.Parse(idEmployee);
+                    string oldPhone = (from x in _db.Employees where x.IdEmployee == id select x).First().Phone;
+                    if (phone != oldPhone) // có thay đổi  sdt
+                    {
+                        var obj = (from x in _db.Employees where x.Phone != oldPhone && x.Phone == phone select x).Count();
+                        if (obj >0)
+                        {
+                            res.Notification.DateTime = DateTime.Now;
+                            res.Notification.Messenge = "[" + phone + "] này đã được đăng ký !";
+                            res.Notification.Type = "Error";
+                            return res;
+                        }
+                    }
+                }
+                else // create
+                {
+                    var emp = (from x in _db.Employees where x.Phone == phone select x).Count();
+                    if (emp > 0)
+                    {
+                        res.Notification.DateTime = DateTime.Now;
+                        res.Notification.Messenge = "[" + phone + "] này đã được đăng ký !";
+                        res.Notification.Type = "Error";
+                        return res;
+                    }
                 }
                 return res;
+
             }
             catch (Exception e)
             {

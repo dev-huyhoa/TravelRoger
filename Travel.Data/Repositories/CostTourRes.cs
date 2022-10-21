@@ -94,13 +94,11 @@ namespace Travel.Data.Repositories
                 if (!insuranceFee.IsNumber())
                 {
                 }
-                var isHoliday = PrCommon.GetString("isHoliday", frmData) ?? "false";
                 if (isUpdate)
                 {
                     // map data
                     UpdateCostViewModel objUpdate = new UpdateCostViewModel();
-                    objUpdate.IdCostTour = Guid.Parse(idCostTour);
-                    objUpdate.TourDetailId = tourDetailId;
+                    objUpdate.IdCostTour = idCostTour;
                     objUpdate.Breakfast = float.Parse(breakfast);
                     objUpdate.Water = float.Parse(water);
                     objUpdate.FeeGas = float.Parse(feeGas);
@@ -111,7 +109,6 @@ namespace Travel.Data.Repositories
                     objUpdate.Tolls = float.Parse(tolls);
                     objUpdate.CusExpected = Convert.ToInt16(cusExpected);
                     objUpdate.InsuranceFee = float.Parse(insuranceFee);
-                    objUpdate.IsHoliday = bool.Parse(isHoliday);
                     objUpdate.HotelId = Guid.Parse(hotelId);
                     objUpdate.RestaurantId = Guid.Parse(restaurantId);
                     objUpdate.PlaceId = Guid.Parse(placeId);
@@ -120,7 +117,6 @@ namespace Travel.Data.Repositories
                 // map data
                 CreateCostViewModel obj = new CreateCostViewModel();
 
-                obj.TourDetailId = tourDetailId;
                 obj.Breakfast = float.Parse(breakfast);
                 obj.Water = float.Parse(water);
                 obj.FeeGas = float.Parse(feeGas);
@@ -131,7 +127,6 @@ namespace Travel.Data.Repositories
                 obj.Tolls = float.Parse(tolls);
                 obj.CusExpected = Convert.ToInt16(cusExpected);
                 obj.InsuranceFee = float.Parse(insuranceFee);
-                obj.IsHoliday = bool.Parse(isHoliday);
                 obj.HotelId = Guid.Parse(hotelId);
                 obj.RestaurantId = Guid.Parse(restaurantId);
                 obj.PlaceId = Guid.Parse(placeId);
@@ -207,7 +202,7 @@ namespace Travel.Data.Repositories
             try
             {
                 //var tourdetail = from x in _db.CostTours where x.TourDetailId == idTourDetail select x;
-                var tourdetail = _db.CostTours.Where(x => x.TourDetailId == idTourDetail).FirstOrDefault();
+                var tourdetail = _db.CostTours.Where(x => x.IdCostTour == idTourDetail).FirstOrDefault();
                 var result = Mapper.MapCost(tourdetail);
                 if (result != null)
                 {

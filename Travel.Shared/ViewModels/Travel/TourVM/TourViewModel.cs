@@ -29,9 +29,6 @@ namespace Travel.Shared.ViewModels.Travel
         private bool isActive;
 
 
-        // client
-        private float priceAdult;
-        private float priceAdultPromotion;
 
         private TourDetailViewModel tourDetail;
         private ICollection<ScheduleViewModel> schedules;
@@ -49,8 +46,6 @@ namespace Travel.Shared.ViewModels.Travel
         public bool IsDelete { get => isDelete; set => isDelete = value; }
         public bool IsActive { get => isActive; set => isActive = value; }
         public string IdTour { get => idTour; set => idTour = value; }
-        public float PriceAdult { get => priceAdult; set => priceAdult = value; }
-        public float PriceAdultPromotion { get => priceAdultPromotion; set => priceAdultPromotion = value; }
         public TourDetailViewModel TourDetail { get => tourDetail; set => tourDetail = value; }
         public ICollection<ScheduleViewModel> Schedules { get => schedules; set => schedules = value; }
     }

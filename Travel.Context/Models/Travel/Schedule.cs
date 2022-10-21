@@ -15,13 +15,13 @@ namespace Travel.Context.Models
         public long TimePromotion { get; set; }
         public int Status { get; set; }
         public int Approve { get; set; }
-        public float FinalPrice { get; set; }
         public float QuantityAdult { get; set; }
         public float QuantityBaby { get; set; }
         public int MinCapacity { get; set; }
         public int MaxCapacity { get; set; }
         public float QuantityChild { get; set; }
         public bool Isdelete { get; set; }
+        public bool IsHoliday { get; set; }
 
         public string TourId { get; set; }
         public Guid CarId { get; set; }

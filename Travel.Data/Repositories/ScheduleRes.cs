@@ -120,7 +120,6 @@ namespace Travel.Data.Repositories
                                 DepartureDate = s.DepartureDate,
                                 EndDate = s.EndDate,
                                 EmployeeId = s.EmployeeId,
-                                FinalPrice = s.FinalPrice,
                                 IdSchedule = s.IdSchedule,
                                 MaxCapacity = s.MaxCapacity,
                                 MinCapacity = s.MinCapacity,
@@ -141,8 +140,6 @@ namespace Travel.Data.Repositories
                                     IsDelete = t.IsDelete,
                                     ModifyBy = t.ModifyBy,
                                     ModifyDate = t.ModifyDate,
-                                    PriceAdult = t.PriceAdult,
-                                    PriceAdultPromotion = t.PriceAdultPromotion,
                                     Rating = t.Rating,
                                     Status = t.Status,
                                     TourDetail = (from td in _db.TourDetails where td.TourId == t.IdTour select td).First()

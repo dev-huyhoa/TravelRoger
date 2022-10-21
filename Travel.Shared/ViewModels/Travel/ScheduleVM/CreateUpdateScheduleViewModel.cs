@@ -18,9 +18,6 @@ namespace Travel.Shared.ViewModels.Travel
         private long beginDate;
         private long endDate;
         private long timePromotion;
-        private float finalPrice;
-        private float quantityAdult;
-        private float quantityBaby;
         private int minCapacity;
         private int maxCapacity;
         private float quantityChild;
@@ -36,9 +33,6 @@ namespace Travel.Shared.ViewModels.Travel
         public long BeginDate { get => beginDate; set => beginDate = value; }
         public long EndDate { get => endDate; set => endDate = value; }
         public long TimePromotion { get => timePromotion; set => timePromotion = value; }
-        public float FinalPrice { get => finalPrice; set => finalPrice = value; }
-        public float QuantityAdult { get => quantityAdult; set => quantityAdult = value; }
-        public float QuantityBaby { get => quantityBaby; set => quantityBaby = value; }
         public float QuantityChild { get => quantityChild; set => quantityChild = value; }
         public int Status { get => status; set => status = value; }
      

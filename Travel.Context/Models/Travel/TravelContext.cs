@@ -70,7 +70,7 @@ namespace Travel.Context.Models.Travel
             modelBuilder.Entity<Tourbooking>(entity =>
             {
                 entity.HasKey(e => e.IdTourbooking);
-                entity.Property(e => e.ScheduleId).HasMaxLength(50);
+                entity.Property(e => e.ScheduleId).HasMaxLength(30);
 
                 entity.HasOne(e => e.Schedule)
                 .WithMany(e => e.TourBookings)
@@ -182,18 +182,21 @@ namespace Travel.Context.Models.Travel
             {
                 entity.HasKey(e => e.IdTourDetail);
 
+                entity.HasOne(e => e.CostTour)
+                .WithOne(e => e.TourDetails)
+                .HasForeignKey<CostTour>(e => e.IdCostTour);
 
                 entity.Property(e => e.Description).HasMaxLength(300);
-                entity.Property(e => e.TourId).HasMaxLength(450);
+                entity.Property(e => e.TourId).HasMaxLength(30);
+                entity.Property(e => e.IdTourDetail).HasMaxLength(30);
             });
 
             modelBuilder.Entity<CostTour>(entity =>
             {
                 entity.HasKey(e => e.IdCostTour);
 
-                entity.HasOne<TourDetail>(e => e.TourDetails)
-                 .WithMany(e => e.CostTours)
-                 .HasForeignKey(e => e.TourDetailId);
+
+                entity.Property(e => e.IdCostTour).HasMaxLength(30);
 
                 entity.HasOne<Place>(e => e.Place)
                   .WithMany(e => e.CostTours)
@@ -291,7 +294,7 @@ namespace Travel.Context.Models.Travel
             modelBuilder.Entity<Schedule>(entity =>
             {
                 entity.HasKey(e => e.IdSchedule);
-                entity.Property(e => e.IdSchedule).HasMaxLength(50);
+                entity.Property(e => e.IdSchedule).HasMaxLength(30);
                 entity.Property(e => e.Alias).HasMaxLength(150);
 
                 entity.HasOne(e => e.Car)
@@ -317,7 +320,7 @@ namespace Travel.Context.Models.Travel
 
                 entity.Property(e => e.Description).HasMaxLength(150);
                 entity.Property(e => e.ModifyBy).HasMaxLength(100);
-                entity.Property(e => e.IdSchedule).HasMaxLength(50);
+                entity.Property(e => e.IdSchedule).HasMaxLength(30);
             });
             modelBuilder.Entity<Tour>(entity =>
             {
@@ -328,6 +331,7 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Thumbsnail).HasMaxLength(150);
                 entity.Property(e => e.FromPlace).HasMaxLength(100);
                 entity.Property(e => e.ToPlace).HasMaxLength(100);
+                entity.Property(e => e.IdTour).HasMaxLength(30);
 
                 entity.HasOne<TourDetail>(e => e.TourDetail)
                 .WithOne(e => e.Tour)

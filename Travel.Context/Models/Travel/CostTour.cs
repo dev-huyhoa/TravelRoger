@@ -8,8 +8,7 @@ namespace Travel.Context.Models
 {
     public class CostTour
     {
-        public Guid IdCostTour { get; set; }
-        public string TourDetailId { get; set; }
+        public string IdCostTour { get; set; }
         public float Breakfast { get; set; }
         public float Water { get; set; }
         public float FeeGas { get; set; }
