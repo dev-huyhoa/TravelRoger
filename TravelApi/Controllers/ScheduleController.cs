@@ -48,6 +48,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
         
+
         [HttpGet()]
         [AllowAnonymous]
         [Route("gets-schedule")]
@@ -56,6 +57,15 @@ namespace TravelApi.Controllers
             res = _schedule.Get();
             return Ok(res);
         }
+        [HttpGet("{id}")]
+        [Route("update-promotion")]
+        public object UpdatePromotion(string idSchedule, int idPromotion)
+        {
+            res = _schedule.UpdatePromotion(idSchedule, idPromotion);
+            return Ok(res);
+        }
+
+
 
         // POST api/<ScheduleController>
         [HttpPost]

@@ -51,9 +51,9 @@ namespace Travel.Context.Models.Travel
             modelBuilder.Entity<Payment>(entity =>
             {
                 entity.HasKey(e => e.IdPayment);
-                entity.Property(e => e.IdPayment).HasMaxLength(30);
+                entity.Property(e => e.IdPayment).HasMaxLength(50);
                 entity.Property(e => e.NamePayment).HasMaxLength(100);
-                entity.Property(e => e.Type).HasMaxLength(30);
+                entity.Property(e => e.Type).HasMaxLength(50);
             });
 
             // tourbooking
@@ -90,12 +90,12 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Address).HasMaxLength(100);
                 entity.Property(e => e.Phone).HasMaxLength(14);
                 entity.Property(e => e.Pincode).HasMaxLength(10);
-                entity.Property(e => e.IdTourbooking).HasMaxLength(30);
+                entity.Property(e => e.IdTourbooking).HasMaxLength(50);
                 entity.Property(e => e.NameCustomer).HasMaxLength(100);
                 entity.Property(e => e.NameContact).HasMaxLength(100);
                 entity.Property(e => e.VoucherCode).HasMaxLength(10);
                 entity.Property(e => e.ModifyBy).HasMaxLength(100);
-                entity.Property(e => e.BookingNo).HasMaxLength(30);
+                entity.Property(e => e.BookingNo).HasMaxLength(50);
 
 
 
@@ -106,7 +106,7 @@ namespace Travel.Context.Models.Travel
             modelBuilder.Entity<TourbookingDetails>(entity =>
             {
                 entity.HasKey(e => e.IdTourbookingDetails);
-                entity.Property(e => e.IdTourbookingDetails).HasMaxLength(30);
+                entity.Property(e => e.IdTourbookingDetails).HasMaxLength(50);
 
 
                 entity.HasOne(e => e.Restaurant)
@@ -130,7 +130,7 @@ namespace Travel.Context.Models.Travel
             modelBuilder.Entity<Province>(entity =>
             {
                 entity.HasKey(e => e.IdProvince);
-                entity.Property(e => e.NameProvince).HasMaxLength(30);
+                entity.Property(e => e.NameProvince).HasMaxLength(50);
                 entity.Property(e => e.NameProvince).IsRequired(true);
 
             });
@@ -152,7 +152,7 @@ namespace Travel.Context.Models.Travel
                 entity.HasOne(e => e.District)
                 .WithMany(e => e.Ward)
                 .HasForeignKey(e => e.DistrictId);
-                entity.Property(e => e.NameWard).HasMaxLength(30);
+                entity.Property(e => e.NameWard).HasMaxLength(50);
                 entity.Property(e => e.NameWard).IsRequired(true);
 
             });
@@ -192,8 +192,8 @@ namespace Travel.Context.Models.Travel
                 .HasForeignKey<CostTour>(e => e.IdCostTour);
 
                 entity.Property(e => e.Description).HasMaxLength(300);
-                entity.Property(e => e.TourId).HasMaxLength(30);
-                entity.Property(e => e.IdTourDetail).HasMaxLength(30);
+                entity.Property(e => e.TourId).HasMaxLength(50);
+                entity.Property(e => e.IdTourDetail).HasMaxLength(50);
             });
 
             modelBuilder.Entity<CostTour>(entity =>
@@ -201,7 +201,7 @@ namespace Travel.Context.Models.Travel
                 entity.HasKey(e => e.IdCostTour);
 
 
-                entity.Property(e => e.IdCostTour).HasMaxLength(30);
+                entity.Property(e => e.IdCostTour).HasMaxLength(50);
 
                 entity.HasOne<Place>(e => e.Place)
                   .WithMany(e => e.CostTours)
@@ -336,7 +336,7 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Thumbsnail).HasMaxLength(150);
                 entity.Property(e => e.FromPlace).HasMaxLength(100);
                 entity.Property(e => e.ToPlace).HasMaxLength(100);
-                entity.Property(e => e.IdTour).HasMaxLength(30);
+                entity.Property(e => e.IdTour).HasMaxLength(50);
 
                 entity.HasOne<TourDetail>(e => e.TourDetail)
                 .WithOne(e => e.Tour)

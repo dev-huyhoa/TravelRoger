@@ -265,5 +265,44 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
+
+        public Response UpdatePromotion(string idSchedule, int idPromotion)
+        {
+            try
+            {
+                var schedule = (from x in _db.Schedules where x.IdSchedule == idSchedule select x).First();
+                if (schedule != null)
+                {
+                    var promotion = (from x in _db.Promotions where x.IdPromotion == idPromotion select x).First();
+                    if (promotion != null)
+                    {
+                        schedule.PromotionId = promotion.IdPromotion;
+                        schedule.TimePromotion = promotion.ToDate;
+                        _db.SaveChanges();
+                     
+                    }
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Cập nhật thành công !";
+                    res.Notification.Type = "Success";
+                    return res;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không tìm thấy !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
     }
 }
