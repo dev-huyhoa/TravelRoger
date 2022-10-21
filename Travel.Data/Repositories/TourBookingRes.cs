@@ -173,6 +173,9 @@ namespace Travel.Data.Repositories
                 tourbooking.TourbookingDetails = tourBookingDetail;
                 _db.Tourbookings.Add(tourbooking);
                 _db.SaveChanges();
+
+                var payment = (from x in _db.Payment where x.IdPayment == input.PaymentId select x).First();
+                tourbooking.Payment = payment;
                 res.Content = tourbooking;
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Đặt tour thành công !";

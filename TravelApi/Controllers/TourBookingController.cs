@@ -50,5 +50,14 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-booking-bill")]
+        public object getBookingBill(string idTourBooking)
+        {
+            res = _tourbooking.Gets();
+            return Ok(res);
+        }
+
     }
 }
