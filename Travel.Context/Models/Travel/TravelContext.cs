@@ -158,14 +158,15 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.NameCustomer).HasMaxLength(100);
                 entity.Property(e => e.Address).HasMaxLength(100);
                 entity.Property(e => e.Phone).HasMaxLength(14);
-                entity.Property(e => e.Password).HasMaxLength(255);
+                entity.Property(e => e.Password).HasMaxLength(2000);
                 entity.Property(e => e.FbToken).HasMaxLength(550);
                 entity.Property(e => e.AccessToken).HasMaxLength(550);
-                entity.Property(e => e.GoogleToken).HasMaxLength(550);
+                entity.Property(e => e.GoogleToken).HasMaxLength(2000);
                 entity.Property(e => e.NameCustomer).IsRequired(true);
                 entity.Property(e => e.Email).HasMaxLength(100).IsRequired(true);
-                entity.Property(e => e.Phone).IsRequired(true);
-
+                entity.Property(e => e.Point).HasDefaultValue(0);
+                entity.Property(e => e.Birthday).HasDefaultValue(0);
+                entity.Property(e => e.IsDelete).HasDefaultValue(0);
             });
 
             modelBuilder.Entity<Banner>(entity =>
