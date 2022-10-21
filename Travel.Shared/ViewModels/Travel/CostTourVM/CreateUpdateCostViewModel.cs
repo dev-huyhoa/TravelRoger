@@ -24,6 +24,7 @@ namespace Travel.Shared.ViewModels.Travel.CostTourVM
         private int cusExpected;
         private float insuranceFee;
         private float totalCostTour;
+        private bool isHoliday;
         private Guid hotelId;
         private Guid restaurantId;
         private Guid placeId;
@@ -43,5 +44,6 @@ namespace Travel.Shared.ViewModels.Travel.CostTourVM
         public Guid HotelId { get => hotelId; set => hotelId = value; }
         public Guid RestaurantId { get => restaurantId; set => restaurantId = value; }
         public Guid PlaceId { get => placeId; set => placeId = value; }
+        public bool IsHoliday { get => isHoliday; set => isHoliday = value; }
     }
 }

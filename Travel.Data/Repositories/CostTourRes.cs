@@ -94,6 +94,10 @@ namespace Travel.Data.Repositories
                 if (!insuranceFee.IsNumber())
                 {
                 }
+                var isHoliday = PrCommon.GetString("isHoliday", frmData);
+                if (String.IsNullOrEmpty(isHoliday))
+                {
+                }
                 if (isUpdate)
                 {
                     // map data
@@ -127,6 +131,7 @@ namespace Travel.Data.Repositories
                 obj.Tolls = float.Parse(tolls);
                 obj.CusExpected = Convert.ToInt16(cusExpected);
                 obj.InsuranceFee = float.Parse(insuranceFee);
+                obj.IsHoliday = bool.Parse(isHoliday);
                 obj.HotelId = Guid.Parse(hotelId);
                 obj.RestaurantId = Guid.Parse(restaurantId);
                 obj.PlaceId = Guid.Parse(placeId);
@@ -150,6 +155,28 @@ namespace Travel.Data.Repositories
             {
                 CostTour cost =
                 cost = Mapper.MapCreateCost(input);
+                Hotel hotel = _db.Hotels.Find(cost.HotelId);
+                Restaurant restaurant = _db.Restaurants.Find(cost.RestaurantId);
+                Place place = _db.Places.Find(cost.PlaceId);
+                TourDetail tourDetail = _db.TourDetails.Find(cost.IdCostTour);
+
+                cost.PriceHotel = hotel.DoubleRoomPrice;
+                cost.PriceTicketPlace = place.PriceTicket;
+                cost.PriceRestaurant = restaurant.ComboPrice;
+
+                if (cost.IsHoliday == true)
+                {
+                    tourDetail.TotalCostTour = (cost.TotalCostTour + (1.5F * cost.PriceHotel
+                    + cost.PriceRestaurant + cost.PriceTicketPlace));
+                }
+                else
+                {
+                    tourDetail.TotalCostTour = (cost.TotalCostTour + cost.PriceHotel
+                    + cost.PriceRestaurant + cost.PriceTicketPlace);
+                }
+
+                _db.TourDetails.Update(tourDetail);
+      
                 _db.CostTours.Add(cost);
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
