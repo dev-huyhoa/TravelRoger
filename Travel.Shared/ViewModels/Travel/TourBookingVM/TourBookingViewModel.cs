@@ -33,17 +33,14 @@ namespace Travel.Shared.ViewModels.Travel
 
         private string modifyBy;
         private long modifyDate;
-        private string paymentType;
-        private string paymentName;
-
-        private int baby;
-        private int child;
-        private int adult;
-        private Enums.StatusBooking status;
-        private string note;
 
 
-        public TourbookingDetails TourbookingDetails { get; set; }
+        private Schedule schedule;
+        private TourbookingDetails tourbookingDetails;
+        private Payment payment;
+
+
+
         public string IdTourBooking { get => idTourBooking; set => idTourBooking = value; }
         public string NameCustomer { get => nameCustomer; set => nameCustomer = value; }
         public string Address { get => address; set => address = value; }
@@ -62,12 +59,8 @@ namespace Travel.Shared.ViewModels.Travel
         public float TotalPrice { get => totalPrice; set => totalPrice = value; }
         public string ModifyBy { get => modifyBy; set => modifyBy = value; }
         public long ModifyDate { get => modifyDate; set => modifyDate = value; }
-        public string PaymentType { get => paymentType; set => paymentType = value; }
-        public string PaymentName { get => paymentName; set => paymentName = value; }
-        public int Baby { get => baby; set => baby = value; }
-        public int Child { get => child; set => child = value; }
-        public int Adult { get => adult; set => adult = value; }
-        public Enums.StatusBooking Status { get => status; set => status = value; }
-        public string Note { get => note; set => note = value; }
+        public Schedule Schedule { get => schedule; set => schedule = value; }
+        public TourbookingDetails TourbookingDetails { get => tourbookingDetails; set => tourbookingDetails = value; }
+        public Payment Payment { get => payment; set => payment = value; }
     }
 }

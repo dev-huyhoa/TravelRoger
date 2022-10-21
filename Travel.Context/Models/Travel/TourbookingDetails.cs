@@ -13,8 +13,8 @@ namespace Travel.Context.Models
         public int    Child{get;set;}
         public int    Adult{get;set;}
         public int    Status{get;set;}
-        public bool   IsCalled{get;set;}
-        public string Note { get; set; }
+       public bool   IsCalled{get;set;}
+        //public string Note { get; set; }
         public Guid HotelId { get; set; }
         public Guid RestaurantId { get; set; }
         public Guid PlaceId { get; set; }

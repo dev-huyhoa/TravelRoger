@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Text.Json;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
@@ -47,6 +48,14 @@ namespace TravelApi.Controllers
         public object GetCustomer()
         {
             res = customer.Gets();
+            return Ok(res);
+        }
+        [HttpGet]
+        [Authorize]
+        [Route("gets-history-booking-bycustomer")]
+        public object GetHistoryByIdCustomer(string idCustomer)
+        {
+            res = customer.GetsHistory(Guid.Parse(idCustomer));
             return Ok(res);
         }
     }

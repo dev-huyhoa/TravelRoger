@@ -101,13 +101,9 @@ namespace Travel.Shared.Ultilities
                     .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
 
 
-                    .ForMember(dto => dto.PaymentName, opt => opt.MapFrom(src => src.Payment.NamePayment))
-                    .ForMember(dto => dto.PaymentType, opt => opt.MapFrom(src => src.Payment.Type))
-                    .ForMember(dto => dto.Note, opt => opt.MapFrom(src => src.TourbookingDetails.Note))
-                    .ForMember(dto => dto.Baby, opt => opt.MapFrom(src => src.TourbookingDetails.Baby))
-                    .ForMember(dto => dto.Child, opt => opt.MapFrom(src => src.TourbookingDetails.Child))
-                    .ForMember(dto => dto.Adult, opt => opt.MapFrom(src => src.TourbookingDetails.Adult))
-                    .ForMember(dto => dto.Status, opt => opt.MapFrom(src => (StatusBooking)Convert.ToUInt16(src.TourbookingDetails.Status)))
+
+                    //.ForMember(dto => dto.Note, opt => opt.MapFrom(src => src.TourbookingDetails.Note))
+        
 
 
                     ;
