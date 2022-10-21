@@ -70,7 +70,7 @@ namespace Travel.Context.Models.Travel
             modelBuilder.Entity<Tourbooking>(entity =>
             {
                 entity.HasKey(e => e.IdTourbooking);
-                entity.Property(e => e.ScheduleId).HasMaxLength(30);
+                entity.Property(e => e.ScheduleId).HasMaxLength(50);
 
                 entity.HasOne(e => e.Schedule)
                 .WithMany(e => e.TourBookings)
@@ -299,7 +299,7 @@ namespace Travel.Context.Models.Travel
             modelBuilder.Entity<Schedule>(entity =>
             {
                 entity.HasKey(e => e.IdSchedule);
-                entity.Property(e => e.IdSchedule).HasMaxLength(30);
+                entity.Property(e => e.IdSchedule).HasMaxLength(50);
                 entity.Property(e => e.Alias).HasMaxLength(150);
 
                 entity.HasOne(e => e.Car)

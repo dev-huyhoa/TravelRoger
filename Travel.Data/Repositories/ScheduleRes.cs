@@ -53,6 +53,10 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(departureDate))
                 {
                 }
+                var returnDate = PrCommon.GetString("returnDate", frmData);
+                if (String.IsNullOrEmpty(returnDate))
+                {
+                }
                 var beginDate = PrCommon.GetString("beginDate", frmData);
                 if (String.IsNullOrEmpty(beginDate))
                 {
@@ -85,6 +89,7 @@ namespace Travel.Data.Repositories
                 createObj.EmployeeId = Guid.Parse(employeeId);
                 createObj.PromotionId = Convert.ToInt32(promotionId);
                 createObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(departureDate));
+                createObj.ReturnDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(returnDate));
                 createObj.BeginDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(beginDate));
                 createObj.EndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(endDate));
                 createObj.TimePromotion = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(timePromotion));
@@ -107,7 +112,8 @@ namespace Travel.Data.Repositories
             try
             {
                 var list = (from s in _db.Schedules
-                            where s.Approve == (int)Enums.ApproveStatus.Waiting
+                            where s.Isdelete == false && 
+                            s.Approve == (int)Enums.ApproveStatus.Waiting
                             select new Schedule
                             {
                                 Alias = s.Alias,
@@ -118,7 +124,9 @@ namespace Travel.Data.Repositories
                                 QuantityChild = s.QuantityChild,
                                 CarId = s.CarId,
                                 DepartureDate = s.DepartureDate,
+                                ReturnDate = s.ReturnDate,
                                 EndDate = s.EndDate,
+                                Isdelete = s.Isdelete,
                                 EmployeeId = s.EmployeeId,
                                 IdSchedule = s.IdSchedule,
                                 MaxCapacity = s.MaxCapacity,
@@ -146,11 +154,7 @@ namespace Travel.Data.Repositories
                                 }).First(),
                                 
                             }).ToList();
-                //foreach (var item in listJoin)
-                //{
-                //    item.s.Tour = item.t;
-                //    list.Add(item.s);
-                //}
+
 
                 var result = Mapper.MapSchedule(list);
                 if (list.Count() > 0)
@@ -176,6 +180,8 @@ namespace Travel.Data.Repositories
             {
                 Schedule schedule =
                 schedule = Mapper.MapCreateSchedule(input);
+                string nameTour = (from x in _db.Tour where x.IdTour == input.TourId select x).First().NameTour;
+                schedule.Alias = $"S{Ultility.SEOUrl(nameTour)}";
                 _db.Schedules.Add(schedule);
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
