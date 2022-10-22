@@ -17,6 +17,7 @@ namespace Travel.Shared.ViewModels.Travel.TourBookingVM
         private string scheduleId;
         private int paymentId;
 
+        private Guid? idCustomer;
         private string nameCustomer;
         private string address;
         private string email;
@@ -43,5 +44,6 @@ namespace Travel.Shared.ViewModels.Travel.TourBookingVM
         public int PaymentId { get => paymentId; set => paymentId = value; }
         public CreateBookingDetailViewModel BookingDetails { get => bookingDetails; set => bookingDetails = value; }
         public int? ValuePromotion { get => valuePromotion; set => valuePromotion = value; }
+        public Guid? IdCustomer { get => idCustomer; set => idCustomer = value; }
     }
 }
