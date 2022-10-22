@@ -261,8 +261,7 @@ namespace Travel.Data.Repositories
 
                 // update price
                 var schedule = (from x in _db.Schedules where x.IdSchedule == input.IdSchedule select x).First();
-
-
+                schedule.AdditionalPrice = cost.PriceHotelSR;
 
 
 

@@ -14,7 +14,7 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         private float totalPrice ;
         private int valuePromotion ;
         private string thumbsnail ;
-
+        private int status;
         private long departureDate ;
         private long returnDate ;
 
@@ -26,5 +26,6 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         public string IdSchedule { get => idSchedule; set => idSchedule = value; }
         public long DateBooking { get => dateBooking; set => dateBooking = value; }
         public float TotalPrice { get => totalPrice; set => totalPrice = value; }
+        public int Status { get => status; set => status = value; }
     }
 }

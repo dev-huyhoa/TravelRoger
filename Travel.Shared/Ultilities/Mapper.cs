@@ -525,6 +525,7 @@ namespace Travel.Shared.Ultilities
            .ForMember(dto => dto.ValuePromotion, opt => opt.MapFrom(src => src.ValuePromotion))
            .ForMember(dto => dto.DateBooking, opt => opt.MapFrom(src => src.DateBooking))
            .ForMember(dto => dto.BookingNo, opt => opt.MapFrom(src => src.BookingNo))
+           .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
 
 
 

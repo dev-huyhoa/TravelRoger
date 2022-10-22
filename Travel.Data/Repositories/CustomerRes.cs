@@ -164,10 +164,10 @@ namespace Travel.Data.Repositories
             try
             {
                 var list = (from x in _db.Tourbookings
-                            where x.Status == Convert.ToInt16(Enums.StatusBooking.Finished)
                             where x.CustomerId == idCustomer
                             select new Tourbooking
                             {
+                                Status = x.Status,
                                 TotalPrice = x.TotalPrice,
                                 TotalPricePromotion = x.TotalPricePromotion,
                                 ScheduleId = x.ScheduleId,
