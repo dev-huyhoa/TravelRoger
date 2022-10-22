@@ -64,7 +64,14 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        [Route("gets-schedule-idtour")]
+        public object GetsSchedulebyIdTour(string idtour)
+        {
+            res = _schedule.GetSchedulebyIdTour(idtour);
+            return Ok(res);
+        }
 
         // POST api/<ScheduleController>
         [HttpPost]
