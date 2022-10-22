@@ -536,7 +536,8 @@ namespace Travel.Shared.Ultilities
            .ForMember(dto => dto.Adult, opt => opt.MapFrom(src => src.TourbookingDetails.Adult))
            .ForMember(dto => dto.Child, opt => opt.MapFrom(src => src.TourbookingDetails.Child))
            .ForMember(dto => dto.Baby, opt => opt.MapFrom(src => src.TourbookingDetails.Baby))
-
+           .ForMember(dto => dto.FromPlace, opt => opt.MapFrom(src => src.Schedule.Tour.FromPlace))
+           .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.Schedule.Tour.ToPlace))
            ;
 
                 //view costtour
