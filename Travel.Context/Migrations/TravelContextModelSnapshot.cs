@@ -660,6 +660,10 @@ namespace Travel.Context.Migrations
                     b.Property<long>("DepartureDate")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
@@ -711,7 +715,7 @@ namespace Travel.Context.Migrations
                     b.Property<long>("TimePromotion")
                         .HasColumnType("bigint");
 
-                    b.Property<float>("TotalCostTour")
+                    b.Property<float>("TotalCostTourNotService")
                         .HasColumnType("real");
 
                     b.Property<string>("TourId")
@@ -808,6 +812,9 @@ namespace Travel.Context.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<int>("QuantityBooked")
+                        .HasColumnType("int");
+
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
@@ -825,32 +832,6 @@ namespace Travel.Context.Migrations
                     b.HasKey("IdTour");
 
                     b.ToTable("Tour");
-                });
-
-            modelBuilder.Entity("Travel.Context.Models.TourDetail", b =>
-                {
-                    b.Property<string>("IdTourDetail")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<int>("QuantityBooked")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TourId")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("IdTourDetail");
-
-                    b.HasIndex("TourId")
-                        .IsUnique()
-                        .HasFilter("[TourId] IS NOT NULL");
-
-                    b.ToTable("TourDetails");
                 });
 
             modelBuilder.Entity("Travel.Context.Models.Tourbooking", b =>
@@ -1172,15 +1153,6 @@ namespace Travel.Context.Migrations
                     b.Navigation("Schedule");
                 });
 
-            modelBuilder.Entity("Travel.Context.Models.TourDetail", b =>
-                {
-                    b.HasOne("Travel.Context.Models.Tour", "Tour")
-                        .WithOne("TourDetail")
-                        .HasForeignKey("Travel.Context.Models.TourDetail", "TourId");
-
-                    b.Navigation("Tour");
-                });
-
             modelBuilder.Entity("Travel.Context.Models.Tourbooking", b =>
                 {
                     b.HasOne("Travel.Context.Models.Payment", "Payment")
@@ -1312,8 +1284,6 @@ namespace Travel.Context.Migrations
             modelBuilder.Entity("Travel.Context.Models.Tour", b =>
                 {
                     b.Navigation("Schedules");
-
-                    b.Navigation("TourDetail");
                 });
 
             modelBuilder.Entity("Travel.Context.Models.Tourbooking", b =>

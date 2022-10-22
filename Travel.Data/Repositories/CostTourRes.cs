@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
@@ -22,11 +23,14 @@ namespace Travel.Data.Repositories
         private readonly TravelContext _db;
         private Notification message;
         private Response res;
-        public CostTourRes(TravelContext db)
+        private IConfiguration _config;
+        public CostTourRes(TravelContext db, IConfiguration config)
         {
             _db = db;
             message = new Notification();
             res = new Response();
+
+            _config = config;
         }
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false)
         {
@@ -158,14 +162,25 @@ namespace Travel.Data.Repositories
                 cost.PriceHotelSR = hotel.SingleRoomPrice;
                 cost.PriceRestaurant = restaurant.ComboPrice;
                 cost.PriceTicketPlace = place.PriceTicket;
-
-                // thêm schedule update giá
-
-
-
                 //
                 _db.CostTours.Add(cost);
                 _db.SaveChanges();
+                // thêm schedule update giá
+                // update price
+                float holidayPercent = Convert.ToInt16(_config["PercentHoliday"]);
+                var schedule = (from x in _db.Schedules where x.IdSchedule == input.IdSchedule select x).First();
+                schedule.AdditionalPrice = cost.PriceHotelSR;
+                schedule.AdditionalPriceHoliday = (cost.PriceHotelSR + (cost.PriceHotelSR * (holidayPercent / 100)));
+                schedule.TotalCostTourNotService = cost.TotalCostTourNotService;
+
+                float CostService = (cost.PriceHotelDB + cost.PriceRestaurant + cost.PriceTicketPlace);
+                float VAT = schedule.Vat;
+                int Profit = schedule.Profit;
+                float FinalPrice = (cost.TotalCostTourNotService + CostService) + ((cost.TotalCostTourNotService + CostService) * VAT) + ((cost.TotalCostTourNotService + CostService) * Profit);
+                schedule.FinalPrice = FinalPrice;
+                schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
+                _db.SaveChanges();
+
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
                 res.Notification.Type = "Success";
@@ -247,8 +262,6 @@ namespace Travel.Data.Repositories
             try
             {
                 CostTour cost = (from x in _db.CostTours where x.IdSchedule == input.IdSchedule select x).First();
-
-                    
                   cost =  Mapper.MapUpdateCost(input);
 
                 var hotel = (from x in _db.Hotels where x.IdHotel == input.HotelId select x).First();
@@ -258,12 +271,21 @@ namespace Travel.Data.Repositories
                 cost.PriceHotelSR = hotel.SingleRoomPrice;
                 cost.PriceRestaurant = restaurant.ComboPrice;
                 cost.PriceTicketPlace = place.PriceTicket;
-
+                _db.CostTours.Update(cost);
+                _db.SaveChanges();
                 // update price
+                float holidayPercent = Convert.ToInt16(_config["PercentHoliday"]);
                 var schedule = (from x in _db.Schedules where x.IdSchedule == input.IdSchedule select x).First();
                 schedule.AdditionalPrice = cost.PriceHotelSR;
+                schedule.AdditionalPriceHoliday = (cost.PriceHotelSR + (cost.PriceHotelSR * (holidayPercent / 100)));
+                schedule.TotalCostTourNotService = cost.TotalCostTourNotService;
 
-
+                float CostService = (cost.PriceHotelDB + cost.PriceRestaurant + cost.PriceTicketPlace);
+                float VAT = schedule.Vat;
+                int Profit = schedule.Profit;
+                float FinalPrice = (cost.TotalCostTourNotService + CostService) + ((cost.TotalCostTourNotService + CostService) * VAT) + ((cost.TotalCostTourNotService + CostService) * Profit);
+                schedule.FinalPrice = FinalPrice;
+                schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
 
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
