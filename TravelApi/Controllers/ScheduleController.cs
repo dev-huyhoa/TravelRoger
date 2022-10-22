@@ -47,7 +47,6 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        
 
         [HttpGet()]
         [AllowAnonymous]

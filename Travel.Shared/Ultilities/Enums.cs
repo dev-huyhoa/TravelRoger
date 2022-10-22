@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Travel.Shared.Ultilities
 {
-    public class Enums
+    public  class Enums
     {
         public enum StatusBooking
         {

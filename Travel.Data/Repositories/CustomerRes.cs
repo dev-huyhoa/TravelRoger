@@ -164,47 +164,76 @@ namespace Travel.Data.Repositories
             try
             {
                 var list = (from x in _db.Tourbookings
+                            where x.Status == Convert.ToInt16(Enums.StatusBooking.Finished)
                             where x.CustomerId == idCustomer
-                            select new Tourbooking {
-                                ValuePromotion = x.ValuePromotion,
-                                CustomerId = x.CustomerId,
-                                IsCalled = x.IsCalled,
-                                NameContact = x.NameContact,
-                                NameCustomer = x.NameCustomer,
-                                DateBooking = x.DateBooking,
-                                Deposit = x.Deposit,
-                                VoucherCode = x.VoucherCode,
-                                Address = x.Address,
-                                LastDate = x.LastDate,
-                                ModifyDate = x.ModifyDate,
-                                BookingNo = x.BookingNo,
-                                Email = x.Email,
-                                IdTourbooking = x.IdTourbooking,
-                                ModifyBy = x.ModifyBy,
-
-                                PaymentId = x.PaymentId,
-                                Phone = x.Phone,
-                                Pincode = x.Pincode,
-                                RemainPrice = x.RemainPrice,
-                                ScheduleId = x.ScheduleId,
+                            select new Tourbooking
+                            {
                                 TotalPrice = x.TotalPrice,
                                 TotalPricePromotion = x.TotalPricePromotion,
-                                Vat = x.Vat,
-                                Payment = (from p in _db.Payment where p.IdPayment == x.PaymentId select p).First(),
-                                Schedule = (from s in _db.Schedules where s.IdSchedule == x.ScheduleId
-                                            select new Schedule{ 
-                                DepartureDate = s.DepartureDate,
-                                Tour = (from t  in _db.Tour where t.IdTour == s.TourId select t).First()
-                                }).First(),
-                                TourbookingDetails = (from td in _db.tourbookingDetails where td.IdTourbookingDetails == x.IdTourbooking select td).First()
+                                ScheduleId = x.ScheduleId,
+                                DateBooking = x.DateBooking,
+                                BookingNo = x.BookingNo,
+                                ValuePromotion = x.ValuePromotion,
+                                Schedule = (from s in _db.Schedules
+                                            where x.ScheduleId == s.IdSchedule
+                                            select new Schedule {
+                                                DepartureDate = s.DepartureDate,
+                                                ReturnDate = s.ReturnDate,
+                                                Tour = (from t in _db.Tour
+                                                        where s.TourId == t.IdTour
+                                                        select new Tour { 
+                                                        Thumbsnail = t.Thumbsnail
+                                                        }).First()
+                                            }).First()
                             }).ToList();
-                var result = Mapper.MapTourBooking(list);
-
                 if (list.Count() > 0)
                 {
+                    var result = Mapper.MapHistoryCustomerViewModel(list);
                     res.Content = result;
                 }
                 return res;
+                //var list = (from x in _db.Tourbookings
+                //            where x.CustomerId == idCustomer
+                //            select new Tourbooking {
+                //                ValuePromotion = x.ValuePromotion,
+                //                CustomerId = x.CustomerId,
+                //                IsCalled = x.IsCalled,
+                //                NameContact = x.NameContact,
+                //                NameCustomer = x.NameCustomer,
+                //                DateBooking = x.DateBooking,
+                //                Deposit = x.Deposit,
+                //                VoucherCode = x.VoucherCode,
+                //                Address = x.Address,
+                //                LastDate = x.LastDate,
+                //                ModifyDate = x.ModifyDate,
+                //                BookingNo = x.BookingNo,
+                //                Email = x.Email,
+                //                IdTourbooking = x.IdTourbooking,
+                //                ModifyBy = x.ModifyBy,
+
+                //                PaymentId = x.PaymentId,
+                //                Phone = x.Phone,
+                //                Pincode = x.Pincode,
+                //                RemainPrice = x.RemainPrice,
+                //                ScheduleId = x.ScheduleId,
+                //                TotalPrice = x.TotalPrice,
+                //                TotalPricePromotion = x.TotalPricePromotion,
+                //                Vat = x.Vat,
+                //                Payment = (from p in _db.Payment where p.IdPayment == x.PaymentId select p).First(),
+                //                Schedule = (from s in _db.Schedules where s.IdSchedule == x.ScheduleId
+                //                            select new Schedule{ 
+                //                DepartureDate = s.DepartureDate,
+                //                Tour = (from t  in _db.Tour where t.IdTour == s.TourId select t).First()
+                //                }).First(),
+                //                TourbookingDetails = (from td in _db.tourbookingDetails where td.IdTourbookingDetails == x.IdTourbooking select td).First()
+                //            }).ToList();
+                //var result = Mapper.MapTourBooking(list);
+
+                //if (list.Count() > 0)
+                //{
+                //    res.Content = result;
+                //}
+                //return res;
             }
             catch (Exception e)
             {

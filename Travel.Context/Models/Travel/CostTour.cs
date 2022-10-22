@@ -22,7 +22,7 @@ namespace Travel.Context.Models
         public int CusExpected { get; set; }
         public float InsuranceFee { get; set; }
         public bool IsHoliday { get; set; }
-        public float TotalCostTour { get; set; }
+        public float TotalCostTourNotService { get; set; }
         public Guid HotelId { get; set; }
         public float PriceHotelDB { get; set; }
         public float PriceHotelSR { get; set; }

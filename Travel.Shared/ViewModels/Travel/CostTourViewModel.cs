@@ -21,7 +21,7 @@ namespace Travel.Shared.ViewModels.Travel
         private int cusExpected;
         private float insuranceFee;
         private bool isHoliday;
-        private float totalCostTour;
+        private float totalCostTourNotService;
 
         private Guid hotelId;
         private string nameHotel;
@@ -50,7 +50,7 @@ namespace Travel.Shared.ViewModels.Travel
         public int CusExpected { get => cusExpected; set => cusExpected = value; }
         public float InsuranceFee { get => insuranceFee; set => insuranceFee = value; }
         public bool IsHoliday { get => isHoliday; set => isHoliday = value; }
-        public float TotalCostTour { get => totalCostTour; set => totalCostTour = value; }
+        public float TotalCostTourNotService { get => totalCostTourNotService; set => totalCostTourNotService = value; }
         public Guid HotelId { get => hotelId; set => hotelId = value; }
         public string NameHotel { get => nameHotel; set => nameHotel = value; }
         public float PriceSRHotel { get => priceSRHotel; set => priceSRHotel = value; }

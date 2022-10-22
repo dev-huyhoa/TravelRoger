@@ -113,7 +113,7 @@ namespace Travel.Data.Repositories
             try
             {
                 var list = (from s in _db.Schedules
-                            where s.Isdelete == false && 
+                            where s.Isdelete == false &&
                             s.Approve == (int)Enums.ApproveStatus.Approved
                             select new Schedule
                             {
@@ -144,15 +144,16 @@ namespace Travel.Data.Repositories
                                 QuantityCustomer = s.QuantityCustomer,
                                 TimePromotion = s.TimePromotion,
                                 Vat = s.Vat,
-                                TotalCostTour= s.TotalCostTour,
+                                TotalCostTour = s.TotalCostTour,
+                                CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
-                                Tour = (from t in _db.Tour where s.TourId == t.IdTour select new Tour { 
+                                Tour = (from t in _db.Tour where s.TourId == t.IdTour select new Tour {
                                     Thumbsnail = t.Thumbsnail,
-                                    ToPlace =t.ToPlace,
+                                    ToPlace = t.ToPlace,
                                     FromPlace = t.FromPlace,
                                     IdTour = t.IdTour,
                                     NameTour = t.NameTour,
-                                    Alias =t.Alias,
+                                    Alias = t.Alias,
                                     ApproveStatus = t.ApproveStatus,
                                     CreateDate = t.CreateDate,
                                     IsActive = t.IsActive,
@@ -163,7 +164,7 @@ namespace Travel.Data.Repositories
                                     Status = t.Status,
                                     TourDetail = (from td in _db.TourDetails where td.TourId == t.IdTour select td).First()
                                 }).First(),
-                                
+
                             }).ToList();
 
 
@@ -315,6 +316,7 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+        // chưa cập nhật
         public async Task<string> UpdateCapacity(string idSchedule,int adult = 1, int child = 0, int baby = 0)
         {
             try

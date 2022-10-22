@@ -108,10 +108,10 @@ namespace Travel.Data.Repositories
                 }
                 var email = PrCommon.GetString("email", frmData);
                 if (String.IsNullOrEmpty(email))
-                {   }
+                { }
                 var phone = PrCommon.GetString("phone", frmData);
                 if (String.IsNullOrEmpty(phone))
-                { }     
+                { }
 
                 var nameContact = PrCommon.GetString("nameContact", frmData);
                 if (String.IsNullOrEmpty(nameContact))
@@ -124,7 +124,7 @@ namespace Travel.Data.Repositories
                 { }
 
 
-              if (isUpdate)
+                if (isUpdate)
                 {
                     CreateTourBookingViewModel updateObj = new CreateTourBookingViewModel();
                     updateObj.IdTourBooking = idTourBooking;
@@ -146,7 +146,7 @@ namespace Travel.Data.Repositories
                 createDetailObj.RestaurantId = Guid.Parse(restaurantId);
                 createDetailObj.PlaceId = Guid.Parse(placeId);
 
-                  CreateTourBookingViewModel createObj = new CreateTourBookingViewModel();
+                CreateTourBookingViewModel createObj = new CreateTourBookingViewModel();
                 createObj.ScheduleId = scheduleId;
                 createObj.PaymentId = Convert.ToInt16(paymentId);
                 createObj.NameCustomer = nameCustomer;
@@ -182,36 +182,20 @@ namespace Travel.Data.Repositories
                 TourbookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
                 tourbooking.TourbookingDetails = tourBookingDetail;
                 _db.Tourbookings.Add(tourbooking);
-                    await _db.SaveChangesAsync();
-                    var payment = await (from x in _db.Payment where x.IdPayment == input.PaymentId select x).FirstAsync();
-                    tourbooking.Payment = payment;
-                    res.Content = tourbooking;
+                await _db.SaveChangesAsync();
+                var payment = await (from x in _db.Payment where x.IdPayment == input.PaymentId select x).FirstAsync();
+                tourbooking.Payment = payment;
 
-                    // cập nhật số lượng
-                    int quantityAdult = tourbooking.TourbookingDetails.Adult;
-                    int quantityChild = tourbooking.TourbookingDetails.Child;
-                    int quantityBaby = tourbooking.TourbookingDetails.Baby;
-                    await _schedule.UpdateCapacity(input.ScheduleId, quantityAdult, quantityChild, quantityBaby);
+                // cập nhật số lượng
+                int quantityAdult = tourbooking.TourbookingDetails.Adult;
+                int quantityChild = tourbooking.TourbookingDetails.Child;
+                int quantityBaby = tourbooking.TourbookingDetails.Baby;
+                await _schedule.UpdateCapacity(input.ScheduleId, quantityAdult, quantityChild, quantityBaby);
                 transaction.Commit();
-                //transaction.Dispose();
-
-                //Tourbooking tourbooking =
-                // tourbooking = Mapper.MapCreateTourBooking(input);
-                //TourbookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
-                //tourbooking.TourbookingDetails = tourBookingDetail;
-                //_db.Tourbookings.Add(tourbooking);
-                //await _db.SaveChangesAsync();
-                //var payment = await (from x in _db.Payment where x.IdPayment == input.PaymentId select x).FirstAsync();
-                //tourbooking.Payment = payment;
-                //res.Content = tourbooking;
-
-                //// cập nhật số lượng
-                //int quantityAdult = tourBookingDetail.Adult;
-                //int quantityChild = tourBookingDetail.Child;
-                //int quantityBaby = tourBookingDetail.Baby;
-                //await _schedule.UpdateCapacity(input.ScheduleId, quantityAdult, quantityChild, quantityBaby);
+                transaction.Dispose();
 
 
+                res.Content = tourbooking;
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Đặt tour thành công !";
                 res.Notification.Type = "Success";

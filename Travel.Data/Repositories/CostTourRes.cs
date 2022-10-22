@@ -32,12 +32,8 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var idCostTour = PrCommon.GetString("idCostTour", frmData);
-                if (String.IsNullOrEmpty(idCostTour))
-                {
-                }
-                var tourDetailId = PrCommon.GetString("tourDetailId", frmData);
-                if (String.IsNullOrEmpty(tourDetailId))
+                var idSchedule = PrCommon.GetString("idSchedule", frmData);
+                if (String.IsNullOrEmpty(idSchedule))
                 {
                 }
                 var hotelId = PrCommon.GetString("hotelId", frmData);
@@ -102,7 +98,7 @@ namespace Travel.Data.Repositories
                 {
                     // map data
                     UpdateCostViewModel objUpdate = new UpdateCostViewModel();
-                    objUpdate.IdCostTour = idCostTour;
+                    objUpdate.IdSchedule = idSchedule;
                     objUpdate.Breakfast = float.Parse(breakfast);
                     objUpdate.Water = float.Parse(water);
                     objUpdate.FeeGas = float.Parse(feeGas);
@@ -120,7 +116,7 @@ namespace Travel.Data.Repositories
                 }
                 // map data
                 CreateCostViewModel obj = new CreateCostViewModel();
-                obj.IdCostTour = idCostTour;
+                obj.IdSchedule = idSchedule;
                 obj.Breakfast = float.Parse(breakfast);
                 obj.Water = float.Parse(water);
                 obj.FeeGas = float.Parse(feeGas);
@@ -153,39 +149,23 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                //CostTour cost =
-                //cost = Mapper.MapCreateCost(input);
-                //Hotel hotel = _db.Hotels.Find(cost.HotelId);
-                //Restaurant restaurant = _db.Restaurants.Find(cost.RestaurantId);
-                //Place place = _db.Places.Find(cost.PlaceId);
-                //TourDetail tourDetail = _db.TourDetails.Find(cost.IdCostTour);
+                var hotel = (from x in _db.Hotels where x.IdHotel == input.HotelId select x).First();
+                var restaurant = (from x in _db.Restaurants where x.IdRestaurant == input.RestaurantId select x).First();
+                var place = (from x in _db.Places where x.IdPlace == input.PlaceId select x).First();
+                CostTour cost =
+                cost = Mapper.MapCreateCost(input);
+                cost.PriceHotelDB = hotel.DoubleRoomPrice;
+                cost.PriceHotelSR = hotel.SingleRoomPrice;
+                cost.PriceRestaurant = restaurant.ComboPrice;
+                cost.PriceTicketPlace = place.PriceTicket;
+
+                // thêm schedule update giá
 
 
 
-                //cost.PriceHotelSR = hotel.SingleRoomPrice;
-                //cost.PriceHotelDB = hotel.DoubleRoomPrice;
-                //cost.PriceTicketPlace = place.PriceTicket;
-                //cost.PriceRestaurant = restaurant.ComboPrice;
-
-
-
-                //if (cost.IsHoliday == true)
-                //{
-                //    tourDetail.TotalCostTour = (cost.TotalCostTour + (1.5F * cost.PriceHotelDB
-                //    + cost.PriceRestaurant + cost.PriceTicketPlace));
-                //}
-                //else
-                //{
-                //    tourDetail.TotalCostTour = (cost.TotalCostTour + cost.PriceHotelDB
-                //    + cost.PriceRestaurant + cost.PriceTicketPlace);
-                //}
-
-
-
-                //_db.TourDetails.Update(tourDetail);
-      
-                //_db.CostTours.Add(cost);
-                //_db.SaveChanges();
+                //
+                _db.CostTours.Add(cost);
+                _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
                 res.Notification.Type = "Success";
@@ -231,6 +211,7 @@ namespace Travel.Data.Repositories
             }
         }
 
+        // hàm cần coi lại
         public Response GetCostByIdTourDetail(string idTourDetail)
         {
             try
@@ -265,8 +246,26 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                CostTour costTour = Mapper.MapUpdateCost(input);
-                _db.CostTours.Update(costTour);
+                CostTour cost = (from x in _db.CostTours where x.IdSchedule == input.IdSchedule select x).First();
+
+                    
+                  cost =  Mapper.MapUpdateCost(input);
+
+                var hotel = (from x in _db.Hotels where x.IdHotel == input.HotelId select x).First();
+                var restaurant = (from x in _db.Restaurants where x.IdRestaurant == input.RestaurantId select x).First();
+                var place = (from x in _db.Places where x.IdPlace == input.PlaceId select x).First();
+                cost.PriceHotelDB = hotel.DoubleRoomPrice;
+                cost.PriceHotelSR = hotel.SingleRoomPrice;
+                cost.PriceRestaurant = restaurant.ComboPrice;
+                cost.PriceTicketPlace = place.PriceTicket;
+
+                // update price
+                var schedule = (from x in _db.Schedules where x.IdSchedule == input.IdSchedule select x).First();
+
+
+
+
+
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Sửa thành công !";
@@ -284,9 +283,5 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public string UpdateCostHotel(Hotel input)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
