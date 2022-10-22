@@ -50,8 +50,12 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateTourBookingViewModel>(result);
+<<<<<<< HEAD
+                res = _tourbooking.Create(createObj);
+                _messageHub.Clients.All.Init();
+=======
                 res =await   _tourbooking.Create(createObj);
-                await _messageHub.Clients.All.Init();
+>>>>>>> 5c4a0e78415753a8863df4f3f9559a749bf9c8d4
             }
             return Ok(res);
         }
