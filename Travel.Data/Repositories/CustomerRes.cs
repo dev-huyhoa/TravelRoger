@@ -174,6 +174,9 @@ namespace Travel.Data.Repositories
                                 DateBooking = x.DateBooking,
                                 BookingNo = x.BookingNo,
                                 ValuePromotion = x.ValuePromotion,
+                                TourbookingDetails = (from tbd in _db.tourbookingDetails 
+                                                      where tbd.IdTourbookingDetails == x.IdTourbooking 
+                                                      select tbd).First(),
                                 Schedule = (from s in _db.Schedules
                                             where x.ScheduleId == s.IdSchedule
                                             select new Schedule {

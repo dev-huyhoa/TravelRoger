@@ -524,6 +524,9 @@ namespace Travel.Shared.Ultilities
            .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
            .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Schedule.Description))
            .ForMember(dto => dto.NameTour, opt => opt.MapFrom(src => src.Schedule.Tour.NameTour))
+           .ForMember(dto => dto.Adult, opt => opt.MapFrom(src => src.TourbookingDetails.Adult))
+           .ForMember(dto => dto.Child, opt => opt.MapFrom(src => src.TourbookingDetails.Child))
+           .ForMember(dto => dto.Baby, opt => opt.MapFrom(src => src.TourbookingDetails.Baby))
 
            ;
 

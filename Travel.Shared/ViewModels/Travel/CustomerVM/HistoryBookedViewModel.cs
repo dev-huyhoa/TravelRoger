@@ -21,6 +21,10 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         private string description;
         private string nameTour;
 
+
+        private int adult;
+        private int child;
+        private int baby;
         public long DepartureDate { get => departureDate; set => departureDate = value; }
         public long ReturnDate { get => returnDate; set => returnDate = value; }
         public int ValuePromotion { get => valuePromotion; set => valuePromotion = value; }
@@ -32,5 +36,8 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         public int Status { get => status; set => status = value; }
         public string Description { get => description; set => description = value; }
         public string NameTour { get => nameTour; set => nameTour = value; }
+        public int Adult { get => adult; set => adult = value; }
+        public int Child { get => child; set => child = value; }
+        public int Baby { get => baby; set => baby = value; }
     }
 }
