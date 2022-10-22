@@ -162,7 +162,7 @@ namespace Travel.Data.Repositories
                 createObj.Vat = Convert.ToInt16(vat);
                 createObj.Pincode = pincode;
                 createObj.BookingDetails = createDetailObj;
-                createObj.IdCustomer = customerId;
+                createObj.CustomerId = customerId;
                 return JsonSerializer.Serialize(createObj);
             }
             catch (Exception e)
