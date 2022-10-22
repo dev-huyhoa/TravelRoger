@@ -52,9 +52,9 @@ namespace TravelApi.Controllers
         [HttpGet()]
         [AllowAnonymous]
         [Route("gets-schedule")]
-        public object Get()
+        public object Gets()
         {
-            res = _schedule.Get();
+            res = _schedule.Gets();
             return Ok(res);
         }
         [HttpGet("{id}")]

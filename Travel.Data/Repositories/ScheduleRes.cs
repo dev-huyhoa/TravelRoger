@@ -108,7 +108,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Get()
+        public Response Gets()
         {
             try
             {
