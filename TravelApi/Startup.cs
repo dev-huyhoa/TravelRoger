@@ -13,6 +13,8 @@ using System;
 using System.Text;
 using Travel.Context.Models.Notification;
 using Travel.Context.Models.Travel;
+using Travel.Data.Interfaces;
+using Travel.Data.Repositories;
 using TravelApi.Extensions;
 using TravelApi.Hubs;
 
@@ -45,7 +47,7 @@ namespace TravelApi
 
             services.AddDatabase(Configuration)
                 .AddRepositories();
-            
+            services.AddScoped<IVoucher, VoucherRes>();
             services.AddDbContext<TravelContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("travelRoverEntities")));
 
