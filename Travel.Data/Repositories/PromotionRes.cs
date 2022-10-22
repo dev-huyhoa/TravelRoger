@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
@@ -30,17 +31,8 @@ namespace Travel.Data.Repositories
 
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
-            CreatePromotionViewModel promotion = new CreatePromotionViewModel();
             try
             {
-
-                //var tourName = PrCommon.GetString("nameTour", frmData);
-                //if (String.IsNullOrEmpty(tourName))
-                //{
-                //}
-                //if (isExistName(tourName))
-                //{
-                //}
                 var idPromotion = PrCommon.GetString("idPromotion", frmData);
                 if (!String.IsNullOrEmpty(idPromotion))
                 {
@@ -61,31 +53,24 @@ namespace Travel.Data.Repositories
                 {
                 }
 
-                //var vat = PrCommon.GetString("vat", frmData) ?? "0";
-                //if (isUpdate)
-                //{
-                //    // map data
-                //    UpdatePromotionViewModel objUpdate = new UpdatePromotionViewModel();
-                //    //objUpdate.NameTour = "tentoatuspa";
-                //    objUpdate.Value = value;
-                //    objUpdate.ToDate = toDate;
-                //    objUpdate.FromDate = fromDate;
-                //    //objUpdate.Description = description;
-                //    //objUpdate.VAT = Convert.ToInt16(vat);
-                //    // generate ID
-                //    objUpdate.IdPromotion = Ultility.GenerateId(promotion);
-                //    return JsonSerializer.Serialize(objUpdate);
-                //}
-                //// map data
-                CreatePromotionViewModel obj = new CreatePromotionViewModel();
+                if (isUpdate)
+                {
+                    UpdatePromotionViewModel objUpdate = new UpdatePromotionViewModel();
+                    objUpdate.IdPromotion =  int.Parse(idPromotion);
+                    objUpdate.Value = Convert.ToInt16(value);
+                    objUpdate.FromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(fromDate));
+                    objUpdate.ToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(toDate));
 
-             
-                obj.Value = Convert.ToInt16(value);
-                obj.ToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(toDate));
-                obj.FromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(fromDate));
-                obj.IdPromotion = Convert.ToInt16(idPromotion); 
+                    return JsonSerializer.Serialize(objUpdate);
+                }
 
-                return JsonSerializer.Serialize(obj);
+
+                CreatePromotionViewModel objCreate = new CreatePromotionViewModel();
+                objCreate.Value = Convert.ToInt16(value);
+                objCreate.ToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(toDate));
+                objCreate.FromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(fromDate));
+                //obj.IdPromotion = Convert.ToInt16(idPromotion);
+                return JsonSerializer.Serialize(objCreate);
             }
             catch (Exception e)
             {
@@ -173,5 +158,29 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response UpdatePromotion(int id, UpdatePromotionViewModel input)
+        {
+            try
+            { // tạm thời khoan update đi ông, nó bị ko tương thích với cái automap
+                var promotion = (from x in _db.Promotions
+                                 where x.IdPromotion == id
+                                 select x).First();
+                promotion = Mapper.MapUpdatePromotion(input);
+                _db.SaveChanges();
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Sửa thành công !";
+                res.Notification.Type = "Success";
+                return res;
+            }
+            catch (Exception e)
+            {
+
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
     }
 }

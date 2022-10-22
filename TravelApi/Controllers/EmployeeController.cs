@@ -84,7 +84,7 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateEmployeeViewModel>(result);
-                res = employee.UpdateEmployee(updateObj);
+                res = employee.UpdateEmployee(updateObj); 
                 _messageHub.Clients.All.Init();
             }
             else

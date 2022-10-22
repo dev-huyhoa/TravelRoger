@@ -384,6 +384,11 @@ namespace Travel.Shared.Ultilities
                        .ForMember(dto => dto.ToDate, opt => opt.MapFrom(src => src.ToDate))
                         .ForMember(dto => dto.FromDate, opt => opt.MapFrom(src => src.FromDate));
 
+                cfg.CreateMap<UpdatePromotionViewModel, Promotion>()
+                      .ForMember(dto => dto.Value, opt => opt.MapFrom(src => src.Value))
+                      .ForMember(dto => dto.ToDate, opt => opt.MapFrom(src => src.ToDate))
+                      .ForMember(dto => dto.FromDate, opt => opt.MapFrom(src => src.FromDate));
+      
 
                 cfg.CreateMap<CreateTimeLineViewModel, Timeline>()
                                   .ForMember(dto => dto.Description, otp => otp.MapFrom(src => src.Description))
@@ -592,6 +597,7 @@ namespace Travel.Shared.Ultilities
             return _mapper.Map<Employee, EmployeeViewModel>(data);
         }
 
+        //map role
         public static List<RoleViewModel> MapRole(List<Role> data)
         {
             return _mapper.Map<List<Role>, List<RoleViewModel>>(data);
@@ -606,6 +612,26 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<UpdateRoleViewModel, Role>(data);
         }
+
+        //map promotion
+        public static Promotion MapCreatePromotion(CreatePromotionViewModel data)
+        {
+            return _mapper.Map<CreatePromotionViewModel, Promotion>(data);
+        }
+        public static List<PromotionViewModel> MapPromotion(List<Promotion> data)
+        {
+            return _mapper.Map<List<Promotion>, List<PromotionViewModel>>(data);
+        }
+        public static PromotionViewModel MapPromotion(Promotion data)
+        {
+            return _mapper.Map<Promotion, PromotionViewModel>(data);
+        }
+        public static Promotion MapUpdatePromotion(UpdatePromotionViewModel data)
+        {
+            return _mapper.Map<UpdatePromotionViewModel, Promotion>(data);
+        }
+
+
 
         public static Employee MapCreateEmployee(CreateEmployeeViewModel data)
         {
@@ -708,18 +734,7 @@ namespace Travel.Shared.Ultilities
             return _mapper.Map<Car, CarViewModel>(data);
         }
 
-        public static Promotion MapCreatePromotion(CreatePromotionViewModel data)
-        {
-            return _mapper.Map<CreatePromotionViewModel, Promotion>(data);
-        }
-        public static List<PromotionViewModel> MapPromotion(List<Promotion> data)
-        {
-            return _mapper.Map<List<Promotion>, List<PromotionViewModel>>(data);
-        }
-        public static PromotionViewModel MapPromotion(Promotion data)
-        {
-            return _mapper.Map<Promotion, PromotionViewModel>(data);
-        }
+
         public static List<TimeLineViewModel> MapTimeLine(List<Timeline> data)
         {
             return _mapper.Map<List<Timeline>, List<TimeLineViewModel>>(data);
