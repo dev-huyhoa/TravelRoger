@@ -42,7 +42,7 @@ namespace TravelApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("create-tourbooking")]
-        public object Create([FromBody] JObject frmData)
+        public async Task<object> Create([FromBody] JObject frmData)
         {
 
             message = null;
@@ -50,8 +50,8 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateTourBookingViewModel>(result);
-                res = _tourbooking.Create(createObj);
-                _messageHub.Clients.All.Init();
+                res =await   _tourbooking.Create(createObj);
+		_messageHub.Clients.All.Init()
             }
             return Ok(res);
         }

@@ -24,6 +24,9 @@ namespace Travel.Shared.ViewModels.Travel
         private float quantityChild;
         private int status;
 
+
+
+
         private string tourId;
         private Guid carId;
         private Guid employeeId;

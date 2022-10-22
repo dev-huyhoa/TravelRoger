@@ -153,32 +153,39 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                CostTour cost =
-                cost = Mapper.MapCreateCost(input);
-                Hotel hotel = _db.Hotels.Find(cost.HotelId);
-                Restaurant restaurant = _db.Restaurants.Find(cost.RestaurantId);
-                Place place = _db.Places.Find(cost.PlaceId);
-                TourDetail tourDetail = _db.TourDetails.Find(cost.IdCostTour);
+                //CostTour cost =
+                //cost = Mapper.MapCreateCost(input);
+                //Hotel hotel = _db.Hotels.Find(cost.HotelId);
+                //Restaurant restaurant = _db.Restaurants.Find(cost.RestaurantId);
+                //Place place = _db.Places.Find(cost.PlaceId);
+                //TourDetail tourDetail = _db.TourDetails.Find(cost.IdCostTour);
 
-                cost.PriceHotel = hotel.DoubleRoomPrice;
-                cost.PriceTicketPlace = place.PriceTicket;
-                cost.PriceRestaurant = restaurant.ComboPrice;
 
-                if (cost.IsHoliday == true)
-                {
-                    tourDetail.TotalCostTour = (cost.TotalCostTour + (1.5F * cost.PriceHotel
-                    + cost.PriceRestaurant + cost.PriceTicketPlace));
-                }
-                else
-                {
-                    tourDetail.TotalCostTour = (cost.TotalCostTour + cost.PriceHotel
-                    + cost.PriceRestaurant + cost.PriceTicketPlace);
-                }
 
-                _db.TourDetails.Update(tourDetail);
+                //cost.PriceHotelSR = hotel.SingleRoomPrice;
+                //cost.PriceHotelDB = hotel.DoubleRoomPrice;
+                //cost.PriceTicketPlace = place.PriceTicket;
+                //cost.PriceRestaurant = restaurant.ComboPrice;
+
+
+
+                //if (cost.IsHoliday == true)
+                //{
+                //    tourDetail.TotalCostTour = (cost.TotalCostTour + (1.5F * cost.PriceHotelDB
+                //    + cost.PriceRestaurant + cost.PriceTicketPlace));
+                //}
+                //else
+                //{
+                //    tourDetail.TotalCostTour = (cost.TotalCostTour + cost.PriceHotelDB
+                //    + cost.PriceRestaurant + cost.PriceTicketPlace);
+                //}
+
+
+
+                //_db.TourDetails.Update(tourDetail);
       
-                _db.CostTours.Add(cost);
-                _db.SaveChanges();
+                //_db.CostTours.Add(cost);
+                //_db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
                 res.Notification.Type = "Success";
@@ -229,18 +236,18 @@ namespace Travel.Data.Repositories
             try
             {
                 //var tourdetail = from x in _db.CostTours where x.TourDetailId == idTourDetail select x;
-                var tourdetail = _db.CostTours.Where(x => x.IdCostTour == idTourDetail).FirstOrDefault();
-                var result = Mapper.MapCost(tourdetail);
-                if (result != null)
-                {
-                    res.Content = result;
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
+                //var tourdetail = _db.CostTours.Where(x => x.IdCostTour == idTourDetail).FirstOrDefault();
+                //var result = Mapper.MapCost(tourdetail);
+                //if (result != null)
+                //{
+                //    res.Content = result;
+                //}
+                //else
+                //{
+                //    res.Notification.DateTime = DateTime.Now;
+                //    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                //    res.Notification.Type = "Warning";
+                //}
                 return res;
             }
             catch (Exception e)

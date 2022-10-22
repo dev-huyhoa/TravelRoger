@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
@@ -304,5 +305,24 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+        public async Task<string> UpdateCapacity(string idSchedule,int adult = 1, int child = 0, int baby = 0)
+        {
+            try
+            {
+                var schedule =await (from x in _db.Schedules where x.IdSchedule == idSchedule select x).FirstAsync();
+                int quantity = (adult + child + baby % 2);
+                schedule.QuantityAdult = adult;
+                schedule.QuantityBaby = baby;
+                schedule.QuantityChild = child;
+                schedule.QuantityCustomer = quantity;
+                await _db.SaveChangesAsync();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
     }
 }

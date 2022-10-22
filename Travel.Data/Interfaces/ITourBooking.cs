@@ -13,6 +13,6 @@ namespace Travel.Data.Interfaces
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Gets();
-        Response Create(CreateTourBookingViewModel input);
+        Task<Response> Create(CreateTourBookingViewModel input);
     }
 }
