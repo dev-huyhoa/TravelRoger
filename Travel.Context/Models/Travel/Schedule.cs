@@ -27,7 +27,7 @@ namespace Travel.Context.Models
 
 
 
-        public float TotalCostTour { get; set; }
+        public float TotalCostTourNotService { get; set; }
         public int Profit { get; set; }
         public float Vat { get; set; }
 

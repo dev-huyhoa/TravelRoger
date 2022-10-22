@@ -144,7 +144,7 @@ namespace Travel.Data.Repositories
                                 QuantityCustomer = s.QuantityCustomer,
                                 TimePromotion = s.TimePromotion,
                                 Vat = s.Vat,
-                                TotalCostTour = s.TotalCostTour,
+                                TotalCostTourNotService = s.TotalCostTourNotService,
                                 CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
                                 Tour = (from t in _db.Tour where s.TourId == t.IdTour select new Tour {
