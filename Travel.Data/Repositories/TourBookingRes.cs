@@ -42,11 +42,11 @@ namespace Travel.Data.Repositories
                 {
                     //   payment.IdPayment = idPay;
                 }
-                var idCustomer = Guid.Empty;
-                var stringIdCustomer = PrCommon.GetString("idCustomer", frmData);
+                var customerId = Guid.Empty;
+                var stringIdCustomer = PrCommon.GetString("customerId", frmData);
                 if (!String.IsNullOrEmpty(stringIdCustomer))
                 {
-                    idCustomer = Guid.Parse(stringIdCustomer);
+                    customerId = Guid.Parse(stringIdCustomer);
                 }
 
                 var baby = PrCommon.GetString("baby", frmData);
@@ -162,7 +162,7 @@ namespace Travel.Data.Repositories
                 createObj.Vat = Convert.ToInt16(vat);
                 createObj.Pincode = pincode;
                 createObj.BookingDetails = createDetailObj;
-                createObj.IdCustomer = idCustomer;
+                createObj.IdCustomer = customerId;
                 return JsonSerializer.Serialize(createObj);
             }
             catch (Exception e)
