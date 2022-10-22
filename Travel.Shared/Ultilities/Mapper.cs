@@ -112,6 +112,8 @@ namespace Travel.Shared.Ultilities
                 // create schedule
                 cfg.CreateMap<CreateScheduleViewModel, Schedule>()
                .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule))
+               .ForMember(dto => dto.Alias, opt => opt.MapFrom(src => src.Alias))
+               .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
                .ForMember(dto => dto.DepartureDate, opt => opt.MapFrom(src => src.DepartureDate))
                .ForMember(dto => dto.BeginDate, opt => opt.MapFrom(src => src.EndDate))
                .ForMember(dto => dto.TimePromotion, opt => opt.MapFrom(src => src.TimePromotion))
@@ -132,6 +134,8 @@ namespace Travel.Shared.Ultilities
                 //View
                 cfg.CreateMap<Schedule, ScheduleViewModel>()
                 .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule))
+                .ForMember(dto => dto.Alias, opt => opt.MapFrom(src => src.Alias))
+                .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
                .ForMember(dto => dto.DepartureDate, opt => opt.MapFrom(src => src.DepartureDate))
                .ForMember(dto => dto.BeginDate, opt => opt.MapFrom(src => src.EndDate))
                .ForMember(dto => dto.TimePromotion, opt => opt.MapFrom(src => src.TimePromotion))

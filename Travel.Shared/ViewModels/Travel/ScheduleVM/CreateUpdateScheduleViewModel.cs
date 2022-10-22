@@ -14,6 +14,8 @@ namespace Travel.Shared.ViewModels.Travel
     public class CreateScheduleViewModel
     {
         private string idSchedule;
+        private string alias;
+        private string description;
         private long departureDate;
         private long returnDate;
         private long beginDate;
@@ -47,5 +49,7 @@ namespace Travel.Shared.ViewModels.Travel
         public Guid EmployeeId { get => employeeId; set => employeeId = value; }
         public int PromotionId { get => promotionId; set => promotionId = value; }
         public long ReturnDate { get => returnDate; set => returnDate = value; }
+        public string Description { get => description; set => description = value; }
+        public string Alias { get => alias; set => alias = value; }
     }
 }

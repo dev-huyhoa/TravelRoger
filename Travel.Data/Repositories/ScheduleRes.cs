@@ -124,6 +124,7 @@ namespace Travel.Data.Repositories
                                 QuantityBaby = s.QuantityBaby,
                                 QuantityChild = s.QuantityChild,
                                 CarId = s.CarId,
+                                Description = s.Description,
                                 DepartureDate = s.DepartureDate,
                                 ReturnDate = s.ReturnDate,
                                 EndDate = s.EndDate,

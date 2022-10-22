@@ -10,6 +10,8 @@ namespace Travel.Shared.ViewModels.Travel
     public class ScheduleViewModel
     {
         private string idSchedule;
+        private string alias;
+        private string description;
         private long departureDate;
         private long returnDate;
         private long beginDate;
@@ -86,5 +88,8 @@ namespace Travel.Shared.ViewModels.Travel
         public float AdditionalPrice { get => additionalPrice; set => additionalPrice = value; }
         public float AdditionalPriceHoliday { get => additionalPriceHoliday; set => additionalPriceHoliday = value; }
         public CostTour CostTour { get => costTour; set => costTour = value; }
+        public string Description { get => description; set => description = value; }
+
+        public string Alias { get => alias; set => alias = value; }
     }
 }
