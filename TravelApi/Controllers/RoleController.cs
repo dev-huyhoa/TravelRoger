@@ -61,6 +61,10 @@ namespace TravelApi.Controllers
                 res = role.CreateRole(createObj);
               _messageHub.Clients.All.Init();
             }
+            else
+            {
+                res.Notification = message;
+            }
             
             return Ok(res);
         }
@@ -78,6 +82,10 @@ namespace TravelApi.Controllers
                 var updateObj = JsonSerializer.Deserialize<UpdateRoleViewModel>(result);
                 res = role.UpdateRole(updateObj);
                 _messageHub.Clients.All.Init();
+            }
+            else
+            {
+                res.Notification = message;
             }
 
             return Ok(res);
