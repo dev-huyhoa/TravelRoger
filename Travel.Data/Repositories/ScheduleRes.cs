@@ -114,7 +114,7 @@ namespace Travel.Data.Repositories
             {
                 var list = (from s in _db.Schedules
                             where s.Isdelete == false && 
-                            s.Approve == (int)Enums.ApproveStatus.Waiting
+                            s.Approve == (int)Enums.ApproveStatus.Approved
                             select new Schedule
                             {
                                 Alias = s.Alias,
@@ -135,6 +135,16 @@ namespace Travel.Data.Repositories
                                 PromotionId = s.PromotionId,
                                 Status = s.Status,
                                 TourId = s.TourId,
+                                FinalPrice = s.FinalPrice,
+                                FinalPriceHoliday = s.FinalPriceHoliday,
+                                AdditionalPrice = s.AdditionalPrice,
+                                AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                                IsHoliday = s.IsHoliday,
+                                Profit = s.Profit,
+                                QuantityCustomer = s.QuantityCustomer,
+                                TimePromotion = s.TimePromotion,
+                                Vat = s.Vat,
+                                TotalCostTour= s.TotalCostTour,
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
                                 Tour = (from t in _db.Tour where s.TourId == t.IdTour select new Tour { 
                                     Thumbsnail = t.Thumbsnail,
