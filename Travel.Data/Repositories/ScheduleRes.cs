@@ -113,7 +113,7 @@ namespace Travel.Data.Repositories
             try
             {
                 var list = (from s in _db.Schedules
-                            where s.Isdelete == false && 
+                            where s.Isdelete == false &&
                             s.Approve == (int)Enums.ApproveStatus.Approved
                             select new Schedule
                             {
@@ -124,6 +124,7 @@ namespace Travel.Data.Repositories
                                 QuantityBaby = s.QuantityBaby,
                                 QuantityChild = s.QuantityChild,
                                 CarId = s.CarId,
+                                Description = s.Description,
                                 DepartureDate = s.DepartureDate,
                                 ReturnDate = s.ReturnDate,
                                 EndDate = s.EndDate,
@@ -144,15 +145,16 @@ namespace Travel.Data.Repositories
                                 QuantityCustomer = s.QuantityCustomer,
                                 TimePromotion = s.TimePromotion,
                                 Vat = s.Vat,
-                                TotalCostTour= s.TotalCostTour,
+                                TotalCostTourNotService = s.TotalCostTourNotService,
+                                CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
-                                Tour = (from t in _db.Tour where s.TourId == t.IdTour select new Tour { 
+                                Tour = (from t in _db.Tour where s.TourId == t.IdTour select new Tour {
                                     Thumbsnail = t.Thumbsnail,
-                                    ToPlace =t.ToPlace,
+                                    ToPlace = t.ToPlace,
                                     FromPlace = t.FromPlace,
                                     IdTour = t.IdTour,
                                     NameTour = t.NameTour,
-                                    Alias =t.Alias,
+                                    Alias = t.Alias,
                                     ApproveStatus = t.ApproveStatus,
                                     CreateDate = t.CreateDate,
                                     IsActive = t.IsActive,
@@ -160,10 +162,9 @@ namespace Travel.Data.Repositories
                                     ModifyBy = t.ModifyBy,
                                     ModifyDate = t.ModifyDate,
                                     Rating = t.Rating,
-                                    Status = t.Status,
-                                    TourDetail = (from td in _db.TourDetails where td.TourId == t.IdTour select td).First()
+                                    Status = t.Status
                                 }).First(),
-                                
+
                             }).ToList();
 
 
@@ -211,7 +212,87 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response GetSchedulebyIdTour(string idTour)
+        {
+            try
+            {
+                var list = (from s in _db.Schedules
+                            where s.TourId == idTour
+                            where s.Isdelete == false &&
+                            s.Approve == (int)Enums.ApproveStatus.Approved
+                            select new Schedule
+                            {
+                                Alias = s.Alias,
+                                Approve = s.Approve,
+                                BeginDate = s.BeginDate,
+                                QuantityAdult = s.QuantityAdult,
+                                QuantityBaby = s.QuantityBaby,
+                                QuantityChild = s.QuantityChild,
+                                CarId = s.CarId,
+                                DepartureDate = s.DepartureDate,
+                                ReturnDate = s.ReturnDate,
+                                EndDate = s.EndDate,
+                                Isdelete = s.Isdelete,
+                                EmployeeId = s.EmployeeId,
+                                IdSchedule = s.IdSchedule,
+                                MaxCapacity = s.MaxCapacity,
+                                MinCapacity = s.MinCapacity,
+                                PromotionId = s.PromotionId,
+                                Status = s.Status,
+                                TourId = s.TourId,
+                                FinalPrice = s.FinalPrice,
+                                FinalPriceHoliday = s.FinalPriceHoliday,
+                                AdditionalPrice = s.AdditionalPrice,
+                                AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                                IsHoliday = s.IsHoliday,
+                                Profit = s.Profit,
+                                QuantityCustomer = s.QuantityCustomer,
+                                TimePromotion = s.TimePromotion,
+                                Vat = s.Vat,
+                                TotalCostTourNotService = s.TotalCostTourNotService,
+                                CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
+                                Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
+                                Tour = (from t in _db.Tour
+                                        where s.TourId == t.IdTour
+                                        select new Tour
+                                        {
+                                            Thumbsnail = t.Thumbsnail,
+                                            ToPlace = t.ToPlace,
+                                            FromPlace = t.FromPlace,
+                                            IdTour = t.IdTour,
+                                            NameTour = t.NameTour,
+                                            Alias = t.Alias,
+                                            ApproveStatus = t.ApproveStatus,
+                                            CreateDate = t.CreateDate,
+                                            IsActive = t.IsActive,
+                                            IsDelete = t.IsDelete,
+                                            ModifyBy = t.ModifyBy,
+                                            ModifyDate = t.ModifyDate,
+                                            Rating = t.Rating,
+                                            Status = t.Status,
+                                            QuantityBooked = t.QuantityBooked,
+                                        }).First(),
 
+                            }).ToList();
+
+
+                var result = Mapper.MapSchedule(list);
+                if (list.Count() > 0)
+                {
+                    res.Content = result;
+                }
+
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
 
         public Response Delete(string idSchedule)
         {
@@ -315,6 +396,7 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+        // chưa cập nhật
         public async Task<string> UpdateCapacity(string idSchedule,int adult = 1, int child = 0, int baby = 0)
         {
             try

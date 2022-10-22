@@ -24,10 +24,10 @@ namespace Travel.Context.Models
         public int QuantityChild { get; set; }
         public bool Isdelete { get; set; }
         public bool IsHoliday { get; set; }
+        public string Description { get; set; }
 
 
-
-        public float TotalCostTour { get; set; }
+        public float TotalCostTourNotService { get; set; }
         public int Profit { get; set; }
         public float Vat { get; set; }
 

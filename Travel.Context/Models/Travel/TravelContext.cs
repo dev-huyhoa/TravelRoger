@@ -25,7 +25,6 @@ namespace Travel.Context.Models.Travel
         public DbSet<District> Districts { get; set; }
         public DbSet<Ward> Wards { get; set; }
         public DbSet<CostTour> CostTours { get; set; }
-        public DbSet<TourDetail> TourDetails { get; set; }
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<Restaurant> Restaurants { get; set; }
         public DbSet<Place> Places { get; set; }
@@ -183,15 +182,6 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.NameBanner).IsRequired(true);
             });
 
-            modelBuilder.Entity<TourDetail>(entity =>
-            {
-                entity.HasKey(e => e.IdTourDetail);
-
-
-                entity.Property(e => e.Description).HasMaxLength(300);
-                entity.Property(e => e.TourId).HasMaxLength(50);
-                entity.Property(e => e.IdTourDetail).HasMaxLength(50);
-            });
 
             modelBuilder.Entity<CostTour>(entity =>
             {
@@ -298,6 +288,7 @@ namespace Travel.Context.Models.Travel
                 entity.HasKey(e => e.IdSchedule);
                 entity.Property(e => e.IdSchedule).HasMaxLength(50);
                 entity.Property(e => e.Alias).HasMaxLength(150);
+                entity.Property(e => e.Description).HasMaxLength(300);
 
 
 
@@ -340,10 +331,6 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.FromPlace).HasMaxLength(100);
                 entity.Property(e => e.ToPlace).HasMaxLength(100);
                 entity.Property(e => e.IdTour).HasMaxLength(50);
-
-                entity.HasOne<TourDetail>(e => e.TourDetail)
-                .WithOne(e => e.Tour)
-                .HasForeignKey<TourDetail>(e => e.TourId);
             });
             modelBuilder.Entity<Promotion>(entity =>
             {

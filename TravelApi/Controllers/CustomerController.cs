@@ -53,9 +53,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("gets-history-booking-bycustomer")]
-        public object GetHistoryByIdCustomer(string idCustomer)
+        public object GetHistoryByIdCustomer(Guid idCustomer)
         {
-            res = customer.GetsHistory(Guid.Parse(idCustomer));
+            res = customer.GetsHistory(idCustomer);
             return Ok(res);
         }
     }

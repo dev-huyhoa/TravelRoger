@@ -17,6 +17,5 @@ namespace Travel.Data.Interfaces
         Response Get();
         Response GetCostByIdTourDetail(string idTourDetail);
         Response Update(UpdateCostViewModel input);
-        string UpdateCostHotel(Hotel input);
     }
 }

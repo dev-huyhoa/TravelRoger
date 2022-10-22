@@ -180,7 +180,7 @@ namespace Travel.Context.Migrations
                     b.Property<float>("Tolls")
                         .HasColumnType("real");
 
-                    b.Property<float>("TotalCostTour")
+                    b.Property<float>("TotalCostTourNotService")
                         .HasColumnType("real");
 
                     b.Property<float>("Water")
@@ -923,6 +923,9 @@ namespace Travel.Context.Migrations
                     b.Property<string>("ScheduleId")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<float>("TotalPrice")
                         .HasColumnType("real");

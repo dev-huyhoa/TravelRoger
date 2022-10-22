@@ -12,7 +12,7 @@ namespace Travel.Shared.ViewModels.Travel.CostTourVM
     }
     public class CreateCostViewModel
     {
-        private string idCostTour;
+        private string idSchedule;
         private float breakfast;
         private float water;
         private float feeGas;
@@ -23,13 +23,13 @@ namespace Travel.Shared.ViewModels.Travel.CostTourVM
         private float tolls;
         private int cusExpected;
         private float insuranceFee;
-        private float totalCostTour;
+        private float totalCostTourNotService;
         private bool isHoliday;
         private Guid hotelId;
         private Guid restaurantId;
         private Guid placeId;
 
-        public string IdCostTour { get => idCostTour; set => idCostTour = value; }
+        public string IdSchedule { get => idSchedule; set => idSchedule = value; }
         public float Breakfast { get => breakfast; set => breakfast = value; }
         public float Water { get => water; set => water = value; }
         public float FeeGas { get => feeGas; set => feeGas = value; }
@@ -40,10 +40,10 @@ namespace Travel.Shared.ViewModels.Travel.CostTourVM
         public float Tolls { get => tolls; set => tolls = value; }
         public int CusExpected { get => cusExpected; set => cusExpected = value; }
         public float InsuranceFee { get => insuranceFee; set => insuranceFee = value; }
-        public float TotalCostTour { get => totalCostTour; set => totalCostTour = value; }
         public Guid HotelId { get => hotelId; set => hotelId = value; }
         public Guid RestaurantId { get => restaurantId; set => restaurantId = value; }
         public Guid PlaceId { get => placeId; set => placeId = value; }
         public bool IsHoliday { get => isHoliday; set => isHoliday = value; }
+        public float TotalCostTourNotService { get => totalCostTourNotService; set => totalCostTourNotService = value; }
     }
 }
