@@ -128,7 +128,7 @@ namespace Travel.Data.Repositories
             try
             {
                 Role role = new Role();
-                role = Mapper.MapCreateRole(input);
+                role = Mapper.MapUpdateRole(input);
                 _db.Roles.Update(role);
                 _db.SaveChanges();
 

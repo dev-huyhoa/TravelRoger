@@ -49,7 +49,7 @@ namespace TravelApi.Controllers
 
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [Route("create-role")]
         public object CreateRole([FromBody] JObject frmData)
         {
@@ -76,7 +76,7 @@ namespace TravelApi.Controllers
         {
 
             message = null;
-            var result = role.CheckBeforSave(frmData, ref message, false);
+            var result = role.CheckBeforSave(frmData, ref message, true);
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateRoleViewModel>(result);
