@@ -55,7 +55,7 @@ namespace Travel.Data.Repositories
                 }
 
                 CreateRoleViewModel objCreate = new CreateRoleViewModel();
-                objCreate.IdRole = int.Parse(idRole);
+                //objCreate.IdRole = int.Parse(idRole);
                 objCreate.NameRole = nameRole;
                 objCreate.Description = description;
                 return JsonSerializer.Serialize(objCreate);
@@ -128,7 +128,7 @@ namespace Travel.Data.Repositories
             try
             {
                 Role role = new Role();
-                role = Mapper.MapCreateRole(input);
+                role = Mapper.MapUpdateRole(input);
                 _db.Roles.Update(role);
                 _db.SaveChanges();
 

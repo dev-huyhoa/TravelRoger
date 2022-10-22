@@ -276,7 +276,6 @@ namespace Travel.Shared.Ultilities
                           .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)));
 
                 cfg.CreateMap<CreateRoleViewModel, Role>()
-                       .ForMember(dto => dto.IdRole, opt => opt.MapFrom(src => src.IdRole))
                        .ForMember(dto => dto.NameRole, opt => opt.MapFrom(src => src.NameRole))
                        .ForMember(dto => dto.Description, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Description) ? "" : src.Description));
 

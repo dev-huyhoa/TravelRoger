@@ -78,7 +78,7 @@ namespace TravelApi.Controllers
                                 auth.Id = result.IdEmployee;
                                 auth.Name = result.NameEmployee;
                                 auth.Image = result.Image;
-
+                                auth.Email = result.Email;
 
                                 res.Content = auth;
                                 res.Notification.DateTime = DateTime.Now;
@@ -212,6 +212,7 @@ namespace TravelApi.Controllers
                         auth.Token = tokenJWT;
                         auth.Id = result.IdCustomer;
                         auth.Name = result.NameCustomer;
+                        auth.Email = result.Email;
 
                         res.Content = auth;
                         res.Notification.DateTime = DateTime.Now;
@@ -252,7 +253,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
+        [AllowAnonymous]
         [Route("logout-customer")]
         public object CusLogout(Guid idCus)
         {

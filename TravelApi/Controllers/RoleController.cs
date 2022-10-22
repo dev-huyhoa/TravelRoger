@@ -49,7 +49,7 @@ namespace TravelApi.Controllers
 
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [Route("create-role")]
         public object CreateRole([FromBody] JObject frmData)
         {
@@ -60,6 +60,10 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreateRoleViewModel>(result);
                 res = role.CreateRole(createObj);
               _messageHub.Clients.All.Init();
+            }
+            else
+            {
+                res.Notification = message;
             }
             
             return Ok(res);
@@ -72,12 +76,16 @@ namespace TravelApi.Controllers
         {
 
             message = null;
-            var result = role.CheckBeforSave(frmData, ref message, false);
+            var result = role.CheckBeforSave(frmData, ref message, true);
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateRoleViewModel>(result);
                 res = role.UpdateRole(updateObj);
                 _messageHub.Clients.All.Init();
+            }
+            else
+            {
+                res.Notification = message;
             }
 
             return Ok(res);
