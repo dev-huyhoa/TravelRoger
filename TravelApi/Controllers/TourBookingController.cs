@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 using Travel.Shared.ViewModels.Travel.TourBookingVM;
+using TravelApi.Hubs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 namespace TravelApi.Controllers
@@ -21,10 +23,12 @@ namespace TravelApi.Controllers
         private ITourBooking _tourbooking;
         private Notification message;
         private Response res;
-        public TourBookingController(ITourBooking tourbooking)
+        private IHubContext<TravelHub, ITravelHub> _messageHub;
+        public TourBookingController(ITourBooking tourbooking, IHubContext<TravelHub, ITravelHub> messageHub)
         {
             _tourbooking = tourbooking;
             res = new Response();
+            _messageHub = messageHub;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -47,6 +51,7 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateTourBookingViewModel>(result);
                 res = _tourbooking.Create(createObj);
+                _messageHub.Clients.All.Init();
             }
             return Ok(res);
         }
