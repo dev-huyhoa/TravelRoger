@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Transactions;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
@@ -18,13 +20,18 @@ namespace Travel.Data.Repositories
     public class TourBookingRes : ITourBooking
     {
         private readonly TravelContext _db;
+        private readonly ISchedule _schedule;
         private Notification message;
         private Response res;
-        public TourBookingRes(TravelContext db)
+        public TourBookingRes(TravelContext db,
+            ISchedule schedule)
         {
             _db = db;
             message = new Notification();
             res = new Response();
+
+
+            _schedule = schedule;
         }
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
@@ -163,20 +170,48 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Create(CreateTourBookingViewModel input)
+        public async Task<Response> Create(CreateTourBookingViewModel input)
         {
+            using var transaction = _db.Database.BeginTransaction();
+
             try
             {
+                await transaction.CreateSavepointAsync("BeforeSave");
                 Tourbooking tourbooking =
-                tourbooking = Mapper.MapCreateTourBooking(input);
+                    tourbooking = Mapper.MapCreateTourBooking(input);
                 TourbookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
                 tourbooking.TourbookingDetails = tourBookingDetail;
                 _db.Tourbookings.Add(tourbooking);
-                _db.SaveChanges();
+                    await _db.SaveChangesAsync();
+                    var payment = await (from x in _db.Payment where x.IdPayment == input.PaymentId select x).FirstAsync();
+                    tourbooking.Payment = payment;
+                    res.Content = tourbooking;
 
-                var payment = (from x in _db.Payment where x.IdPayment == input.PaymentId select x).First();
-                tourbooking.Payment = payment;
-                res.Content = tourbooking;
+                    // cập nhật số lượng
+                    int quantityAdult = tourbooking.TourbookingDetails.Adult;
+                    int quantityChild = tourbooking.TourbookingDetails.Child;
+                    int quantityBaby = tourbooking.TourbookingDetails.Baby;
+                    await _schedule.UpdateCapacity(input.ScheduleId, quantityAdult, quantityChild, quantityBaby);
+                transaction.Commit();
+                //transaction.Dispose();
+
+                //Tourbooking tourbooking =
+                // tourbooking = Mapper.MapCreateTourBooking(input);
+                //TourbookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
+                //tourbooking.TourbookingDetails = tourBookingDetail;
+                //_db.Tourbookings.Add(tourbooking);
+                //await _db.SaveChangesAsync();
+                //var payment = await (from x in _db.Payment where x.IdPayment == input.PaymentId select x).FirstAsync();
+                //tourbooking.Payment = payment;
+                //res.Content = tourbooking;
+
+                //// cập nhật số lượng
+                //int quantityAdult = tourBookingDetail.Adult;
+                //int quantityChild = tourBookingDetail.Child;
+                //int quantityBaby = tourBookingDetail.Baby;
+                //await _schedule.UpdateCapacity(input.ScheduleId, quantityAdult, quantityChild, quantityBaby);
+
+
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Đặt tour thành công !";
                 res.Notification.Type = "Success";
@@ -184,6 +219,7 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
+                transaction.RollbackToSavepoint("BeforeSave");
 
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Description = e.Message;
@@ -220,5 +256,6 @@ namespace Travel.Data.Repositories
                 return res;
             };
         }
+
     }
 }

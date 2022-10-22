@@ -30,7 +30,8 @@ namespace Travel.Context.Models
         public bool   IsCalled{get;set;}
         public float  Deposit{get;set;}
         public float  RemainPrice{get;set;}
-        public float  TotalPrice{get;set;}
+        public float TotalPrice { get; set; }
+        public float AdditionalPrice{get;set;}
         public float TotalPricePromotion { get; set; }
         public string ModifyBy{get;set;}
 

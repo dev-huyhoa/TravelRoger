@@ -36,6 +36,18 @@ namespace Travel.Shared.ViewModels.Travel
         private int promotionId;
         private int valuePromotion;
 
+
+        // costtour
+        private float additionalPrice;
+        private float additionalPriceHoliday;
+
+        private float totalCostTour;
+        private int profit;
+        private float vat;
+
+        private float finalPrice;
+        private float finalPriceHoliday;
+
         private Tour tour;
         private ICollection<Timeline> timelines;
 
@@ -62,5 +74,12 @@ namespace Travel.Shared.ViewModels.Travel
         public int ValuePromotion { get => valuePromotion; set => valuePromotion = value; }
         public Tour Tour { get => tour; set => tour = value; }
         public long ReturnDate { get => returnDate; set => returnDate = value; }
+        public float FinalPriceHoliday { get => finalPriceHoliday; set => finalPriceHoliday = value; }
+        public float FinalPrice { get => finalPrice; set => finalPrice = value; }
+        public float Vat { get => vat; set => vat = value; }
+        public int Profit { get => profit; set => profit = value; }
+        public float TotalCostTour { get => totalCostTour; set => totalCostTour = value; }
+        public float AdditionalPrice { get => additionalPrice; set => additionalPrice = value; }
+        public float AdditionalPriceHoliday { get => additionalPriceHoliday; set => additionalPriceHoliday = value; }
     }
 }

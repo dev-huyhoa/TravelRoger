@@ -31,7 +31,6 @@ namespace Travel.Shared.ViewModels.Travel
 
 
         private TourDetailViewModel tourDetail;
-        private ICollection<ScheduleViewModel> schedules;
 
         public string NameTour { get => nameTour; set => nameTour = value; }
         public double Rating { get => rating; set => rating = value; }
@@ -47,6 +46,5 @@ namespace Travel.Shared.ViewModels.Travel
         public bool IsActive { get => isActive; set => isActive = value; }
         public string IdTour { get => idTour; set => idTour = value; }
         public TourDetailViewModel TourDetail { get => tourDetail; set => tourDetail = value; }
-        public ICollection<ScheduleViewModel> Schedules { get => schedules; set => schedules = value; }
     }
 }

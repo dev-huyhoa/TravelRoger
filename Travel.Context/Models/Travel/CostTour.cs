@@ -8,7 +8,9 @@ namespace Travel.Context.Models
 {
     public class CostTour
     {
-        public string IdCostTour { get; set; }
+
+
+        public string IdSchedule { get; set; }
         public float Breakfast { get; set; }
         public float Water { get; set; }
         public float FeeGas { get; set; }
@@ -22,14 +24,21 @@ namespace Travel.Context.Models
         public bool IsHoliday { get; set; }
         public float TotalCostTour { get; set; }
         public Guid HotelId { get; set; }
-        public float PriceHotel { get; set; }
+        public float PriceHotelDB { get; set; }
+        public float PriceHotelSR { get; set; }
         public Guid RestaurantId { get; set; }
         public float PriceRestaurant { get; set; }
         public Guid PlaceId { get; set; }
         public float PriceTicketPlace { get; set; }
-        public virtual TourDetail TourDetails { get; set; }
-        public virtual Place Place { get; set; }
-        public virtual Hotel Hotel { get; set; }
-        public virtual Restaurant Restaurant { get; set; }
+
+
+
+
+
+
+        public Schedule Schedule { get; set; }
+        public Place Place { get; set; }
+        public Hotel Hotel { get; set; }
+        public Restaurant Restaurant { get; set; }
     }
 }
