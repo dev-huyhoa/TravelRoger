@@ -18,6 +18,9 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         private long departureDate ;
         private long returnDate ;
 
+        private string description;
+        private string nameTour;
+
         public long DepartureDate { get => departureDate; set => departureDate = value; }
         public long ReturnDate { get => returnDate; set => returnDate = value; }
         public int ValuePromotion { get => valuePromotion; set => valuePromotion = value; }
@@ -27,5 +30,7 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         public long DateBooking { get => dateBooking; set => dateBooking = value; }
         public float TotalPrice { get => totalPrice; set => totalPrice = value; }
         public int Status { get => status; set => status = value; }
+        public string Description { get => description; set => description = value; }
+        public string NameTour { get => nameTour; set => nameTour = value; }
     }
 }

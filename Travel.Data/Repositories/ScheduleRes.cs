@@ -161,8 +161,7 @@ namespace Travel.Data.Repositories
                                     ModifyBy = t.ModifyBy,
                                     ModifyDate = t.ModifyDate,
                                     Rating = t.Rating,
-                                    Status = t.Status,
-                                    TourDetail = (from td in _db.TourDetails where td.TourId == t.IdTour select td).First()
+                                    Status = t.Status
                                 }).First(),
 
                             }).ToList();
@@ -270,7 +269,7 @@ namespace Travel.Data.Repositories
                                             ModifyDate = t.ModifyDate,
                                             Rating = t.Rating,
                                             Status = t.Status,
-                                            TourDetail = (from td in _db.TourDetails where td.TourId == t.IdTour select td).First()
+                                            QuantityBooked = t.QuantityBooked,
                                         }).First(),
 
                             }).ToList();

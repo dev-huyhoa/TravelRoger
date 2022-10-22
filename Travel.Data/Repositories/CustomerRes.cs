@@ -177,12 +177,14 @@ namespace Travel.Data.Repositories
                                 Schedule = (from s in _db.Schedules
                                             where x.ScheduleId == s.IdSchedule
                                             select new Schedule {
+                                                Description = s.Description,
                                                 DepartureDate = s.DepartureDate,
                                                 ReturnDate = s.ReturnDate,
                                                 Tour = (from t in _db.Tour
                                                         where s.TourId == t.IdTour
                                                         select new Tour { 
-                                                        Thumbsnail = t.Thumbsnail
+                                                        Thumbsnail = t.Thumbsnail,
+                                                        NameTour = t.NameTour
                                                         }).First()
                                             }).First()
                             }).ToList();

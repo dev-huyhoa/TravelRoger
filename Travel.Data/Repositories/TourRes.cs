@@ -55,7 +55,6 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(description))
                 {
                 }
-                var vat = PrCommon.GetString("vat", frmData) ?? "0";
                 if (isUpdate)
                 {
                     // map data
@@ -65,7 +64,6 @@ namespace Travel.Data.Repositories
                     objUpdate.FromPlace = fromPlace;
                     objUpdate.ToPlace = toPlace;
                     objUpdate.Description = description;
-                    objUpdate.VAT = Convert.ToInt16(vat);
                     // generate ID
                     objUpdate.IdTour = Ultility.GenerateId(tourName);
                     return JsonSerializer.Serialize(objUpdate);
@@ -78,7 +76,6 @@ namespace Travel.Data.Repositories
                 obj.FromPlace = fromPlace;
                 obj.ToPlace = toPlace;
                 obj.Description = description;
-                obj.VAT = Convert.ToInt16(vat);
                 // generate ID
                 obj.IdTour = Ultility.GenerateId(tourName);
 
@@ -100,12 +97,9 @@ namespace Travel.Data.Repositories
             {
                 Tour tour =
                 tour = Mapper.MapCreateTour(input);
-                TourDetail tourDetail = Mapper.MapCreateTourDetails(input);
-                tour.TourDetail = tourDetail;
                 tour.IsDelete = false;
                 _db.Tour.Add(tour);
                 _db.SaveChanges();
-                res.Content = tour.TourDetail.IdTourDetail;
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
                 res.Notification.Type = "Success";
