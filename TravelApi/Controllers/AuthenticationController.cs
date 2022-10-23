@@ -252,7 +252,7 @@ namespace TravelApi.Controllers
 
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [AllowAnonymous]
         [Route("logout-customer")]
         public object CusLogout(Guid idCus)

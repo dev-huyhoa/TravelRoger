@@ -34,12 +34,12 @@ namespace TravelApi.Controllers
             res = new Response();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("gets-employee")]
         public object GetsEmployee(bool isDelete)
         {
-            res =  employee.GetsEmployee(isDelete);
+            res = employee.GetsEmployee(isDelete);
             return Ok(res);
         }
 
@@ -75,7 +75,7 @@ namespace TravelApi.Controllers
 
 
         [HttpPost]
-        [Authorize] 
+        [Authorize]
         [Route("update-employee")]
         public object UpdateEmployee(IFormCollection frmdata, IFormFile file)
         {
@@ -84,7 +84,7 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateEmployeeViewModel>(result);
-                res = employee.UpdateEmployee(updateObj); 
+                res = employee.UpdateEmployee(updateObj);
                 _messageHub.Clients.All.Init();
             }
             else
@@ -93,8 +93,7 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("delete-employee")]
         public object DeleteEmployee(Guid idEmployee)
@@ -103,13 +102,23 @@ namespace TravelApi.Controllers
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
-
-        [HttpGet("{id}")]
+        [HttpGet]
         [AllowAnonymous]
         [Route("restore-employee")]
         public object RestoreEmployee(Guid idEmployee)
         {
             res = employee.RestoreEmployee(idEmployee);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-employee")]
+        public object GetEmployee(Guid idEmployee)
+        {
+            res = employee.GetEmployee(idEmployee);
             _messageHub.Clients.All.Init();
             return Ok(res);
         }

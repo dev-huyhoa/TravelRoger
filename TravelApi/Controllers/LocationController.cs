@@ -211,7 +211,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("delete-province")]
         public object DeleteProvince(Guid idProvince)
@@ -221,7 +221,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("delete-district")]
         public object DeleteDistrict(Guid idDistrict)
@@ -231,7 +231,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("delete-ward")]
         public object DeleteWard(Guid idWard)

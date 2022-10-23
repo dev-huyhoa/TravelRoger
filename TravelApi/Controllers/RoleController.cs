@@ -29,7 +29,7 @@ namespace TravelApi.Controllers
             res = new Response();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [AllowAnonymous]
         [Route("gets-role")]
         public object GetsRole(bool isDelete)
@@ -91,7 +91,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("restore-role")]
         public object RestoreRole(int idRole)
@@ -100,7 +100,7 @@ namespace TravelApi.Controllers
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("delete-role")]
         public object DeleteRole(int idRole)

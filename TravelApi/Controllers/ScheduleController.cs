@@ -56,7 +56,7 @@ namespace TravelApi.Controllers
             res = _schedule.Gets();
             return Ok(res);
         }
-        [HttpGet("{id}")]
+        [HttpGet]
         [Route("update-promotion")]
         public object UpdatePromotion(string idSchedule, int idPromotion)
         {
@@ -64,7 +64,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [AllowAnonymous]
         [Route("gets-schedule-idtour")]
         public object GetsSchedulebyIdTour(string idtour)
@@ -73,20 +73,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        // POST api/<ScheduleController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<ScheduleController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+     
 
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("delete-schedule")]
         public object DeleteTour(string idSchedule)
@@ -95,9 +85,7 @@ namespace TravelApi.Controllers
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
-
-
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("restore-schedule")]
         public object RestoreSchedule(string idSchedule)

@@ -165,6 +165,7 @@ namespace Travel.Data.Repositories
                 var promotion = (from x in _db.Promotions
                                  where x.IdPromotion == id
                                  select x).First();
+                // tự gán 
                 promotion = Mapper.MapUpdatePromotion(input);
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;

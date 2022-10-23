@@ -561,5 +561,29 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
+        public Response GetEmployee(Guid idEmployee)
+        {
+            try
+            {
+                var employee = (from x in _db.Employees 
+                                where x.IdEmployee == idEmployee 
+                                select x).First();
+                if (employee != null)
+                {
+                    var result = Mapper.MapEmployee(employee);
+                    res.Content = result;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
     }
 }

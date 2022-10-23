@@ -15,6 +15,7 @@ namespace Travel.Data.Interfaces
     {
         string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate);
         Response GetsEmployee(bool isDelete);
+        Response GetEmployee(Guid idEmployee);
         Response UpdateEmployee(UpdateEmployeeViewModel input);
         Response CreateEmployee(CreateEmployeeViewModel input);
         Response SearchEmployee(JObject frmData);

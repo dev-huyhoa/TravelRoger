@@ -28,7 +28,7 @@ namespace TravelApi.Controllers
             res = new Response();
         }
         
-        [HttpGet()]
+        [HttpGet]
         [Authorize]
         [Route("gets-cost-tour")]
         public object Get()
@@ -36,9 +36,9 @@ namespace TravelApi.Controllers
             res = _costTourRes.Get();
             return Ok(res);
         }
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
-        [Route("gets-cost-tour-id-tour-detail")]
+        [Route("gets-cost-tour-id-tour-detail")] 
         public object GetGetCostByIdTourDetail(string idTourDetail)
         {
             res = _costTourRes.GetCostByIdTourDetail(idTourDetail);
@@ -80,12 +80,6 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-   
-
-        // DELETE api/<CostTourController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+    
     }
 }
