@@ -43,7 +43,7 @@ namespace Travel.Context.Models.Travel
         public DbSet<Timeline> Timelines { get; set; }
 
         public DbSet<Car> Cars { get; set; }
-        public DbSet<OTP> OPTs { get; set; }
+        public DbSet<OTP> OTPs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

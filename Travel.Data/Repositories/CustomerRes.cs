@@ -13,6 +13,7 @@ using Travel.Context.Models.Travel;
 using Travel.Context.Models;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace Travel.Data.Repositories
 {
@@ -21,12 +22,13 @@ namespace Travel.Data.Repositories
         private readonly TravelContext _db;
         private Notification message;
         private Response res;
-
-        public CustomerRes(TravelContext db)
+        private readonly IConfiguration _config;
+        public CustomerRes(TravelContext db, IConfiguration config)
         {
             _db = db;
             message = new Notification();
             res = new Response();
+            _config = config;
         }
 
         public string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate)
@@ -259,6 +261,60 @@ namespace Travel.Data.Repositories
             }
         }
 
+
+
+        public async Task<Response> SendOTP(string email)
+        {
+            try
+            {
+                var account = (from x in _db.Customers
+                               where x.Email.ToLower() == email.ToLower()
+                               select x).FirstOrDefault();
+                if (account != null)
+                {
+                    string otpCode = Ultility.RandomString(8, false);
+                    OTP obj = new OTP();
+                    var dateTime = DateTime.Now;
+                    var begin = dateTime;
+                    var end = dateTime.AddMinutes(2);
+                    obj.BeginTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(begin);
+                    obj.EndTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(end);
+                    obj.OTPCode = otpCode;
+                    await _db.OTPs.AddAsync(obj);
+                    await _db.SaveChangesAsync();
+
+                    var subjectOTP = _config["OTPSubject"];
+                    var emailSend = _config["emailSend"];
+                    var keySecurity = _config["keySecurity"]; 
+                     var stringHtml = Ultility.getHtml(otpCode, subjectOTP, "OTP");
+
+                    Ultility.sendEmail(stringHtml, email, "Yêu cầu quên mật khẩu", emailSend,keySecurity);
+                    res.Content = obj;
+                    res.Notification.Messenge = $"Mã OTP đã gửi vào email {email}!";
+                    res.Notification.Type = "Success";
+
+                }
+                else
+                {
+                    res.Notification.Messenge = $"{email} không tồn tại!";
+                    res.Notification.Type = "Error";
+                }
+                res.Notification.DateTime = DateTime.Now;
+
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+
+
         public Response GetCustomer(Guid idCustomer)
         {
             try
@@ -306,4 +362,6 @@ namespace Travel.Data.Repositories
             }
         }
     }
+
+
 }

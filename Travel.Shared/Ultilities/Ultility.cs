@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
@@ -254,7 +255,53 @@ namespace Travel.Shared.Ultilities
                 return image;
             }
         }
+        public static string getHtml(string content, string subjectBody, string textHead)
+        {
+            try
+            {
+          
+                string body = $@"<div style='max-width: 60vw; min-height:50%; background-color: whitesmoke; padding: 50px; border-radius:20px; margin: auto'><h1>EMAIL FROM TRAVELROVER</h1><h4>TravelRover. Xin chào quý khách. Cảm ơn đã sử dụng dịch vụ của chúng tôi</h4><h5>{subjectBody}</h5><hr><span>{textHead}:</span> <span style='font-size:32px ;' ><b>{content}</b></span></div>";
 
+                return (body);
+
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public static void sendEmail(string htmlString, string toEmail, string mailSubject, string emailSend,string keySecurity)
+        {
+            try
+            {
+                using (var message = new MailMessage())
+                {
+                    message.From = new MailAddress(emailSend);
+                    message.To.Add(new MailAddress(toEmail));
+                    message.Subject = mailSubject;
+                    message.IsBodyHtml = true; //to make message body as html  
+                    message.Body = htmlString;
+                    using (SmtpClient smtp = new SmtpClient())
+                    {
+                        smtp.Port = 587;
+                        smtp.Host = "smtp.gmail.com"; //for gmail host  
+                        smtp.EnableSsl = true;
+                        smtp.UseDefaultCredentials = false;
+                        smtp.Credentials = new NetworkCredential("professional8778781@gmail.com", keySecurity);
+                        smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtp.Send(message);
+                    }
+
+                }
+
+
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
         //public static void SendMail(UserModel userModel, string password, string url, ref NotificationModel _message)
         //{
         //    try
