@@ -230,6 +230,7 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
+               
                 return res;
             }
             catch (Exception e)
@@ -373,7 +374,26 @@ namespace Travel.Data.Repositories
                                                    x.IsActive == keywords.KwIsActive &&
                                                    keywords.KwIdRole.Contains(x.RoleId)
                                    orderby x.RoleId
-                                   select x).ToList();
+                                   select new Employee
+                                   {
+                                       CreateDate = x.CreateDate,
+                                       AccessToken = x.AccessToken,
+                                       Address = x.Address,
+                                       Birthday = x.Birthday,
+                                       Email = x.Email,
+                                       IsDelete = x.IsDelete,
+                                       Gender = x.Gender,
+                                       ModifyDate = x.ModifyDate,
+                                       IdEmployee = x.IdEmployee,
+                                       Image = x.Image,
+                                       IsActive = x.IsActive,
+                                       ModifyBy = x.ModifyBy,
+                                       NameEmployee = x.NameEmployee,
+                                       Password = x.Password,
+                                       Phone = x.Phone,
+                                       Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                                       RoleId = x.RoleId
+                                   }).ToList();
                     }
                     else
                     {
@@ -385,7 +405,26 @@ namespace Travel.Data.Repositories
                                                   x.Phone.ToLower().Contains(keywords.KwPhone) &&
                                                   keywords.KwIdRole.Contains(x.RoleId)
                                    orderby x.RoleId
-                                   select x).ToList();
+                                   select new Employee
+                                   {
+                                       CreateDate = x.CreateDate,
+                                       AccessToken = x.AccessToken,
+                                       Address = x.Address,
+                                       Birthday = x.Birthday,
+                                       Email = x.Email,
+                                       IsDelete = x.IsDelete,
+                                       Gender = x.Gender,
+                                       ModifyDate = x.ModifyDate,
+                                       IdEmployee = x.IdEmployee,
+                                       Image = x.Image,
+                                       IsActive = x.IsActive,
+                                       ModifyBy = x.ModifyBy,
+                                       NameEmployee = x.NameEmployee,
+                                       Password = x.Password,
+                                       Phone = x.Phone,
+                                       Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                                       RoleId = x.RoleId
+                                   }).ToList();
                     }
                 }
                 else
@@ -400,7 +439,26 @@ namespace Travel.Data.Repositories
                                                    x.Phone.ToLower().Contains(keywords.KwPhone) &&
                                                    x.IsActive == keywords.KwIsActive
                                    orderby x.RoleId
-                                   select x).ToList();
+                                   select new Employee
+                                   {
+                                       CreateDate = x.CreateDate,
+                                       AccessToken = x.AccessToken,
+                                       Address = x.Address,
+                                       Birthday = x.Birthday,
+                                       Email = x.Email,
+                                       IsDelete = x.IsDelete,
+                                       Gender = x.Gender,
+                                       ModifyDate = x.ModifyDate,
+                                       IdEmployee = x.IdEmployee,
+                                       Image = x.Image,
+                                       IsActive = x.IsActive,
+                                       ModifyBy = x.ModifyBy,
+                                       NameEmployee = x.NameEmployee,
+                                       Password = x.Password,
+                                       Phone = x.Phone,
+                                       Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                                       RoleId = x.RoleId
+                                   }).ToList();
                     }
                     else
                     {
@@ -411,13 +469,38 @@ namespace Travel.Data.Repositories
                                                    x.Email.ToLower().Contains(keywords.KwEmail) &&
                                                    x.Phone.ToLower().Contains(keywords.KwPhone)
                                    orderby x.RoleId
-                                   select x).ToList();
+                                   select new Employee
+                                   {
+                                       CreateDate = x.CreateDate,
+                                       AccessToken = x.AccessToken,
+                                       Address = x.Address,
+                                       Birthday = x.Birthday,
+                                       Email = x.Email,
+                                       IsDelete = x.IsDelete,
+                                       Gender = x.Gender,
+                                       ModifyDate = x.ModifyDate,
+                                       IdEmployee = x.IdEmployee,
+                                       Image = x.Image,
+                                       IsActive = x.IsActive,
+                                       ModifyBy = x.ModifyBy,
+                                       NameEmployee = x.NameEmployee,
+                                       Password = x.Password,
+                                       Phone = x.Phone,
+                                       Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                                       RoleId = x.RoleId
+                                   }).ToList();
                     }
                 }
                 var result = Mapper.MapEmployee(listEmp);
                 if (listEmp.Count() > 0)
                 {
                     res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không tìm thấy dữ liệu !";
+                    res.Notification.Type = "Warning";
                 }
                 return res;
             }
