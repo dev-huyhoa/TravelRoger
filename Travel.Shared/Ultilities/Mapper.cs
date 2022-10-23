@@ -568,6 +568,7 @@ namespace Travel.Shared.Ultilities
             ;
 
                 cfg.CreateMap<UpdateCostViewModel, CostTour>()
+                .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule))
                 .ForMember(dto => dto.Breakfast, opt => opt.MapFrom(src => src.Breakfast))
                 .ForMember(dto => dto.Water, opt => opt.MapFrom(src => src.Water))
                 .ForMember(dto => dto.FeeGas, opt => opt.MapFrom(src => src.FeeGas))
