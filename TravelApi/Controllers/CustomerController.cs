@@ -67,5 +67,15 @@ namespace TravelApi.Controllers
             res = await customer.SendOTP(email);
             return Ok(res);
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("get-customer")]
+        public object GetCustomer(Guid idCustomer)
+        {
+            res = customer.GetCustomer(idCustomer);
+            //_messageHub.Clients.All.Init();
+            return Ok(res);
+        }
     }
 }

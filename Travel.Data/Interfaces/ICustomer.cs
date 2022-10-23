@@ -17,5 +17,6 @@ namespace Travel.Data.Interfaces
         Response Create(CreateCustomerViewModel input);
         Response GetsHistory(Guid idCustomer);
         Task<Response> SendOTP(string email);
+        Response GetCustomer(Guid idCustomer);
     }
 }
