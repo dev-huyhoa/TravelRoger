@@ -24,6 +24,8 @@ namespace Travel.Data.Interfaces
         bool CreateAccountGoogle(Customer cus);
         bool CusAddToken(string token, Guid idCus);
         bool CusAddTokenGoogle(string token, Guid idCus);
+
+        Response CusChangePassword(Guid idCus, string password, string newPassword);
         string Encryption(string password);
     }
 }

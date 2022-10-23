@@ -265,6 +265,43 @@ namespace Travel.Data.Responsives
         //    }
         //}
 
+        public Response CusChangePassword(Guid idCus, string password, string newPassword)
+        {
+            try
+            {
+                Customer cus = _db.Customers.Find(idCus);
+                if (cus != null)
+                {
+
+                    if (cus.Password == Ultility.Encryption(password))
+                    {
+                        cus.Password = Ultility.Encryption(newPassword);
+                        _db.SaveChanges();
+
+
+                        res.Notification.DateTime = DateTime.Now;
+                        res.Notification.Messenge = "Đổi mật khẩu thành công, mời đăng nhập lại !";
+                        res.Notification.Type = "Success";
+                    }
+                    else
+                    {
+                        res.Notification.DateTime = DateTime.Now;
+                        res.Notification.Messenge = "Mật khẩu cũ không đúng, mời nhập lại !";
+                        res.Notification.Type = "Warning";
+                    }
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
         public string Encryption(string password)
         {
             MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();

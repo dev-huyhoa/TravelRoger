@@ -260,5 +260,14 @@ namespace TravelApi.Controllers
             res = authentication.CusDeleteToken(idCus);
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("change-pass-customer")]
+        public object CusChangePass(Guid idCus, string password, string newPassword)
+        {
+            res = authentication.CusChangePassword(idCus, password, newPassword);
+            return Ok(res);
+        }
     }
 }
