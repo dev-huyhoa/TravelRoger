@@ -26,7 +26,7 @@ namespace TravelApi.Controllers
             _voucher = voucher;  
             res = new Response();
         }
-        [HttpGet("{id}")]
+        [HttpGet]
         [AllowAnonymous]
         [Route("gets-voucher")]
         public object GetVoucher(bool isDelete)
@@ -65,7 +65,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("restore-voucher")]
         public object RestoreVoucher(int id)
@@ -73,7 +73,7 @@ namespace TravelApi.Controllers
             res = _voucher.RestoreVoucher(id);            
             return Ok(res);
         }
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("delete-role")]
         public object DeleteRole(int id)

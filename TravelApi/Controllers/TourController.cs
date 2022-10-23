@@ -81,7 +81,7 @@ namespace TravelApi.Controllers
         {
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("delete-tour")]
         public object DeleteTour(string idTour)
@@ -92,7 +92,7 @@ namespace TravelApi.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet]
         [Authorize]
         [Route("restore-tour")]
         public object RestoreTour(string idTour)
