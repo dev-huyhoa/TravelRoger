@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.CustomerVM;
@@ -56,6 +57,14 @@ namespace TravelApi.Controllers
         public object GetHistoryByIdCustomer(Guid idCustomer)
         {
             res = customer.GetsHistory(idCustomer);
+            return Ok(res);
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("send-otp")]
+        public async Task<object> SendOTP(string email)
+        {
+            res = await customer.SendOTP(email);
             return Ok(res);
         }
     }

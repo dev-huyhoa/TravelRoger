@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,12 @@ namespace Travel.Data.Responsives
     {
         private readonly TravelContext _db;
         private Response res;
-        public AuthenticationRes(TravelContext db)
+        IConfiguration _config;
+        public AuthenticationRes(TravelContext db, IConfiguration config)
         {
             _db = db;
             res = new Response();
+            _config = config;
         }
         public Employee EmpLogin(string email)
         {
@@ -28,10 +31,12 @@ namespace Travel.Data.Responsives
             {
                 //var result = _db.Employees.Where(x => x.IsDelete == false &&
                 //                                      x.Email == email).FirstOrDefault();
-                var result = (from x in _db.Employees where x.IsDelete == false && 
-                                                            x.Email == email select x).FirstOrDefault();
+                var result = (from x in _db.Employees
+                              where x.IsDelete == false &&
+                                    x.Email == email
+                              select x).FirstOrDefault();
                 return result;
- 
+
             }
             catch (Exception)
             {
