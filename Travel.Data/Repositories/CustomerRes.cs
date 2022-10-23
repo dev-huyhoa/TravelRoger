@@ -251,5 +251,29 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
+        public Response GetCustomer(Guid idCustomer)
+        {
+            try
+            {
+                var customer = (from x in _db.Customers
+                                where x.IdCustomer == idCustomer
+                                select x).First();
+                if (customer != null)
+                {
+                    var result = Mapper.MapCustomer(customer);
+                    res.Content = result;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
     }
 }

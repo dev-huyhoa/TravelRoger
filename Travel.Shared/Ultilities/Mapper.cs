@@ -749,9 +749,9 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<List<Customer>, List<CustomerViewModel>>(data);
         }
-        public static Customer MapCustomer(CustomerViewModel data)
+        public static CustomerViewModel MapCustomer(Customer data)
         {
-            return _mapper.Map<CustomerViewModel, Customer>(data);
+            return _mapper.Map<Customer, CustomerViewModel>(data);
         }
 
         public static List<ProvinceViewModel> MapProvince(List<Province> data)

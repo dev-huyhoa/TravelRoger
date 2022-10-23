@@ -58,5 +58,15 @@ namespace TravelApi.Controllers
             res = customer.GetsHistory(idCustomer);
             return Ok(res);
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("get-customer")]
+        public object GetCustomer(Guid idCustomer)
+        {
+            res = customer.GetCustomer(idCustomer);
+            //_messageHub.Clients.All.Init();
+            return Ok(res);
+        }
     }
 }

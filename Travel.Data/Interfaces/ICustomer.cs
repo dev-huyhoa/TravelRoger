@@ -16,6 +16,6 @@ namespace Travel.Data.Interfaces
         Response Gets();
         Response Create(CreateCustomerViewModel input);
         Response GetsHistory(Guid idCustomer);
-
+        Response GetCustomer(Guid idCustomer);
     }
 }
