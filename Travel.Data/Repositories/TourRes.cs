@@ -171,6 +171,28 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response GetTour(string idTour)
+        {
+            try
+            {
+                Tour tour = _db.Tour.Find(idTour);
+                var result = Mapper.MapTour(tour);
+                if (result != null)
+                {
+                    res.Content = result;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
         public Response GetWaiting()
         {
             try

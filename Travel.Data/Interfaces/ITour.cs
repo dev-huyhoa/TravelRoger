@@ -16,6 +16,7 @@ namespace Travel.Data.Interfaces
         Response Create(CreateTourViewModel input);
         Response Get();
         Response GetWaiting();
+        Response GetTour(string idTour);
         Response Delete(string idTour);
         Response RestoreTour(string idTour);
         Response Approve(JObject frmData);

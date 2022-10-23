@@ -66,6 +66,15 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-tour")]
+        public object GetTour(string idTour)
+        {
+            res = _tourRes.GetTour(idTour);
+            return Ok(res);
+        }
+
         // POST api/<TourController>
         [HttpPost]
         [Authorize]

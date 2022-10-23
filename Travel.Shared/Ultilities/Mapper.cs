@@ -741,6 +741,10 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<List<Tour>, List<TourViewModel>>(data);
         }
+        public static TourViewModel MapTour(Tour data)
+        {
+            return _mapper.Map<Tour, TourViewModel>(data);
+        }
         public static Schedule MapCreateSchedule(CreateScheduleViewModel data)
         {
             return _mapper.Map<CreateScheduleViewModel, Schedule>(data);
