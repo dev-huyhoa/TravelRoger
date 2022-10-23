@@ -551,22 +551,33 @@ namespace Travel.Data.Repositories
             try
             {
                 var employee = _db.Employees.Find(idEmployee);
-                if (employee != null)
+                if (employee.RoleId != -1)
                 {
-                    employee.IsDelete = true;
-                    _db.SaveChanges();
+                    if (employee != null)
+                    {
+                        employee.IsDelete = true;
+                        _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Xóa thành công !";
-                    res.Notification.Type = "Success";
+                        res.Notification.DateTime = DateTime.Now;
+                        res.Notification.Messenge = "Xóa thành công !";
+                        res.Notification.Type = "Success";
+                    }
+                    else
+                    {
+                        res.Notification.DateTime = DateTime.Now;
+                        res.Notification.Messenge = "Không tìm thấy !";
+                        res.Notification.Type = "Warning";
+                    }
+                    return res;
                 }
                 else
                 {
                     res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
+                    res.Notification.Messenge = "Không được xóa Admin !";
                     res.Notification.Type = "Warning";
                 }
                 return res;
+
             }
             catch (Exception e)
             {
