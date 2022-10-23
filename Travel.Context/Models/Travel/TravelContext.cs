@@ -43,6 +43,8 @@ namespace Travel.Context.Models.Travel
         public DbSet<Timeline> Timelines { get; set; }
 
         public DbSet<Car> Cars { get; set; }
+        public DbSet<OTP> OPTs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Seed();
@@ -101,6 +103,13 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Email).IsRequired(true);
                 entity.Property(e => e.Phone).IsRequired(true);
             });
+
+
+            modelBuilder.Entity<OTP>(entity =>
+            {
+                entity.Property(e => e.OTPCode).HasMaxLength(10);
+            });
+
 
             modelBuilder.Entity<TourbookingDetails>(entity =>
             {
