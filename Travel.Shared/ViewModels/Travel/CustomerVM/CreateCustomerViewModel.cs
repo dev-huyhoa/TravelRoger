@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Travel.Shared.ViewModels.Travel.CustomerVM
 {
+    public class UpdateCustomerViewModel : CreateCustomerViewModel
+    {
+
+    }
     public class CreateCustomerViewModel
     {
         private Guid idCustomer;

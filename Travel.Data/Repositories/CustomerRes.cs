@@ -29,17 +29,16 @@ namespace Travel.Data.Repositories
             res = new Response();
         }
 
-        public string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate)
+        public string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
             try
             {
-                JObject frmData = JObject.Parse(frmdata["data"]);
                 if (frmData != null)
                 {
                     var idCustomer = PrCommon.GetString("idCustomer", frmData);
                     if (String.IsNullOrEmpty(idCustomer))
                     {
-                        idCustomer = Guid.NewGuid().ToString();
+                        //idCustomer = Guid.NewGuid().ToString();
                     }
 
                     var nameCustomer = PrCommon.GetString("nameCustomer", frmData);
@@ -85,9 +84,17 @@ namespace Travel.Data.Repositories
 
                     if (isUpdate)
                     {
+                        UpdateCustomerViewModel objUpdate = new UpdateCustomerViewModel();
+                        objUpdate.IdCustomer = Guid.Parse(idCustomer);
+                        objUpdate.NameCustomer = nameCustomer;
+                        objUpdate.Phone = phone;
+                        objUpdate.Email = email;
+                        objUpdate.Address = address;
+                        objUpdate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(birthday));
+                        objUpdate.Gender = Convert.ToBoolean(gender);
+                        return JsonSerializer.Serialize(objUpdate);
                     }
                         CreateCustomerViewModel objCreate = new CreateCustomerViewModel();
-                        objCreate.IdCustomer = Guid.Parse(idCustomer);
                         objCreate.NameCustomer = nameCustomer;
                         objCreate.Phone = phone;
                         objCreate.Email = email;
@@ -268,6 +275,29 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response UpdateCustomer(UpdateCustomerViewModel input)
+        {
+            try
+            {
+                Customer customer = Mapper.MapUpdateCustomer(input);
+                _db.Customers.Update(customer);
+                _db.SaveChanges();
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Sửa thành công !";
+                res.Notification.Type = "Success";
+                return res;
+            }
+            catch (Exception e)
+            {
+
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Description = e.Message;
                 res.Notification.Messenge = "Có lỗi xảy ra !";

@@ -313,6 +313,17 @@ namespace Travel.Shared.Ultilities
                         .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
                         .ForMember(dto => dto.Password, otp => otp.MapFrom(src => src.Password));
 
+                cfg.CreateMap<UpdateCustomerViewModel, Customer>()
+                        .ForMember(dto => dto.IdCustomer, otp => otp.MapFrom(src => src.IdCustomer))
+                        .ForMember(dto => dto.NameCustomer, otp => otp.MapFrom(src => src.NameCustomer))
+                        .ForMember(dto => dto.Phone, otp => otp.MapFrom(src => src.Phone))
+                        .ForMember(dto => dto.Email, otp => otp.MapFrom(src => src.Email))
+                        .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
+                        .ForMember(dto => dto.Address, otp => otp.MapFrom(src => src.Address))
+                        .ForMember(dto => dto.Birthday, opt => opt.MapFrom(src => src.Birthday));
+                        
+                       
+
                 cfg.CreateMap<Province, ProvinceViewModel>()
                        .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => src.IdProvince))
                        .ForMember(dto => dto.NameProvince, opt => opt.MapFrom(src => src.NameProvince));
@@ -744,6 +755,10 @@ namespace Travel.Shared.Ultilities
         public static Customer MapCreateCustomer(CreateCustomerViewModel data)
         {
             return _mapper.Map<CreateCustomerViewModel, Customer>(data);
+        }
+        public static Customer MapUpdateCustomer(UpdateCustomerViewModel data)
+        {
+            return _mapper.Map<UpdateCustomerViewModel, Customer>(data);
         }
         public static List<CustomerViewModel> MapCustomer(List<Customer> data)
         {

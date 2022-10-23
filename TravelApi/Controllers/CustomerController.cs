@@ -26,10 +26,10 @@ namespace TravelApi.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("create-customer")]
-        public object Create(IFormCollection frmdata, IFormFile file)
+        public object Create([FromBody] JObject frmdata)
         {
             message = null;
-            var result = customer.CheckBeforeSave(frmdata, file, ref message, false);
+            var result = customer.CheckBeforeSave(frmdata, ref message, false);
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateCustomerViewModel>(result);
@@ -66,6 +66,26 @@ namespace TravelApi.Controllers
         {
             res = customer.GetCustomer(idCustomer);
             //_messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("update-customer")]
+        public object UpdateCustomer([FromBody] JObject frmdata)
+        {
+            message = null;
+            var result = customer.CheckBeforeSave(frmdata, ref message, true);
+            if (message == null)
+            {
+                var updateObj = JsonSerializer.Deserialize<UpdateCustomerViewModel>(result);
+                res = customer.UpdateCustomer(updateObj);
+                //_messageHub.Clients.All.Init();
+            }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
     }
