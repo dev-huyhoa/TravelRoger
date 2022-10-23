@@ -94,6 +94,15 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpGet]
+        [Authorize]
+        [Route("get-employee")]
+        public object GetEmployee(Guid idEmployee)
+        {
+            res = employee.GetEmployee(idEmployee);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
         [HttpGet("{id}")]
         [Authorize]
         [Route("delete-employee")]
