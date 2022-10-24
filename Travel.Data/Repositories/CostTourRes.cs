@@ -113,6 +113,7 @@ namespace Travel.Data.Repositories
                     objUpdate.Tolls = float.Parse(tolls);
                     objUpdate.CusExpected = Convert.ToInt16(cusExpected);
                     objUpdate.InsuranceFee = float.Parse(insuranceFee);
+                    objUpdate.IsHoliday = bool.Parse(isHoliday);
                     objUpdate.HotelId = Guid.Parse(hotelId);
                     objUpdate.RestaurantId = Guid.Parse(restaurantId);
                     objUpdate.PlaceId = Guid.Parse(placeId);
@@ -227,23 +228,22 @@ namespace Travel.Data.Repositories
         }
 
         // hàm cần coi lại
-        public Response GetCostByIdTourDetail(string idTourDetail)
+        public Response GetCostByIdSchedule(string IdSchedule)
         {
             try
             {
-                //var tourdetail = from x in _db.CostTours where x.TourDetailId == idTourDetail select x;
-                //var tourdetail = _db.CostTours.Where(x => x.IdCostTour == idTourDetail).FirstOrDefault();
-                //var result = Mapper.MapCost(tourdetail);
-                //if (result != null)
-                //{
-                //    res.Content = result;
-                //}
-                //else
-                //{
-                //    res.Notification.DateTime = DateTime.Now;
-                //    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                //    res.Notification.Type = "Warning";
-                //}
+                var cost = (from x in _db.CostTours where x.IdSchedule == IdSchedule select x).First();
+                var result = Mapper.MapCost(cost);
+                if (result != null)
+                {
+                    res.Content = result;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
                 return res;
             }
             catch (Exception e)
@@ -261,8 +261,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                CostTour cost = (from x in _db.CostTours where x.IdSchedule == input.IdSchedule select x).First();
-                  cost =  Mapper.MapUpdateCost(input);
+                CostTour cost = Mapper.MapUpdateCost(input);
 
                 var hotel = (from x in _db.Hotels where x.IdHotel == input.HotelId select x).First();
                 var restaurant = (from x in _db.Restaurants where x.IdRestaurant == input.RestaurantId select x).First();
@@ -291,7 +290,7 @@ namespace Travel.Data.Repositories
                 schedule.FinalPriceHoliday = FinalPriceHoliday;
                 schedule.PriceAdultHoliday = FinalPriceHoliday;
                 schedule.PriceChildHoliday = FinalPriceHoliday/2;
-
+                schedule.IsHoliday = input.IsHoliday;
 
 
                 _db.SaveChanges();
