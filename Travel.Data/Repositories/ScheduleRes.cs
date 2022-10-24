@@ -508,6 +508,7 @@ namespace Travel.Data.Repositories
                                       && x.IdSchedule == idSchedule
                                       select new Schedule
                                       {
+                                          IdSchedule = x.IdSchedule,
                                           AdditionalPrice = x.AdditionalPrice,
                                           AdditionalPriceHoliday = x.AdditionalPriceHoliday,
                                           Alias = x.Alias,
