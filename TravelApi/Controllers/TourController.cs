@@ -56,7 +56,6 @@ namespace TravelApi.Controllers
             res = _tourRes.Get();
             return Ok(res);
         }
-
         [HttpGet]
         [Authorize]
         [Route("gets-tour-waiting")]

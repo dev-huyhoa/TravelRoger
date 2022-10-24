@@ -39,6 +39,18 @@ namespace Travel.Context.Models
 
 
 
+        public float PriceAdult { get; set; }
+        public float PriceChild { get; set; }
+        public float PriceBaby { get; set; }
+        public float PriceAdultHoliday { get; set; }
+        public float PriceChildHoliday { get; set; }
+        public float PriceBabyHoliday { get; set; }
+
+
+        public string MetaDesc { get; set; }
+        public string MetaKey { get; set; }
+
+
 
 
         public string TourId { get; set; }

@@ -57,6 +57,14 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
         [HttpGet]
+        [AllowAnonymous]
+        [Route("get-schedule")]
+        public async Task<object> Get(string idSchedule)
+        {
+            res = await _schedule.Get(idSchedule);
+            return Ok(res);
+        }
+        [HttpGet]
         [Route("update-promotion")]
         public object UpdatePromotion(string idSchedule, int idPromotion)
         {

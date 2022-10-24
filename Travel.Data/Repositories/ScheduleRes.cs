@@ -497,5 +497,56 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public async Task<Response> Get(string idSchedule)
+        {
+            try
+            {
+                int approve = Convert.ToInt16(Enums.ApproveStatus.Approved);
+                var schedule = await (from x in _db.Schedules
+                                      where x.Isdelete == false
+                                      && x.Approve == approve
+                                      && x.IdSchedule == idSchedule
+                                      select new Schedule
+                                      {
+                                          AdditionalPrice = x.AdditionalPrice,
+                                          AdditionalPriceHoliday = x.AdditionalPriceHoliday,
+                                          Alias = x.Alias,
+                                          PriceAdult = x.PriceAdult,
+                                          PriceBaby = x.PriceBaby,
+                                          PriceChild = x.PriceChild,
+                                          PriceAdultHoliday = x.PriceAdultHoliday,
+                                          PriceBabyHoliday = x.PriceBabyHoliday,
+                                          PriceChildHoliday = x.PriceChildHoliday,
+                                          QuantityAdult = x.QuantityAdult,
+                                          QuantityBaby = x.QuantityBaby,
+                                          QuantityChild = x.QuantityChild,
+                                          BeginDate = x.BeginDate,
+                                          EndDate = x.EndDate,
+                                          DepartureDate = x.DepartureDate,
+                                          ReturnDate = x.ReturnDate,
+                                          Description = x.Description,
+                                          IsHoliday = x.IsHoliday,
+                                          Timelines = (from t in _db.Timelines
+                                                       where t.IdSchedule == x.IdSchedule
+                                                       select t).ToList(),
+                                          Tour = (from tour in _db.Tour
+                                                  where x.TourId == tour.IdTour
+                                                  select tour).First()
+                                      }).FirstAsync();
+                if (schedule != null)
+                {
+                    res.Content = schedule;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
     }
 }

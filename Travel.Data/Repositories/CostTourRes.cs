@@ -285,7 +285,14 @@ namespace Travel.Data.Repositories
                 int Profit = schedule.Profit;
                 float FinalPrice = (cost.TotalCostTourNotService + CostService) + ((cost.TotalCostTourNotService + CostService) * VAT) + ((cost.TotalCostTourNotService + CostService) * Profit);
                 schedule.FinalPrice = FinalPrice;
-                schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
+                schedule.PriceAdult = FinalPrice;
+                schedule.PriceChild = FinalPrice/2;
+                float FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
+                schedule.FinalPriceHoliday = FinalPriceHoliday;
+                schedule.PriceAdultHoliday = FinalPriceHoliday;
+                schedule.PriceChildHoliday = FinalPriceHoliday/2;
+
+
 
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
