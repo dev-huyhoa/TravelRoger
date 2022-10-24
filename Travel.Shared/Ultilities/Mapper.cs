@@ -600,6 +600,8 @@ namespace Travel.Shared.Ultilities
                 .ForMember(dto => dto.HotelId, opt => opt.MapFrom(src => src.HotelId))
                 .ForMember(dto => dto.RestaurantId, opt => opt.MapFrom(src => src.RestaurantId))
                 .ForMember(dto => dto.PlaceId, opt => opt.MapFrom(src => src.PlaceId))
+                .ForMember(dto => dto.IsHoliday, opt => opt.MapFrom(src => src.IsHoliday))
+
                 .ForMember(dto => dto.TotalCostTourNotService, opt => opt.MapFrom(src =>
                         (src.Breakfast + src.Water + src.SellCost + src.OtherPrice + src.InsuranceFee) + (src.Depreciation + src.Tolls + (src.FeeGas * src.Distance))
                 ))

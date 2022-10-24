@@ -38,10 +38,10 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("gets-cost-tour-id-tour-detail")] 
-        public object GetGetCostByIdTourDetail(string idTourDetail)
+        [Route("get-cost-tour-idSchedule")] 
+        public object GetGetCostByIdTourDetail(string idSchedule)
         {
-            res = _costTourRes.GetCostByIdTourDetail(idTourDetail);
+            res = _costTourRes.GetCostByIdSchedule(idSchedule);
             return Ok(res);
         }
 
