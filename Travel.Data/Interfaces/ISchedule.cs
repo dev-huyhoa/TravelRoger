@@ -19,5 +19,6 @@ namespace Travel.Data.Interfaces
         Response UpdatePromotion(string idSchedule, int idPromotion);
         Task<string> UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0);
         Response GetSchedulebyIdTour(string idTour);
+        Response GetSchedulebyIdTourWaiting(string idTour);
     }
 }
