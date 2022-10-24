@@ -50,7 +50,7 @@ namespace Travel.Data.Repositories
                     if (!String.IsNullOrEmpty(email) && isUpdate == false)
                     {
                        var check = CheckEmailEmployee(email);
-                        if (check.Notification.Type == "Error")
+                        if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
                         {
                             _message = check.Notification;
                             return string.Empty;
@@ -62,7 +62,7 @@ namespace Travel.Data.Repositories
                     if (!String.IsNullOrEmpty(phone) && isUpdate == false)
                     {
                         var check = CheckPhoneEmployee(phone);
-                        if (check.Notification.Type == "Error")
+                        if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
                         {
                             _message = check.Notification;
                             return string.Empty;
@@ -597,8 +597,9 @@ namespace Travel.Data.Repositories
                 if (emp > 0)
                 {
                     res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Description = "Email";
                     res.Notification.Messenge = "[" + email + "] này đã được đăng ký !";
-                    res.Notification.Type = "Error";
+                    res.Notification.Type = "Validation";
                 }
                 return res;
             }
@@ -626,8 +627,9 @@ namespace Travel.Data.Repositories
                         if (obj >0)
                         {
                             res.Notification.DateTime = DateTime.Now;
+                            res.Notification.Description = "Phone";
                             res.Notification.Messenge = "[" + phone + "] này đã được đăng ký !";
-                            res.Notification.Type = "Error";
+                            res.Notification.Type = "Validation";
                             return res;
                         }
                     }
@@ -638,8 +640,9 @@ namespace Travel.Data.Repositories
                     if (emp > 0)
                     {
                         res.Notification.DateTime = DateTime.Now;
+                        res.Notification.Description = "Phone";
                         res.Notification.Messenge = "[" + phone + "] này đã được đăng ký !";
-                        res.Notification.Type = "Error";
+                        res.Notification.Type = "Validation";
                         return res;
                     }
                 }
