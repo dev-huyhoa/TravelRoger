@@ -9,6 +9,7 @@ namespace Travel.Context.Models
     {
         public string IdSchedule { get; set; }
         public string Alias { get; set; }
+        public string DeparturePlace { get; set; }
         public long DepartureDate { get; set; }
         public long ReturnDate { get; set; }
         public long BeginDate { get; set; }
