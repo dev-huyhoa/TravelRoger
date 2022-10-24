@@ -61,7 +61,6 @@ namespace Travel.Data.Repositories
                     UpdateTourViewModel objUpdate = new UpdateTourViewModel();
                     objUpdate.NameTour = "tentoatuspa";
                     objUpdate.Thumbsnail = thumbSnail;
-                    objUpdate.FromPlace = fromPlace;
                     objUpdate.ToPlace = toPlace;
                     objUpdate.Description = description;
                     // generate ID
@@ -70,10 +69,8 @@ namespace Travel.Data.Repositories
                 }
                 // map data
                 CreateTourViewModel obj = new CreateTourViewModel();
-
                 obj.NameTour = tourName;
                 obj.Thumbsnail = thumbSnail;
-                obj.FromPlace = fromPlace;
                 obj.ToPlace = toPlace;
                 obj.Description = description;
                 // generate ID

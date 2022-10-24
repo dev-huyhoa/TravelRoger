@@ -136,6 +136,8 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.CarId, opt => opt.MapFrom(src => src.CarId))
                .ForMember(dto => dto.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
                .ForMember(dto => dto.PromotionId, opt => opt.MapFrom(src => src.PromotionId))
+               .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
+               .ForMember(dto => dto.Vat, opt => opt.MapFrom(src => src.Vat))
                ;
 
                 //View
@@ -179,7 +181,6 @@ namespace Travel.Shared.Ultilities
                 .ForMember(dto => dto.IdTour, opt => opt.MapFrom(src => src.IdTour))
                 .ForMember(dto => dto.NameTour, opt => opt.MapFrom(src => src.NameTour))
                 .ForMember(dto => dto.Thumbsnail, opt => opt.MapFrom(src => src.Thumbsnail))
-                .ForMember(dto => dto.FromPlace, opt => opt.MapFrom(src => src.FromPlace))
                 .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.ToPlace))
                 .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => 10))
                 .ForMember(dto => dto.ApproveStatus, opt => opt.MapFrom(src => Enums.ApproveStatus.Waiting))
@@ -198,7 +199,6 @@ namespace Travel.Shared.Ultilities
                    .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
                    .ForMember(dto => dto.NameTour, opt => opt.MapFrom(src => src.NameTour))
                    .ForMember(dto => dto.Thumbsnail, opt => opt.MapFrom(src => src.Thumbsnail))
-                   .ForMember(dto => dto.FromPlace, opt => opt.MapFrom(src => src.FromPlace))
                    .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.ToPlace))
                    .ForMember(dto => dto.ApproveStatus, opt => opt.MapFrom(src => src.ApproveStatus))
                    .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
@@ -554,7 +554,7 @@ namespace Travel.Shared.Ultilities
            .ForMember(dto => dto.Adult, opt => opt.MapFrom(src => src.TourbookingDetails.Adult))
            .ForMember(dto => dto.Child, opt => opt.MapFrom(src => src.TourbookingDetails.Child))
            .ForMember(dto => dto.Baby, opt => opt.MapFrom(src => src.TourbookingDetails.Baby))
-           .ForMember(dto => dto.FromPlace, opt => opt.MapFrom(src => src.Schedule.Tour.FromPlace))
+           .ForMember(dto => dto.FromPlace, opt => opt.MapFrom(src => src.Schedule.DeparturePlace))
            .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.Schedule.Tour.ToPlace))
            ;
 

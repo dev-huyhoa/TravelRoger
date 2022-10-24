@@ -298,6 +298,7 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.IdSchedule).HasMaxLength(50);
                 entity.Property(e => e.Alias).HasMaxLength(150);
                 entity.Property(e => e.Description).HasMaxLength(300);
+                entity.Property(e => e.DeparturePlace).HasMaxLength(100);
 
 
 
@@ -337,7 +338,6 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Alias).HasMaxLength(150);
                 entity.Property(e => e.ModifyBy).HasMaxLength(100);
                 entity.Property(e => e.Thumbsnail).HasMaxLength(150);
-                entity.Property(e => e.FromPlace).HasMaxLength(100);
                 entity.Property(e => e.ToPlace).HasMaxLength(100);
                 entity.Property(e => e.IdTour).HasMaxLength(50);
             });

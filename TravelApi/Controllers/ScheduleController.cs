@@ -109,5 +109,14 @@ namespace TravelApi.Controllers
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("cus-search-schedule")]
+        public async Task<object> SearchSchedule(string from = null, string to = null,DateTime? departureDate = null, DateTime? returnDate = null)
+        {
+            res = await _schedule.SearchTour(from,to,departureDate,returnDate);
+            await _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
     }
 }

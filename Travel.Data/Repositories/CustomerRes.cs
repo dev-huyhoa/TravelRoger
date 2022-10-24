@@ -191,13 +191,13 @@ namespace Travel.Data.Repositories
                                             select new Schedule {
                                                 Description = s.Description,
                                                 DepartureDate = s.DepartureDate,
+                                                DeparturePlace = s.DeparturePlace,
                                                 ReturnDate = s.ReturnDate,
                                                 Tour = (from t in _db.Tour
                                                         where s.TourId == t.IdTour
                                                         select new Tour { 
                                                         Thumbsnail = t.Thumbsnail,
                                                         NameTour = t.NameTour,
-                                                        FromPlace = t.FromPlace,
                                                         ToPlace = t.ToPlace
                                                         }).First()
                                             }).First()
