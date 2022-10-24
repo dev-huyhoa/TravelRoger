@@ -24,6 +24,7 @@ namespace Travel.Shared.ViewModels.Travel
         private int minCapacity;
         private int maxCapacity;
         private float quantityChild;
+        private float vat;
         private int status;
 
 
@@ -51,5 +52,6 @@ namespace Travel.Shared.ViewModels.Travel
         public long ReturnDate { get => returnDate; set => returnDate = value; }
         public string Description { get => description; set => description = value; }
         public string Alias { get => alias; set => alias = value; }
+        public float Vat { get => vat; set => vat = value; }
     }
 }
