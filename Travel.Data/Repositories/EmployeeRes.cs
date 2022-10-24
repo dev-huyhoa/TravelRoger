@@ -574,7 +574,7 @@ namespace Travel.Data.Repositories
                 {
                     res.Notification.DateTime = DateTime.Now;
                     res.Notification.Messenge = "Không được xóa Admin !";
-                    res.Notification.Type = "Warning";
+                    res.Notification.Type = "Error";
                 }
                 return res;
 
