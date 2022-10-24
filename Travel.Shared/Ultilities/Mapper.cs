@@ -136,6 +136,8 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.CarId, opt => opt.MapFrom(src => src.CarId))
                .ForMember(dto => dto.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
                .ForMember(dto => dto.PromotionId, opt => opt.MapFrom(src => src.PromotionId))
+               .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
+               .ForMember(dto => dto.Vat, opt => opt.MapFrom(src => src.Vat))
                ;
 
                 //View

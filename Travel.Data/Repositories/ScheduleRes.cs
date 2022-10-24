@@ -70,6 +70,14 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(timePromotion))
                 {
                 }
+                var description = PrCommon.GetString("description", frmData);
+                if (String.IsNullOrEmpty(description))
+                {
+                }
+                var vat = PrCommon.GetString("vat", frmData);
+                if (String.IsNullOrEmpty(vat))
+                {
+                }
                 if (isUpdate)
                 {
                     CreateScheduleViewModel updateObj = new CreateScheduleViewModel();
@@ -89,6 +97,8 @@ namespace Travel.Data.Repositories
                 createObj.CarId = Guid.Parse(carId);
                 createObj.EmployeeId = Guid.Parse(employeeId);
                 createObj.PromotionId = Convert.ToInt32(promotionId);
+                createObj.Description = description;
+                createObj.Vat = float.Parse(vat);
                 createObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(departureDate));
                 createObj.ReturnDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(returnDate));
                 createObj.BeginDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(beginDate));
@@ -196,6 +206,7 @@ namespace Travel.Data.Repositories
                 schedule.Alias = $"S{Ultility.SEOUrl(nameTour)}";
                 _db.Schedules.Add(schedule);
                 _db.SaveChanges();
+                res.Content = schedule.IdSchedule;
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
                 res.Notification.Type = "Success";
