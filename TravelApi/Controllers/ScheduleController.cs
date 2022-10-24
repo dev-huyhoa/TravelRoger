@@ -73,7 +73,14 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-     
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("gets-schedule-idtour-waiting")]
+        public object GetsSchedulebyIdTourWaiting(string idtour)
+        {
+            res = _schedule.GetSchedulebyIdTourWaiting(idtour);
+            return Ok(res);
+        }
 
 
         [HttpGet]
