@@ -13,6 +13,7 @@ namespace Travel.Shared.ViewModels.Travel
         private string alias;
         private string description;
         private long departureDate;
+        private string departurePlace;
         private long returnDate;
         private long beginDate;
         private long endDate;
@@ -91,5 +92,6 @@ namespace Travel.Shared.ViewModels.Travel
         public string Description { get => description; set => description = value; }
 
         public string Alias { get => alias; set => alias = value; }
+        public string DeparturePlace { get => departurePlace; set => departurePlace = value; }
     }
 }
