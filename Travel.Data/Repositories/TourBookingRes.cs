@@ -201,7 +201,7 @@ namespace Travel.Data.Repositories
                 transaction.Dispose();
 
 
-                res.Content = tourbooking;
+                res.Content = tourbooking.IdTourbooking;
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Đặt tour thành công !";
                 res.Notification.Type = "Success";
@@ -247,5 +247,57 @@ namespace Travel.Data.Repositories
             };
         }
 
+        public async Task<Response> TourBookingById(string idTourbooking)
+        {
+            try
+            {
+                var tourbooking = await (from x in _db.Tourbookings
+                                         where x.IdTourbooking == idTourbooking
+                                         select new Tourbooking
+                                         {
+                                             NameCustomer = x.NameCustomer,
+                                             NameContact = x.NameContact,
+                                             Pincode = x.Pincode,
+                                             Email = x.Email,
+                                             Phone = x.Phone,
+                                             Address = x.Address,
+                                             AdditionalPrice = x.AdditionalPrice,
+                                             BookingNo = x.BookingNo,
+                                             DateBooking = x.DateBooking,
+                                             TotalPrice = x.TotalPrice,
+                                             TotalPricePromotion = x.TotalPricePromotion,
+                                             VoucherCode = x.VoucherCode,
+                                             ValuePromotion = x.ValuePromotion,
+                                             Payment = (from p in _db.Payment
+                                                        where p.IdPayment == x.PaymentId
+                                                        select p).First(),
+                                             TourbookingDetails = (from tbd in _db.tourbookingDetails
+                                                                   where tbd.IdTourbookingDetails == x.IdTourbooking
+                                                                   select tbd).First(),
+                                             Schedule = (from s in _db.Schedules
+                                                         where s.IdSchedule == x.ScheduleId
+                                                         select s).First()
+                                         }).FirstAsync();
+                if (tourbooking  != null )
+                {
+                    res.Content = tourbooking;
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            };
+        }
     }
 }

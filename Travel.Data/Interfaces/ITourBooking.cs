@@ -14,5 +14,6 @@ namespace Travel.Data.Interfaces
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Gets();
         Task<Response> Create(CreateTourBookingViewModel input);
+        Task<Response> TourBookingById(string idTourbooking);
     }
 }

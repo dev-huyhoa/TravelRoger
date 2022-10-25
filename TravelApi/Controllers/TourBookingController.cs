@@ -57,10 +57,10 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-booking-bill")]
-        public object getBookingBill(string idTourBooking)
+        [Route("tour-booking-by-id")]
+        public async Task<object> TourBookingById(string idTourBooking)
         {
-            res = _tourbooking.Gets();
+            res =await _tourbooking.TourBookingById(idTourBooking);
             return Ok(res);
         }
 
