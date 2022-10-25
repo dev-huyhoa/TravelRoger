@@ -255,6 +255,7 @@ namespace Travel.Data.Repositories
                                          where x.IdTourbooking == idTourbooking
                                          select new Tourbooking
                                          {
+                                             LastDate = x.LastDate,
                                              NameCustomer = x.NameCustomer,
                                              NameContact = x.NameContact,
                                              Pincode = x.Pincode,
