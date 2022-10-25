@@ -380,10 +380,106 @@ namespace Travel.Data.Repositories
                                                                    select e).First()
                                                    }).ToList()
                                   }).ToListAsync();
-                var result = Mapper.MapTour(list);
                 if (list.Count() > 0)
                 {
-                    res.Content = result;
+                    res.Content = list;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public async Task<Response> GetTourById(string idTour)
+        {
+            try
+            {
+                var dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                var list = await(from x in _db.Tour
+                                 where x.IsDelete == false
+                                 && x.IdTour == idTour
+                                 && x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved)
+                                 && x.IsActive == true
+                                 select new Tour
+                                 {
+                                     Thumbsnail = x.Thumbsnail,
+                                     ToPlace = x.ToPlace,
+                                     IdTour = x.IdTour,
+                                     NameTour = x.NameTour,
+                                     Alias = x.Alias,
+                                     Rating = x.Rating,
+                                     QuantityBooked = x.QuantityBooked,
+                                     Schedules = (from s in _db.Schedules
+                                                  where s.TourId == x.IdTour
+                                                  && s.EndDate < dateTimeNow
+                                                  && s.Status == (int)Enums.StatusSchedule.Free
+                                                  select new Schedule
+                                                  {
+                                                      DepartureDate = s.DepartureDate,
+                                                      ReturnDate = s.ReturnDate,
+                                                      DeparturePlace = s.DeparturePlace,
+                                                      Description = s.Description,
+                                                      BeginDate = s.BeginDate,
+                                                      EndDate = s.EndDate,
+                                                      MetaDesc = s.MetaDesc,
+                                                      MetaKey = s.MetaKey,
+                                                      AdditionalPrice = s.AdditionalPrice,
+                                                      AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                                                      Alias = s.Alias,
+                                                      Status = s.Status,
+                                                      Approve = s.Approve,
+                                                      FinalPrice = s.FinalPrice,
+                                                      FinalPriceHoliday = s.FinalPriceHoliday,
+                                                      IdSchedule = s.IdSchedule,
+                                                      IsHoliday = s.IsHoliday,
+                                                      MinCapacity = s.MinCapacity,
+                                                      MaxCapacity = s.MaxCapacity,
+                                                      PriceAdult = s.PriceAdult,
+                                                      PriceAdultHoliday = s.PriceAdultHoliday,
+                                                      PriceChild = s.PriceChild,
+                                                      PriceBabyHoliday = s.PriceChildHoliday,
+                                                      PriceBaby = s.PriceBaby,
+                                                      PriceChildHoliday = s.PriceChildHoliday,
+                                                      QuantityAdult = s.QuantityAdult,
+                                                      QuantityBaby = s.QuantityBaby,
+                                                      QuantityChild = s.QuantityChild,
+                                                      QuantityCustomer = s.QuantityCustomer,
+                                                      TotalCostTourNotService = s.TotalCostTourNotService,
+                                                      Vat = s.Vat,
+                                                      Profit = s.Profit,
+                                                      TimePromotion = s.TimePromotion,
+                                                      Promotions = (from pro in _db.Promotions
+                                                                    where pro.IdPromotion == s.PromotionId
+                                                                    select pro).FirstOrDefault(),
+                                                      Car = (from car in _db.Cars
+                                                             where car.IdCar == s.CarId
+                                                             select car).First(),
+                                                      Timelines = (from timeline in _db.Timelines
+                                                                   where timeline.IdSchedule == s.IdSchedule
+                                                                   && timeline.IsDelete == false
+                                                                   select new Timeline
+                                                                   {
+                                                                       Description = timeline.Description,
+                                                                       FromTime = timeline.FromTime,
+                                                                       ToTime = timeline.ToTime,
+                                                                   }).ToList(),
+                                                      CostTour = (from c in _db.CostTours
+                                                                  where c.IdSchedule == s.IdSchedule
+                                                                  select c).First(),
+                                                      Employee = (from e in _db.Employees
+                                                                  where e.IdEmployee == s.EmployeeId
+                                                                  select e).First()
+                                                  }).ToList()
+                                 }).FirstAsync();
+                if (list != null)
+                {
+                    res.Content = list;
                 }
                 return res;
             }

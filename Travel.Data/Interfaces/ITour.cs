@@ -21,6 +21,7 @@ namespace Travel.Data.Interfaces
         Response RestoreTour(string idTour);
         Response Approve(JObject frmData);
         Task<Response> GetsTourWithSchedule();
+        Task<Response> GetTourById(string idTour);
 
     }
 }

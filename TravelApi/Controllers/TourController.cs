@@ -74,6 +74,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+
+     
+
+
         // POST api/<TourController>
         [HttpPost]
         [Authorize]
@@ -116,6 +120,14 @@ namespace TravelApi.Controllers
         {
             res = await _tourRes.GetsTourWithSchedule();
             await _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-tour-by-id")]
+        public async Task<object> GetTourById(string idTour)
+        {
+            res = await _tourRes.GetTourById(idTour);
             return Ok(res);
         }
     }
