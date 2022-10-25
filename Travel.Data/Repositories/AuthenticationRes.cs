@@ -168,6 +168,31 @@ namespace Travel.Data.Responsives
             }
         }
 
+        public Response EmpDeleteToken(Guid idEmp)
+        {
+            try
+            {
+                var emp = (from x in _db.Employees
+                           where x.IsDelete == false &&
+                                 x.IdEmployee == idEmp
+                           select x).FirstOrDefault();
+                emp.AccessToken = null;
+                _db.SaveChanges();
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Đăng xuất thành công !";
+                res.Notification.Type = "Success";
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
         public Customer CusLogin(string email)
         {
             try

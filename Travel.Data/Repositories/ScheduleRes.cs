@@ -541,6 +541,7 @@ namespace Travel.Data.Repositories
                                           BeginDate = x.BeginDate,
                                           EndDate = x.EndDate,
                                           DepartureDate = x.DepartureDate,
+                                          DeparturePlace = x.DeparturePlace,
                                           ReturnDate = x.ReturnDate,
                                           Description = x.Description,
                                           IsHoliday = x.IsHoliday,

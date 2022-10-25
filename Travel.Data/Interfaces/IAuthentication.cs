@@ -16,8 +16,7 @@ namespace Travel.Data.Interfaces
         bool EmpAddToken(string token, Guid idEmp);
         bool EmpActive(string email);
         bool EmpIsNew(string email);
-        bool EmpDeleteToken(string Id);
-
+        Response EmpDeleteToken(Guid idEmp);
         Customer CusLogin(string email);
         Customer CusLogin(string email, string password);
         Response CusDeleteToken(Guid idCus);

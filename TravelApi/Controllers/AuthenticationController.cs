@@ -263,6 +263,15 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
+        [Route("logout-employee")]
+        public object EmpLogout(Guid idEmp)
+        {
+            res = authentication.EmpDeleteToken(idEmp);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
         [Route("change-pass-customer")]
         public object CusChangePass(Guid idCus, string password, string newPassword)
         {
