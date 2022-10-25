@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
@@ -299,6 +300,32 @@ namespace Travel.Data.Repositories
             catch (Exception e)
             {
                 return false;
+            }
+        }
+
+        public async Task<Response> Gets()
+        {
+            try
+            {
+
+                var list =await (from x in _db.Tour
+                            where (x.IsDelete == false)
+                            where (x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved))
+                            select x).ToListAsync();
+                var result = Mapper.MapTour(list);
+                if (list.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
             }
         }
     }

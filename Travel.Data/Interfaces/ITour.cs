@@ -20,6 +20,7 @@ namespace Travel.Data.Interfaces
         Response Delete(string idTour);
         Response RestoreTour(string idTour);
         Response Approve(JObject frmData);
+        Task<Response> Gets();
 
     }
 }

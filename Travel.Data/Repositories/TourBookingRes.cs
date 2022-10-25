@@ -276,7 +276,18 @@ namespace Travel.Data.Repositories
                                                                    select tbd).First(),
                                              Schedule = (from s in _db.Schedules
                                                          where s.IdSchedule == x.ScheduleId
-                                                         select s).First()
+                                                         select new Schedule { 
+                                                             DepartureDate = s.DepartureDate,
+                                                             ReturnDate = s.ReturnDate,
+                                                             DeparturePlace = s.DeparturePlace,
+                                                             Description = s.Description,
+                                                             QuantityCustomer = s.QuantityCustomer,
+                                                             IdSchedule = s.IdSchedule,
+                                                         Tour = (from t in _db.Tour
+                                                                 where t.IdTour == s.TourId
+                                                                 select t).First(),
+
+                                                         }).First()
                                          }).FirstAsync();
                 if (tourbooking  != null )
                 {
