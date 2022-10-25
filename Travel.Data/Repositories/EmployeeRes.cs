@@ -50,7 +50,7 @@ namespace Travel.Data.Repositories
                     var email = PrCommon.GetString("email", frmData);
                     if (!String.IsNullOrEmpty(email) && isUpdate == false)
                     {
-                       var check = CheckEmailEmployee(email);
+                        var check = CheckEmailEmployee(email);
                         if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
                         {
                             _message = check.Notification;
@@ -75,7 +75,7 @@ namespace Travel.Data.Repositories
                     {
                     }
 
-                   
+
 
                     var birthday = PrCommon.GetString("birthday", frmData);
                     if (String.IsNullOrEmpty(birthday))
@@ -166,7 +166,7 @@ namespace Travel.Data.Repositories
                     objCreate.ModifyBy = modifyBy;
                     return JsonSerializer.Serialize(objCreate);
 
-                   
+
                 }
                 return string.Empty;
             }
@@ -185,7 +185,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-     
+
                 //var isDelete = false;
                 //var check = PrCommon.GetString("isDelete", frmData);
                 //if (!String.IsNullOrEmpty(check))
@@ -202,29 +202,29 @@ namespace Travel.Data.Repositories
                 //var b5 = stopWatch5.Elapsed;
                 #endregion
 
-                var listEmp = (from x in _db.Employees 
+                var listEmp = (from x in _db.Employees
                                where x.IsDelete == isDelete && x.IsActive
                                orderby x.RoleId
-                               select new Employee 
-                { 
-                CreateDate = x.CreateDate,
-                AccessToken = x.AccessToken,
-                Address = x.Address,
-                Birthday = x.Birthday,
-                Email = x.Email,
-                IsDelete = x.IsDelete,
-                Gender = x.Gender,
-                ModifyDate = x.ModifyDate,
-                IdEmployee = x.IdEmployee,
-                Image = x.Image,
-                IsActive = x.IsActive,
-                ModifyBy = x.ModifyBy,
-                NameEmployee = x.NameEmployee,
-                Password = x.Password,
-                Phone = x.Phone,
-                Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
-                RoleId = x.RoleId,
-                }).ToList();
+                               select new Employee
+                               {
+                                   CreateDate = x.CreateDate,
+                                   AccessToken = x.AccessToken,
+                                   Address = x.Address,
+                                   Birthday = x.Birthday,
+                                   Email = x.Email,
+                                   IsDelete = x.IsDelete,
+                                   Gender = x.Gender,
+                                   ModifyDate = x.ModifyDate,
+                                   IdEmployee = x.IdEmployee,
+                                   Image = x.Image,
+                                   IsActive = x.IsActive,
+                                   ModifyBy = x.ModifyBy,
+                                   NameEmployee = x.NameEmployee,
+                                   Password = x.Password,
+                                   Phone = x.Phone,
+                                   Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                                   RoleId = x.RoleId,
+                               }).ToList();
 
                 var result = Mapper.MapEmployee(listEmp);
 
@@ -232,7 +232,7 @@ namespace Travel.Data.Repositories
                 {
                     res.Content = result;
                 }
-               
+
                 return res;
             }
             catch (Exception e)
@@ -400,12 +400,12 @@ namespace Travel.Data.Repositories
                     else
                     {
                         listEmp = (from x in _db.Employees
-                                  where x.IsDelete == keywords.IsDelete &&
-                                                  x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
-                                                  x.NameEmployee.ToLower().Contains(keywords.KwName) &&
-                                                  x.Email.ToLower().Contains(keywords.KwEmail) &&
-                                                  x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                                  keywords.KwIdRole.Contains(x.RoleId)
+                                   where x.IsDelete == keywords.IsDelete &&
+                                                   x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
+                                                   x.NameEmployee.ToLower().Contains(keywords.KwName) &&
+                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                   x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                   keywords.KwIdRole.Contains(x.RoleId)
                                    orderby x.RoleId
                                    select new Employee
                                    {
@@ -626,7 +626,7 @@ namespace Travel.Data.Repositories
                     if (phone != oldPhone) // có thay đổi  sdt
                     {
                         var obj = (from x in _db.Employees where x.Phone != oldPhone && x.Phone == phone select x).Count();
-                        if (obj >0)
+                        if (obj > 0)
                         {
                             res.Notification.DateTime = DateTime.Now;
                             res.Notification.Description = "Phone";
@@ -665,8 +665,8 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var employee = (from x in _db.Employees 
-                                where x.IdEmployee == idEmployee 
+                var employee = (from x in _db.Employees
+                                where x.IdEmployee == idEmployee
                                 select x).First();
                 if (employee != null)
                 {
@@ -685,28 +685,29 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetEmployeeStatus(bool isDelete, bool isActive  )
+        public Response StatisticEmployee()
         {
             try
             {
-              var list= (from x in _db.Employees select x).ToList();
-                var listAdmin = (from x in _db.Employees where x.IsDelete == isDelete && x.IsActive != isActive select x).ToList();
-                    var result = Mapper.MapEmployee(listAdmin);
-              
-                    if (result.Count() > 0)
-                    {
-                      //  res.Content = result;
-                        res.Notification.Messenge = " dữ liệu trả về  là số nhân viên đang hoạt động " + result.Count + "/" + list.Count;
+                var lsEmployeeOnline = (from x in _db.Employees
+                                        where x.IsDelete == false
+                                        && x.IsOnline == true
+                                        select x).ToList();
+                var lsEmployee = (from x in _db.Employees
+                                        where x.IsDelete == false
+                                        && x.IsActive == true
+                                        select x).ToList();
+                var lsEmployeeUnActive = (from x in _db.Employees
+                                          where x.IsDelete == false
+                                          && x.IsActive == false
+                                          select x).ToList();
+                var result = lsEmployeeOnline.Concat(lsEmployee).Concat(lsEmployeeUnActive);
+                if (result.Count() > 0)
+                {
+                     res.Content = result;
                 }
-                    else
-                    {
-                        res.Notification.DateTime = DateTime.Now;
-                        res.Notification.Messenge = "Không có dữ liệu trả về !";
-                        res.Notification.Type = "Warning";
+                return res;
 
-                    }
-                    return res;
-             
             }
             catch (Exception e)
             {

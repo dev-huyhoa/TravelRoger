@@ -21,7 +21,7 @@ namespace Travel.Data.Interfaces
         Response SearchEmployee(JObject frmData);
         Response RestoreEmployee(Guid idEmployee);
         Response DeleteEmployee(Guid idEmployee);
-        Response GetEmployeeStatus(bool isDelete  ,bool isActive );
+        Response StatisticEmployee();
 
     }
 }

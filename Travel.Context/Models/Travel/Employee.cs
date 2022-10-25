@@ -23,6 +23,7 @@ namespace Travel.Context.Models
         public long ModifyDate { get; set; }
         public bool IsDelete { get; set; }
         public bool IsActive { get; set; }
+        public bool IsOnline { get; set; }
         public virtual Role Role { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
 

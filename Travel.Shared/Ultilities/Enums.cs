@@ -36,9 +36,10 @@ namespace Travel.Shared.Ultilities
         }
         public enum StatusCar
         {
-            Broken = -1, // xe đang hư
+            
             Free = 0, // xe đang rảnh
             Busy = 1, // xe đã có tour
+            Full = 2, // xe đang đầy
         }
         public enum TitleRole
         {

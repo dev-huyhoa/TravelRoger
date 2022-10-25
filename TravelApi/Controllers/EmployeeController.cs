@@ -115,11 +115,10 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-employee")]
-        public object GetEmployeeStatus(bool isDelete , bool isActive)
+        [Route("statistic-employee")]
+        public object StatisticEmployee(bool isDelete , bool isActive)
         {
-            res = employee.GetEmployeeStatus(isDelete ,isActive );
-           
+            res = employee.StatisticEmployee();
             return Ok(res);
         }
     }

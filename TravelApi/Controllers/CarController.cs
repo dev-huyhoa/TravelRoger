@@ -33,10 +33,10 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("get")]
-        public object GetCar()
+        [Route("statistic-car")]
+        public object StatisticCar()
         {
-            res = car.GetCarStatus();
+            res = car.StatisticCar();
             return Ok(res);
         }
 

@@ -73,48 +73,49 @@ namespace Travel.Data.Repositories
         }
         public Response UploadNews(IFormCollection frmdata, IFormFile file)
         {
-            try
-            {
-                if (file != null)
-                {
-                    News news = new News();
-                    JObject frmData = JObject.Parse(frmdata["data"]);
-                    var Id = Guid.NewGuid();
-                    news.IdNews = Id;
-                    news.CreateDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now); 
-                    news.Content = PrCommon.GetString("content", frmData);
-                    
-                    _db.News.Add(news);
-                    _db.SaveChanges();
-                    int err = 0;
-                
-                        var image = Ultility.WriteFile(file, "News", Id, ref _message);
-                        if (_message != null)
-                        {
-                            message.Messenge = _message.Messenge;
-                        }
-                        else
-                        {
-                            _db.News.Add(news);
-                            _db.SaveChanges();
-                            message.Messenge = "Upload News thành công !";
-                            message.DateTime = DateTime.Now;
-                            message.Type = "Success";
-                        }
-                }
+            //try
+            //{
+            //    if (file != null)
+            //    {
+            //        News news = new News();
+            //        JObject frmData = JObject.Parse(frmdata["data"]);
+            //        var Id = Guid.NewGuid();
+            //        news.IdNews = Id;
+            //        news.CreateDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now); 
+            //        news.Content = PrCommon.GetString("content", frmData);
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Success";
-                return res;
-            }
-            catch (Exception e)
-            {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = e.Message;
-                res.Notification.Type = "Error";
-                return res;
-            }
+            //        _db.News.Add(news);
+            //        _db.SaveChanges();
+            //        int err = 0;
+
+            //            var image = Ultility.WriteFile(file, "News", Id, ref _message);
+            //            if (_message != null)
+            //            {
+            //                message.Messenge = _message.Messenge;
+            //            }
+            //            else
+            //            {
+            //                _db.News.Add(news);
+            //                _db.SaveChanges();
+            //                message.Messenge = "Upload News thành công !";
+            //                message.DateTime = DateTime.Now;
+            //                message.Type = "Success";
+            //            }
+            //    }
+
+            //    res.Notification.DateTime = DateTime.Now;
+            //    res.Notification.Messenge = "Có lỗi xảy ra !";
+            //    res.Notification.Type = "Success";
+            //    return res;
+            //}
+            //catch (Exception e)
+            //{
+            //    res.Notification.DateTime = DateTime.Now;
+            //    res.Notification.Messenge = e.Message;
+            //    res.Notification.Type = "Error";
+            //    return res;
+            //}
+            return null;
         }
 
         public Response GetBanner()
@@ -208,19 +209,19 @@ namespace Travel.Data.Repositories
                             message = _message;
                         }
                     }
-                    News news = new News();
-                    news.IdNews = Guid.Parse(idNews);
-                    news.Order = int.Parse(order);
-                    news.Image = image;
-                    news.TypeNews = typeNews;
-                    news.CreateDate = long.Parse(createDate);
-                    news.Title = title;
-                    news.SortContent = sortContent;
-                    news.Content = content;
-                    news.IsSubNews = bool.Parse(isSubNews);
-                    news.IsMainNews = bool.Parse(isMainNews);
-                    news.IsDelete = bool.Parse(isDelete);
-                    news.IsShow = bool.Parse(isShow);
+                    //News news = new News();
+                    //news.IdNews = Guid.Parse(idNews);
+                    //news.Order = int.Parse(order);
+                    //news.Image = image;
+                    //news.TypeNews = typeNews;
+                    //news.CreateDate = long.Parse(createDate);
+                    //news.Title = title;
+                    //news.SortContent = sortContent;
+                    //news.Content = content;
+                    //news.IsSubNews = bool.Parse(isSubNews);
+                    //news.IsMainNews = bool.Parse(isMainNews);
+                    //news.IsDelete = bool.Parse(isDelete);
+                    //news.IsShow = bool.Parse(isShow);
 
 
                 }

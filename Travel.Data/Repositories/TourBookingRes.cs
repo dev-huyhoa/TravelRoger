@@ -263,7 +263,7 @@ namespace Travel.Data.Repositories
                 }
                 if (toDateInput != null)
                 {
-                    toDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(fromDateInput.Value); // nếu ko bị null thì gán dữ liệu vào
+                    toDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(toDateInput.Value); // nếu ko bị null thì gán dữ liệu vào
                 }
                 else
                 {

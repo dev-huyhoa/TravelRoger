@@ -14,8 +14,6 @@ namespace Travel.Data.Interfaces
         CreateCarViewModel CheckBeforeSave(JObject frmData, ref Notification _message);
         Response Gets();
         Response Create(CreateCarViewModel input);
-
-        Response GetCarStatus();
-
+        Response StatisticCar();
     }
 }

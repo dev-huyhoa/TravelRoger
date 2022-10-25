@@ -258,29 +258,26 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetCarStatus()
+        public Response StatisticCar()
         {
             try
             {
-                var list = (from x in _db.Cars select x).ToList();
-                var listcar = (from x in _db.Cars where  x.Status ==1 select x).ToList();
-                var result = Mapper.MapCar(listcar);
+                var lsCarFree = (from x in _db.Cars
+                                 where x.Status == (int)Enums.StatusCar.Free
+                                 select x).ToList();
+                var lsCarBusy = (from x in _db.Cars
+                                 where x.Status == (int)Enums.StatusCar.Busy
+                                 select x).ToList();
 
+                var lsCarFull = (from x in _db.Cars
+                                   where x.Status == (int)Enums.StatusCar.Busy
+                                   select x).ToList();
 
-                if (result.Count() > 0)
+                var lsResult = lsCarFree.Concat(lsCarBusy).Concat(lsCarFull);
+                if (lsResult.Count() > 0)
                 {
-                    res.Content = result;
-                    res.Notification.Messenge = "Dữ liệu trả về có xe đang hoạt động : " + result.Count + "/"+ list.Count;
-
+                    res.Content = lsResult;
                 }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
-
-
                 return res;
             }
             catch (Exception e)
