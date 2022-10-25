@@ -109,5 +109,14 @@ namespace TravelApi.Controllers
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-tour-with-schedule")]
+        public async Task<object> GetTourWithSchedule()
+        {
+            res = await _tourRes.GetsTourWithSchedule();
+            await _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
     }
 }
