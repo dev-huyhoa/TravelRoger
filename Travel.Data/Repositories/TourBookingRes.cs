@@ -247,6 +247,51 @@ namespace Travel.Data.Repositories
             };
         }
 
+        public Response GetTourBookingFromDateToDate(DateTime? fromDateInput, DateTime? toDateInput)
+        {
+
+            try
+            {
+                // khai báo
+                long fromDate = 0;
+                long toDate = 0;
+
+                // gán dữ liệu
+                if (fromDateInput != null)
+                {
+                    fromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(fromDateInput.Value); // nếu ko bị null thì gán dữ liệu vào
+                }
+                if (toDateInput != null)
+                {
+                    toDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(fromDateInput.Value); // nếu ko bị null thì gán dữ liệu vào
+                }
+                else
+                {
+                    toDate = long.MaxValue; // nếu toDate ko gán thì cho nó dữ liệu max, để ngày nào nó cũng lấy 
+                }
+
+                var list = (from x in _db.Tourbookings
+                            where x.DateBooking >= fromDate
+                            && x.DateBooking <= toDate
+                            select x).ToList();
+                var result = Mapper.MapTourBooking(list);
+                if (list.Count() > 0)
+                {
+                    res.Content = result;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+
         public async Task<Response> TourBookingById(string idTourbooking)
         {
             try
@@ -312,4 +357,5 @@ namespace Travel.Data.Repositories
             };
         }
     }
+
 }

@@ -64,5 +64,13 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-tourbooking-by-date")]
+        public object GetTourBookingFromDateToDate(DateTime? fromDateInput, DateTime? toDateInput)
+        {
+            res = _tourbooking.GetTourBookingFromDateToDate(fromDateInput, toDateInput);
+            return Ok(res);
+        }
     }
 }
