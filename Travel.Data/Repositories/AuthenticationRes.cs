@@ -332,6 +332,40 @@ namespace Travel.Data.Responsives
             }
         }
 
+        public Response CusForgotPassword(string email, string password)
+        {
+            try
+            {
+                var account = (from x in _db.Customers
+                               where x.Email.ToLower() == email.ToLower()
+                               select x).FirstOrDefault();
+                if (account != null)
+                {
+                    account.Password = Ultility.Encryption(password);
+                    _db.SaveChanges();
+
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Cật nhập mật khẩu thành công, mời đăng nhập lại !";
+                    res.Notification.Type = "Success";
+                }
+                else
+                {
+                    res.Notification.Messenge = $"{email} không tồn tại!";
+                    res.Notification.Type = "Error";
+                    res.Notification.DateTime = DateTime.Now;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
         public string Encryption(string password)
         {
             MD5CryptoServiceProvider MD5 = new MD5CryptoServiceProvider();

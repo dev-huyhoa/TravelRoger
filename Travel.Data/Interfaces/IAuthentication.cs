@@ -25,6 +25,7 @@ namespace Travel.Data.Interfaces
         bool CusAddTokenGoogle(string token, Guid idCus);
 
         Response CusChangePassword(Guid idCus, string password, string newPassword);
+        Response CusForgotPassword(string email, string password);
         string Encryption(string password);
     }
 }

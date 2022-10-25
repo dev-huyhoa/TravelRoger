@@ -278,5 +278,14 @@ namespace TravelApi.Controllers
             res = authentication.CusChangePassword(idCus, password, newPassword);
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("forgot-pass-customer")]
+        public object CusForgotPass(string email, string password)
+        {
+            res = authentication.CusForgotPassword(email, password);
+            return Ok(res);
+        }
     }
 }
