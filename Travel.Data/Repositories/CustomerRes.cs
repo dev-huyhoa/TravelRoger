@@ -176,6 +176,7 @@ namespace Travel.Data.Repositories
                             where x.CustomerId == idCustomer
                             select new Tourbooking
                             {
+                                IdTourbooking = x.IdTourbooking,
                                 Status = x.Status,
                                 TotalPrice = x.TotalPrice,
                                 TotalPricePromotion = x.TotalPricePromotion,
