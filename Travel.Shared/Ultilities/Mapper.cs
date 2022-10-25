@@ -542,6 +542,7 @@ namespace Travel.Shared.Ultilities
                 // view history customer
                 cfg.CreateMap<Tourbooking, HistoryBookedViewModel>()
            .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.ScheduleId))
+           .ForMember(dto => dto.IdTourBooking, opt => opt.MapFrom(src => src.IdTourbooking))
            .ForMember(dto => dto.DepartureDate, opt => opt.MapFrom(src => src.Schedule.DepartureDate))
            .ForMember(dto => dto.ReturnDate, opt => opt.MapFrom(src => src.Schedule.ReturnDate))
            .ForMember(dto => dto.Thumbsnail, opt => opt.MapFrom(src => src.Schedule.Tour.Thumbsnail))

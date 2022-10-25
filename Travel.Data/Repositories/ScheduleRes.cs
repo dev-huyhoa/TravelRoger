@@ -526,6 +526,9 @@ namespace Travel.Data.Repositories
                                       select new Schedule
                                       {
                                           IdSchedule = x.IdSchedule,
+                                          MinCapacity = x.MinCapacity,
+                                          MaxCapacity = x.MaxCapacity,
+                                          QuantityCustomer = x.QuantityCustomer,
                                           AdditionalPrice = x.AdditionalPrice,
                                           AdditionalPriceHoliday = x.AdditionalPriceHoliday,
                                           Alias = x.Alias,

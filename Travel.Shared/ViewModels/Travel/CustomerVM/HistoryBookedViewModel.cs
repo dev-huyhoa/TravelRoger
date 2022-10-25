@@ -10,6 +10,7 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
     {
         private string bookingNo ;
         private string idSchedule ;
+        private string idTourBooking;
         private long dateBooking ;
         private float totalPrice ;
         private int valuePromotion ;
@@ -44,5 +45,6 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         public int Baby { get => baby; set => baby = value; }
         public string FromPlace { get => fromPlace; set => fromPlace = value; }
         public string ToPlace { get => toPlace; set => toPlace = value; }
+        public string IdTourBooking { get => idTourBooking; set => idTourBooking = value; }
     }
 }
