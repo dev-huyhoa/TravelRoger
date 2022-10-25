@@ -116,10 +116,10 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("get-employee")]
-        public object GetEmployee(Guid idEmployee)
+        public object GetEmployeeStatus(bool isDelete , bool isActive)
         {
-            res = employee.GetEmployee(idEmployee);
-            _messageHub.Clients.All.Init();
+            res = employee.GetEmployeeStatus(isDelete ,isActive );
+           
             return Ok(res);
         }
     }

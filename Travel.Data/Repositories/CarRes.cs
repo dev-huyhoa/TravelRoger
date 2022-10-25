@@ -257,5 +257,40 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
+        public Response GetCarStatus()
+        {
+            try
+            {
+                var list = (from x in _db.Cars select x).ToList();
+                var listcar = (from x in _db.Cars where  x.Status ==1 select x).ToList();
+                var result = Mapper.MapCar(listcar);
+
+
+                if (result.Count() > 0)
+                {
+                    res.Content = result;
+                    res.Notification.Messenge = "Dữ liệu trả về có xe đang hoạt động : " + result.Count + "/"+ list.Count;
+
+                }
+                else
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Messenge = "Không có dữ liệu trả về !";
+                    res.Notification.Type = "Warning";
+                }
+
+
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
     }
 }

@@ -14,7 +14,9 @@ namespace Travel.Data.Interfaces
     public interface INews
     {
         Notification UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files);
+        Response UploadNews(IFormCollection frmdata, IFormFile file);
         Response GetBanner();
         //Response DeleteBanner(DeleteBannerViewModel input);
+        string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message);
     }
 }

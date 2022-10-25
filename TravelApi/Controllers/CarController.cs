@@ -31,6 +31,14 @@ namespace TravelApi.Controllers
             res = car.Gets();
             return Ok(res);
         }
+        [HttpGet]
+        [Authorize]
+        [Route("get")]
+        public object GetCar()
+        {
+            res = car.GetCarStatus();
+            return Ok(res);
+        }
 
         [HttpPost]
         [AllowAnonymous]

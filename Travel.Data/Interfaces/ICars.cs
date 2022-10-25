@@ -15,6 +15,7 @@ namespace Travel.Data.Interfaces
         Response Gets();
         Response Create(CreateCarViewModel input);
 
+        Response GetCarStatus();
 
     }
 }

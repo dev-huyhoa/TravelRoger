@@ -14,6 +14,7 @@ using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 using static Travel.Shared.Ultilities.Enums;
 
+
 namespace Travel.Data.Repositories
 {
     public class EmployeeRes : IEmployee
@@ -184,6 +185,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
+     
                 //var isDelete = false;
                 //var check = PrCommon.GetString("isDelete", frmData);
                 //if (!String.IsNullOrEmpty(check))
@@ -201,7 +203,7 @@ namespace Travel.Data.Repositories
                 #endregion
 
                 var listEmp = (from x in _db.Employees 
-                               where x.IsDelete == isDelete 
+                               where x.IsDelete == isDelete && x.IsActive
                                orderby x.RoleId
                                select new Employee 
                 { 
@@ -672,6 +674,39 @@ namespace Travel.Data.Repositories
                     res.Content = result;
                 }
                 return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response GetEmployeeStatus(bool isDelete, bool isActive  )
+        {
+            try
+            {
+              var list= (from x in _db.Employees select x).ToList();
+                var listAdmin = (from x in _db.Employees where x.IsDelete == isDelete && x.IsActive != isActive select x).ToList();
+                    var result = Mapper.MapEmployee(listAdmin);
+              
+                    if (result.Count() > 0)
+                    {
+                      //  res.Content = result;
+                        res.Notification.Messenge = " dữ liệu trả về  là số nhân viên đang hoạt động " + result.Count + "/" + list.Count;
+                }
+                    else
+                    {
+                        res.Notification.DateTime = DateTime.Now;
+                        res.Notification.Messenge = "Không có dữ liệu trả về !";
+                        res.Notification.Type = "Warning";
+
+                    }
+                    return res;
+             
             }
             catch (Exception e)
             {

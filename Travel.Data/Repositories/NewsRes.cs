@@ -71,6 +71,51 @@ namespace Travel.Data.Repositories
                 return message;
             }
         }
+        public Response UploadNews(IFormCollection frmdata, IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    News news = new News();
+                    JObject frmData = JObject.Parse(frmdata["data"]);
+                    var Id = Guid.NewGuid();
+                    news.IdNews = Id;
+                    news.CreateDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now); 
+                    news.Content = PrCommon.GetString("content", frmData);
+                    
+                    _db.News.Add(news);
+                    _db.SaveChanges();
+                    int err = 0;
+                
+                        var image = Ultility.WriteFile(file, "News", Id, ref _message);
+                        if (_message != null)
+                        {
+                            message.Messenge = _message.Messenge;
+                        }
+                        else
+                        {
+                            _db.News.Add(news);
+                            _db.SaveChanges();
+                            message.Messenge = "Upload News thành công !";
+                            message.DateTime = DateTime.Now;
+                            message.Type = "Success";
+                        }
+                }
+
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Success";
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = e.Message;
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
 
         public Response GetBanner()
         {
@@ -97,12 +142,108 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message)
+        {
+            try
+            {
+              
+                JObject frmData = JObject.Parse(frmdata["data"]);
+                if (frmData != null)
+                {
+                    var idNews = PrCommon.GetString("IdNews", frmData);
+                    if (String.IsNullOrEmpty(idNews))
+                    {
+                        idNews = Guid.NewGuid().ToString();
+                    }
+
+                    var order = PrCommon.GetString("Order", frmData);
+                    if (String.IsNullOrEmpty(order))
+                    {
+                    }
+                    var image = PrCommon.GetString("Image", frmData);
+                    if (String.IsNullOrEmpty(image))
+                    {
+                    }
+                    var typeNews = PrCommon.GetString("TypeNews", frmData);
+                    if (String.IsNullOrEmpty(typeNews))
+                    {
+                    }
+                    var createDate = PrCommon.GetString("CreateDate", frmData);
+                    if (String.IsNullOrEmpty(createDate))
+                    {
+                    }
+                    var title = PrCommon.GetString("Title", frmData);
+                    if (String.IsNullOrEmpty(title))
+                    {
+                    }
+                    var sortContent = PrCommon.GetString("SortContent", frmData);
+                    if (String.IsNullOrEmpty(sortContent))
+                    {
+                    }
+                    var content = PrCommon.GetString("Content", frmData);
+                    if (String.IsNullOrEmpty(content))
+                    {
+                    }
+                    var isSubNews = PrCommon.GetString("IsSubNews", frmData);
+                    if (String.IsNullOrEmpty(isSubNews))
+                    {
+                    }
+                    var isMainNews = PrCommon.GetString("IsMainNews", frmData);
+                    if (String.IsNullOrEmpty(isMainNews))
+                    {
+                    }
+                    var isDelete = PrCommon.GetString("IsDelete", frmData);
+                    if (String.IsNullOrEmpty(isDelete))
+                    {
+                    }
+                    var isShow = PrCommon.GetString("IsShow", frmData);
+                    if (String.IsNullOrEmpty(isShow))
+                    {
+                    }
+                    if (file != null)
+                    {
+                        image = Ultility.WriteFile(file, "IdNews", Guid.Parse(idNews), ref _message).FilePath;
+                        if (_message != null)
+                        {
+                            message = _message;
+                        }
+                    }
+                    News news = new News();
+                    news.IdNews = Guid.Parse(idNews);
+                    news.Order = int.Parse(order);
+                    news.Image = image;
+                    news.TypeNews = typeNews;
+                    news.CreateDate = long.Parse(createDate);
+                    news.Title = title;
+                    news.SortContent = sortContent;
+                    news.Content = content;
+                    news.IsSubNews = bool.Parse(isSubNews);
+                    news.IsMainNews = bool.Parse(isMainNews);
+                    news.IsDelete = bool.Parse(isDelete);
+                    news.IsShow = bool.Parse(isShow);
+
+
+                }
+                return string.Empty;
+            }
+            catch (Exception e)
+            {
+                message.DateTime = DateTime.Now;
+                message.Description = e.Message;
+                message.Messenge = "Có lỗi xảy ra !";
+                message.Type = "Error";
+
+                _message = message;
+                return string.Empty;
+            }
+        }
+
         //public Response DeleteBanner(DeleteBannerViewModel input)
         //{
         //    try
         //    {
         //        Banner banner = new Banner();
-               
+
         //        var check = _db.Banners.Find(banner.IdBanner);
         //        if (check != null)
         //        {
