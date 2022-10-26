@@ -198,7 +198,7 @@ namespace Travel.Data.Repositories
                                                 Tour = (from t in _db.Tour
                                                         where s.TourId == t.IdTour
                                                         select new Tour { 
-                                                        Thumbsnail = t.Thumbsnail,
+                                                        Thumbnail = t.Thumbnail,
                                                         NameTour = t.NameTour,
                                                         ToPlace = t.ToPlace
                                                         }).First()

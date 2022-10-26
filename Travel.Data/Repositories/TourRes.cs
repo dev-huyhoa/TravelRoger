@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
@@ -27,57 +28,71 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
-        public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
+        public string CheckBeforSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate)
         {
             try
             {
+                JObject frmData = JObject.Parse(frmdata["data"]);
+                if(frmData != null)
+                {
+                    var tourName = PrCommon.GetString("nameTour", frmData);
+                    if (String.IsNullOrEmpty(tourName))
+                    {
+                    }
+                    if (isExistName(tourName))
+                    {
+                    }
 
-                var tourName = PrCommon.GetString("nameTour", frmData);
-                if (String.IsNullOrEmpty(tourName))
-                {
-                }
-                if (isExistName(tourName))
-                {
-                }
-                var thumbSnail = PrCommon.GetString("thumbsnail", frmData);
-                if (String.IsNullOrEmpty(thumbSnail))
-                {
-                }
-                var fromPlace = PrCommon.GetString("fromPlace", frmData);
-                if (String.IsNullOrEmpty(thumbSnail))
-                {
+                    var idTour = Ultility.GenerateId(tourName);
+                    var thumbnail = PrCommon.GetString("thumbsnail", frmData);
+                    if (String.IsNullOrEmpty(thumbnail))
+                    {
+                    }
+                    var fromPlace = PrCommon.GetString("fromPlace", frmData);
+                    if (String.IsNullOrEmpty(fromPlace))
+                    {
 
-                }
-                var toPlace = PrCommon.GetString("toPlace", frmData);
-                if (String.IsNullOrEmpty(thumbSnail))
-                {
-                }
-                var description = PrCommon.GetString("description", frmData);
-                if (String.IsNullOrEmpty(description))
-                {
-                }
-                if (isUpdate)
-                {
+                    }
+                    var toPlace = PrCommon.GetString("toPlace", frmData);
+                    if (String.IsNullOrEmpty(toPlace))
+                    {
+                    }
+                    var description = PrCommon.GetString("description", frmData);
+                    if (String.IsNullOrEmpty(description))
+                    {
+                    }
+                    if (file != null)
+                    {
+                        thumbnail = Ultility.WriteFile(file, "Tour", idTour, ref _message).FilePath;
+                        if (_message != null)
+                        {
+                            message = _message;
+                        }
+                    }
+                    if (isUpdate)
+                    {
+                        // map data
+                        UpdateTourViewModel objUpdate = new UpdateTourViewModel();
+                        objUpdate.NameTour = "tentoatuspa";
+                        objUpdate.Thumbnail = thumbnail;
+                        objUpdate.ToPlace = toPlace;
+                        objUpdate.Description = description;
+                        // generate ID
+                        objUpdate.IdTour = idTour;
+                        return JsonSerializer.Serialize(objUpdate);
+                    }
                     // map data
-                    UpdateTourViewModel objUpdate = new UpdateTourViewModel();
-                    objUpdate.NameTour = "tentoatuspa";
-                    objUpdate.Thumbsnail = thumbSnail;
-                    objUpdate.ToPlace = toPlace;
-                    objUpdate.Description = description;
+                    CreateTourViewModel obj = new CreateTourViewModel();
+                    obj.NameTour = tourName;
+                    obj.Thumbnail = thumbnail;
+                    obj.ToPlace = toPlace;
+                    obj.Description = description;
                     // generate ID
-                    objUpdate.IdTour = Ultility.GenerateId(tourName);
-                    return JsonSerializer.Serialize(objUpdate);
-                }
-                // map data
-                CreateTourViewModel obj = new CreateTourViewModel();
-                obj.NameTour = tourName;
-                obj.Thumbsnail = thumbSnail;
-                obj.ToPlace = toPlace;
-                obj.Description = description;
-                // generate ID
-                obj.IdTour = Ultility.GenerateId(tourName);
+                    obj.IdTour = idTour;
 
-                return JsonSerializer.Serialize(obj);
+                    return JsonSerializer.Serialize(obj);
+                }
+                return string.Empty;
             }
             catch (Exception e)
             {
@@ -337,7 +352,7 @@ namespace Travel.Data.Repositories
                                   && x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved)
                                   && x.IsActive == true
                                   select new Tour {
-                                      Thumbsnail = x.Thumbsnail,
+                                      Thumbnail = x.Thumbnail,
                                       ToPlace = x.ToPlace,
                                       IdTour = x.IdTour,
                                       NameTour = x.NameTour,
@@ -432,7 +447,7 @@ namespace Travel.Data.Repositories
                                  && x.IsActive == true
                                  select new Tour
                                  {
-                                     Thumbsnail = x.Thumbsnail,
+                                     Thumbnail = x.Thumbnail,
                                      ToPlace = x.ToPlace,
                                      IdTour = x.IdTour,
                                      NameTour = x.NameTour,

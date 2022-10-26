@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Travel.Data.Interfaces
 {
    public  interface ITour
     {
-        string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
+        string CheckBeforSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate = false);
         Response Create(CreateTourViewModel input);
         Response Get();
         Response GetWaiting();

@@ -47,7 +47,7 @@ namespace Travel.Data.Repositories
                     int err = 0;
                     foreach (var file in files)
                     {
-                        var image = Ultility.WriteFile(file, "Banners", Id, ref _message);
+                        var image = Ultility.WriteFile(file, "Banners", Id.ToString(), ref _message);
                         if (_message != null)
                         {
                             err++;
@@ -203,7 +203,7 @@ namespace Travel.Data.Repositories
                     }
                     if (file != null)
                     {
-                        image = Ultility.WriteFile(file, "IdNews", Guid.Parse(idNews), ref _message).FilePath;
+                        image = Ultility.WriteFile(file, "IdNews", idNews, ref _message).FilePath;
                         if (_message != null)
                         {
                             message = _message;

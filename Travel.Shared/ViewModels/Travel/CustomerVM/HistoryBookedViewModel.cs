@@ -14,7 +14,7 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         private long dateBooking ;
         private float totalPrice ;
         private int valuePromotion ;
-        private string thumbsnail ;
+        private string thumbnail ;
         private int status;
         private long departureDate ;
         private long returnDate ;
@@ -32,7 +32,7 @@ namespace Travel.Shared.ViewModels.Travel.CustomerVM
         public long DepartureDate { get => departureDate; set => departureDate = value; }
         public long ReturnDate { get => returnDate; set => returnDate = value; }
         public int ValuePromotion { get => valuePromotion; set => valuePromotion = value; }
-        public string Thumbsnail { get => thumbsnail; set => thumbsnail = value; }
+        public string Thumbnail { get => thumbnail; set => thumbnail = value; }
         public string BookingNo { get => bookingNo; set => bookingNo = value; }
         public string IdSchedule { get => idSchedule; set => idSchedule = value; }
         public long DateBooking { get => dateBooking; set => dateBooking = value; }

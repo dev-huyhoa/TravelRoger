@@ -19,7 +19,7 @@ namespace Travel.Context.Models
         public long ModifyDate { get; set; }
         public bool IsDelete { get; set; }
         public bool IsActive { get; set; }
-        public string Thumbsnail { get; set; }
+        public string Thumbnail { get; set; }
         public int QuantityBooked { get; set; }
         public ICollection<Schedule> Schedules { get; set; }
 

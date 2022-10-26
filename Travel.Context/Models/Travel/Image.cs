@@ -12,7 +12,7 @@ namespace Travel.Context.Models
         public long Size { get; set; }
 
         public string FilePath { get; set; }
-        public Guid IdService { get; set; }
+        public string IdService { get; set; }
         public string Extension { get; set; }
     }
 }

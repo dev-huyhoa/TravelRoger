@@ -13,7 +13,7 @@ namespace Travel.Shared.ViewModels.Travel
         private string idTour;
         private string nameTour;
         private double rating;
-        private string thumbsnail;
+        private string thumbnail;
         private string fromPlace;
         private string toPlace;
 
@@ -35,7 +35,7 @@ namespace Travel.Shared.ViewModels.Travel
 
         public string NameTour { get => nameTour; set => nameTour = value; }
         public double Rating { get => rating; set => rating = value; }
-        public string Thumbsnail { get => thumbsnail; set => thumbsnail = value; }
+        public string Thumbnail { get => thumbnail; set => thumbnail = value; }
         public string FromPlace { get => fromPlace; set => fromPlace = value; }
         public string ToPlace { get => toPlace; set => toPlace = value; }
         public string ApproveStatus { get => approveStatus; set => approveStatus = value; }

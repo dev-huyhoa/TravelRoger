@@ -186,7 +186,7 @@ namespace Travel.Shared.Ultilities
 
 
 
-        public static Image WriteFile(IFormFile file, string type, Guid Id, ref Notification _message)
+        public static Image WriteFile(IFormFile file, string type, string idService, ref Notification _message)
         {
             try
             {
@@ -204,7 +204,7 @@ namespace Travel.Shared.Ultilities
                     Directory.CreateDirectory(pathType);
                 }
 
-                string pathId = Path.Combine(pathType, Id.ToString());
+                string pathId = Path.Combine(pathType, idService.ToString());
 
                 if (!Directory.Exists(pathId))
                 {
@@ -222,11 +222,11 @@ namespace Travel.Shared.Ultilities
                 //get file extension
                 string[] str = file.FileName.Split('.');
 
-                string fileName = Guid.NewGuid().ToString() + "." + str[1];
+                string fileName = file.FileName;
 
                 string fullpath = Path.Combine(pathDate, fileName);
 
-                string serverPath = "/Uploads/" + type + "/" + Id + "/" + date + "/" + fileName;
+                string serverPath = "/Uploads/" + type + "/" + idService + "/" + date + "/" + fileName;
                 if (Directory.Exists(fullpath))
                 {
                     System.IO.File.Delete(fullpath);
@@ -240,7 +240,7 @@ namespace Travel.Shared.Ultilities
                 image.IdImage = Guid.NewGuid();
                 image.NameImage = fileName;
                 image.Extension = str[1];
-                image.IdService = Id;
+                image.IdService = idService;
                 image.Size = file.Length;
                 image.FilePath = serverPath;
                 return image;

@@ -160,7 +160,7 @@ namespace Travel.Data.Repositories
                                 CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
                                 Tour = (from t in _db.Tour where s.TourId == t.IdTour select new Tour {
-                                    Thumbsnail = t.Thumbsnail,
+                                    Thumbnail = t.Thumbnail,
                                     ToPlace = t.ToPlace,
                                     IdTour = t.IdTour,
                                     NameTour = t.NameTour,
@@ -271,7 +271,7 @@ namespace Travel.Data.Repositories
                                         where s.TourId == t.IdTour
                                         select new Tour
                                         {
-                                            Thumbsnail = t.Thumbsnail,
+                                            Thumbnail = t.Thumbnail,
                                             ToPlace = t.ToPlace,
                                             IdTour = t.IdTour,
                                             NameTour = t.NameTour,
@@ -356,7 +356,7 @@ namespace Travel.Data.Repositories
                                         where s.TourId == t.IdTour
                                         select new Tour
                                         {
-                                            Thumbsnail = t.Thumbsnail,
+                                            Thumbnail = t.Thumbnail,
                                             ToPlace = t.ToPlace,
                                             IdTour = t.IdTour,
                                             NameTour = t.NameTour,
@@ -663,7 +663,7 @@ namespace Travel.Data.Repositories
                                         where s.TourId == t.IdTour
                                         select new Tour
                                         {
-                                            Thumbsnail = t.Thumbsnail,
+                                            Thumbnail = t.Thumbnail,
                                             ToPlace = t.ToPlace,
                                             IdTour = t.IdTour,
                                             NameTour = t.NameTour,
@@ -821,7 +821,7 @@ namespace Travel.Data.Repositories
                                     where s.TourId == t.IdTour
                                     select new Tour
                                     {
-                                        Thumbsnail = t.Thumbsnail,
+                                        Thumbnail = t.Thumbnail,
                                         ToPlace = t.ToPlace,
                                         IdTour = t.IdTour,
                                         NameTour = t.NameTour,

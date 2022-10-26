@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
@@ -36,10 +37,10 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("create-tour")]
-        public object Create([FromBody] JObject frmData)
+        public object Create(IFormCollection frmdata, IFormFile file)
         {
             message = null;
-            var result = _tourRes.CheckBeforSave(frmData, ref message,false);
+            var result = _tourRes.CheckBeforSave(frmdata, file, ref message,false);
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateTourViewModel>(result);

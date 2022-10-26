@@ -111,7 +111,7 @@ namespace Travel.Data.Repositories
 
                     if (file != null)
                     {
-                        image = Ultility.WriteFile(file, "Employee", Guid.Parse(idEmployee), ref _message).FilePath;
+                        image = Ultility.WriteFile(file, "Employee", idEmployee, ref _message).FilePath;
                         if (_message != null)
                         {
                             message = _message;
