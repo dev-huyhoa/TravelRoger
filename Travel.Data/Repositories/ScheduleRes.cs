@@ -696,7 +696,7 @@ namespace Travel.Data.Repositories
                             TimePromotion = s.TimePromotion,
                             Vat = s.Vat,
                             TotalCostTourNotService = s.TotalCostTourNotService,
-                            CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
+                            CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
                             Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
                             Tour = (from t in _db.Tour
                                     where s.TourId == t.IdTour
@@ -715,7 +715,7 @@ namespace Travel.Data.Repositories
                                         ModifyDate = t.ModifyDate,
                                         Rating = t.Rating,
                                         Status = t.Status
-                                    }).First(),
+                                    }).FirstOrDefault(),
 
                         }).ToList();
                 if (!string.IsNullOrEmpty(to))
