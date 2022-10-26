@@ -27,6 +27,8 @@ namespace Travel.Shared.ViewModels.Travel.TourBookingVM
         private string pincode;
         private string voucherCode;
         private int? valuePromotion;
+        private float totalPrice;
+        private float totalPricePromotion;
         private CreateBookingDetailViewModel bookingDetails;
 
 
@@ -45,5 +47,7 @@ namespace Travel.Shared.ViewModels.Travel.TourBookingVM
         public CreateBookingDetailViewModel BookingDetails { get => bookingDetails; set => bookingDetails = value; }
         public int? ValuePromotion { get => valuePromotion; set => valuePromotion = value; }
         public Guid? CustomerId { get => customerId; set => customerId = value; }
+        public float TotalPrice { get => totalPrice; set => totalPrice = value; }
+        public float TotalPricePromotion { get => totalPricePromotion; set => totalPricePromotion = value; }
     }
 }

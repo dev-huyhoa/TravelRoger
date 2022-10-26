@@ -128,6 +128,9 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(pincode))
                 { }
 
+                var totalPrice = PrCommon.GetString("totalPrice", frmData);
+                if (String.IsNullOrEmpty(totalPrice))
+                { }
 
                 if (isUpdate)
                 {
@@ -160,6 +163,7 @@ namespace Travel.Data.Repositories
                 createObj.Phone = phone;
                 createObj.NameContact = nameContact;
                 createObj.Vat = Convert.ToInt16(vat);
+                createObj.TotalPrice = float.Parse(totalPrice);
                 createObj.Pincode = pincode;
                 createObj.BookingDetails = createDetailObj;
                 createObj.CustomerId = customerId;
@@ -183,8 +187,7 @@ namespace Travel.Data.Repositories
             try
             {
                 await transaction.CreateSavepointAsync("BeforeSave");
-                Tourbooking tourbooking =
-                    tourbooking = Mapper.MapCreateTourBooking(input);
+                Tourbooking tourbooking = Mapper.MapCreateTourBooking(input);
                 TourbookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
                 tourbooking.TourbookingDetails = tourBookingDetail;
                 _db.Tourbookings.Add(tourbooking);

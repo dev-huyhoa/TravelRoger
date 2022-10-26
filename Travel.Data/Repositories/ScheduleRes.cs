@@ -532,6 +532,8 @@ namespace Travel.Data.Repositories
                                           AdditionalPrice = x.AdditionalPrice,
                                           AdditionalPriceHoliday = x.AdditionalPriceHoliday,
                                           Alias = x.Alias,
+                                          FinalPrice = x.FinalPrice,
+                                          FinalPriceHoliday = x.FinalPriceHoliday,
                                           PriceAdult = x.PriceAdult,
                                           PriceBaby = x.PriceBaby,
                                           PriceChild = x.PriceChild,

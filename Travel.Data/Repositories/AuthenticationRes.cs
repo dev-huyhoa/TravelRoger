@@ -38,7 +38,7 @@ namespace Travel.Data.Responsives
                 return result;
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return null;
             }

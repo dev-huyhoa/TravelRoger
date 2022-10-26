@@ -102,12 +102,23 @@ namespace TravelApi.Controllers
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
+
         [HttpGet]
         [AllowAnonymous]
         [Route("restore-employee")]
         public object RestoreEmployee(Guid idEmployee)
         {
             res = employee.RestoreEmployee(idEmployee);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-employee")]
+        public object GetEmployee(Guid idEmployee)
+        {
+            res = employee.GetEmployee(idEmployee);
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
