@@ -174,6 +174,7 @@ namespace Travel.Data.Repositories
             {
                 var list = (from x in _db.Tourbookings
                             where x.CustomerId == idCustomer
+                            orderby x.DateBooking descending    
                             select new Tourbooking
                             {
                                 IdTourbooking = x.IdTourbooking,

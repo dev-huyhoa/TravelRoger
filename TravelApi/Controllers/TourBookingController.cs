@@ -44,7 +44,6 @@ namespace TravelApi.Controllers
         [Route("create-tourbooking")]
         public async Task<object> Create([FromBody] JObject frmData)
         {
-
             message = null;
             var result = _tourbooking.CheckBeforSave(frmData, ref message, false);
             if (message == null)
