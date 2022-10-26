@@ -175,7 +175,7 @@ namespace Travel.Data.Repositories
                                     Status = t.Status
                                 }).First(),
 
-                            }).ToList();
+                            }).OrderByDescending(x=> x.DepartureDate).ToList();
 
 
                 var result = Mapper.MapSchedule(list);
@@ -575,6 +575,123 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                if (departureDate == null || returnDate == null)
+                {
+
+                    long dateTimeNowUnix1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    var list1 = new List<Schedule>();
+                    if (departureDate != null)
+                    {
+                        var fromDepartTureDate1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(departureDate.Value);
+                        var toDepartTureDate1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(departureDate.Value.AddDays(1).AddMinutes(-1));
+                        // cách 1
+                        list1 = await (from x in _db.Schedules
+                                       where x.EndDate <= dateTimeNowUnix1
+                                       && x.DepartureDate >= fromDepartTureDate1
+                                       && x.DepartureDate <= toDepartTureDate1
+                                       && x.Isdelete == false
+                                       && x.Approve == (int)Enums.ApproveStatus.Approved
+                                       select x
+                                      ).ToListAsync();
+                        // cách 2 
+                        //list1 = await (from x in _db.Schedules
+                        //               where x.EndDate <= dateTimeNowUnix1
+                        //               && (x.DepartureDate >= fromDepartTureDate1 && x.DepartureDate <= toDepartTureDate1)
+                        //               && x.Isdelete == false
+                        //               && x.Approve == (int)Enums.ApproveStatus.Approved
+                        //               select x
+                        //              ).ToListAsync();
+                    }
+                    else
+                    {
+                        var fromReturnDate1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(returnDate.Value);
+                        var toReturnDate1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(returnDate.Value.AddDays(1).AddMinutes(-1));
+                        list1 = await (from x in _db.Schedules
+                                       where x.EndDate <= dateTimeNowUnix1
+                                       && x.ReturnDate >= fromReturnDate1
+                                       && x.ReturnDate <= toReturnDate1
+                                       && x.Isdelete == false
+                                       && x.Approve == (int)Enums.ApproveStatus.Approved
+                                       select x
+                                                             ).ToListAsync();
+                    }
+                    if (!string.IsNullOrEmpty(from))
+                    {
+                        string keyFrom = Ultility.removeVietnameseSign(from.ToLower());
+                        list1 = (from x in list1
+                                 where Ultility.removeVietnameseSign(x.DeparturePlace.ToLower()).Contains(keyFrom)
+                                select x).ToList();
+                    }
+                    list1 = (from s in list1
+                             select new Schedule
+                            {
+                                Alias = s.Alias,
+                                Approve = s.Approve,
+                                BeginDate = s.BeginDate,
+                                QuantityAdult = s.QuantityAdult,
+                                QuantityBaby = s.QuantityBaby,
+                                QuantityChild = s.QuantityChild,
+                                CarId = s.CarId,
+                                Description = s.Description,
+                                DepartureDate = s.DepartureDate,
+                                ReturnDate = s.ReturnDate,
+                                EndDate = s.EndDate,
+                                Isdelete = s.Isdelete,
+                                EmployeeId = s.EmployeeId,
+                                IdSchedule = s.IdSchedule,
+                                MaxCapacity = s.MaxCapacity,
+                                MinCapacity = s.MinCapacity,
+                                PromotionId = s.PromotionId,
+                                DeparturePlace = s.DeparturePlace,
+                                Status = s.Status,
+                                TourId = s.TourId,
+                                FinalPrice = s.FinalPrice,
+                                FinalPriceHoliday = s.FinalPriceHoliday,
+                                AdditionalPrice = s.AdditionalPrice,
+                                AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                                IsHoliday = s.IsHoliday,
+                                Profit = s.Profit,
+                                QuantityCustomer = s.QuantityCustomer,
+                                TimePromotion = s.TimePromotion,
+                                Vat = s.Vat,
+                                TotalCostTourNotService = s.TotalCostTourNotService,
+                                CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
+                                Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
+                                Tour = (from t in _db.Tour
+                                        where s.TourId == t.IdTour
+                                        select new Tour
+                                        {
+                                            Thumbsnail = t.Thumbsnail,
+                                            ToPlace = t.ToPlace,
+                                            IdTour = t.IdTour,
+                                            NameTour = t.NameTour,
+                                            Alias = t.Alias,
+                                            ApproveStatus = t.ApproveStatus,
+                                            CreateDate = t.CreateDate,
+                                            IsActive = t.IsActive,
+                                            IsDelete = t.IsDelete,
+                                            ModifyBy = t.ModifyBy,
+                                            ModifyDate = t.ModifyDate,
+                                            Rating = t.Rating,
+                                            Status = t.Status
+                                        }).FirstOrDefault(),
+
+                            }).ToList();
+                    if (!string.IsNullOrEmpty(to))
+                    {
+                        string keyTo = Ultility.removeVietnameseSign(to.ToLower());
+                        list1 = (from x in list1
+                                 where Ultility.removeVietnameseSign(x.Tour.ToPlace.ToLower()).Contains(keyTo)
+                                select x).OrderByDescending(x => x.DepartureDate).ToList();
+                    }
+                    var result1 = Mapper.MapSchedule(list1);
+                    if (list1.Count() > 0)
+                    {
+                        res.Content = result1;
+                    }
+
+                    return res;
+                }
                 //var list = await (from s in _db.Schedules
                 //            where s.Isdelete == false
                 //            && s.Approve == (int)Enums.ApproveStatus.Approved
@@ -723,7 +840,7 @@ namespace Travel.Data.Repositories
                     string keyTo = Ultility.removeVietnameseSign(to.ToLower());
                     list = (from x in list
                             where Ultility.removeVietnameseSign(x.Tour.ToPlace.ToLower()).Contains(keyTo)
-                            select x).ToList();
+                            select x).OrderByDescending(x => x.DepartureDate).ToList();
                 }
                 var result = Mapper.MapSchedule(list);
                 if (list.Count() > 0)

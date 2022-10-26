@@ -119,14 +119,38 @@ namespace Travel.Data.Repositories
             try
             {
                 var tour = _db.Tour.Find(idTour);
+                var unixNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 if (tour != null)
                 {
-                    tour.IsDelete = true;
-                    _db.SaveChanges();
+                    // cách 1
+                    var scheduleInTour = (from x in _db.Schedules
+                                          where x.TourId == idTour
+                                          && x.Isdelete == false
+                                          && x.Approve == (int)Enums.ApproveStatus.Approved
+                                          && (x.Status == (int)Enums.StatusSchedule.Finished || (x.Status == (int)Enums.StatusSchedule.Free && x.QuantityCustomer == 0))
+                                          select x).ToList();
+                    //cách 2
+                    //var scheduleInTour = (from x in _db.Tourbookings
+                    //           where (x.Status >= (int)Enums.StatusBooking.Paying && x.Status <= (int)Enums.StatusBooking.Paid)
+                    //           select new
+                    //           {
+                    //               Schedule = (from s in _db.Schedules
+                    //                           where s.TourId == idTour
+                    //                           select s).FirstOrDefault()
+                    //           }).ToList();
 
+                    if (scheduleInTour.Count  != 0)
+                    {
+                        tour.IsDelete = true;
+                        _db.SaveChanges();
+
+                        res.Notification.DateTime = DateTime.Now;
+                        res.Notification.Messenge = "Xóa thành công !";
+                        res.Notification.Type = "Success";
+                    }
                     res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Xóa thành công !";
-                    res.Notification.Type = "Success";
+                    res.Notification.Messenge = "Tour đang có booking!";
+                    res.Notification.Type = "Warning";
                 }
                 else
                 {

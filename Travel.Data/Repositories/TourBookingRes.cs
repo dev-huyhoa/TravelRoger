@@ -223,7 +223,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var ListTourBooking = _db.Tourbookings.ToList();
+                var ListTourBooking = _db.Tourbookings.OrderByDescending(x=> x.DateBooking).ToList();
                 var result = Mapper.MapTourBooking(ListTourBooking);
                 if (ListTourBooking.Count() > 0)
                 {
@@ -273,7 +273,7 @@ namespace Travel.Data.Repositories
                 var list = (from x in _db.Tourbookings
                             where x.DateBooking >= fromDate
                             && x.DateBooking <= toDate
-                            select x).ToList();
+                            select x).OrderByDescending(x=> x.DateBooking).ToList();
                 var result = Mapper.MapTourBooking(list);
                 if (list.Count() > 0)
                 {
