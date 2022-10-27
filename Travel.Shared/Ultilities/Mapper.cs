@@ -206,6 +206,14 @@ namespace Travel.Shared.Ultilities
                 .ForMember(dto => dto.IsActive, opt => opt.MapFrom(src => false))
                 ;
 
+                cfg.CreateMap<UpdateTourViewModel, Tour>()
+                .ForMember(dto => dto.IdTour, opt => opt.MapFrom(src => src.IdTour))
+                .ForMember(dto => dto.NameTour, opt => opt.MapFrom(src => src.NameTour))
+                .ForMember(dto => dto.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
+                .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.ToPlace))
+                .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src =>
+                Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
+                ;
 
                 //view
                 cfg.CreateMap<Tour, TourViewModel>()
@@ -759,6 +767,10 @@ namespace Travel.Shared.Ultilities
         public static Tour MapCreateTour(CreateTourViewModel data)
         {
             return _mapper.Map<CreateTourViewModel, Tour>(data);
+        }
+        public static Tour MapUpdateTour(UpdateTourViewModel data)
+        {
+            return _mapper.Map<UpdateTourViewModel, Tour>(data);
         }
         public static List<TourViewModel> MapTour(List<Tour> data)
         {
