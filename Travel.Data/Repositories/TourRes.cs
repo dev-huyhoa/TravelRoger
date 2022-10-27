@@ -361,8 +361,9 @@ namespace Travel.Data.Repositories
                                       QuantityBooked = x.QuantityBooked,
                                       Schedules = (from s in _db.Schedules
                                                    where s.TourId == x.IdTour
-                                                   && s.EndDate < dateTimeNow
+                                                   && s.BeginDate >= dateTimeNow
                                                    && s.Status == (int)Enums.StatusSchedule.Free
+                                                   orderby s.DepartureDate
                                                    select new Schedule {
                                                        DepartureDate = s.DepartureDate,
                                                        ReturnDate = s.ReturnDate,

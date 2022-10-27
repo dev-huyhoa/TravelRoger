@@ -77,7 +77,7 @@ namespace TravelApi.Controllers
         [Route("gets-schedule-idtour")]
         public object GetsSchedulebyIdTour(string idtour)
         {
-            res = _schedule.GetSchedulebyIdTour(idtour);
+            res = _schedule.GetsSchedulebyIdTour(idtour);
             return Ok(res);
         }
 
@@ -116,6 +116,15 @@ namespace TravelApi.Controllers
         {
             res = await _schedule.SearchTour(from,to,departureDate,returnDate);
             await _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("cus-gets-schedule-idtour")]
+        public object CusGetsSchedulebyIdTour(string idtour)
+        {
+            res = _schedule.GetsSchedulebyIdTour(idtour);
             return Ok(res);
         }
     }

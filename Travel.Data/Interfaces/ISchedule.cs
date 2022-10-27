@@ -18,7 +18,9 @@ namespace Travel.Data.Interfaces
         Response RestoreShedule(string idSchedule);
         Response UpdatePromotion(string idSchedule, int idPromotion);
         Task<string> UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0);
-        Response GetSchedulebyIdTour(string idTour);
+        Response GetsSchedulebyIdTour(string idTour);
+
+        Response CusGetsSchedulebyIdTour(string idTour);
         Response GetSchedulebyIdTourWaiting(string idTour);
         Task<Response> Get(string idSchedule);
         Task<Response> SearchTour(string? from, string? to, DateTime? departureDate, DateTime? returnDate); 
