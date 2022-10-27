@@ -35,6 +35,7 @@ namespace Travel.Data.Repositories
                 JObject frmData = JObject.Parse(frmdata["data"]);
                 if(frmData != null)
                 {
+
                     var tourName = PrCommon.GetString("nameTour", frmData);
                     if (String.IsNullOrEmpty(tourName))
                     {
@@ -42,9 +43,13 @@ namespace Travel.Data.Repositories
                     if (isExistName(tourName))
                     {
                     }
+                    var idTour = PrCommon.GetString("idTour", frmData);
+                    if (String.IsNullOrEmpty(idTour))
+                    {
+                        idTour = Ultility.GenerateId(tourName);
+                    }
 
-                    var idTour = Ultility.GenerateId(tourName);
-                    var thumbnail = PrCommon.GetString("thumbsnail", frmData);
+                    var thumbnail = PrCommon.GetString("thumbnail", frmData);
                     if (String.IsNullOrEmpty(thumbnail))
                     {
                     }
@@ -73,10 +78,9 @@ namespace Travel.Data.Repositories
                     {
                         // map data
                         UpdateTourViewModel objUpdate = new UpdateTourViewModel();
-                        objUpdate.NameTour = "tentoatuspa";
+                        objUpdate.NameTour = tourName;
                         objUpdate.Thumbnail = thumbnail;
                         objUpdate.ToPlace = toPlace;
-                        objUpdate.Description = description;
                         // generate ID
                         objUpdate.IdTour = idTour;
                         return JsonSerializer.Serialize(objUpdate);
@@ -86,7 +90,7 @@ namespace Travel.Data.Repositories
                     obj.NameTour = tourName;
                     obj.Thumbnail = thumbnail;
                     obj.ToPlace = toPlace;
-                    obj.Description = description;
+
                     // generate ID
                     obj.IdTour = idTour;
 
@@ -115,6 +119,30 @@ namespace Travel.Data.Repositories
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
+                res.Notification.Type = "Success";
+                return res;
+            }
+            catch (Exception e)
+            {
+
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response Update(UpdateTourViewModel input)
+        {
+            try
+            {
+                Tour tour =
+                tour = Mapper.MapUpdateTour(input);
+                _db.Tour.Update(tour);
+                _db.SaveChanges();
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Sửa thành công !";
                 res.Notification.Type = "Success";
                 return res;
             }

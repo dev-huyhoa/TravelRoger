@@ -45,9 +45,27 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateTourViewModel>(result);
                 res = _tourRes.Create(createObj);
+                _messageHub.Clients.All.Init();
             }
             return Ok(res);
         }
+
+        [HttpPost]
+        [Authorize]
+        [Route("update-tour")]
+        public object Update(IFormCollection frmdata, IFormFile file)
+        {
+            message = null;
+            var result = _tourRes.CheckBeforSave(frmdata, file, ref message, true);
+            if (message == null)
+            {
+                var createObj = JsonSerializer.Deserialize<UpdateTourViewModel>(result);
+                res = _tourRes.Update(createObj);
+                _messageHub.Clients.All.Init();
+            }
+            return Ok(res);
+        }
+
         // GET api/<TourController>/5
         [HttpGet]
         [AllowAnonymous]
