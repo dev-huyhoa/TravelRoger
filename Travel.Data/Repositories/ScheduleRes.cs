@@ -669,7 +669,7 @@ namespace Travel.Data.Repositories
                 {
                     long dateTimeNowUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     var list = await (from x in _db.Schedules
-                                      where x.EndDate <= dateTimeNowUnix
+                                      where x.EndDate >= dateTimeNowUnix
                                       && x.Isdelete == false
                                       && x.Approve == (int)Enums.ApproveStatus.Approved
                                       select x
@@ -769,7 +769,7 @@ namespace Travel.Data.Repositories
                 {
                     long dateTimeNowUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     var list2 = await (from x in _db.Schedules
-                                      where x.EndDate <= dateTimeNowUnix
+                                      where x.EndDate >= dateTimeNowUnix
                                       && x.Isdelete == false
                                       && x.Approve == (int)Enums.ApproveStatus.Approved
                                       select x
