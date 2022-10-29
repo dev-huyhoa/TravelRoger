@@ -92,7 +92,10 @@ namespace Travel.Data.Repositories
                         objUpdate.Phone = phone;
                         objUpdate.Email = email;
                         objUpdate.Address = address;
-                        objUpdate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(birthday));
+                        if (birthday != "")
+                        {
+                            objUpdate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(birthday));
+                        }
                         objUpdate.Gender = Convert.ToBoolean(gender);
                         return JsonSerializer.Serialize(objUpdate);
                     }
