@@ -48,6 +48,21 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("update-schedule")]
+        public object Update([FromBody] JObject frmData)
+        {
+            message = null;
+            var result = _schedule.CheckBeforSave(frmData, ref message, true);
+            if (message == null)
+            {
+                var updateObj = JsonSerializer.Deserialize<UpdateScheduleViewModel>(result);
+                res = _schedule.Update(updateObj);
+            }
+            return Ok(res);
+        }
+
         [HttpGet]
         [AllowAnonymous]
         [Route("gets-schedule")]

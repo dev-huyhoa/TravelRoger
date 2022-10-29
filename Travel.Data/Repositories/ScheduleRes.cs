@@ -32,7 +32,11 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var idSchedule = PrCommon.GetString("idSchedule", frmData);
 
+                if (String.IsNullOrEmpty(idSchedule))
+                {
+                }
                 var tourId = PrCommon.GetString("tourId", frmData);
                
                 if (String.IsNullOrEmpty(tourId))
@@ -48,6 +52,10 @@ namespace Travel.Data.Repositories
                 }
                 var promotionId = PrCommon.GetString("promotionId", frmData);
                 if (String.IsNullOrEmpty(promotionId))
+                {
+                }
+                var departurePlace = PrCommon.GetString("departurePlace", frmData);
+                if (String.IsNullOrEmpty(departurePlace))
                 {
                 }
                 var departureDate = PrCommon.GetString("departureDate", frmData);
@@ -78,18 +86,41 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(vat))
                 {
                 }
+                var minCapacity = PrCommon.GetString("minCapacity", frmData);
+                if (String.IsNullOrEmpty(minCapacity))
+                {
+                }
+                var maxCapacity = PrCommon.GetString("maxCapacity", frmData);
+                if (String.IsNullOrEmpty(maxCapacity))
+                {
+                }
                 if (isUpdate)
                 {
-                    CreateScheduleViewModel updateObj = new CreateScheduleViewModel();
+                    UpdateScheduleViewModel updateObj = new UpdateScheduleViewModel();
                     updateObj.TourId = tourId;
                     updateObj.CarId = Guid.Parse(carId);
                     updateObj.EmployeeId = Guid.Parse(employeeId);
                     updateObj.PromotionId =Convert.ToInt32(promotionId);
+                    updateObj.Description = description;
+                    updateObj.Vat = float.Parse(vat);
+                    updateObj.DeparturePlace = departurePlace;
+                    //try
+                    //{
+                    //    var departure = DateTime.Parse(departureDate);
+                    //    updateObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(departure);
+                    //}
+                    //catch (Exception)
+                    //{
+                    //    updateObj.DepartureDate = long.Parse(departureDate);
+                    //}
                     updateObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(departureDate));
+                    updateObj.ReturnDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(returnDate));
                     updateObj.BeginDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(beginDate));
                     updateObj.EndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(endDate));
                     updateObj.TimePromotion = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(timePromotion));
-                    updateObj.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
+                    updateObj.MinCapacity = Convert.ToInt16(minCapacity);
+                    updateObj.MaxCapacity = Convert.ToInt16(maxCapacity);
+                    updateObj.IdSchedule = idSchedule;
                     return JsonSerializer.Serialize(updateObj);
                 }
                 CreateScheduleViewModel createObj = new CreateScheduleViewModel();
@@ -99,6 +130,7 @@ namespace Travel.Data.Repositories
                 createObj.PromotionId = Convert.ToInt32(promotionId);
                 createObj.Description = description;
                 createObj.Vat = float.Parse(vat);
+                createObj.DeparturePlace = departurePlace;
                 createObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(departureDate));
                 createObj.ReturnDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(returnDate));
                 createObj.BeginDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(beginDate));
@@ -209,6 +241,30 @@ namespace Travel.Data.Repositories
                 res.Content = schedule.IdSchedule;
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
+                res.Notification.Type = "Success";
+                return res;
+            }
+            catch (Exception e)
+            {
+
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response Update(UpdateScheduleViewModel input)
+        {
+            try
+            {
+                Schedule schedule = Mapper.MapUpdateSchedule(input);
+                _db.Schedules.Update(schedule);
+                _db.SaveChanges();
+     
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Sửa thành công !";
                 res.Notification.Type = "Success";
                 return res;
             }

@@ -143,6 +143,35 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.Vat, opt => opt.MapFrom(src => src.Vat))
                ;
 
+                cfg.CreateMap<UpdateScheduleViewModel, Schedule>()
+              .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule))
+              //.ForMember(dto => dto.Alias, opt => opt.MapFrom(src => src.Alias))
+              .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
+              .ForMember(dto => dto.DeparturePlace, opt => opt.MapFrom(src => src.DeparturePlace))
+              .ForMember(dto => dto.BeginDate, opt => opt.MapFrom(src => src.EndDate))
+              .ForMember(dto => dto.TimePromotion, opt => opt.MapFrom(src => src.TimePromotion))
+              //.ForMember(dto => dto.QuantityAdult, opt => opt.MapFrom(src => src.QuantityAdult))
+              //.ForMember(dto => dto.QuantityBaby, opt => opt.MapFrom(src => src.QuantityBaby))
+              //.ForMember(dto => dto.QuantityChild, opt => opt.MapFrom(src => src.QuantityChild))
+              //.ForMember(dto => dto.QuantityCustomer, opt => opt.MapFrom(src => src.QuantityCustomer))
+              //.ForMember(dto => dto.PriceAdult, opt => opt.MapFrom(src => src.PriceAdult))
+              //.ForMember(dto => dto.PriceChild, opt => opt.MapFrom(src => src.PriceChild))
+              //.ForMember(dto => dto.PriceBaby, opt => opt.MapFrom(src => src.PriceBaby))
+              //.ForMember(dto => dto.PriceAdultHoliday, opt => opt.MapFrom(src => src.PriceAdultHoliday))
+              //.ForMember(dto => dto.PriceChildHoliday, opt => opt.MapFrom(src => src.PriceChildHoliday))
+              //.ForMember(dto => dto.PriceBabyHoliday, opt => opt.MapFrom(src => src.PriceBabyHoliday))
+              .ForMember(dto => dto.MinCapacity, opt => opt.MapFrom(src => src.MinCapacity))
+              .ForMember(dto => dto.MaxCapacity, opt => opt.MapFrom(src => src.MaxCapacity))
+              //.ForMember(dto => dto.IsHoliday, opt => opt.MapFrom(src => src.IsHoliday))
+              //.ForMember(dto => dto.Status, opt => opt.MapFrom(src => Enums.StatusSchedule.Free))
+              .ForMember(dto => dto.TourId, opt => opt.MapFrom(src => src.TourId))
+              .ForMember(dto => dto.CarId, opt => opt.MapFrom(src => src.CarId))
+              .ForMember(dto => dto.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
+              .ForMember(dto => dto.PromotionId, opt => opt.MapFrom(src => src.PromotionId))
+              .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
+              .ForMember(dto => dto.Vat, opt => opt.MapFrom(src => src.Vat))
+              ;
+
                 //View
                 cfg.CreateMap<Schedule, ScheduleViewModel>()
                 .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule))
@@ -783,6 +812,11 @@ namespace Travel.Shared.Ultilities
         public static Schedule MapCreateSchedule(CreateScheduleViewModel data)
         {
             return _mapper.Map<CreateScheduleViewModel, Schedule>(data);
+        }
+
+        public static Schedule MapUpdateSchedule(UpdateScheduleViewModel data)
+        {
+            return _mapper.Map<UpdateScheduleViewModel, Schedule>(data);
         }
 
         public static List<ScheduleViewModel> MapSchedule(List<Schedule> data)

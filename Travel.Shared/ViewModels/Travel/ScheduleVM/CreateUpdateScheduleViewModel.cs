@@ -9,7 +9,29 @@ namespace Travel.Shared.ViewModels.Travel
 {
     public class UpdateScheduleViewModel : CreateScheduleViewModel
     {
+        private int quantityAdult;
+        private int quantityBaby;
+        private int quantityCustomer;
 
+        private float priceAdult;
+        private float priceChild;
+        private float priceBaby;
+        private float priceAdultHoliday;
+        private float priceChildHoliday;
+        private float priceBabyHoliday;
+
+        private bool isHoliday;
+
+        public int QuantityAdult { get => quantityAdult; set => quantityAdult = value; }
+        public int QuantityBaby { get => quantityBaby; set => quantityBaby = value; }
+        public int QuantityCustomer { get => quantityCustomer; set => quantityCustomer = value; }
+        public float PriceAdult { get => priceAdult; set => priceAdult = value; }
+        public float PriceChild { get => priceChild; set => priceChild = value; }
+        public float PriceBaby { get => priceBaby; set => priceBaby = value; }
+        public float PriceAdultHoliday { get => priceAdultHoliday; set => priceAdultHoliday = value; }
+        public float PriceChildHoliday { get => priceChildHoliday; set => priceChildHoliday = value; }
+        public float PriceBabyHoliday { get => priceBabyHoliday; set => priceBabyHoliday = value; }
+        public bool IsHoliday { get => isHoliday; set => isHoliday = value; }
     }
     public class CreateScheduleViewModel
     {
