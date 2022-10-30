@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
@@ -26,74 +27,59 @@ namespace Travel.Data.Repositories
             res = new Response();
         }
 
-        public CreateCarViewModel CheckBeforeSave(JObject frmData, ref Notification _message) // hàm đăng nhập  sử cho create update delete
+        public string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate) // hàm đăng nhập  sử cho create update delete
         {
-            CreateCarViewModel car = new CreateCarViewModel();
             try
             {
-                int error = 0;
                 var idCar = PrCommon.GetString("idCar", frmData); 
                 if (!String.IsNullOrEmpty(idCar))  
-                {
-                    car.IdCar = Guid.Parse(idCar);
+                {                  
                 }
-                else
-                {
-                    error++;
-                }
-
+               
                 var nameDriver = PrCommon.GetString("nameDriver", frmData);
                 if (!String.IsNullOrEmpty(nameDriver))
                 {
-                    car.NameDriver = nameDriver.Trim();
-                }
-                else
-                {
-                    error++;
-                }
+                }            
 
                 var amountSeat = PrCommon.GetString("amountSeat", frmData);
                 if (!String.IsNullOrEmpty(amountSeat))
                 {
-                    //car.AmountSeat = amountSeat.Trim();
                 }
-                else
-                {
-                    error++;
-                }
-
+               
                 var liscenseplate = PrCommon.GetString("liscenseplate", frmData);
                 if (!String.IsNullOrEmpty(liscenseplate))
                 {
-                    car.LiscensePlate = liscenseplate.Trim();
                 }
-                else
-                {
-                    error++;
-                }
-
+          
            
-
                 var phone = PrCommon.GetString("Phone", frmData);
                 if (!String.IsNullOrEmpty(phone))
                 {
-                    car.Phone = phone.Trim();
-                }
-                else
-                {
-                    error++;
-                }
-
+                }      
+                
                 var status = PrCommon.GetString("status", frmData);
                 if (!String.IsNullOrEmpty(status))
                 {
-                    //car.Status = status.Trim();
                 }
-                else
-                {
-                    error++;
-                }
-                return car;
+
+                //if (isUpdate)
+                //{
+                //    UpdateRoleViewModel objUpdate = new UpdateRoleViewModel();
+                //    objUpdate.IdRole = int.Parse(idRole);
+                //    objUpdate.NameRole = nameRole;
+                //    objUpdate.Description = description;
+                //    return JsonSerializer.Serialize(objUpdate);
+                //}
+
+                CreateCarViewModel objCreate = new CreateCarViewModel();
+                //objCreate.IdCar = Guid.Parse(idCar);
+                objCreate.NameDriver = nameDriver;
+                objCreate.AmountSeat =  int.Parse(amountSeat);
+                objCreate.Status = 0;
+                objCreate.LiscensePlate = liscenseplate;
+                objCreate.Phone = phone;
+                return JsonSerializer.Serialize(objCreate);
+
             }
             catch (Exception e)
             {
@@ -103,83 +89,10 @@ namespace Travel.Data.Repositories
                 message.Type = "Error";
 
                 _message = message;
-                return car;
+                return string.Empty;
             }
         }
 
-        //public Response Restore(CreateCarViewModel input)
-        //{
-
-        //    try
-        //    {
-        //        Car car = new Car();
-        //        car = Mapper.MapCreateCar(input);
-
-        //        var check = _db.Cars.Find(car.IdCar);
-        //        if (check != null)
-        //        {
-                    
-        //            _db.SaveChanges();
-
-        //            res.Notification.DateTime = DateTime.Now;
-        //            res.Notification.Messenge = "Restore thành công !";
-        //            res.Notification.Type = "Success";
-        //        }
-        //        else
-        //        {
-        //            res.Notification.DateTime = DateTime.Now;
-        //            res.Notification.Messenge = "Không tìm thấy !";
-        //            res.Notification.Type = "Warning";
-        //        }
-        //        return res;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        res.Notification.DateTime = DateTime.Now;
-        //        res.Notification.Description = e.Message;
-        //        res.Notification.Messenge = "Có lỗi xảy ra !";
-        //        res.Notification.Type = "Error";
-        //        return res;
-        //    }
-
-        //}
-
-        //public CreateCarViewModel CheckBeforSave(JObject frmData, ref Notification _message)
-        //{
-        //    CreateCarViewModel car = new CreateCarViewModel();
-
-        //    try
-        //    {
-        //        var idCar = PrCommon.GetString("idRole", frmData);
-        //        if (!String.IsNullOrEmpty(idCar))
-        //        {
-        //            car.IdCar = Int32.Parse(idCar);
-        //        }
-
-        //        var nameDriver = PrCommon.GetString("nameDriver", frmData);
-        //        if (!String.IsNullOrEmpty(nameDriver))
-        //        {
-        //            car.NameDriver = nameDriver;
-        //        }
-
-        //        var phone = PrCommon.GetString("phone", frmData);
-        //        if (!String.IsNullOrEmpty(phone))
-        //        {
-        //            car.Phone = phone;
-        //        }
-        //        return car;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        message.DateTime = DateTime.Now;
-        //        message.Description = e.Message;
-        //        message.Messenge = "Có lỗi xảy ra !";
-        //        message.Type = "Error";
-
-        //        _message = message;
-        //        return car;
-        //    }
-        //}
 
         public Response Gets()
         {
