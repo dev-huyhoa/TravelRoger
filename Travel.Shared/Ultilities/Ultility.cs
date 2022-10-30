@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,10 +21,22 @@ namespace Travel.Shared.Ultilities
     {
         private static Notification message = new Notification();
         private static Image image = new Image();
-        public static Response Responses()
+
+
+        public static T DeepCopy<T>(this T self)
+        {
+            var serialized = JsonSerializer.Serialize(self);
+            return JsonSerializer.Deserialize<T>(serialized);
+        }
+        public static Response Responses(string message, string type,object content = null, string description = null)
         {
             Response res = new Response();
-            return null;
+            res.Notification.DateTime = DateTime.Now;
+            res.Notification.Description = description;
+            res.Content = content;
+            res.Notification.Messenge =  message;
+            res.Notification.Type = type;
+            return res;
         }
         public static string GenerateRandomCode()
         {

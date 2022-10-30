@@ -265,12 +265,12 @@ namespace Travel.Shared.Ultilities
 
 
 
-             //   //create
-             //   cfg.CreateMap<CreateTourViewModel, TourDetail>()
-             //   .ForMember(dto => dto.IdTourDetail, opt => opt.MapFrom(src => $"{src.IdTour}-Details"))
-             //   .ForMember(dto => dto.TourId, opt => opt.MapFrom(src => src.IdTour))
-             //   .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
-             //;
+                //   //create
+                //   cfg.CreateMap<CreateTourViewModel, TourDetail>()
+                //   .ForMember(dto => dto.IdTourDetail, opt => opt.MapFrom(src => $"{src.IdTour}-Details"))
+                //   .ForMember(dto => dto.TourId, opt => opt.MapFrom(src => src.IdTour))
+                //   .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
+                //;
 
                 cfg.CreateMap<Payment, PaymentViewModel>()
                            .ForMember(dto => dto.IdPayment, otp => otp.MapFrom(src => src.IdPayment))
@@ -378,8 +378,8 @@ namespace Travel.Shared.Ultilities
                         .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
                         .ForMember(dto => dto.Address, otp => otp.MapFrom(src => src.Address))
                         .ForMember(dto => dto.Birthday, opt => opt.MapFrom(src => src.Birthday));
-                        
-                       
+
+
 
                 cfg.CreateMap<Province, ProvinceViewModel>()
                        .ForMember(dto => dto.IdProvince, opt => opt.MapFrom(src => src.IdProvince))
@@ -457,7 +457,7 @@ namespace Travel.Shared.Ultilities
                       .ForMember(dto => dto.Value, opt => opt.MapFrom(src => src.Value))
                       .ForMember(dto => dto.ToDate, opt => opt.MapFrom(src => src.ToDate))
                       .ForMember(dto => dto.FromDate, opt => opt.MapFrom(src => src.FromDate));
-      
+
 
                 cfg.CreateMap<CreateTimeLineViewModel, Timeline>()
                                   .ForMember(dto => dto.Description, otp => otp.MapFrom(src => src.Description))
@@ -510,6 +510,7 @@ namespace Travel.Shared.Ultilities
                                .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => ""))
                               .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => 0))
                               .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
+                              .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => ApproveStatus.Waiting))
                               .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                               .ForMember(dto => dto.NamePlace, opt => opt.MapFrom(src => src.Name))
 
@@ -522,7 +523,7 @@ namespace Travel.Shared.Ultilities
                               .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
                               .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                               .ForMember(dto => dto.NameRestaurant, opt => opt.MapFrom(src => src.Name))
-
+                              .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => ApproveStatus.Waiting))
                ;
                 //view restaurant
                 cfg.CreateMap<Restaurant, RestaurantViewModel>()
@@ -534,7 +535,6 @@ namespace Travel.Shared.Ultilities
                               .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.NameRestaurant))
                               .ForMember(dto => dto.ContractId, opt => opt.MapFrom(src => src.ContractId))
                ;
-
                 // create hotel
                 cfg.CreateMap<CreateHotelViewModel, Hotel>()
            .ForMember(dto => dto.IdHotel, opt => opt.MapFrom(src => Guid.NewGuid()))
@@ -543,7 +543,9 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.QuantityDBR, opt => opt.MapFrom(src => src.QuantityDBR))
                .ForMember(dto => dto.SingleRoomPrice, opt => opt.MapFrom(src => src.SingleRoomPrice))
                .ForMember(dto => dto.DoubleRoomPrice, opt => opt.MapFrom(src => src.DoubleRoomPrice))
-
+               .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => ApproveStatus.Waiting))
+               .ForMember(dto => dto.IsTempdata, opt => opt.MapFrom(src => false))
+               .ForMember(dto => dto.IdUserModify, opt => opt.MapFrom(src => Guid.NewGuid()))
                               .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => ""))
                               .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => 0))
                               .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
@@ -566,7 +568,6 @@ namespace Travel.Shared.Ultilities
                               .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
                               .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                               .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.NameHotel))
-                              .ForMember(dto => dto.ContractId, opt => opt.MapFrom(src => src.ContractId))
 
                ;
                 // create costtour

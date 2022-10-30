@@ -17,6 +17,7 @@ namespace Travel.Context.Models
         public string TypeAction { get; set; }
         public int Status { get; set; }
         public long CreateDate { get; set; }
+        public Guid IdUserModify { get; set; }
         public string ModifyBy { get; set; }
         public long ModifyDate { get; set; }
         public bool IsDelete { get; set; }

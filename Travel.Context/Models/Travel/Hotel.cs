@@ -6,22 +6,25 @@ using System.Threading.Tasks;
 
 namespace Travel.Context.Models
 {
+ 
     public class Hotel
     {
 
         public Guid IdHotel  { get; set; }
-        public Guid ContractId { get; set; }
         public string NameHotel { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
         public int Star { get; set; }
-        public int Approve { get; set; }
-        public string IdAction { get; set; }
-        public string TypeAction { get; set; }
+
         public float SingleRoomPrice { get; set; }
         public float DoubleRoomPrice { get; set; }
         public int QuantityDBR { get; set; }
         public int QuantitySR { get; set; }
+        public int Approve { get; set; }
+        public bool IsTempdata { get; set; }
+        public string IdAction { get; set; }
+        public string TypeAction { get; set; }
+        public Guid IdUserModify { get; set; }
         public string ModifyBy { get; set; }
         public long ModifyDate { get; set; }
         public virtual ICollection<CostTour> CostTours { get; set; }

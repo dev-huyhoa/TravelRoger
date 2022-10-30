@@ -41,37 +41,52 @@ namespace TravelApi.Controllers
         [HttpGet()]
         [Authorize]
         [Route("gets-hotel-waiting")]
-        public object GetHotelWaiting()
+        public object GetHotelWaiting(Guid idUser)
         {
-            res = _serviceRes.GetWaitingHotel();
+            res = _serviceRes.GetWaitingHotel(idUser);
             return Ok(res);
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("update-hotel")]
+        public object UpdateHotel([FromBody] JObject frmData)
+        {
+            message = null;
+            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, true);
+            if (message == null)
+            {
+                var updateObj = JsonSerializer.Deserialize<UpdateHotelViewModel>(result);
+                res = _serviceRes.UpdateHotel(updateObj);
+            }
+            return Ok(res);
+        }
+        [HttpPost]
+        [Authorize]
+        [Route("approve-hotel")]
+        public object ApproveHotel(Guid idHotel)
+        {
+            res = _serviceRes.ApproveHotel(idHotel);
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("refuse-hotel")]
+        public object RefuseHotel(Guid idHotel)
+        {
+            res = _serviceRes.RefusedHotel(idHotel);
+            return Ok(res);
+        }
 
         [HttpGet()]
         [Authorize]
         [Route("gets-place-waiting")]
-        public object GetPlaceWaiting()
+        public object GetPlaceWaiting(Guid idUser)
         {
-            res = _serviceRes.GetWaitingHPlace();
+            res = _serviceRes.GetWaitingHPlace(idUser);
             return Ok(res);
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -91,36 +106,12 @@ namespace TravelApi.Controllers
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         [HttpGet()]
         [Authorize]
         [Route("gets-restaurant-waiting")]
-        public object GetWaitingRestaurant()
+        public object GetWaitingRestaurant(Guid idUser)
         {
-            res = _serviceRes.GetWaitingRestaurant();
+            res = _serviceRes.GetWaitingRestaurant(idUser);
             return Ok(res);
         }
 
@@ -147,6 +138,8 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+
+
         [HttpGet()]
         [AllowAnonymous]
         [Route("gets-place")]

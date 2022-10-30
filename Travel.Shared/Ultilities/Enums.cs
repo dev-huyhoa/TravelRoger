@@ -66,5 +66,11 @@ namespace Travel.Shared.Ultilities
             Promotion = 1,
             Refused = 2
         }
+        public enum TypeCRUD
+        {
+            Success = 1,
+            Error=  2,
+            Warning = 3
+        }
     }
 }

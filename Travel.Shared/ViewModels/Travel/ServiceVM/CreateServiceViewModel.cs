@@ -7,9 +7,19 @@ using static Travel.Shared.Ultilities.Enums;
 
 namespace Travel.Shared.ViewModels.Travel.ContractVM
 {
+    public class UpdateApproveData
+    {
+        private string idAction;
+        private string typeAction;
+        private Guid idUserModify;
+
+        public string IdAction { get => idAction; set => idAction = value; }
+        public string TypeAction { get => typeAction; set => typeAction = value; }
+        public Guid IdUserModify { get => idUserModify; set => idUserModify = value; }
+    }
     public class UpdateHotelViewModel : CreateHotelViewModel
     {
-
+        
     }
     public class UpdateRestaurantViewModel : CreateRestaurantViewModel
     {
@@ -68,7 +78,7 @@ namespace Travel.Shared.ViewModels.Travel.ContractVM
         public float SingleRoomPrice { get => singleRoomPrice; set => singleRoomPrice = value; }
         public float DoubleRoomPrice { get => doubleRoomPrice; set => doubleRoomPrice = value; }
     }
-    public class ParentProperty
+    public class ParentProperty : UpdateApproveData
     {
         private string modifyBy;
         private long modifyDate;

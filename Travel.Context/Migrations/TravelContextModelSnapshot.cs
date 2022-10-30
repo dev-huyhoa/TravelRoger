@@ -322,6 +322,9 @@ namespace Travel.Context.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -394,11 +397,18 @@ namespace Travel.Context.Migrations
                     b.Property<int>("Approve")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ContractId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<float>("DoubleRoomPrice")
                         .HasColumnType("real");
+
+                    b.Property<string>("IdAction")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("IdUserModify")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsTempdata")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(50)
@@ -429,6 +439,10 @@ namespace Travel.Context.Migrations
                     b.Property<int>("Star")
                         .HasColumnType("int");
 
+                    b.Property<string>("TypeAction")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
                     b.HasKey("IdHotel");
 
                     b.ToTable("Hotels");
@@ -448,8 +462,8 @@ namespace Travel.Context.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid>("IdService")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("IdService")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NameImage")
                         .IsRequired()
@@ -502,6 +516,13 @@ namespace Travel.Context.Migrations
                     b.Property<Guid>("ContractId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("IdAction")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("IdUserModify")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -521,6 +542,10 @@ namespace Travel.Context.Migrations
 
                     b.Property<float>("PriceTicket")
                         .HasColumnType("real");
+
+                    b.Property<string>("TypeAction")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("IdPlace");
 
@@ -587,6 +612,13 @@ namespace Travel.Context.Migrations
                     b.Property<Guid>("ContractId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("IdAction")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("IdUserModify")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -603,6 +635,10 @@ namespace Travel.Context.Migrations
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("TypeAction")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("IdRestaurant");
 
@@ -660,6 +696,10 @@ namespace Travel.Context.Migrations
                     b.Property<long>("DepartureDate")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("DeparturePlace")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Description")
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
@@ -676,6 +716,10 @@ namespace Travel.Context.Migrations
                     b.Property<float>("FinalPriceHoliday")
                         .HasColumnType("real");
 
+                    b.Property<string>("IdAction")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<bool>("IsHoliday")
                         .HasColumnType("bit");
 
@@ -685,8 +729,32 @@ namespace Travel.Context.Migrations
                     b.Property<int>("MaxCapacity")
                         .HasColumnType("int");
 
+                    b.Property<string>("MetaDesc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaKey")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("MinCapacity")
                         .HasColumnType("int");
+
+                    b.Property<float>("PriceAdult")
+                        .HasColumnType("real");
+
+                    b.Property<float>("PriceAdultHoliday")
+                        .HasColumnType("real");
+
+                    b.Property<float>("PriceBaby")
+                        .HasColumnType("real");
+
+                    b.Property<float>("PriceBabyHoliday")
+                        .HasColumnType("real");
+
+                    b.Property<float>("PriceChild")
+                        .HasColumnType("real");
+
+                    b.Property<float>("PriceChildHoliday")
+                        .HasColumnType("real");
 
                     b.Property<int>("Profit")
                         .HasColumnType("int");
@@ -720,6 +788,10 @@ namespace Travel.Context.Migrations
 
                     b.Property<string>("TourId")
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("TypeAction")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<float>("Vat")
                         .HasColumnType("real");
@@ -790,9 +862,12 @@ namespace Travel.Context.Migrations
                     b.Property<long>("CreateDate")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("FromPlace")
+                    b.Property<string>("IdAction")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("IdUserModify")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -821,13 +896,17 @@ namespace Travel.Context.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("Thumbsnail")
+                    b.Property<string>("Thumbnail")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("ToPlace")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("TypeAction")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("IdTour");
 
@@ -976,6 +1055,28 @@ namespace Travel.Context.Migrations
                     b.HasIndex("RestaurantId");
 
                     b.ToTable("tourbookingDetails");
+                });
+
+            modelBuilder.Entity("Travel.Context.Models.Travel.OTP", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("BeginTime")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EndTime")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OTPCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OTPs");
                 });
 
             modelBuilder.Entity("Travel.Context.Models.Voucher", b =>
