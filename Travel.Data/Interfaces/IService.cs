@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using System;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.ContractVM;
 
@@ -21,8 +22,6 @@ namespace Travel.Data.Interfaces
 
         Response CreateContract(CreateContractViewModel input);
 
-
-        Response UpdateHotel(UpdateHotelViewModel input);
 
         Response DeleteHotel(Guid id, Guid idUser);
         Response DeleteRestaurant(Guid id, Guid idUser);
