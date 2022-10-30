@@ -31,7 +31,7 @@ namespace TravelApi.Controllers
         {
             _tourRes = tourRes;
             res = new Response();
-            _messageHub = messageHub;
+            _messageHub = messageHub;   
         }
 
         [HttpPost]
@@ -70,9 +70,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("gets-tour")]
-        public object Get()
+        public object Get(bool isDelete)
         {
-            res = _tourRes.Get();
+            res = _tourRes.Get(isDelete);
             return Ok(res);
         }
         [HttpGet]
