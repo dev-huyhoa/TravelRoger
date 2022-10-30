@@ -90,9 +90,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("gets-schedule-idtour")]
-        public object GetsSchedulebyIdTour(string idtour)
+        public object GetsSchedulebyIdTour(string idtour, bool isDelete)
         {
-            res = _schedule.GetsSchedulebyIdTour(idtour);
+            res = _schedule.GetsSchedulebyIdTour(idtour, isDelete);
             return Ok(res);
         }
 
@@ -139,7 +139,7 @@ namespace TravelApi.Controllers
         [Route("cus-gets-schedule-idtour")]
         public object CusGetsSchedulebyIdTour(string idtour)
         {
-            res = _schedule.GetsSchedulebyIdTour(idtour);
+            res = _schedule.CusGetsSchedulebyIdTour(idtour);
             return Ok(res);
         }
     }

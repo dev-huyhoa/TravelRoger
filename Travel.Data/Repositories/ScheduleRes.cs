@@ -104,20 +104,13 @@ namespace Travel.Data.Repositories
                     updateObj.Description = description;
                     updateObj.Vat = float.Parse(vat);
                     updateObj.DeparturePlace = departurePlace;
-                    //try
-                    //{
-                    //    var departure = DateTime.Parse(departureDate);
-                    //    updateObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(departure);
-                    //}
-                    //catch (Exception)
-                    //{
-                    //    updateObj.DepartureDate = long.Parse(departureDate);
-                    //}
+
                     updateObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(departureDate));
                     updateObj.ReturnDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(returnDate));
                     updateObj.BeginDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(beginDate));
                     updateObj.EndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(endDate));
                     updateObj.TimePromotion = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(timePromotion));
+
                     updateObj.MinCapacity = Convert.ToInt16(minCapacity);
                     updateObj.MaxCapacity = Convert.ToInt16(maxCapacity);
                     updateObj.IdSchedule = idSchedule;
@@ -279,14 +272,14 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsSchedulebyIdTour(string idTour)
+        public Response GetsSchedulebyIdTour(string idTour, bool isDelete)
         {
             try
             {
                 var list = (from s in _db.Schedules
                             where s.TourId == idTour
-                            where s.Isdelete == false &&
-                            s.Approve == (int)Enums.ApproveStatus.Approved
+                            && s.Isdelete == isDelete 
+                            && s.Approve == (int)Enums.ApproveStatus.Approved
                             select new Schedule
                             {
                                 Alias = s.Alias,
