@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
+using Travel.Shared.ViewModels.Travel;
+using TravelApi.Hubs;
 
 namespace TravelApi.Controllers
 {
@@ -17,10 +21,12 @@ namespace TravelApi.Controllers
         private ICars car;
         private Notification message;
         private Response res;
-        public CarController(ICars _car)
+        private IHubContext<TravelHub, ITravelHub> _messageHub;
+        public CarController(ICars _car, IHubContext<TravelHub, ITravelHub> messageHub)
         {
             car = _car;
             res = new Response();
+            _messageHub = messageHub;
         }
 
         [HttpGet]
@@ -46,10 +52,17 @@ namespace TravelApi.Controllers
         public object Create([FromBody] JObject frmData)
         {
 
-            var result = car.CheckBeforeSave(frmData, ref message);
+            message = null;
+            var result = car.CheckBeforeSave(frmData, ref message, false);
             if (message == null)
             {
-                res = car.Create(result);
+                var createObj = JsonSerializer.Deserialize<CreateCarViewModel>(result);
+                res = car.Create(createObj);
+                _messageHub.Clients.All.Init();
+            }
+            else
+            {
+                res.Notification = message;
             }
 
             return Ok(res);

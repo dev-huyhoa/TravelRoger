@@ -11,7 +11,7 @@ namespace Travel.Data.Interfaces
 {
     public interface ICars
     {
-        CreateCarViewModel CheckBeforeSave(JObject frmData, ref Notification _message);
+        string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate);
         Response Gets();
         Response Create(CreateCarViewModel input);
         Response StatisticCar();
