@@ -361,17 +361,32 @@ namespace Travel.Data.Repositories
                              select x).FirstOrDefault();
                 if (hotel.Approve == (int)ApproveStatus.Waiting)
                 {
-                    var idHotelTemp = hotel.IdAction;
-                    hotel.Approve = (int)ApproveStatus.Approved;
-                    hotel.IdAction = null;
-                    hotel.TypeAction = null;
 
 
-                    // delete tempdata
-                    var hotelTemp = (from x in _db.Hotels
-                                     where x.IdHotel == Guid.Parse(idHotelTemp)
-                                     select x).FirstOrDefault();
-                    _db.Hotels.Remove(hotelTemp);
+                    if (hotel.TypeAction == "update")
+                    {
+                        var idHotelTemp = hotel.IdAction;
+                        hotel.Approve = (int)ApproveStatus.Approved;
+                        hotel.IdAction = null;
+                        hotel.TypeAction = null;
+
+
+                        // delete tempdata
+                        var hotelTemp = (from x in _db.Hotels
+                                         where x.IdHotel == Guid.Parse(idHotelTemp)
+                                         select x).FirstOrDefault();
+                        _db.Hotels.Remove(hotelTemp);
+                    }
+                    else 
+                    {
+                        hotel.IdAction = null;
+                        hotel.TypeAction = null;
+                        hotel.Approve = (int)ApproveStatus.Approved;
+                    }
+                  
+
+
+
                     _db.SaveChanges();
                     res = Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
@@ -471,6 +486,7 @@ namespace Travel.Data.Repositories
         {
             Restaurant restaurant
                          = Mapper.MapCreateRestaurant(input);
+         
             _db.Restaurants.Add(restaurant);
             _db.SaveChanges();
             Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
@@ -539,6 +555,119 @@ namespace Travel.Data.Repositories
                     }
                 }
                 _db.SaveChanges();
+                return res;
+
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+
+
+        public Response ApproveRestaurant(Guid id)
+        {
+            try
+            {
+                var hotel = (from x in _db.Hotels
+                             where x.IdHotel == id
+                             && x.Approve == (int)ApproveStatus.Waiting
+                             select x).FirstOrDefault();
+                if (hotel.Approve == (int)ApproveStatus.Waiting)
+                {
+
+
+                    if (hotel.TypeAction == "update")
+                    {
+                        var idHotelTemp = hotel.IdAction;
+                        hotel.Approve = (int)ApproveStatus.Approved;
+                        hotel.IdAction = null;
+                        hotel.TypeAction = null;
+
+
+                        // delete tempdata
+                        var hotelTemp = (from x in _db.Hotels
+                                         where x.IdHotel == Guid.Parse(idHotelTemp)
+                                         select x).FirstOrDefault();
+                        _db.Hotels.Remove(hotelTemp);
+                    }
+                    else
+                    {
+                        hotel.IdAction = null;
+                        hotel.TypeAction = null;
+                        hotel.Approve = (int)ApproveStatus.Approved;
+                    }
+
+
+
+
+                    _db.SaveChanges();
+                    res = Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                return res;
+
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+
+        public Response RefusedRestaurant(Guid id)
+        {
+            try
+            {
+                var hotel = (from x in _db.Hotels
+                             where x.IdHotel == id
+                             && x.Approve == (int)ApproveStatus.Waiting
+                             select x).FirstOrDefault();
+                if (hotel.Approve == (int)ApproveStatus.Waiting)
+                {
+                    if (hotel.TypeAction == "update")
+                    {
+                        var idHotelTemp = hotel.IdAction;
+                        // old hotel
+                        var hotelTemp = (from x in _db.Hotels
+                                         where x.IdHotel == Guid.Parse(idHotelTemp)
+                                         select x).FirstOrDefault();
+                        hotel.Approve = (int)ApproveStatus.Approved;
+
+                        hotel.IdAction = null;
+                        hotel.TypeAction = null;
+
+                        #region restore old data
+                        hotel.Approve = (int)ApproveStatus.Approved;
+
+
+                        hotel.Address = hotelTemp.Address;
+                        hotel.DoubleRoomPrice = hotelTemp.DoubleRoomPrice;
+                        hotel.SingleRoomPrice = hotelTemp.SingleRoomPrice;
+                        hotel.NameHotel = hotelTemp.NameHotel;
+                        hotel.Phone = hotelTemp.Phone;
+                        hotel.QuantityDBR = hotelTemp.QuantityDBR;
+                        hotel.QuantitySR = hotelTemp.QuantitySR;
+                        hotel.Star = hotelTemp.Star;
+                        #endregion
+
+                        _db.Hotels.Remove(hotelTemp);
+                    }
+                    else if (hotel.TypeAction == "insert")
+                    {
+                        hotel.IdAction = null;
+                        hotel.TypeAction = null;
+                        hotel.Approve = (int)ApproveStatus.Refused;
+                    }
+                    else
+                    {
+                        hotel.IdAction = null;
+                        hotel.TypeAction = null;
+                        hotel.Approve = (int)ApproveStatus.Approved;
+                    }
+                    _db.SaveChanges();
+                    res = Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
+                }
                 return res;
 
             }
