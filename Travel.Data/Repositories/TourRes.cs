@@ -191,9 +191,13 @@ namespace Travel.Data.Repositories
                         res.Notification.Messenge = "Xóa thành công !";
                         res.Notification.Type = "Success";
                     }
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Tour đang có booking!";
-                    res.Notification.Type = "Warning";
+                    else
+                    {
+                        res.Notification.DateTime = DateTime.Now;
+                        res.Notification.Messenge = "Tour đang có booking!";
+                        res.Notification.Type = "Warning";
+                    }
+                    
                 }
                 else
                 {
@@ -213,11 +217,11 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Get()
+        public Response Get(bool isDelete)
         {
             try
             {
-                var list = (from x in _db.Tour where x.IsDelete == false 
+                   var list = (from x in _db.Tour where x.IsDelete == isDelete 
                             where x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) select x).ToList();
                 var result = Mapper.MapTour(list);
                 if (list.Count()>0)

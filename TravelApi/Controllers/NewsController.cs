@@ -70,6 +70,26 @@ namespace TravelApi.Controllers
 
         //[HttpPost]
         //[Authorize]
+        //[Route("create-news")]
+        //public object CreateNews(IFormCollection frmdata, IFormFile file)
+        //{
+        //    message = null; IFormCollection frmdata, IFormFile file, ref Notification _message
+        //    var result = news.CheckBeforeSave(frmdata, file, ref message, false);
+        //    if (message == null)
+        //    {
+        //        var createObj = JsonSerializer.Deserialize<CreateEmployeeViewModel>(result);
+        //        res = employee.CreateEmployee(createObj);
+        //        _messageHub.Clients.All.Init();
+        //    }
+        //    else
+        //    {
+        //        res.Notification = message;
+        //    }
+        //    return Ok(res);
+        //}
+
+        //[HttpPost]
+        //[Authorize]
         //[Route("delete-banner")]
         //public object Delete([FromBody] JObject frmData)
         //{

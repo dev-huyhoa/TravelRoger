@@ -19,7 +19,7 @@ namespace Travel.Data.Interfaces
         Response RestoreShedule(string idSchedule);
         Response UpdatePromotion(string idSchedule, int idPromotion);
         Task<string> UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0);
-        Response GetsSchedulebyIdTour(string idTour);
+        Response GetsSchedulebyIdTour(string idTour, bool isDelete);
 
         Response CusGetsSchedulebyIdTour(string idTour);
         Response GetSchedulebyIdTourWaiting(string idTour);

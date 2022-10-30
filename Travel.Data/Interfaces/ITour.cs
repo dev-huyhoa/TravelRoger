@@ -16,7 +16,7 @@ namespace Travel.Data.Interfaces
         string CheckBeforSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate = false);
         Response Create(CreateTourViewModel input);
         Response Update(UpdateTourViewModel input);
-        Response Get();
+        Response Get(bool isDelete);
         Response GetWaiting();
         Response GetTour(string idTour);
         Response Delete(string idTour);

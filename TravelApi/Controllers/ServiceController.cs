@@ -90,6 +90,12 @@ namespace TravelApi.Controllers
 
 
 
+
+
+
+
+
+
         [HttpPost]
         [Authorize]
         [Route("create-hotel")]
@@ -104,6 +110,44 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+
+
+        [HttpPost]
+        [Authorize]
+        [Route("update-hotel")]
+        public object UpdateHotel([FromBody] JObject frmData)
+        {
+            message = null;
+            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, false);
+            if (message == null)
+            {
+                var updateOjb = JsonSerializer.Deserialize<UpdateHotelViewModel>(result);
+                res = _serviceRes.UpdateHotel(updateOjb);
+            }
+            return Ok(res);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         [HttpGet()]

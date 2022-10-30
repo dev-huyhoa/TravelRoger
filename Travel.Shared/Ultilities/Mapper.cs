@@ -551,9 +551,20 @@ namespace Travel.Shared.Ultilities
                               .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
                               .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                               .ForMember(dto => dto.NameHotel, opt => opt.MapFrom(src => src.Name))
+                    ;
 
+                cfg.CreateMap<UpdateHotelViewModel, Hotel>()
+                   .ForMember(dto => dto.Star, opt => opt.MapFrom(src => src.Star))
+                .ForMember(dto => dto.QuantitySR, opt => opt.MapFrom(src => src.QuantitySR))
+                .ForMember(dto => dto.QuantityDBR, opt => opt.MapFrom(src => src.QuantityDBR))
+                .ForMember(dto => dto.SingleRoomPrice, opt => opt.MapFrom(src => src.SingleRoomPrice))
+                .ForMember(dto => dto.DoubleRoomPrice, opt => opt.MapFrom(src => src.DoubleRoomPrice))
+                 .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
+                              .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
+                              .ForMember(dto => dto.NameHotel, opt => opt.MapFrom(src => src.Name))
+                               .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => ""))
+                              .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => 0));
 
-               ;
                 //view hotel
                 cfg.CreateMap<Hotel, HotelViewModel>()
            .ForMember(dto => dto.IdHotel, opt => opt.MapFrom(src => src.IdHotel))
@@ -934,7 +945,10 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<CreateHotelViewModel, Hotel>(data);
         }
-
+        public static Hotel MapUpdateHotel(UpdateHotelViewModel data)
+        {
+            return _mapper.Map<UpdateHotelViewModel, Hotel>(data);
+        }
         public static List<HotelViewModel> MapHotel(List<Hotel> data)
         {
             return _mapper.Map<List<Hotel>, List<HotelViewModel>>(data);
