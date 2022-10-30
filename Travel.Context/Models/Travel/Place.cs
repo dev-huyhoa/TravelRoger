@@ -13,6 +13,8 @@ namespace Travel.Context.Models
         public string NamePlace { get; set; }
         public string Address { get; set; }
         public int Approve { get; set; }
+        public string IdAction { get; set; }
+        public string TypeAction { get; set; }
         public string Phone { get; set; }
         public float PriceTicket { get; set; }
         public string ModifyBy { get; set; }

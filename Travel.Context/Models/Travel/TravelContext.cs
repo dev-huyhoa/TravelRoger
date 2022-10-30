@@ -222,6 +222,9 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Phone).HasMaxLength(15);
                 entity.Property(e => e.ModifyBy).HasMaxLength(50);
 
+                entity.Property(e => e.IdAction).HasMaxLength(100);
+                entity.Property(e => e.TypeAction).HasMaxLength(10);
+
                 entity.Property(e => e.NamePlace).IsRequired(true);
                 entity.Property(e => e.Phone).IsRequired(true);
                 entity.Property(e => e.Address).IsRequired(true);
@@ -236,6 +239,10 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Phone).HasMaxLength(15);
                 entity.Property(e => e.ModifyBy).HasMaxLength(50);
 
+                entity.Property(e => e.IdAction).HasMaxLength(100);
+                entity.Property(e => e.TypeAction).HasMaxLength(10);
+
+
                 entity.Property(e => e.NameRestaurant).IsRequired(true);
                 entity.Property(e => e.Phone).IsRequired(true);
                 entity.Property(e => e.Address).IsRequired(true);
@@ -249,6 +256,10 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Address).HasMaxLength(100);
                 entity.Property(e => e.Phone).HasMaxLength(15);
                 entity.Property(e => e.ModifyBy).HasMaxLength(50);
+
+                entity.Property(e => e.IdAction).HasMaxLength(100);
+                entity.Property(e => e.TypeAction).HasMaxLength(10);
+
 
                 entity.Property(e => e.NameHotel).IsRequired(true);
                 entity.Property(e => e.Phone).IsRequired(true);
@@ -300,7 +311,8 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Description).HasMaxLength(300);
                 entity.Property(e => e.DeparturePlace).HasMaxLength(100);
 
-
+                entity.Property(e => e.IdAction).HasMaxLength(100);
+                entity.Property(e => e.TypeAction).HasMaxLength(10);
 
                 entity.HasOne(e => e.CostTour)
                 .WithOne(e => e.Schedule)
@@ -340,6 +352,11 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Thumbnail).HasMaxLength(150);
                 entity.Property(e => e.ToPlace).HasMaxLength(100);
                 entity.Property(e => e.IdTour).HasMaxLength(50);
+
+
+                entity.Property(e => e.IdAction).HasMaxLength(100);
+                entity.Property(e => e.TypeAction).HasMaxLength(10);
+
             });
             modelBuilder.Entity<Promotion>(entity =>
             {

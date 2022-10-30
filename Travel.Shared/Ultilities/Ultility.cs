@@ -20,7 +20,11 @@ namespace Travel.Shared.Ultilities
     {
         private static Notification message = new Notification();
         private static Image image = new Image();
-
+        public static Response Responses()
+        {
+            Response res = new Response();
+            return null;
+        }
         public static string GenerateRandomCode()
         {
             Random random = new Random();

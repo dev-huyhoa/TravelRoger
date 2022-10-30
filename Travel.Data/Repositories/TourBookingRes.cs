@@ -88,9 +88,6 @@ namespace Travel.Data.Repositories
                     //   payment.IdPayment = idPay;
                 }
 
-
-
-
                 var scheduleId = PrCommon.GetString("scheduleId", frmData);
                 if (String.IsNullOrEmpty(scheduleId))
                 {

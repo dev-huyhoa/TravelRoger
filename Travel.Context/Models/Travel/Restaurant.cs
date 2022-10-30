@@ -15,6 +15,8 @@ namespace Travel.Context.Models
         public string Address { get; set; }
         public string Phone { get; set; }
         public int Approve { get; set; }
+        public string IdAction { get; set; }
+        public string TypeAction { get; set; }
         public string ModifyBy { get; set; }
         public long ModifyDate { get; set; }
         public virtual ICollection<CostTour> CostTours { get; set; }

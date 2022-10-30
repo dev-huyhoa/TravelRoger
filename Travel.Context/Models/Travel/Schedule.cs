@@ -17,6 +17,8 @@ namespace Travel.Context.Models
         public long TimePromotion { get; set; }
         public int Status { get; set; }
         public int Approve { get; set; }
+        public string IdAction { get; set; }
+        public string TypeAction { get; set; }
         public int QuantityAdult { get; set; }
         public int QuantityBaby { get; set; }
         public int MinCapacity { get; set; }
