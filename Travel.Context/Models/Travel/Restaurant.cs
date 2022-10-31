@@ -15,11 +15,14 @@ namespace Travel.Context.Models
         public string Address { get; set; }
         public string Phone { get; set; }
         public int Approve { get; set; }
+        public bool IsTempdata { get; set; }
         public string IdAction { get; set; }
         public string TypeAction { get; set; }
         public Guid IdUserModify { get; set; }
         public string ModifyBy { get; set; }
         public long ModifyDate { get; set; }
+        public bool IsDelete { get; set; }
+
         public virtual ICollection<CostTour> CostTours { get; set; }
         public virtual ICollection<TourbookingDetails> TourBookingDetails { get; set; }
 

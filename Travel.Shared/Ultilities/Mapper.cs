@@ -513,6 +513,8 @@ namespace Travel.Shared.Ultilities
                               .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => ApproveStatus.Waiting))
                               .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                               .ForMember(dto => dto.NamePlace, opt => opt.MapFrom(src => src.Name))
+                                         .ForMember(dto => dto.IsTempdata, opt => opt.MapFrom(src => false))
+                              .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
 
                ;
                 // create restaurant
@@ -524,6 +526,9 @@ namespace Travel.Shared.Ultilities
                               .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                               .ForMember(dto => dto.NameRestaurant, opt => opt.MapFrom(src => src.Name))
                               .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => ApproveStatus.Waiting))
+                              .ForMember(dto => dto.IsTempdata, opt => opt.MapFrom(src => false))
+                              .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
+
                ;
                 //view restaurant
                 cfg.CreateMap<Restaurant, RestaurantViewModel>()
@@ -545,6 +550,7 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.DoubleRoomPrice, opt => opt.MapFrom(src => src.DoubleRoomPrice))
                .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => ApproveStatus.Waiting))
                .ForMember(dto => dto.IsTempdata, opt => opt.MapFrom(src => false))
+               .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
                .ForMember(dto => dto.IdUserModify, opt => opt.MapFrom(src => Guid.NewGuid()))
                               .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => ""))
                               .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => 0))

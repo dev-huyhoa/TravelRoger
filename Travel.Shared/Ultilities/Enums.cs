@@ -58,7 +58,8 @@ namespace Travel.Shared.Ultilities
         {
             Waiting = 0,
             Approved = 1,
-            Refused = 2
+            Refused = 2,
+            CancelRequired =3
         }
         public enum TourStatus
         {
