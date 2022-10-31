@@ -1100,9 +1100,12 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var flashSaleDay  = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(Ultility.GetDateZeroTime(DateTime.Now.AddDays(3))); // sau này gắn config
+
                 var list = await (from s in _db.Schedules
-                            where s.Isdelete == false &&
-                            s.Approve == (int)Enums.ApproveStatus.Approved
+                            where s.Isdelete == false
+                            && s.Approve == (int)Enums.ApproveStatus.Approved
+                            && s.EndDate <= flashSaleDay
                             select new Schedule
                             {
                                 Alias = s.Alias,
@@ -1163,6 +1166,8 @@ namespace Travel.Data.Repositories
                 var result = Mapper.MapSchedule(list);
                 if (list.Count() > 0)
                 {
+                    Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
                     res.Content = result;
                 }
 
@@ -1170,10 +1175,7 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
+                Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
                 return res;
             }
         }
