@@ -182,8 +182,9 @@ namespace Travel.Data.Repositories
                                 TimePromotion = s.TimePromotion,
                                 Vat = s.Vat,
                                 TotalCostTourNotService = s.TotalCostTourNotService,
-                                CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
+                                CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
+                                Promotions = (from p in _db.Promotions where p.IdPromotion == s.PromotionId select p).FirstOrDefault(),
                                 Tour = (from t in _db.Tour where s.TourId == t.IdTour select new Tour {
                                     Thumbnail = t.Thumbnail,
                                     ToPlace = t.ToPlace,
