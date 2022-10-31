@@ -70,7 +70,7 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(address))
                 {
                 }
-                var name = PrCommon.GetString("nameHotel", frmData);
+                var name = PrCommon.GetString("name", frmData);
                 if (String.IsNullOrEmpty(name))
                 {
                 }
@@ -1231,6 +1231,9 @@ namespace Travel.Data.Repositories
             }
         }
 
-    
+        public Response GetHotel(Guid idHotel)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
