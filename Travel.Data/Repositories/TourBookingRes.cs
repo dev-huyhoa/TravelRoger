@@ -128,7 +128,7 @@ namespace Travel.Data.Repositories
                 var totalPrice = PrCommon.GetString("totalPrice", frmData);
                 if (String.IsNullOrEmpty(totalPrice))
                 { }
-
+                 var valuePromotion = PrCommon.GetString("valuePromotion", frmData); 
                 if (isUpdate)
                 {
                     CreateTourBookingViewModel updateObj = new CreateTourBookingViewModel();
@@ -164,6 +164,11 @@ namespace Travel.Data.Repositories
                 createObj.Pincode = pincode;
                 createObj.BookingDetails = createDetailObj;
                 createObj.CustomerId = customerId;
+                if (valuePromotion != null)
+                {
+                    createObj.ValuePromotion = Convert.ToInt16(valuePromotion);
+
+                }
                 return JsonSerializer.Serialize(createObj);
             }
             catch (Exception e)

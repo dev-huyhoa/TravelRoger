@@ -25,6 +25,6 @@ namespace Travel.Data.Interfaces
         Response Refused(string id);
         Task<Response> GetsTourWithSchedule();
         Task<Response> GetTourById(string idTour);
-
+        Task<Response> GetsTourByRating();
     }
 }

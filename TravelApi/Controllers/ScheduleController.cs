@@ -142,5 +142,14 @@ namespace TravelApi.Controllers
             res = _schedule.CusGetsSchedulebyIdTour(idtour);
             return Ok(res);
         }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("gets-schedule-flash-sale")]
+        public async Task<object> GetsScheduleFlashSale()
+        {
+            res = await _schedule.GetsScheduleFlashSale();
+            return Ok(res);
+        }
+
     }
 }

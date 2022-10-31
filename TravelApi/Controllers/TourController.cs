@@ -141,5 +141,14 @@ namespace TravelApi.Controllers
             res = await _tourRes.GetTourById(idTour);
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-tour-by-rating")]
+        public async Task<object> GetsTourByRating()
+        {
+            res = await _tourRes.GetsTourByRating();
+            return Ok(res);
+        }
     }
 }

@@ -24,6 +24,9 @@ namespace Travel.Data.Interfaces
         Response CusGetsSchedulebyIdTour(string idTour);
         Response GetSchedulebyIdTourWaiting(string idTour);
         Task<Response> Get(string idSchedule);
-        Task<Response> SearchTour(string? from, string? to, DateTime? departureDate, DateTime? returnDate); 
+        Task<Response> SearchTour(string? from, string? to, DateTime? departureDate, DateTime? returnDate);
+
+
+        Task<Response> GetsScheduleFlashSale();
     }
 }
