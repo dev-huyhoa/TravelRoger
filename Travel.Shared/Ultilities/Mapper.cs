@@ -207,7 +207,7 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.NameEmployee, opt => opt.MapFrom(src => src.Employee.NameEmployee))
                .ForMember(dto => dto.ValuePromotion, opt => opt.MapFrom(src => src.Promotions.Value))
                .ForMember(dto => dto.TotalCostTourNotService, opt => opt.MapFrom(src => src.TotalCostTourNotService))
-
+               .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => src.Isdelete))
 
                //          private float totalCostTour;
                //private int profit;
