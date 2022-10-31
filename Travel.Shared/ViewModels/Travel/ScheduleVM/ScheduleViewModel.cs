@@ -50,7 +50,7 @@ namespace Travel.Shared.ViewModels.Travel
         private float additionalPrice;
         private float additionalPriceHoliday;
 
-        private float totalCostTour;
+        private float totalCostTourNotService;
         private int profit;
         private float vat;
 
@@ -91,7 +91,7 @@ namespace Travel.Shared.ViewModels.Travel
         public float FinalPrice { get => finalPrice; set => finalPrice = value; }
         public float Vat { get => vat; set => vat = value; }
         public int Profit { get => profit; set => profit = value; }
-        public float TotalCostTour { get => totalCostTour; set => totalCostTour = value; }
+        public float TotalCostTourNotService { get => totalCostTourNotService; set => totalCostTourNotService = value; }
         public float AdditionalPrice { get => additionalPrice; set => additionalPrice = value; }
         public float AdditionalPriceHoliday { get => additionalPriceHoliday; set => additionalPriceHoliday = value; }
         public CostTour CostTour { get => costTour; set => costTour = value; }
