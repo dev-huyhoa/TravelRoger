@@ -182,7 +182,7 @@ namespace Travel.Data.Repositories
             }
         }
         #region Hotel
-        public Response GetWaitingHotel(Guid idUser)
+        public Response GetsWaitingHotel(Guid idUser)
         {
             try
             {
@@ -215,14 +215,13 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-        public Response GetHotel(Guid idHotel)
+        public Response GetsHotel()
         {
             try
             {
                 var list = (from x in _db.Hotels
                             where x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
                             && x.IsTempdata == false
-                            && x.IdHotel == idHotel
                             select x).ToList();
                 var result = Mapper.MapHotel(list);
                 if (list.Count() > 0)
@@ -548,7 +547,7 @@ namespace Travel.Data.Repositories
         }
         #endregion
         #region Restaurant
-        public Response GetRestaurant()
+        public Response GetsRestaurant()
         {
             try
             {
@@ -570,7 +569,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetWaitingRestaurant(Guid idUser)
+        public Response GetsWaitingRestaurant(Guid idUser)
         {
             try
             {
@@ -891,7 +890,7 @@ namespace Travel.Data.Repositories
             Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             return res;
         }
-        public Response GetPlace()
+        public Response GetsPlace()
         {
             try
             {
@@ -912,7 +911,7 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-        public Response GetWaitingHPlace(Guid idUser)
+        public Response GetsWaitingHPlace(Guid idUser)
         {
             try
             {
