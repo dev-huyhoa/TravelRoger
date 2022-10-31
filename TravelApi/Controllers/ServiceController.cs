@@ -132,14 +132,21 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-
+        [HttpPost]
+        [Authorize]
+        [Route("approve-restaurant")]
+        public object ApproveRestaurant(Guid idRestaurant)
+        {
+            res = _serviceRes.ApproveRestaurant(idRestaurant);
+            return Ok(res);
+        }
 
         [HttpPost]
         [Authorize]
         [Route("refuse-restaurant")]
-        public object RefuseRestaurant(Guid idHotel)
+        public object RefuseRestaurant(Guid idRestaurant)
         {
-            res = _serviceRes.re(idHotel);
+            res = _serviceRes.RefusedRestaurant(idRestaurant);
             return Ok(res);
         }
         [HttpPost]
@@ -151,24 +158,24 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("update-restaurant")]
+        public object UpdateRestaurant([FromBody] JObject frmData)
+        {
+
+            message = null;
+            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, true);
+            if (message == null)
+            {
+                var updateObj = JsonSerializer.Deserialize<UpdateRestaurantViewModel>(result);
+                res = _serviceRes.UpdateRestaurant(updateObj);
+            }
+            return Ok(res);
+        }
         #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        #region place
         [HttpGet()]
         [Authorize]
         [Route("gets-place-waiting")]
@@ -177,12 +184,6 @@ namespace TravelApi.Controllers
             res = _serviceRes.GetWaitingHPlace(idUser);
             return Ok(res);
         }
-
-
-
-
-
-
 
         [HttpGet()]
         [AllowAnonymous]
@@ -207,5 +208,46 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+        [HttpPost]
+        [Authorize]
+        [Route("update-place")]
+        public object UpdatePlace([FromBody] JObject frmData)
+        {
+            message = null;
+            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, true);
+            if (message == null)
+            {
+                var updateObj = JsonSerializer.Deserialize<UpdatePlaceViewModel>(result);
+                res = _serviceRes.UpdatePlace(updateObj);
+            }
+            return Ok(res);
+        }
+        [HttpPost]
+        [Authorize]
+        [Route("approve-place")]
+        public object ApprovePlace(Guid idPlace)
+        {
+            res = _serviceRes.ApprovePlace(idPlace);
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("refuse-place")]
+        public object RefusePlace(Guid idPlace)
+        {
+            res = _serviceRes.RefusedPlace(idPlace);
+            return Ok(res);
+        }
+        [HttpPost]
+        [Authorize]
+        [Route("delete-place")]
+        public object DeletePlace(Guid idPlace, Guid idUser)
+        {
+            res = _serviceRes.DeletePlace(idPlace, idUser);
+            return Ok(res); 
+        }
+        #endregion
+
     }
 }
