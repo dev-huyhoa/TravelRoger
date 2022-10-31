@@ -52,6 +52,10 @@ namespace TravelApi.Controllers
                 res =await   _tourbooking.Create(createObj);
                 await _messageHub.Clients.All.Init();
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
         [HttpGet]

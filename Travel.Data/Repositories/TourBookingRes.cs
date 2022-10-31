@@ -174,7 +174,7 @@ namespace Travel.Data.Repositories
                 message.Type = "Error";
                 _message = message;
                 return null;
-            }
+            }           
         }
 
         public async Task<Response> Create(CreateTourBookingViewModel input)

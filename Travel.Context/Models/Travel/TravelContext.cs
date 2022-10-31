@@ -90,7 +90,7 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Email).HasMaxLength(100);
                 entity.Property(e => e.Address).HasMaxLength(100);
                 entity.Property(e => e.Phone).HasMaxLength(14);
-                entity.Property(e => e.Pincode).HasMaxLength(10);
+                entity.Property(e => e.Pincode).HasMaxLength(20);
                 entity.Property(e => e.IdTourbooking).HasMaxLength(50);
                 entity.Property(e => e.NameCustomer).HasMaxLength(100);
                 entity.Property(e => e.NameContact).HasMaxLength(100);
