@@ -68,6 +68,7 @@ namespace Travel.Shared.ViewModels.Travel.ContractVM
     public class CreateHotelViewModel : ParentProperty
     {
         private Guid idHotel;
+        private string name;
         private int star;
         private int quantitySR;
         private int quantityDBR;
@@ -80,6 +81,7 @@ namespace Travel.Shared.ViewModels.Travel.ContractVM
         public int QuantityDBR { get => quantityDBR; set => quantityDBR = value; }
         public float SingleRoomPrice { get => singleRoomPrice; set => singleRoomPrice = value; }
         public float DoubleRoomPrice { get => doubleRoomPrice; set => doubleRoomPrice = value; }
+        public string NameHotel { get => name; set => name = value; }
     }
     public class ParentProperty : UpdateApproveData
     {

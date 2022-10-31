@@ -959,6 +959,10 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<List<Hotel>, List<HotelViewModel>>(data);
         }
+        public static HotelViewModel MapHotel(Hotel data)
+        {
+            return _mapper.Map<Hotel, HotelViewModel>(data);
+        }
         // create place
 
         public static Place MapCreatePlace(CreatePlaceViewModel data)

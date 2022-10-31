@@ -26,21 +26,9 @@ namespace TravelApi.Controllers
             _serviceRes = service;
             res = new Response();
         }
-        #region hotel
-        [HttpPost]
-        [Authorize]
-        [Route("create-hotel")]
-        public object CreateHotel([FromBody] JObject frmData)
-        {
-            message = null;
-            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, false);
-            if (message == null)
-            {
-                var createObj = JsonSerializer.Deserialize<CreateHotelViewModel>(result);
-                res = _serviceRes.CreateHotel(createObj);
-            }
-            return Ok(res);
-        }
+
+
+
         [HttpGet()]
         [Authorize]
         [Route("gets-hotel")]
@@ -49,6 +37,18 @@ namespace TravelApi.Controllers
             res = _serviceRes.GetHotel();
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-hotel")]
+        public object GetHotel(Guid idHotel)
+        {
+            res = _serviceRes.GetHotel(idHotel);
+            return Ok(res);
+        }
+
+
+
         [HttpGet()]
         [Authorize]
         [Route("gets-hotel-waiting")]
@@ -89,17 +89,65 @@ namespace TravelApi.Controllers
             res = _serviceRes.RefusedHotel(idHotel);
             return Ok(res);
         }
-        [HttpPost]
+
+        [HttpGet()]
         [Authorize]
-        [Route("delete-hotel")]
-        public object DeleteHotel(Guid idHotel, Guid idUser)
+        [Route("gets-place-waiting")]
+        public object GetPlaceWaiting(Guid idUser)
         {
-            res = _serviceRes.DeleteHotel(idHotel, idUser);
+            res = _serviceRes.GetWaitingHPlace(idUser);
             return Ok(res);
         }
-        #endregion
 
-        #region restaurant
+
+
+
+
+
+
+
+
+        [HttpPost]
+        [Authorize]
+        [Route("create-hotel")]
+        public object CreateHotel([FromBody] JObject frmData)
+        {
+            message = null;
+            var result = _serviceRes.CheckBeforSave(frmData, ref message,Travel.Shared.Ultilities.Enums.TypeService.Hotel, false);
+            if (message == null)
+            {
+                var createObj = JsonSerializer.Deserialize<CreateHotelViewModel>(result);
+                res = _serviceRes.CreateHotel(createObj);
+            }
+            return Ok(res);
+        }
+
+
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         [HttpGet()]
         [Authorize]
         [Route("gets-restaurant-waiting")]
@@ -122,8 +170,9 @@ namespace TravelApi.Controllers
         [Route("create-restaurant")]
         public object CreateRestaurant([FromBody] JObject frmData)
         {
+
             message = null;
-            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Restaurant, false);
+            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Restaurant, false) ;
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateRestaurantViewModel>(result);
@@ -131,57 +180,6 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-
-
-
-        [HttpPost]
-        [Authorize]
-        [Route("refuse-restaurant")]
-        public object RefuseRestaurant(Guid idHotel)
-        {
-            res = _serviceRes.re(idHotel);
-            return Ok(res);
-        }
-        [HttpPost]
-        [Authorize]
-        [Route("delete-restaurant")]
-        public object DeleteRestaurant(Guid idHotel, Guid idUser)
-        {
-            res = _serviceRes.DeleteRestaurant(idHotel, idUser);
-            return Ok(res);
-        }
-
-        #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        [HttpGet()]
-        [Authorize]
-        [Route("gets-place-waiting")]
-        public object GetPlaceWaiting(Guid idUser)
-        {
-            res = _serviceRes.GetWaitingHPlace(idUser);
-            return Ok(res);
-        }
-
-
-
-
-
 
 
         [HttpGet()]

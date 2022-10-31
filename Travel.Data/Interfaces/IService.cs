@@ -32,7 +32,7 @@ namespace Travel.Data.Interfaces
 
 
 
-
+        Response GetHotel(Guid idHotel);
         Response GetHotel();
         Response GetWaitingHotel(Guid idUser);
         Response CreateHotel(CreateHotelViewModel input);
