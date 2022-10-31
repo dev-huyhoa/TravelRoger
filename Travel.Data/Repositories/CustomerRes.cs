@@ -21,13 +21,11 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private Notification message;
-        private Response res;
         private readonly IConfiguration _config;
         public CustomerRes(TravelContext db, IConfiguration config)
         {
             _db = db;
             message = new Notification();
-            res = new Response();
             _config = config;
         }
 
@@ -112,12 +110,7 @@ namespace Travel.Data.Repositories
                 }
             catch (Exception e)
             {
-                message.DateTime = DateTime.Now;
-                message.Description = e.Message;
-                message.Messenge = "Có lỗi xảy ra !";
-                message.Type = "Error";
-
-                _message = message;
+                _message = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message).Notification;
                 return string.Empty;
             }     
         }
@@ -133,18 +126,11 @@ namespace Travel.Data.Repositories
                 _db.Customers.Add(customer);
                 _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
             }
         }
@@ -156,19 +142,18 @@ namespace Travel.Data.Repositories
                 var listCus = (from x in _db.Customers where x.IsDelete == false select x).ToList();
                 var result = Mapper.MapCustomer(listCus);
 
-                if (listCus.Count() > 0)
+                if (result.Count() > 0)
                 {
-                    res.Content = result;
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
-                return res;
+                else
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), null);
+                }
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
         public Response GetsHistory(Guid idCustomer)
@@ -207,12 +192,17 @@ namespace Travel.Data.Repositories
                                                         }).First()
                                             }).First()
                             }).ToList();
-                if (list.Count() > 0)
+
+                var result = Mapper.MapHistoryCustomerViewModel(list);
+
+                if (result.Count() > 0)
                 {
-                    var result = Mapper.MapHistoryCustomerViewModel(list);
-                    res.Content = result;
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
-                return res;
+                else
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), null);
+                }
                 //var list = (from x in _db.Tourbookings
                 //            where x.CustomerId == idCustomer
                 //            select new Tourbooking {
@@ -258,11 +248,7 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -294,27 +280,17 @@ namespace Travel.Data.Repositories
                      var stringHtml = Ultility.getHtml(otpCode, subjectOTP, "OTP");
 
                     Ultility.sendEmail(stringHtml, email, "Yêu cầu quên mật khẩu", emailSend,keySecurity);
-                    res.Content = obj;
-                    res.Notification.Messenge = $"Mã OTP đã gửi vào email {email}!";
-                    res.Notification.Type = "Success";
+                    return Ultility.Responses($"Mã OTP đã gửi vào email {email}!", Enums.TypeCRUD.Success.ToString(), obj);
 
                 }
                 else
                 {
-                    res.Notification.Messenge = $"{email} không tồn tại!";
-                    res.Notification.Type = "Error";
+                    return Ultility.Responses($"{email} không tồn tại!", Enums.TypeCRUD.Error.ToString());
                 }
-                res.Notification.DateTime = DateTime.Now;
-
-                return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -327,20 +303,20 @@ namespace Travel.Data.Repositories
                 var customer = (from x in _db.Customers
                                 where x.IdCustomer == idCustomer
                                 select x).First();
-                if (customer != null)
+                var result = Mapper.MapCustomer(customer);
+
+                if (result != null)
                 {
-                    var result = Mapper.MapCustomer(customer);
-                    res.Content = result;
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
-                return res;
+                else
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
+                }
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -351,19 +327,11 @@ namespace Travel.Data.Repositories
                 Customer customer = Mapper.MapUpdateCustomer(input);
                 _db.Customers.Update(customer);
                 _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
-
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
     }

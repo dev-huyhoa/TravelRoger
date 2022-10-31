@@ -314,7 +314,7 @@ namespace Travel.Data.Repositories
 
                                                          }).First()
                                          }).FirstAsync();
-                if (tourbooking !!= null)
+                if (tourbooking != null)
                 {
                     return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
                 }
