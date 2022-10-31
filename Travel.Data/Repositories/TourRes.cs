@@ -14,6 +14,7 @@ using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.TourVM;
+using static Travel.Shared.Ultilities.Enums;
 
 namespace Travel.Data.Repositories
 {
@@ -114,128 +115,41 @@ namespace Travel.Data.Repositories
             {
                 Tour tour =
                 tour = Mapper.MapCreateTour(input);
-                tour.IsDelete = false;
                 _db.Tour.Add(tour);
                 _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
+                res = Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
                 return res;
             }
             catch (Exception e)
             {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
                 return res;
+
             }
         }
 
-        public Response Update(UpdateTourViewModel input)
-        {
-            try
-            {
-                Tour tour =
-                tour = Mapper.MapUpdateTour(input);
-                _db.Tour.Update(tour);
-                _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
-            }
-            catch (Exception e)
-            {
-
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
-            }
-        }
-
-        public Response Delete(string idTour)
-        {
-            try
-            {
-                var tour = _db.Tour.Find(idTour);
-                var unixNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
-                if (tour != null)
-                {
-                    // cách 1
-                    var scheduleInTour = (from x in _db.Schedules
-                                          where x.TourId == idTour
-                                          && x.Isdelete == false
-                                          && x.Approve == (int)Enums.ApproveStatus.Approved
-                                          && (x.Status == (int)Enums.StatusSchedule.Finished || (x.Status == (int)Enums.StatusSchedule.Free && x.QuantityCustomer == 0))
-                                          select x).ToList();
-                    //cách 2
-                    //var scheduleInTour = (from x in _db.Tourbookings
-                    //           where (x.Status >= (int)Enums.StatusBooking.Paying && x.Status <= (int)Enums.StatusBooking.Paid)
-                    //           select new
-                    //           {
-                    //               Schedule = (from s in _db.Schedules
-                    //                           where s.TourId == idTour
-                    //                           select s).FirstOrDefault()
-                    //           }).ToList();
-
-                    if (scheduleInTour.Count  != 0)
-                    {
-                        tour.IsDelete = true;
-                        _db.SaveChanges();
-
-                        res.Notification.DateTime = DateTime.Now;
-                        res.Notification.Messenge = "Xóa thành công !";
-                        res.Notification.Type = "Success";
-                    }
-                    else
-                    {
-                        res.Notification.DateTime = DateTime.Now;
-                        res.Notification.Messenge = "Tour đang có booking!";
-                        res.Notification.Type = "Warning";
-                    }
-                    
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
-                }
-                return res;
-            }
-            catch (Exception e)
-            {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
-            }
-        }
+      
 
         public Response Get(bool isDelete)
         {
             try
             {
-                   var list = (from x in _db.Tour where x.IsDelete == isDelete 
-                            where x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) select x).ToList();
+                   var list = (from x in _db.Tour
+                               where x.IsDelete == isDelete 
+                               && x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved)
+                               && x.IsTempdata == false
+                               select x).ToList();
                 var result = Mapper.MapTour(list);
                 if (list.Count()>0)
                 {
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: result);
                 }
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
                 return res;
             }
         }
@@ -244,115 +158,26 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                Tour tour = _db.Tour.Find(idTour);
+                // cách 1
+                //Tour tour = _db.Tour.Find(idTour);
+                // cashc 2
+                Tour tour = (from x in _db.Tour
+                             where x.IdTour == idTour
+                             select x).FirstOrDefault();
                 var result = Mapper.MapTour(tour);
                 if (result != null)
                 {
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: result);
                 }
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
                 return res;
             }
         }
 
-        public Response GetWaiting()
-        {
-            try
-            {
-             
-                var list = (from x in _db.Tour where(x.IsDelete == false)
-                            where(x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting)) select x ).ToList();
-                var result = Mapper.MapTour(list);
-                if (list.Count() > 0)
-                {
-                    res.Content = result;
-                }
-                return res;
-            }
-            catch(Exception e)
-            {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
-            }
-        }
-
-        public Response Approve(JObject frmData)
-        {
-            try
-            {
-                var id = PrCommon.GetString("idTour", frmData);
-                if (String.IsNullOrEmpty(id))
-                {
-                }
-                var typeApprove = PrCommon.GetString("typeApprove", frmData);
-
-                if (String.IsNullOrEmpty(typeApprove))
-                {
-                }
-                var tour = (from x in _db.Tour where x.IdTour == id select x).First();
-                tour.ApproveStatus = Convert.ToInt16(typeApprove);
-                _db.SaveChanges();
-                res.Content = $"Thao tác {tour.NameTour} thành công";
-                return res;
-            }
-            catch (Exception e)
-            {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
-            }
-        }
-
-
-
-
-
-
-
-
-        public Response RestoreTour(string idTour)
-        {
-            try
-            {
-                var tour = _db.Tour.Find(idTour);
-                if (tour != null)
-                {
-                    tour.IsDelete = false;
-                    _db.SaveChanges();
-
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Khôi phục thành công !";
-                    res.Notification.Type = "Success";
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
-                }
-                return res;
-            }
-            catch (Exception e)
-            {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
-            }
-        }
 
         private bool isExistName(string input)
         {
@@ -383,6 +208,7 @@ namespace Travel.Data.Repositories
                                   where x.IsDelete == false
                                   && x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved)
                                   && x.IsActive == true
+                                  && x.IsTempdata == false
                                   select new Tour {
                                       Thumbnail = x.Thumbnail,
                                       ToPlace = x.ToPlace,
@@ -454,16 +280,13 @@ namespace Travel.Data.Repositories
                                   }).ToListAsync();
                 if (list.Count() > 0)
                 {
-                    res.Content = list;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: list);
                 }
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
                 return res;
             }
         }
@@ -478,6 +301,7 @@ namespace Travel.Data.Repositories
                                  && x.IdTour == idTour
                                  && x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved)
                                  && x.IsActive == true
+                                 && x.IsTempdata == false
                                  select new Tour
                                  {
                                      Thumbnail = x.Thumbnail,
@@ -551,18 +375,388 @@ namespace Travel.Data.Repositories
                                  }).FirstAsync();
                 if (list != null)
                 {
-                    res.Content = list;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content:list);
                 }
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
                 return res;
             }
         }
+
+
+        #region Đang chỉnh
+        public Response Update(UpdateTourViewModel input)
+        {
+            try
+            {
+                Tour tour = (from x in _db.Tour
+                             where x.IdTour == input.IdTour
+                             && x.IsDelete == false
+                             && x.ApproveStatus == (int)ApproveStatus.Approved
+                             select x).FirstOrDefault();
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == input.IdUserModify
+                                 select x).FirstOrDefault();
+                // clone new object
+                var tourOld = new Tour();
+                tourOld = Ultility.DeepCopy<Tour>(tour);
+                tourOld.IdAction = tourOld.IdTour.ToString();
+                tourOld.IdTour = $"{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}TempData";
+                tourOld.IsTempdata = true;
+
+                _db.Tour.Add(tourOld);
+
+
+                #region setdata
+                tour.IdAction = tourOld.IdTour.ToString();
+                tour.IdUserModify = input.IdUserModify;
+                tour.TypeAction = input.TypeAction;
+                tour.ApproveStatus = (int)ApproveStatus.Waiting;
+                tour.ModifyBy = userLogin.NameEmployee;
+                tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+
+                tour.Alias = Ultility.SEOUrl(input.NameTour);
+                tour.NameTour = input.NameTour;
+                tour.Thumbnail = input.Thumbnail;
+                tour.ToPlace = input.ToPlace;
+                #endregion
+
+                _db.SaveChanges();
+                res = Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+                return res;
+            }
+            catch (Exception e)
+            {
+
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+
+        public Response Delete(string idTour, Guid idUser)
+        {
+            try
+            {
+                var tour = (from x in _db.Tour
+                            where x.IdTour == idTour
+                            select x).FirstOrDefault();
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                var unixNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                if (tour != null)
+                {
+                    if (tour.ApproveStatus == (int)ApproveStatus.Approved)
+                    {
+                        // cách 1
+                        var scheduleInTour = (from x in _db.Schedules
+                                              where x.TourId == idTour
+                                              && x.Isdelete == false
+                                              && x.Approve == (int)Enums.ApproveStatus.Approved
+                                              && (x.Status == (int)Enums.StatusSchedule.Finished || (x.Status == (int)Enums.StatusSchedule.Free && x.QuantityCustomer == 0))
+                                              select x).ToList();
+                        //cách 2
+                        //var scheduleInTour = (from x in _db.Tourbookings
+                        //           where (x.Status >= (int)Enums.StatusBooking.Paying && x.Status <= (int)Enums.StatusBooking.Paid)
+                        //           select new
+                        //           {
+                        //               Schedule = (from s in _db.Schedules
+                        //                           where s.TourId == idTour
+                        //                           select s).FirstOrDefault()
+                        //           }).ToList();
+
+                        if (scheduleInTour.Count != 0)
+                        {
+                            tour.IsDelete = true;
+                            tour.ApproveStatus = (int)ApproveStatus.Waiting;
+                            tour.TypeAction = "delete";
+                            tour.IdUserModify = idUser;
+                            tour.ModifyBy = userLogin.NameEmployee;
+                            tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                            _db.SaveChanges();
+                            res = Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                        }
+                        else
+                        {
+                            res = Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString());
+                        }
+                    }
+                    else
+                    {
+                        if (tour.IdUserModify == idUser)
+                        {
+                            if (tour.TypeAction == "insert")
+                            {
+                                _db.Tour.Remove(tour);
+                                res = Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
+                            }
+                            else if (tour.TypeAction == "update")
+                            {
+                                var idTourTemp = tour.IdAction;
+                                // old hotel
+                                var tourTemp = (from x in _db.Tour
+                                                 where x.IdTour == idTourTemp
+                                                 select x).FirstOrDefault();
+
+                                tour.IdAction = null;
+                                tour.TypeAction = null;
+
+                                #region restore old data
+
+                                tour.Alias = tourTemp.Alias ;
+                                tour.NameTour = tourTemp.NameTour;
+                                tour.Thumbnail = tourTemp.Thumbnail;
+                                tour.ApproveStatus = (int)ApproveStatus.Approved;
+
+                                #endregion
+                                _db.Tour.Remove(tourTemp);
+                                res = Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
+
+                            }
+
+                            else if (tour.TypeAction == "restore")
+                            {
+                                tour.IdAction = null;
+                                tour.TypeAction = null;
+                                tour.IsDelete = true;
+                                tour.ApproveStatus = (int)ApproveStatus.Approved;
+                                res = Ultility.Responses("Đã hủy yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+
+                            }
+                            else // delete
+                            {
+                                tour.IdAction = null;
+                                tour.TypeAction = null;
+                                tour.IsDelete = false;
+                                tour.ApproveStatus = (int)ApproveStatus.Approved;
+                                res = Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                            }
+                        }
+                        else
+                        {
+                            res = Ultility.Responses("Bạn không thể thực thi hành động này !", Enums.TypeCRUD.Success.ToString());
+                        }
+                    }
+                }
+                else
+                {
+                    res = Ultility.Responses("Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+        public Response GetWaiting(Guid idUser)
+        {
+            try
+            {
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                var listWaiting = new List<Tour>();
+                if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
+                {
+                    listWaiting = (from x in _db.Tour
+                                   where x.ApproveStatus == Convert.ToInt16(ApproveStatus.Waiting)
+                                   select x).ToList();
+                }
+                else
+                {
+                    listWaiting = (from x in _db.Tour
+                                   where x.IdUserModify == idUser
+                                   && x.ApproveStatus == Convert.ToInt16(ApproveStatus.Waiting)
+                                   select x).ToList();
+                }
+                var result = Mapper.MapTour(listWaiting);
+                if (listWaiting.Count() > 0)
+                {
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+
+        public Response Approve(string id)
+        {
+            try
+            {
+                var tour = (from x in _db.Tour
+                             where x.IdTour == id
+                             && x.ApproveStatus == (int)ApproveStatus.Waiting
+                             select x).FirstOrDefault();
+                if (tour != null)
+                {
+
+
+                    if (tour.TypeAction == "update")
+                    {
+                        var idTourTemp = tour.IdAction;
+                        tour.ApproveStatus = (int)ApproveStatus.Approved;
+                        tour.IdAction = null;
+                        tour.TypeAction = null;
+
+
+                        // delete tempdata
+                        var tourTemp = (from x in _db.Tour
+                                         where x.IdTour == idTourTemp
+                                         select x).FirstOrDefault();
+                        _db.Tour.Remove(tourTemp);
+                    }
+                    else if (tour.TypeAction == "insert")
+                    {
+                        tour.IdAction = null;
+                        tour.TypeAction = null;
+                        tour.ApproveStatus = (int)ApproveStatus.Approved;
+                    }
+                    else if (tour.TypeAction == "restore")
+                    {
+                        tour.IdAction = null;
+                        tour.TypeAction = null;
+                        tour.ApproveStatus = (int)ApproveStatus.Approved;
+                        tour.IsDelete = false;
+
+                    }
+                    else
+                    {
+                        tour.IdAction = null;
+                        tour.TypeAction = null;
+                        tour.ApproveStatus = (int)ApproveStatus.Approved;
+                        tour.IsDelete = true;
+                    }
+                    _db.SaveChanges();
+                    res = Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                }
+                return res;
+
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+        public Response Refused(string id)
+        {
+            try
+            {
+                var tour = (from x in _db.Tour
+                             where x.IdTour == id
+                             && x.ApproveStatus == (int)ApproveStatus.Waiting
+                             select x).FirstOrDefault();
+                if (tour != null)
+                {
+                    if (tour.TypeAction == "insert")
+                    {
+                        tour.ApproveStatus = (int)ApproveStatus.Refused;
+                        tour.IdAction = null;
+                        tour.TypeAction = null;
+                    }
+                    else if (tour.TypeAction == "update")
+                    {
+                        var idTourTemp = tour.IdAction;
+                        // old hotel
+                        var tourTemp = (from x in _db.Tour
+                                        where x.IdTour == idTourTemp
+                                        select x).FirstOrDefault();
+
+                        tour.IdAction = null;
+                        tour.TypeAction = null;
+
+                        #region restore old data
+
+                        tour.Alias = tourTemp.Alias;
+                        tour.NameTour = tourTemp.NameTour;
+                        tour.Thumbnail = tourTemp.Thumbnail;
+                        tour.ApproveStatus = (int)ApproveStatus.Approved;
+                        #endregion
+                        _db.Tour.Remove(tourTemp);
+
+                    }
+
+                    else if (tour.TypeAction == "restore")
+                    {
+                        tour.IdAction = null;
+                        tour.TypeAction = null;
+                        tour.IsDelete = true;
+                        tour.ApproveStatus = (int)ApproveStatus.Approved;
+
+                    }
+                    else // delete
+                    {
+                        tour.IdAction = null;
+                        tour.TypeAction = null;
+                        tour.IsDelete = false;
+                        tour.ApproveStatus = (int)ApproveStatus.Approved;
+                    }
+                    _db.SaveChanges();
+                    res = Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                }
+                return res;
+
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+
+
+        public Response RestoreTour(string idTour, Guid idUser)
+        {
+            try
+            {
+                var tour = (from x in _db.Tour
+                            where x.IdTour == idTour
+                            && x.IsDelete == true
+                            select x).FirstOrDefault();
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                if (tour != null)
+                {
+                    tour.IsDelete = false;
+                    tour.IdUserModify = userLogin.IdEmployee;
+                    tour.TypeAction = "restore";
+                    tour.ModifyBy = userLogin.NameEmployee;
+                    tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    _db.SaveChanges();
+
+                    res = Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    res = Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+
+        #endregion
     }
 }

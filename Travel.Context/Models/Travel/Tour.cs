@@ -15,6 +15,7 @@ namespace Travel.Context.Models
         public int ApproveStatus { get; set; }
         public string IdAction { get; set; }
         public string TypeAction { get; set; }
+        public bool IsTempdata { get; set; }
         public int Status { get; set; }
         public long CreateDate { get; set; }
         public Guid IdUserModify { get; set; }

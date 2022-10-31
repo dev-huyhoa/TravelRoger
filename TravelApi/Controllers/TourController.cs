@@ -78,9 +78,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("gets-tour-waiting")]
-        public object GetWaiting()
+        public object GetWaiting( Guid idUser)
         {
-            res = _tourRes.GetWaiting();
+            res = _tourRes.GetWaiting(idUser);
             return Ok(res);
         }
 
@@ -94,30 +94,22 @@ namespace TravelApi.Controllers
         }
 
 
-     
-
 
         // POST api/<TourController>
         [HttpPost]
         [Authorize]
         [Route("approve-tour")]
-        public object Approve([FromBody] JObject frmData)
+        public object Approve(string id)
         {
-            res = _tourRes.Approve(frmData);
+            res = _tourRes.Approve(id);
             return Ok(res);
         }
-        // PUT api/<TourController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
         [HttpGet]
         [Authorize]
         [Route("delete-tour")]
-        public object DeleteTour(string idTour)
+        public object DeleteTour(string idTour, Guid idUser)
         {
-            res = _tourRes.Delete(idTour);
+            res = _tourRes.Delete(idTour, idUser);
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
@@ -126,9 +118,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("restore-tour")]
-        public object RestoreTour(string idTour)
+        public object RestoreTour(string idTour,Guid idUser)
         {
-            res = _tourRes.RestoreTour(idTour);
+            res = _tourRes.RestoreTour(idTour, idUser);
             _messageHub.Clients.All.Init();
             return Ok(res);
         }

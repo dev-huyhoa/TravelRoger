@@ -364,7 +364,7 @@ namespace Travel.Data.Repositories
                 var dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 var list = (from s in _db.Schedules
                             where s.TourId == idTour
-                            && s.BeginDate >= dateTimeNow
+                            && s.EndDate >= dateTimeNow
                             && s.Status == (int)Enums.StatusSchedule.Free
                             orderby s.DepartureDate
                             select new Schedule
@@ -912,7 +912,7 @@ namespace Travel.Data.Repositories
                         var toDepartTureDate1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(departureDate.Value.AddDays(1).AddMinutes(-1));
                         // cách 1
                         list1 = await (from x in _db.Schedules
-                                       where x.EndDate <= dateTimeNowUnix1
+                                       where x.EndDate >= dateTimeNowUnix1
                                        && x.DepartureDate >= fromDepartTureDate1
                                        && x.DepartureDate <= toDepartTureDate1
                                        && x.Isdelete == false
@@ -933,7 +933,7 @@ namespace Travel.Data.Repositories
                         var fromReturnDate1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(returnDate.Value);
                         var toReturnDate1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(returnDate.Value.AddDays(1).AddMinutes(-1));
                         list1 = await (from x in _db.Schedules
-                                       where x.EndDate <= dateTimeNowUnix1
+                                       where x.EndDate >= dateTimeNowUnix1
                                        && x.ReturnDate >= fromReturnDate1
                                        && x.ReturnDate <= toReturnDate1
                                        && x.Isdelete == false
