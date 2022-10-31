@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Shared.ViewModels.Travel.ContractVM;
 
 namespace Travel.Shared.ViewModels.Travel.TourVM
 {
@@ -10,7 +11,7 @@ namespace Travel.Shared.ViewModels.Travel.TourVM
     {
         
     }
-    public class CreateTourViewModel
+    public class CreateTourViewModel : UpdateApproveData
     {
         private string idTour;
         private string nameTour;

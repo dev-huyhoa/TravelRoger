@@ -143,6 +143,7 @@ namespace Travel.Data.Repositories
                         hotelObj.SingleRoomPrice = float.Parse(singleRoomPrice);
                         hotelObj.Star = Convert.ToInt16(star);
                         hotelObj.NameContract = nameContract;
+                        hotelObj.IdUserModify = Guid.Parse(idUserModify);
                         return JsonSerializer.Serialize(hotelObj);
 
                     }
@@ -153,6 +154,7 @@ namespace Travel.Data.Repositories
                         restaurantObj.Name = name;
                         restaurantObj.Phone = phone;
                         restaurantObj.NameContract = nameContract;
+                        restaurantObj.IdUserModify = Guid.Parse(idUserModify);
                         return JsonSerializer.Serialize(restaurantObj);
                     }
                     else
@@ -163,6 +165,7 @@ namespace Travel.Data.Repositories
                         placeObj.Name = name;
                         placeObj.Phone = phone;
                         placeObj.NameContract = nameContract;
+                        placeObj.IdUserModify = Guid.Parse(idUserModify);
                         return JsonSerializer.Serialize(placeObj);
                     }
                 }
@@ -190,7 +193,6 @@ namespace Travel.Data.Repositories
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
                     listWaiting = (from x in _db.Hotels where x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
-                                   && x.IsTempdata == false
                                    select x).ToList();
                 }
                 else
@@ -198,7 +200,6 @@ namespace Travel.Data.Repositories
                     listWaiting = (from x in _db.Hotels
                                    where x.IdUserModify == idUser
                                    && x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
-                                   && x.IsTempdata == false
                                    select x).ToList();
                 }
                 var result = Mapper.MapHotel(listWaiting);
@@ -210,10 +211,7 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
                 return res;
             }
         }
@@ -234,10 +232,8 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
                 return res;
             }
         }
@@ -259,7 +255,6 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-
         public Response DeleteHotel(Guid id, Guid idUser)
         {
             try
@@ -415,7 +410,7 @@ namespace Travel.Data.Repositories
                              where x.IdHotel == id
                              && x.Approve == (int)ApproveStatus.Waiting
                              select x).FirstOrDefault();
-                if (hotel.Approve == (int)ApproveStatus.Waiting)
+                if (hotel != null)
                 {
 
 
@@ -461,6 +456,11 @@ namespace Travel.Data.Repositories
                     _db.SaveChanges();
                     res = Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
+                else
+                {
+                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+
+                }
                 return res;
 
             }
@@ -479,7 +479,7 @@ namespace Travel.Data.Repositories
                              where x.IdHotel == id
                              && x.Approve == (int)ApproveStatus.Waiting
                              select x).FirstOrDefault();
-                if (hotel.Approve == (int)ApproveStatus.Waiting)
+                if (hotel != null)
                 {
                     if (hotel.TypeAction == "update")
                     {
@@ -532,6 +532,10 @@ namespace Travel.Data.Repositories
                     _db.SaveChanges();
                     res = Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
+                else
+                {
+                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                }
                 return res;
 
             }
@@ -547,7 +551,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.Restaurants where x.Approve == Convert.ToInt16(ApproveStatus.Approved) select x).ToList();
+                var list = (from x in _db.Restaurants
+                            where x.Approve == Convert.ToInt16(ApproveStatus.Approved)
+                            && x.IsTempdata == false
+                            select x).ToList();
                 var result = Mapper.MapRestaurant(list);
                 if (list.Count() > 0)
                 {
@@ -749,7 +756,7 @@ namespace Travel.Data.Repositories
                                   where x.IdRestaurant == id
                                   && x.Approve == (int)ApproveStatus.Waiting
                                   select x).FirstOrDefault();
-                if (restaurant.Approve == (int)ApproveStatus.Waiting)
+                if (restaurant != null)
                 {
                     if (restaurant.TypeAction == "update")
                     {
@@ -790,6 +797,10 @@ namespace Travel.Data.Repositories
                     _db.SaveChanges();
                     res = Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
+                else
+                {
+                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                }
                 return res;
 
             }
@@ -808,7 +819,7 @@ namespace Travel.Data.Repositories
                                   where x.IdRestaurant == id
                                   && x.Approve == (int)ApproveStatus.Waiting
                                   select x).FirstOrDefault();
-                if (restaurant.Approve == (int)ApproveStatus.Waiting)
+                if (restaurant != null)
                 {
                     if (restaurant.TypeAction == "update")
                     {
@@ -855,6 +866,10 @@ namespace Travel.Data.Repositories
                     _db.SaveChanges();
                     res = Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
+                else
+                {
+                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                }
                 return res;
 
             }
@@ -879,7 +894,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.Places where x.Approve == Convert.ToInt16(ApproveStatus.Approved) select x).ToList();
+                var list = (from x in _db.Places 
+                            where x.Approve == Convert.ToInt16(ApproveStatus.Approved)
+                                             && x.IsTempdata == false
+                            select x).ToList();
                 var result = Mapper.MapPlace(list);
                 if (list.Count() > 0)
                 {
@@ -1008,7 +1026,7 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-        public Response UpdatePlace(UpdateHotelViewModel input)
+        public Response UpdatePlace(UpdatePlaceViewModel input)
         {
             try
             {
@@ -1016,36 +1034,32 @@ namespace Travel.Data.Repositories
                                  where x.IdEmployee == input.IdUserModify
                                  select x).FirstOrDefault();
 
-                var hotel = (from x in _db.Hotels
-                             where x.IdHotel == input.IdHotel
+                var place = (from x in _db.Places
+                             where x.IdPlace == input.IdPlace
                              select x).FirstOrDefault();
 
                 // clone new object
-                var hotelOld = new Hotel();
-                hotelOld = Ultility.DeepCopy<Hotel>(hotel);
-                hotelOld.IdAction = hotelOld.IdHotel.ToString();
-                hotelOld.IdHotel = Guid.NewGuid();
-                hotelOld.IsTempdata = true;
+                var placeOld = new Place();
+                placeOld = Ultility.DeepCopy<Place>(place);
+                placeOld.IdAction = placeOld.IdPlace.ToString();
+                placeOld.IdPlace = Guid.NewGuid();
+                placeOld.IsTempdata = true;
 
-                _db.Hotels.Add(hotelOld);
+                _db.Places.Add(placeOld);
 
                 #region setdata
-                hotel.IdAction = hotelOld.IdHotel.ToString();
-                hotel.IdUserModify = input.IdUserModify;
-                hotel.TypeAction = input.TypeAction;
-                hotel.Approve = (int)ApproveStatus.Waiting;
-                hotel.ModifyBy = userLogin.NameEmployee;
-                hotel.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                place.IdAction = placeOld.IdPlace.ToString();
+                place.IdUserModify = input.IdUserModify;
+                place.TypeAction = input.TypeAction;
+                place.Approve = (int)ApproveStatus.Waiting;
+                place.ModifyBy = userLogin.NameEmployee;
+                place.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
 
 
-                hotel.Address = input.Address;
-                hotel.DoubleRoomPrice = input.DoubleRoomPrice;
-                hotel.SingleRoomPrice = input.SingleRoomPrice;
-                hotel.NameHotel = input.Name;
-                hotel.Phone = input.Phone;
-                hotel.QuantityDBR = input.QuantityDBR;
-                hotel.QuantitySR = input.QuantitySR;
-                hotel.Star = input.Star;
+                place.Address = input.Address;
+                place.NamePlace = input.Name;
+                place.Phone = input.Phone;
+                place.PriceTicket = input.PriceTicket;
                 #endregion
 
 
@@ -1064,48 +1078,48 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var hotel = (from x in _db.Hotels
-                             where x.IdHotel == id
+                var place = (from x in _db.Places
+                             where x.IdPlace == id
                              && x.Approve == (int)ApproveStatus.Waiting
                              select x).FirstOrDefault();
-                if (hotel.Approve == (int)ApproveStatus.Waiting)
+                if (place != null)
                 {
 
 
-                    if (hotel.TypeAction == "update")
+                    if (place.TypeAction == "update")
                     {
-                        var idHotelTemp = hotel.IdAction;
-                        hotel.Approve = (int)ApproveStatus.Approved;
-                        hotel.IdAction = null;
-                        hotel.TypeAction = null;
+                        var idPlaceTemp = place.IdAction;
+                        place.Approve = (int)ApproveStatus.Approved;
+                        place.IdAction = null;
+                        place.TypeAction = null;
 
 
                         // delete tempdata
-                        var hotelTemp = (from x in _db.Hotels
-                                         where x.IdHotel == Guid.Parse(idHotelTemp)
+                        var placeTemp = (from x in _db.Places
+                                         where x.IdPlace == Guid.Parse(idPlaceTemp)
                                          select x).FirstOrDefault();
-                        _db.Hotels.Remove(hotelTemp);
+                        _db.Places.Remove(placeTemp);
                     }
-                    else if (hotel.TypeAction == "insert")
+                    else if (place.TypeAction == "insert")
                     {
-                        hotel.IdAction = null;
-                        hotel.TypeAction = null;
-                        hotel.Approve = (int)ApproveStatus.Approved;
+                        place.IdAction = null;
+                        place.TypeAction = null;
+                        place.Approve = (int)ApproveStatus.Approved;
                     }
-                    else if (hotel.TypeAction == "restore")
+                    else if (place.TypeAction == "restore")
                     {
-                        hotel.IdAction = null;
-                        hotel.TypeAction = null;
-                        hotel.Approve = (int)ApproveStatus.Approved;
-                        hotel.IsDelete = false;
+                        place.IdAction = null;
+                        place.TypeAction = null;
+                        place.Approve = (int)ApproveStatus.Approved;
+                        place.IsDelete = false;
 
                     }
                     else
                     {
-                        hotel.IdAction = null;
-                        hotel.TypeAction = null;
-                        hotel.Approve = (int)ApproveStatus.Approved;
-                        hotel.IsDelete = true;
+                       place.IdAction = null;
+                       place.TypeAction = null;
+                       place.Approve = (int)ApproveStatus.Approved;
+                        place.IsDelete = true;
                     }
 
 
@@ -1113,6 +1127,11 @@ namespace Travel.Data.Repositories
 
                     _db.SaveChanges();
                     res = Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+
                 }
                 return res;
 
@@ -1131,7 +1150,7 @@ namespace Travel.Data.Repositories
                              where x.IdPlace == id
                              && x.Approve == (int)ApproveStatus.Waiting
                              select x).FirstOrDefault();
-                if (place.Approve == (int)ApproveStatus.Waiting)
+                if (place != null)
                 {
                     if (place.TypeAction == "update")
                     {
@@ -1178,6 +1197,11 @@ namespace Travel.Data.Repositories
                     _db.SaveChanges();
                     res = Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
+                else
+                {
+                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+
+                }
                 return res;
 
             }
@@ -1207,5 +1231,6 @@ namespace Travel.Data.Repositories
             }
         }
 
+    
     }
 }

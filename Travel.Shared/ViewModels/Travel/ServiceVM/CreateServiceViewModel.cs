@@ -12,10 +12,11 @@ namespace Travel.Shared.ViewModels.Travel.ContractVM
         private string idAction;
         private string typeAction;
         private Guid idUserModify;
-
+        private Guid idUserRequired;
         public string IdAction { get => idAction; set => idAction = value; }
         public string TypeAction { get => typeAction; set => typeAction = value; }
         public Guid IdUserModify { get => idUserModify; set => idUserModify = value; }
+        public Guid IdUserRequired { get => idUserRequired; set => idUserRequired = value; }
     }
     public class UpdateHotelViewModel : CreateHotelViewModel
     {

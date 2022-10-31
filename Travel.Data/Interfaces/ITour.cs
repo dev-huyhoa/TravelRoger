@@ -17,11 +17,12 @@ namespace Travel.Data.Interfaces
         Response Create(CreateTourViewModel input);
         Response Update(UpdateTourViewModel input);
         Response Get(bool isDelete);
-        Response GetWaiting();
+        Response GetWaiting(Guid idUser);
         Response GetTour(string idTour);
-        Response Delete(string idTour);
-        Response RestoreTour(string idTour);
-        Response Approve(JObject frmData);
+        Response Delete(string idTour,Guid idUser);
+        Response RestoreTour(string idTour, Guid idUser);
+        Response Approve(string id);
+        Response Refused(string id);
         Task<Response> GetsTourWithSchedule();
         Task<Response> GetTourById(string idTour);
 
