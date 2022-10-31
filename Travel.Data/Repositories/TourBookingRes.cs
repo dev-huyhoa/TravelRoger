@@ -212,12 +212,19 @@ namespace Travel.Data.Repositories
             {
                 var ListTourBooking = _db.Tourbookings.OrderByDescending(x=> x.DateBooking).ToList();
                 var result = Mapper.MapTourBooking(ListTourBooking);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                if (result.Count > 0)
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                else
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
+                }
             }
             catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-            };
+            }
         }
 
         public Response GetTourBookingFromDateToDate(DateTime? fromDateInput, DateTime? toDateInput)
@@ -248,7 +255,14 @@ namespace Travel.Data.Repositories
                             && x.DateBooking <= toDate
                             select x).OrderByDescending(x=> x.DateBooking).ToList();
                 var result = Mapper.MapTourBooking(list);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                if (result.Count > 0)
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                else
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -300,7 +314,14 @@ namespace Travel.Data.Repositories
 
                                                          }).First()
                                          }).FirstAsync();
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
+                if (tourbooking !!= null)
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
+                }
+                else
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
+                }
             }
             catch (Exception e)
             {
