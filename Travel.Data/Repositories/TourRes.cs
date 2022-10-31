@@ -101,12 +101,8 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
-                message.DateTime = DateTime.Now;
-                message.Description = e.Message;
-                message.Messenge = "Có lỗi xảy ra !";
-                message.Type = "Error";
-                _message = message;
-                return null;
+                _message = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message).Notification;
+                return string.Empty;
             }
         }
         public Response Create(CreateTourViewModel input)
@@ -117,15 +113,11 @@ namespace Travel.Data.Repositories
                 tour = Mapper.MapCreateTour(input);
                 _db.Tour.Add(tour);
                 _db.SaveChanges();
-                res = Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
-                return res;
+                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
-
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
-
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -141,16 +133,12 @@ namespace Travel.Data.Repositories
                                && x.IsTempdata == false
                                select x).ToList();
                 var result = Mapper.MapTour(list);
-                if (list.Count()>0)
-                {
-                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: result);
-                }
-                return res;
+              
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: result);
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -165,16 +153,11 @@ namespace Travel.Data.Repositories
                              where x.IdTour == idTour
                              select x).FirstOrDefault();
                 var result = Mapper.MapTour(tour);
-                if (result != null)
-                {
-                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: result);
-                }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -278,16 +261,11 @@ namespace Travel.Data.Repositories
                                                                    select e).First()
                                                    }).ToList()
                                   }).ToListAsync();
-                if (list.Count() > 0)
-                {
-                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: list);
-                }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: list);
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -373,16 +351,12 @@ namespace Travel.Data.Repositories
                                                                   select e).First()
                                                   }).ToList()
                                  }).FirstAsync();
-                if (list != null)
-                {
-                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content:list);
-                }
-                return res;
+        
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: list);
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -843,16 +817,12 @@ namespace Travel.Data.Repositories
                                                                    select e).First()
                                                    }).ToList()
                                   }).OrderByDescending(x=> x.Rating).ToListAsync();
-                if (list.Count() > 0)
-                {
-                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: list);
-                }
-                return res;
+      
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), content: list);
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 

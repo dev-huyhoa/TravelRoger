@@ -21,12 +21,10 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private Notification message;
-        private Response res;
         public ScheduleRes(TravelContext db)
         {
             _db = db;
             message = new Notification();
-            res = new Response();
         }
         public string CheckBeforSave(JObject frmData, ref Notification _message,bool isUpdate)
         {
@@ -205,20 +203,12 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (list.Count() > 0)
-                {
-                    res.Content = result;
-                }
-
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+               return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -232,20 +222,13 @@ namespace Travel.Data.Repositories
                 schedule.Alias = $"S{Ultility.SEOUrl(nameTour)}";
                 _db.Schedules.Add(schedule);
                 _db.SaveChanges();
-                res.Content = schedule.IdSchedule;
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-                return res;
+        
+                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString(), schedule.IdSchedule);
             }
             catch (Exception e)
             {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -256,20 +239,13 @@ namespace Travel.Data.Repositories
                 Schedule schedule = Mapper.MapUpdateSchedule(input);
                 _db.Schedules.Update(schedule);
                 _db.SaveChanges();
-     
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
+
+                return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -341,20 +317,11 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (list.Count() > 0)
-                {
-                    res.Content = result;
-                }
-
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -429,20 +396,11 @@ namespace Travel.Data.Repositories
 
                 //var result = Mapper.MapSchedule(list);
                 var result = list;
-                if (list.Count() > 0)
-                {
-                    res.Content = result;
-                }
-
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -514,20 +472,11 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (list.Count() > 0)
-                {
-                    res.Content = result;
-                }
-
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
         public Response Delete(string idSchedule)
@@ -540,25 +489,16 @@ namespace Travel.Data.Repositories
                     schedule.Isdelete = true;
                     _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Xóa thành công !";
-                    res.Notification.Type = "Success";
+                    return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
+                    return Ultility.Responses($"Không tìm thấy Id [{idSchedule}] !", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -572,25 +512,16 @@ namespace Travel.Data.Repositories
                     schedule.Isdelete = false;
                     _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Xóa thành công !";
-                    res.Notification.Type = "Success";
+                    return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
+                    return Ultility.Responses($"Không tìm thấy Id [{idSchedule}] !", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -610,26 +541,16 @@ namespace Travel.Data.Repositories
                         _db.SaveChanges();
                      
                     }
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Cập nhật thành công !";
-                    res.Notification.Type = "Success";
-                    return res;
+                    return Ultility.Responses("Cập nhật thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
+                    return Ultility.Responses($"Không tìm thấy Id [{idSchedule}] !", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
         // chưa cập nhật
@@ -698,19 +619,11 @@ namespace Travel.Data.Repositories
                                                   where x.TourId == tour.IdTour
                                                   select tour).FirstOrDefault()
                                       }).FirstAsync();
-                if (schedule != null)
-                {
-                    res.Content = schedule;
-                }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), schedule);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -811,12 +724,7 @@ namespace Travel.Data.Repositories
                                 select x).OrderByDescending(x => x.DepartureDate).ToList();
                     }
                     var result = Mapper.MapSchedule(list);
-                    if (list.Count() > 0)
-                    {
-                        res.Content = result;
-                    }
-
-                    return res;
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
                 else if (departureDate == null && returnDate == null)
                 {
@@ -898,12 +806,7 @@ namespace Travel.Data.Repositories
                                 select x).OrderByDescending(x => x.DepartureDate).ToList();
                     }
                     var result = Mapper.MapSchedule(list2);
-                    if (list2.Count() > 0)
-                    {
-                        res.Content = result;
-                    }
-
-                    return res;
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
 
                 }
                 else
@@ -1017,12 +920,7 @@ namespace Travel.Data.Repositories
                                 select x).OrderByDescending(x => x.DepartureDate).ToList();
                     }
                     var result1 = Mapper.MapSchedule(list1);
-                    if (list1.Count() > 0)
-                    {
-                        res.Content = result1;
-                    }
-
-                    return res;
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result1);
                 }
                 //var list = await (from s in _db.Schedules
                 //            where s.Isdelete == false
@@ -1088,11 +986,7 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -1164,19 +1058,12 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (list.Count() > 0)
-                {
-                    Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
 
-                    res.Content = result;
-                }
-
-                return res;
             }
             catch (Exception e)
             {
-                Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
     }

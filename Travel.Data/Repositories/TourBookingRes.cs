@@ -22,15 +22,11 @@ namespace Travel.Data.Repositories
         private readonly TravelContext _db;
         private readonly ISchedule _schedule;
         private Notification message;
-        private Response res;
         public TourBookingRes(TravelContext db,
             ISchedule schedule)
         {
             _db = db;
             message = new Notification();
-            res = new Response();
-
-
             _schedule = schedule;
         }
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
@@ -164,7 +160,7 @@ namespace Travel.Data.Repositories
                 createObj.Pincode = pincode;
                 createObj.BookingDetails = createDetailObj;
                 createObj.CustomerId = customerId;
-                if (valuePromotion != null)
+                if (!string.IsNullOrEmpty(valuePromotion))
                 {
                     createObj.ValuePromotion = Convert.ToInt16(valuePromotion);
 
@@ -173,11 +169,7 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
-                message.DateTime = DateTime.Now;
-                message.Description = e.Message;
-                message.Messenge = "Có lỗi xảy ra !";
-                message.Type = "Error";
-                _message = message;
+                _message = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message).Notification;
                 return null;
             }           
         }
@@ -204,23 +196,13 @@ namespace Travel.Data.Repositories
                 await _schedule.UpdateCapacity(input.ScheduleId, quantityAdult, quantityChild, quantityBaby);
                 transaction.Commit();
                 transaction.Dispose();
-
-
-                res.Content = tourbooking.IdTourbooking;
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Đặt tour thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourbooking);
             }
             catch (Exception e)
             {
                 transaction.RollbackToSavepoint("BeforeSave");
-
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                ;
             }
         }
 
@@ -230,25 +212,11 @@ namespace Travel.Data.Repositories
             {
                 var ListTourBooking = _db.Tourbookings.OrderByDescending(x=> x.DateBooking).ToList();
                 var result = Mapper.MapTourBooking(ListTourBooking);
-                if (ListTourBooking.Count() > 0)
-                {
-                    res.Content = result;
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             };
         }
 
@@ -280,19 +248,11 @@ namespace Travel.Data.Repositories
                             && x.DateBooking <= toDate
                             select x).OrderByDescending(x=> x.DateBooking).ToList();
                 var result = Mapper.MapTourBooking(list);
-                if (list.Count() > 0)
-                {
-                    res.Content = result;
-                }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -340,26 +300,12 @@ namespace Travel.Data.Repositories
 
                                                          }).First()
                                          }).FirstAsync();
-                if (tourbooking  != null )
-                {
-                    res.Content = tourbooking;
-                }
-                else
-                {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
-                }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
-            };
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
         }
     }
 
