@@ -215,13 +215,14 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-        public Response GetHotel()
+        public Response GetHotel(Guid idHotel)
         {
             try
             {
                 var list = (from x in _db.Hotels
                             where x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
                             && x.IsTempdata == false
+                            && x.IdHotel == idHotel
                             select x).ToList();
                 var result = Mapper.MapHotel(list);
                 if (list.Count() > 0)
@@ -1229,11 +1230,6 @@ namespace Travel.Data.Repositories
                 res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
                 return res;
             }
-        }
-
-        public Response GetHotel(Guid idHotel)
-        {
-            throw new NotImplementedException();
         }
     }
 }

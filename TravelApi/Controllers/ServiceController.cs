@@ -46,7 +46,7 @@ namespace TravelApi.Controllers
         [Route("gets-hotel")]
         public object GetHotel()
         {
-            res = _serviceRes.GetHotel();
+            res = _serviceRes.GetsHotel();
             return Ok(res);
         }
         [HttpGet()]
@@ -54,7 +54,7 @@ namespace TravelApi.Controllers
         [Route("gets-hotel-waiting")]
         public object GetHotelWaiting(Guid idUser)
         {
-            res = _serviceRes.GetWaitingHotel(idUser);
+            res = _serviceRes.GetsWaitingHotel(idUser);
             return Ok(res);
         }
 
@@ -105,7 +105,7 @@ namespace TravelApi.Controllers
         [Route("gets-restaurant-waiting")]
         public object GetWaitingRestaurant(Guid idUser)
         {
-            res = _serviceRes.GetWaitingRestaurant(idUser);
+            res = _serviceRes.GetsWaitingRestaurant(idUser);
             return Ok(res);
         }
 
@@ -114,7 +114,7 @@ namespace TravelApi.Controllers
         [Route("gets-restaurant")]
         public object GetRestaurant()
         {
-            res = _serviceRes.GetRestaurant();
+            res = _serviceRes.GetsRestaurant();
             return Ok(res);
         }
         [HttpPost]
@@ -181,7 +181,7 @@ namespace TravelApi.Controllers
         [Route("gets-place-waiting")]
         public object GetPlaceWaiting(Guid idUser)
         {
-            res = _serviceRes.GetWaitingHPlace(idUser);
+            res = _serviceRes.GetsWaitingHPlace(idUser);
             return Ok(res);
         }
 
@@ -190,7 +190,7 @@ namespace TravelApi.Controllers
         [Route("gets-place")]
         public object GetPlace()
         {
-            res = _serviceRes.GetPlace();
+            res = _serviceRes.GetsPlace();
             return Ok(res);
         }
         [HttpPost]
