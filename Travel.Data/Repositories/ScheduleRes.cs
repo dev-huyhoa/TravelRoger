@@ -13,6 +13,7 @@ using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using static Travel.Shared.Ultilities.Enums;
 
 namespace Travel.Data.Repositories
 {
@@ -94,6 +95,13 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(maxCapacity))
                 {
                 }
+            
+                var idUserModify = PrCommon.GetString("idUserModify", frmData);
+                if (String.IsNullOrEmpty(idUserModify))
+                {
+                }
+                var typeAction = PrCommon.GetString("typeAction", frmData);
+
                 if (isUpdate)
                 {
                     UpdateScheduleViewModel updateObj = new UpdateScheduleViewModel();
@@ -114,6 +122,8 @@ namespace Travel.Data.Repositories
                     updateObj.MinCapacity = Convert.ToInt16(minCapacity);
                     updateObj.MaxCapacity = Convert.ToInt16(maxCapacity);
                     updateObj.IdSchedule = idSchedule;
+                    updateObj.TypeAction = typeAction;
+                    updateObj.IdUserModify = Guid.Parse(idUserModify);
                     return JsonSerializer.Serialize(updateObj);
                 }
                 CreateScheduleViewModel createObj = new CreateScheduleViewModel();
@@ -130,6 +140,8 @@ namespace Travel.Data.Repositories
                 createObj.EndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(endDate));
                 createObj.TimePromotion = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(timePromotion));
                 createObj.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
+                createObj.IdUserModify = Guid.Parse(idUserModify); 
+
                 return JsonSerializer.Serialize(createObj);
             }
             catch (Exception e)
@@ -249,29 +261,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Update(UpdateScheduleViewModel input)
-        {
-            try
-            {
-                Schedule schedule = Mapper.MapUpdateSchedule(input);
-                _db.Schedules.Update(schedule);
-                _db.SaveChanges();
-     
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
-            }
-            catch (Exception e)
-            {
-
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
-            }
-        }
+ 
 
         public Response GetsSchedulebyIdTour(string idTour, bool isDelete)
         {
@@ -1179,5 +1169,271 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+
+        #region dang chỉnh
+        public Response DeletePlace(Guid id, Guid idUser)
+        {
+            try
+            {
+                var place = (from x in _db.Places
+                             where x.IdPlace == id
+                             select x).FirstOrDefault();
+
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                if (place.Approve == (int)ApproveStatus.Approved)
+                {
+                    place.ModifyBy = userLogin.NameEmployee;
+                    place.IdUserModify = userLogin.IdEmployee;
+                    place.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    place.Approve = (int)ApproveStatus.Waiting;
+
+                    res = Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    if (place.IdUserModify == idUser)
+                    {
+                        if (place.TypeAction == "insert")
+                        {
+                            _db.Places.Remove(place);
+                            res = Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
+                        }
+                        else if (place.TypeAction == "update")
+                        {
+                            var idPlaceTemp = place.IdAction;
+                            // old hotel
+                            var placeTemp = (from x in _db.Places
+                                             where x.IdPlace == Guid.Parse(idPlaceTemp)
+                                             select x).FirstOrDefault();
+                            place.Approve = (int)ApproveStatus.Approved;
+                            place.IdAction = null;
+                            place.TypeAction = null;
+                            #region restore old data
+
+                            place.Approve = (int)ApproveStatus.Approved;
+                            place.Address = placeTemp.Address;
+
+                            place.Phone = placeTemp.Phone;
+                            place.NamePlace = placeTemp.NamePlace;
+                            place.PriceTicket = placeTemp.PriceTicket;
+                            #endregion
+
+                            _db.Places.Remove(placeTemp);
+                            res = Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
+                        }
+                        else if (place.TypeAction == "restore")
+                        {
+                            place.IdAction = null;
+                            place.TypeAction = null;
+                            place.IsDelete = true;
+                            place.Approve = (int)ApproveStatus.Approved;
+                            res = Ultility.Responses("Đã hủy yêu cầu khôi phục!", Enums.TypeCRUD.Success.ToString());
+
+                        }
+                        else // delete
+                        {
+                            place.IdAction = null;
+                            place.TypeAction = null;
+                            place.IsDelete = false;
+                            place.Approve = (int)ApproveStatus.Approved;
+                            res = Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+
+                        }
+                    }
+                }
+                _db.SaveChanges();
+                return res;
+
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+        public Response ApprovePlace(Guid id)
+        {
+            try
+            {
+                var place = (from x in _db.Places
+                             where x.IdPlace == id
+                             && x.Approve == (int)ApproveStatus.Waiting
+                             select x).FirstOrDefault();
+                if (place != null)
+                {
+
+
+                    if (place.TypeAction == "update")
+                    {
+                        var idPlaceTemp = place.IdAction;
+                        place.Approve = (int)ApproveStatus.Approved;
+                        place.IdAction = null;
+                        place.TypeAction = null;
+
+
+                        // delete tempdata
+                        var placeTemp = (from x in _db.Places
+                                         where x.IdPlace == Guid.Parse(idPlaceTemp)
+                                         select x).FirstOrDefault();
+                        _db.Places.Remove(placeTemp);
+                    }
+                    else if (place.TypeAction == "insert")
+                    {
+                        place.IdAction = null;
+                        place.TypeAction = null;
+                        place.Approve = (int)ApproveStatus.Approved;
+                    }
+                    else if (place.TypeAction == "restore")
+                    {
+                        place.IdAction = null;
+                        place.TypeAction = null;
+                        place.Approve = (int)ApproveStatus.Approved;
+                        place.IsDelete = false;
+
+                    }
+                    else
+                    {
+                        place.IdAction = null;
+                        place.TypeAction = null;
+                        place.Approve = (int)ApproveStatus.Approved;
+                        place.IsDelete = true;
+                    }
+
+
+
+
+                    _db.SaveChanges();
+                    res = Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+
+                }
+                return res;
+
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+        public Response RefusedPlace(Guid id)
+        {
+            try
+            {
+                var place = (from x in _db.Places
+                             where x.IdPlace == id
+                             && x.Approve == (int)ApproveStatus.Waiting
+                             select x).FirstOrDefault();
+                if (place != null)
+                {
+                    if (place.TypeAction == "update")
+                    {
+                        var idPlaceTemp = place.IdAction;
+                        // old hotel
+                        var placeTemp = (from x in _db.Places
+                                         where x.IdPlace == Guid.Parse(idPlaceTemp)
+                                         select x).FirstOrDefault();
+                        place.Approve = (int)ApproveStatus.Approved;
+                        place.IdAction = null;
+                        place.TypeAction = null;
+                        #region restore old data
+
+                        place.Approve = (int)ApproveStatus.Approved;
+                        place.Address = placeTemp.Address;
+
+                        place.Phone = placeTemp.Phone;
+                        place.NamePlace = placeTemp.NamePlace;
+                        place.PriceTicket = placeTemp.PriceTicket;
+                        #endregion
+
+                        _db.Places.Remove(placeTemp);
+                    }
+                    else if (place.TypeAction == "insert")
+                    {
+                        place.IdAction = null;
+                        place.TypeAction = null;
+                        place.Approve = (int)ApproveStatus.Refused;
+                    }
+                    else if (place.TypeAction == "restore")
+                    {
+                        place.IdAction = null;
+                        place.TypeAction = null;
+                        place.IsDelete = true;
+                        place.Approve = (int)ApproveStatus.Approved;
+                    }
+                    else // delete
+                    {
+                        place.IdAction = null;
+                        place.TypeAction = null;
+                        place.IsDelete = false;
+                        place.Approve = (int)ApproveStatus.Approved;
+                    }
+                    _db.SaveChanges();
+                    res = Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+
+                }
+                return res;
+
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+
+        public Response Update(UpdateScheduleViewModel input)
+        {
+            try
+            {
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == input.IdUserModify
+                                 select x).FirstOrDefault();
+
+                var schedule = (from x in _db.Schedules
+                             where x.IdSchedule == input.IdSchedule
+                             select x).FirstOrDefault();
+
+                // clone new object
+                var scheduleOld = new Schedule();
+                scheduleOld = Ultility.DeepCopy<Schedule>(schedule);
+                scheduleOld.IdAction = scheduleOld.IdSchedule.ToString();
+                scheduleOld.IdSchedule = $"{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}Temp";
+                scheduleOld.IsTempData = true;
+
+                _db.Schedules.Add(scheduleOld);
+
+                #region setdata
+                schedule.IdAction = scheduleOld.IdSchedule.ToString();
+                schedule.IdUserModify = input.IdUserModify;
+                schedule.TypeAction = input.TypeAction;
+                schedule.Approve = (int)ApproveStatus.Waiting;
+
+
+               
+                #endregion
+
+
+                _db.SaveChanges();
+                res = Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+                return res;
+
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+        #endregion
     }
 }

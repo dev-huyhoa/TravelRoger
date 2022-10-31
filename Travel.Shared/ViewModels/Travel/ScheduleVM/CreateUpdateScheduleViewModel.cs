@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Travel.Context.Models;
+using Travel.Shared.ViewModels.Travel.ContractVM;
 
 namespace Travel.Shared.ViewModels.Travel
 {
@@ -33,7 +34,7 @@ namespace Travel.Shared.ViewModels.Travel
         public float PriceBabyHoliday { get => priceBabyHoliday; set => priceBabyHoliday = value; }
         public bool IsHoliday { get => isHoliday; set => isHoliday = value; }
     }
-    public class CreateScheduleViewModel
+    public class CreateScheduleViewModel : UpdateApproveData
     {
         private string idSchedule;
         private string alias;

@@ -75,6 +75,11 @@ namespace Travel.Data.Repositories
                             message = _message;
                         }
                     }
+                    var typeAction = PrCommon.GetString("typeAction", frmData);
+                    var idUserModify = PrCommon.GetString("idUserModify", frmData);
+                    if (String.IsNullOrEmpty(idUserModify))
+                    {
+                    }
                     if (isUpdate)
                     {
                         // map data
@@ -82,6 +87,8 @@ namespace Travel.Data.Repositories
                         objUpdate.NameTour = tourName;
                         objUpdate.Thumbnail = thumbnail;
                         objUpdate.ToPlace = toPlace;
+                        objUpdate.TypeAction = typeAction;
+                        objUpdate.IdUserModify = Guid.Parse(idUserModify);
                         // generate ID
                         objUpdate.IdTour = idTour;
                         return JsonSerializer.Serialize(objUpdate);
@@ -91,7 +98,8 @@ namespace Travel.Data.Repositories
                     obj.NameTour = tourName;
                     obj.Thumbnail = thumbnail;
                     obj.ToPlace = toPlace;
-
+                    obj.TypeAction = typeAction;
+                    obj.IdUserModify = Guid.Parse(idUserModify);
                     // generate ID
                     obj.IdTour = idTour;
 

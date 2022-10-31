@@ -19,6 +19,8 @@ namespace Travel.Context.Models
         public int Approve { get; set; }
         public string IdAction { get; set; }
         public string TypeAction { get; set; }
+        public Guid IdUserModify { get; set; }
+        public bool IsTempData { get; set; }
         public int QuantityAdult { get; set; }
         public int QuantityBaby { get; set; }
         public int MinCapacity { get; set; }
