@@ -178,7 +178,6 @@ namespace Travel.Data.Repositories
                 return null;
             }
         }
-
         #region Hotel
         public Response GetWaitingHotel(Guid idUser)
         {

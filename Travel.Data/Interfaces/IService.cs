@@ -13,22 +13,18 @@ namespace Travel.Data.Interfaces
 
         Response CreateContract(CreateContractViewModel input);
 
-
-
         Response GetRestaurant();
         Response GetWaitingRestaurant(Guid idUser);
         Response CreateRestaurant(CreateRestaurantViewModel input);
         Response DeleteRestaurant(Guid id, Guid idUser);
-
-
-
-
-
-
         Response GetWaitingHPlace(Guid idUser);
         Response GetPlace();
         Response CreatePlace(CreatePlaceViewModel input);
         Response DeletePlace(Guid id, Guid idUser);
+        Response UpdatePlace(UpdatePlaceViewModel input);
+        Response ApprovePlace(Guid id);
+        Response RefusedPlace(Guid id);
+
 
 
 
@@ -39,9 +35,13 @@ namespace Travel.Data.Interfaces
         Response UpdateHotel(UpdateHotelViewModel input);
 
         Response DeleteHotel(Guid id, Guid idUser);
-
         Response ApproveHotel(Guid id);
         Response RefusedHotel(Guid id);
+
+        Response RefusedRestaurant(Guid id);
+        Response ApproveRestaurant(Guid id);
+        Response UpdateRestaurant(UpdateRestaurantViewModel input);
+
 
     }
 }
