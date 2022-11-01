@@ -28,7 +28,7 @@ namespace Travel.Data.Repositories
         {
             _db = db;
             message = new Notification();
-            dateTimeNow =  Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(-3));
+            dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(-3));
         }
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
@@ -351,7 +351,7 @@ namespace Travel.Data.Repositories
                             && s.Isdelete == false
                             && s.EndDate > dateTimeNow
                             && s.Status == (int)Enums.StatusSchedule.Free
-                            && s.IsTempData == false 
+                            && s.IsTempData == false
                             orderby s.DepartureDate
                             select new Schedule
                             {
@@ -615,6 +615,7 @@ namespace Travel.Data.Repositories
                                       && x.Isdelete == false
                                       && x.Approve == approve
                                       && x.IdSchedule == idSchedule
+                                      && x.IsTempData == false
                                       select new Schedule
                                       {
                                           IdSchedule = x.IdSchedule,
@@ -642,6 +643,9 @@ namespace Travel.Data.Repositories
                                           ReturnDate = x.ReturnDate,
                                           Description = x.Description,
                                           IsHoliday = x.IsHoliday,
+                                          Promotions = (from p in _db.Promotions
+                                                        where p.IdPromotion == x.PromotionId
+                                                        select p).FirstOrDefault(),
                                           CostTour = (from c in _db.CostTours
                                                       where c.IdSchedule == x.IdSchedule
                                                       select c).FirstOrDefault(),
@@ -1144,15 +1148,17 @@ namespace Travel.Data.Repositories
                 var closetPrice1 = (schedule.FinalPrice - 200000);
                 var closetPrice2 = (schedule.FinalPrice + 200000);
                 var list1 = await (from x in _db.Schedules
-                                   where x.EndDate > dateTimeNow
+                                   where x.IdSchedule != idSchedule
+                                   && x.EndDate > dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
-                                   &&( x.FinalPrice >= closetPrice1 || x.FinalPrice <= closetPrice2)
+                                   && (x.FinalPrice >= closetPrice1 || x.FinalPrice <= closetPrice2)
                                    && x.Isdelete == false
                                    && x.Approve == (int)Enums.ApproveStatus.Approved
                                    && x.IsTempData == false
                                    select x).ToListAsync();
                 var list2 = await (from x in _db.Schedules
-                                   where x.EndDate > dateTimeNow
+                                   where x.IdSchedule != idSchedule
+                               && x.EndDate > dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
                                    && (x.Status == (int)StatusSchedule.Free && x.QuantityCustomer <= x.MinCapacity)
                                        && x.Isdelete == false
