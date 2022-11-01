@@ -348,8 +348,9 @@ namespace Travel.Data.Repositories
             {
                 var list = (from s in _db.Schedules
                             where s.TourId == idTour
+                            && s.Isdelete == false
                             && s.EndDate > dateTimeNow
-                            && s.Status == (int)Enums.StatusSchedule.Free
+                            && s.IsTempData == false
                             orderby s.DepartureDate
                             select new Schedule
                             {
