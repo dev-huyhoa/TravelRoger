@@ -223,6 +223,7 @@ namespace Travel.Data.Repositories
                                       QuantityBooked = x.QuantityBooked,
                                       Schedules = (from s in _db.Schedules
                                                    where s.TourId == x.IdTour
+                                                   && s.Isdelete == false
                                                    && s.EndDate >= dateTimeNow
                                                    && s.Status == (int)Enums.StatusSchedule.Free
                                                    orderby s.DepartureDate
@@ -269,16 +270,16 @@ namespace Travel.Data.Repositories
                                                        Timelines = (from timeline in _db.Timelines
                                                                     where timeline.IdSchedule == s.IdSchedule
                                                                     && timeline.IsDelete == false
-                                                                    select new Timeline { 
-                                                                    Description = timeline.Description,
-                                                                    FromTime = timeline.FromTime,
-                                                                    ToTime = timeline.ToTime,
+                                                                    select new Timeline {
+                                                                        Description = timeline.Description,
+                                                                        FromTime = timeline.FromTime,
+                                                                        ToTime = timeline.ToTime,
                                                                     }).ToList(),
                                                        CostTour = (from c in _db.CostTours
                                                                    where c.IdSchedule == s.IdSchedule
                                                                    select c).First(),
                                                        Employee = (from e in _db.Employees
-                                                                   where e.IdEmployee ==  s.EmployeeId
+                                                                   where e.IdEmployee == s.EmployeeId
                                                                    select e).First()
                                                    }).ToList()
                                   }).ToListAsync();

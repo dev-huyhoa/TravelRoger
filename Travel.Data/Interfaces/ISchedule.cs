@@ -28,6 +28,6 @@ namespace Travel.Data.Interfaces
 
 
         Task<Response> GetsScheduleFlashSale();
-        Task<Response> GetRelatedSchedule(string idSchedule);
+        Task<Response> GetsRelatedSchedule(string idSchedule);
     }
 }

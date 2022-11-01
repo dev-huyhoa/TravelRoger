@@ -22,7 +22,19 @@ namespace Travel.Shared.Ultilities
         private static Notification message = new Notification();
         private static Image image = new Image();
 
+        public static List<T> Shuffle<T>(this List<T> list, Random rnd)
+{
+            for (var i = list.Count; i > 0; i--)
+                list.Swap(0, rnd.Next(0, i));
 
+            return list.Take(2).ToList();
+        }
+        public static void Swap<T>(this List<T> list, int i, int j)
+        {
+            var temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
+        }
         public static T DeepCopy<T>(this T self)
         {
             var serialized = JsonSerializer.Serialize(self);

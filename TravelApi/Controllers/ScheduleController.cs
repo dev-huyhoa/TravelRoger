@@ -151,5 +151,13 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("gets-schedule-relate")]
+        public async Task<object> GetsScheduleRelate(string idSchedule)
+        {
+            res = await _schedule.GetsRelatedSchedule(idSchedule);
+            return Ok(res);
+        }
     }
 }
