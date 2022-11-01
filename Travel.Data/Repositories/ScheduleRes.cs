@@ -35,10 +35,20 @@ namespace Travel.Data.Repositories
             try
             {
                 var idSchedule = PrCommon.GetString("idSchedule", frmData);
-
                 if (String.IsNullOrEmpty(idSchedule))
                 {
                 }
+                #region check update when having tour booking
+                if (isUpdate)
+                {
+                    if (CheckAnyBookingInSchedule(idSchedule))
+                    {
+                        _message = Ultility.Responses("Chuyến đi này đang có booking !", Enums.TypeCRUD.Warning.ToString()).Notification;
+                        return null;
+                    }
+                }
+
+                #endregion
                 var tourId = PrCommon.GetString("tourId", frmData);
 
                 if (String.IsNullOrEmpty(tourId))
@@ -111,7 +121,6 @@ namespace Travel.Data.Repositories
                     updateObj.EmployeeId = Guid.Parse(employeeId);
                     updateObj.PromotionId = Convert.ToInt32(promotionId);
                     updateObj.Description = description;
-                    updateObj.Vat = float.Parse(vat);
                     updateObj.DeparturePlace = departurePlace;
 
                     updateObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(departureDate));
@@ -125,6 +134,9 @@ namespace Travel.Data.Repositories
                     updateObj.IdSchedule = idSchedule;
                     updateObj.TypeAction = typeAction;
                     updateObj.IdUserModify = Guid.Parse(idUserModify);
+
+                    // price 
+                    updateObj.Vat = float.Parse(vat);
                     return JsonSerializer.Serialize(updateObj);
                 }
                 CreateScheduleViewModel createObj = new CreateScheduleViewModel();
@@ -511,44 +523,31 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response Delete(string idSchedule)
+
+        public Response RestoreShedule(string idSchedule, Guid idUser)
         {
             try
             {
-                var schedule = _db.Schedules.Find(idSchedule);
-                if (schedule != null)
-                {
-                    schedule.Isdelete = true;
-                    _db.SaveChanges();
-
-                    return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
-                }
-                else
-                {
-                    return Ultility.Responses($"Không tìm thấy Id [{idSchedule}] !", Enums.TypeCRUD.Warning.ToString());
-                }
-            }
-            catch (Exception e)
-            {
-                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-            }
-        }
-
-        public Response RestoreShedule(string idSchedule)
-        {
-            try
-            {
-                var schedule = _db.Schedules.Find(idSchedule);
+                var schedule = (from x in _db.Schedules
+                            where x.IdSchedule == idSchedule
+                            && x.Isdelete == true
+                            select x).FirstOrDefault();
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
                 if (schedule != null)
                 {
                     schedule.Isdelete = false;
+                    schedule.IdUserModify = userLogin.IdEmployee;
+                    schedule.Approve = (int)ApproveStatus.Waiting;
+                    schedule.TypeAction = "restore";
                     _db.SaveChanges();
 
-                    return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
+                    return Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
-                    return Ultility.Responses($"Không tìm thấy Id [{idSchedule}] !", Enums.TypeCRUD.Warning.ToString());
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
                 }
             }
             catch (Exception e)
@@ -586,22 +585,21 @@ namespace Travel.Data.Repositories
             }
         }
         // chưa cập nhật
-        public async Task<string> UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0)
+        public async Task UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0)
         {
             try
             {
                 var schedule = await (from x in _db.Schedules where x.IdSchedule == idSchedule select x).FirstAsync();
-                int quantity = (adult + child + baby % 2);
+                int availableQuantity = schedule.QuantityCustomer;
+                int quantity = availableQuantity + (adult + child);
                 schedule.QuantityAdult = adult;
                 schedule.QuantityBaby = baby;
                 schedule.QuantityChild = child;
                 schedule.QuantityCustomer = quantity;
                 await _db.SaveChangesAsync();
-                return "Success";
             }
             catch (Exception e)
             {
-                return e.Message;
             }
         }
 
@@ -1322,7 +1320,7 @@ namespace Travel.Data.Repositories
                                    select x).ToListAsync();
                 var list2 = await (from x in _db.Schedules
                                    where x.IdSchedule != idSchedule
-                                   && !(from s in list1 select s.IdSchedule).Contains(x.IdSchedule) 
+                                   && !(from s in list1 select s.IdSchedule).Contains(x.IdSchedule)
                                    && x.EndDate > dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
                                    && (x.Status == (int)StatusSchedule.Free && x.QuantityCustomer <= x.MinCapacity)
@@ -1334,62 +1332,62 @@ namespace Travel.Data.Repositories
                 var lsFinal = list1.Concat(list2).ToList();
                 lsFinal = lsFinal.Shuffle(rd);
 
-                var list =   (from s in lsFinal
-                                  select new Schedule
-                                  {
-                                      Alias = s.Alias,
-                                      Approve = s.Approve,
-                                      BeginDate = s.BeginDate,
-                                      QuantityAdult = s.QuantityAdult,
-                                      QuantityBaby = s.QuantityBaby,
-                                      QuantityChild = s.QuantityChild,
-                                      CarId = s.CarId,
-                                      Description = s.Description,
-                                      DepartureDate = s.DepartureDate,
-                                      ReturnDate = s.ReturnDate,
-                                      EndDate = s.EndDate,
-                                      Isdelete = s.Isdelete,
-                                      EmployeeId = s.EmployeeId,
-                                      IdSchedule = s.IdSchedule,
-                                      MaxCapacity = s.MaxCapacity,
-                                      MinCapacity = s.MinCapacity,
-                                      PromotionId = s.PromotionId,
-                                      DeparturePlace = s.DeparturePlace,
-                                      Status = s.Status,
-                                      TourId = s.TourId,
-                                      FinalPrice = s.FinalPrice,
-                                      FinalPriceHoliday = s.FinalPriceHoliday,
-                                      AdditionalPrice = s.AdditionalPrice,
-                                      AdditionalPriceHoliday = s.AdditionalPriceHoliday,
-                                      IsHoliday = s.IsHoliday,
-                                      Profit = s.Profit,
-                                      QuantityCustomer = s.QuantityCustomer,
-                                      TimePromotion = s.TimePromotion,
-                                      Vat = s.Vat,
-                                      TotalCostTourNotService = s.TotalCostTourNotService,
-                                      CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
-                                      Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
-                                      Promotions = (from p in _db.Promotions where p.IdPromotion == s.PromotionId select p).FirstOrDefault(),
-                                      Tour = (from t in _db.Tour
-                                              where s.TourId == t.IdTour
-                                              select new Tour
-                                              {
-                                                  Thumbnail = t.Thumbnail,
-                                                  ToPlace = t.ToPlace,
-                                                  IdTour = t.IdTour,
-                                                  NameTour = t.NameTour,
-                                                  Alias = t.Alias,
-                                                  ApproveStatus = t.ApproveStatus,
-                                                  CreateDate = t.CreateDate,
-                                                  IsActive = t.IsActive,
-                                                  IsDelete = t.IsDelete,
-                                                  ModifyBy = t.ModifyBy,
-                                                  ModifyDate = t.ModifyDate,
-                                                  Rating = t.Rating,
-                                                  Status = t.Status
-                                              }).First(),
+                var list = (from s in lsFinal
+                            select new Schedule
+                            {
+                                Alias = s.Alias,
+                                Approve = s.Approve,
+                                BeginDate = s.BeginDate,
+                                QuantityAdult = s.QuantityAdult,
+                                QuantityBaby = s.QuantityBaby,
+                                QuantityChild = s.QuantityChild,
+                                CarId = s.CarId,
+                                Description = s.Description,
+                                DepartureDate = s.DepartureDate,
+                                ReturnDate = s.ReturnDate,
+                                EndDate = s.EndDate,
+                                Isdelete = s.Isdelete,
+                                EmployeeId = s.EmployeeId,
+                                IdSchedule = s.IdSchedule,
+                                MaxCapacity = s.MaxCapacity,
+                                MinCapacity = s.MinCapacity,
+                                PromotionId = s.PromotionId,
+                                DeparturePlace = s.DeparturePlace,
+                                Status = s.Status,
+                                TourId = s.TourId,
+                                FinalPrice = s.FinalPrice,
+                                FinalPriceHoliday = s.FinalPriceHoliday,
+                                AdditionalPrice = s.AdditionalPrice,
+                                AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                                IsHoliday = s.IsHoliday,
+                                Profit = s.Profit,
+                                QuantityCustomer = s.QuantityCustomer,
+                                TimePromotion = s.TimePromotion,
+                                Vat = s.Vat,
+                                TotalCostTourNotService = s.TotalCostTourNotService,
+                                CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
+                                Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
+                                Promotions = (from p in _db.Promotions where p.IdPromotion == s.PromotionId select p).FirstOrDefault(),
+                                Tour = (from t in _db.Tour
+                                        where s.TourId == t.IdTour
+                                        select new Tour
+                                        {
+                                            Thumbnail = t.Thumbnail,
+                                            ToPlace = t.ToPlace,
+                                            IdTour = t.IdTour,
+                                            NameTour = t.NameTour,
+                                            Alias = t.Alias,
+                                            ApproveStatus = t.ApproveStatus,
+                                            CreateDate = t.CreateDate,
+                                            IsActive = t.IsActive,
+                                            IsDelete = t.IsDelete,
+                                            ModifyBy = t.ModifyBy,
+                                            ModifyDate = t.ModifyDate,
+                                            Rating = t.Rating,
+                                            Status = t.Status
+                                        }).First(),
 
-                                  }).OrderBy(x => x.DepartureDate).ToList();
+                            }).OrderBy(x => x.DepartureDate).ToList();
 
 
                 var result = Mapper.MapSchedule(list);
@@ -1411,23 +1409,21 @@ namespace Travel.Data.Repositories
 
 
         #region dang chỉnh
-        public Response DeletePlace(Guid id, Guid idUser)
+        public Response Delete(string idSchedule, Guid idUser)
         {
             try
             {
-                var place = (from x in _db.Places
-                             where x.IdPlace == id
-                             select x).FirstOrDefault();
+                var schedule = (from x in _db.Schedules
+                             where x.IdSchedule == idSchedule
+                                select x).FirstOrDefault();
 
                 var userLogin = (from x in _db.Employees
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
-                if (place.Approve == (int)ApproveStatus.Approved)
+                if (schedule.Approve == (int)ApproveStatus.Approved)
                 {
-                    place.ModifyBy = userLogin.NameEmployee;
-                    place.IdUserModify = userLogin.IdEmployee;
-                    place.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
-                    place.Approve = (int)ApproveStatus.Waiting;
+                    schedule.IdUserModify = userLogin.IdEmployee;
+                    schedule.Approve = (int)ApproveStatus.Waiting;
 
                     _db.SaveChanges();
 
@@ -1435,48 +1431,58 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    if (place.IdUserModify == idUser)
+                    if (schedule.IdUserModify == idUser)
                     {
-                        if (place.TypeAction == "insert")
+                        if (schedule.TypeAction == "insert")
                         {
-                            _db.Places.Remove(place);
+                            _db.Schedules.Remove(schedule);
 
                             _db.SaveChanges();
 
                             return Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
                         }
-                        else if (place.TypeAction == "update")
+                        else if (schedule.TypeAction == "update")
                         {
-                            var idPlaceTemp = place.IdAction;
+                            var idScheduleTemp = schedule.IdAction;
                             // old hotel
-                            var placeTemp = (from x in _db.Places
-                                             where x.IdPlace == Guid.Parse(idPlaceTemp)
-                                             select x).FirstOrDefault();
-                            place.Approve = (int)ApproveStatus.Approved;
-                            place.IdAction = null;
-                            place.TypeAction = null;
-                            #region restore old data
+                            var scheduleTemp = (from x in _db.Schedules
+                                             where x.IdSchedule == idScheduleTemp
+                                                select x).FirstOrDefault();
+                            schedule.Approve = (int)ApproveStatus.Approved;
+                            schedule.IdAction = null;
+                            schedule.TypeAction = null;
+                            #region restore data
 
-                            place.Approve = (int)ApproveStatus.Approved;
-                            place.Address = placeTemp.Address;
+                            schedule.BeginDate = scheduleTemp.BeginDate;
+                            schedule.CarId = scheduleTemp.CarId;
+                            schedule.DepartureDate = scheduleTemp.DepartureDate;
+                            schedule.DeparturePlace = scheduleTemp.DeparturePlace;
+                            schedule.Description = scheduleTemp.Description;
+                            schedule.EmployeeId = scheduleTemp.EmployeeId;
+                            schedule.EndDate = scheduleTemp.EndDate;
+                            schedule.IsHoliday = scheduleTemp.IsHoliday;
+                            schedule.MaxCapacity = scheduleTemp.MaxCapacity;
+                            schedule.MinCapacity = scheduleTemp.MinCapacity;
 
-                            place.Phone = placeTemp.Phone;
-                            place.NamePlace = placeTemp.NamePlace;
-                            place.PriceTicket = placeTemp.PriceTicket;
+                            schedule.PromotionId = scheduleTemp.PromotionId;
+                            schedule.ReturnDate = scheduleTemp.ReturnDate;
+                            schedule.Vat = scheduleTemp.Vat;
+
+
+                            schedule.TimePromotion = scheduleTemp.TimePromotion;
                             #endregion
-
-                            _db.Places.Remove(placeTemp);
+                            _db.Schedules.Remove(scheduleTemp);
 
                             _db.SaveChanges();
 
                             return Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
                         }
-                        else if (place.TypeAction == "restore")
+                        else if (schedule.TypeAction == "restore")
                         {
-                            place.IdAction = null;
-                            place.TypeAction = null;
-                            place.IsDelete = true;
-                            place.Approve = (int)ApproveStatus.Approved;
+                            schedule.IdAction = null;
+                            schedule.TypeAction = null;
+                            schedule.Isdelete = true;
+                            schedule.Approve = (int)ApproveStatus.Approved;
 
                             _db.SaveChanges();
 
@@ -1485,11 +1491,10 @@ namespace Travel.Data.Repositories
                         }
                         else // delete
                         {
-                            place.IdAction = null;
-                            place.TypeAction = null;
-                            place.IsDelete = false;
-                            place.Approve = (int)ApproveStatus.Approved;
-
+                            schedule.IdAction = null;
+                            schedule.TypeAction = null;
+                            schedule.Isdelete = false;
+                            schedule.Approve = (int)ApproveStatus.Approved;
                             _db.SaveChanges();
 
                             return Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
@@ -1508,52 +1513,52 @@ namespace Travel.Data.Repositories
 
             }
         }
-        public Response ApprovePlace(Guid id)
+        public Response Approve(string idSchedule)
         {
             try
             {
-                var place = (from x in _db.Places
-                             where x.IdPlace == id
+                var schedule = (from x in _db.Schedules
+                             where x.IdSchedule == idSchedule
                              && x.Approve == (int)ApproveStatus.Waiting
                              select x).FirstOrDefault();
-                if (place != null)
+                if (schedule != null)
                 {
 
 
-                    if (place.TypeAction == "update")
+                    if (schedule.TypeAction == "update")
                     {
-                        var idPlaceTemp = place.IdAction;
-                        place.Approve = (int)ApproveStatus.Approved;
-                        place.IdAction = null;
-                        place.TypeAction = null;
+                        var idScheduleTemp = schedule.IdAction;
+                        schedule.Approve = (int)ApproveStatus.Approved;
+                        schedule.IdAction = null;
+                        schedule.TypeAction = null;
 
 
                         // delete tempdata
-                        var placeTemp = (from x in _db.Places
-                                         where x.IdPlace == Guid.Parse(idPlaceTemp)
+                        var scheduleTemp = (from x in _db.Schedules
+                                         where x.IdSchedule == idScheduleTemp
                                          select x).FirstOrDefault();
-                        _db.Places.Remove(placeTemp);
+                        _db.Schedules.Remove(scheduleTemp);
                     }
-                    else if (place.TypeAction == "insert")
+                    else if (schedule.TypeAction == "insert")
                     {
-                        place.IdAction = null;
-                        place.TypeAction = null;
-                        place.Approve = (int)ApproveStatus.Approved;
+                        schedule.IdAction = null;
+                        schedule.TypeAction = null;
+                        schedule.Approve = (int)ApproveStatus.Approved;
                     }
-                    else if (place.TypeAction == "restore")
+                    else if (schedule.TypeAction == "restore")
                     {
-                        place.IdAction = null;
-                        place.TypeAction = null;
-                        place.Approve = (int)ApproveStatus.Approved;
-                        place.IsDelete = false;
+                        schedule.IdAction = null;
+                        schedule.TypeAction = null;
+                        schedule.Approve = (int)ApproveStatus.Approved;
+                        schedule.Isdelete = false;
 
                     }
                     else
                     {
-                        place.IdAction = null;
-                        place.TypeAction = null;
-                        place.Approve = (int)ApproveStatus.Approved;
-                        place.IsDelete = true;
+                        schedule.IdAction = null;
+                        schedule.TypeAction = null;
+                        schedule.Approve = (int)ApproveStatus.Approved;
+                        schedule.Isdelete = true;
                     }
 
                     _db.SaveChanges();
@@ -1570,57 +1575,71 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response RefusedPlace(Guid id)
+        public Response Refused(string idSchedule)
         {
             try
             {
-                var place = (from x in _db.Places
-                             where x.IdPlace == id
+                var schedule = (from x in _db.Schedules
+                             where x.IdSchedule == idSchedule
                              && x.Approve == (int)ApproveStatus.Waiting
                              select x).FirstOrDefault();
-                if (place != null)
+                if (schedule != null)
                 {
-                    if (place.TypeAction == "update")
+                    if (schedule.TypeAction == "update")
                     {
-                        var idPlaceTemp = place.IdAction;
+                        var idScheduleTemp = schedule.IdAction;
                         // old hotel
-                        var placeTemp = (from x in _db.Places
-                                         where x.IdPlace == Guid.Parse(idPlaceTemp)
+                        var scheduleTemp = (from x in _db.Schedules
+                                         where x.IdSchedule == idScheduleTemp
+                                         && x.IsTempData == true
                                          select x).FirstOrDefault();
-                        place.Approve = (int)ApproveStatus.Approved;
-                        place.IdAction = null;
-                        place.TypeAction = null;
-                        #region restore old data
 
-                        place.Approve = (int)ApproveStatus.Approved;
-                        place.Address = placeTemp.Address;
+                        schedule.Approve = (int)ApproveStatus.Approved;
+                        schedule.IdAction = null;
+                        schedule.TypeAction = null;
 
-                        place.Phone = placeTemp.Phone;
-                        place.NamePlace = placeTemp.NamePlace;
-                        place.PriceTicket = placeTemp.PriceTicket;
+                        #region restore data
+
+                        schedule.BeginDate = scheduleTemp.BeginDate;
+                        schedule.CarId = scheduleTemp.CarId;
+                        schedule.DepartureDate = scheduleTemp.DepartureDate;
+                        schedule.DeparturePlace = scheduleTemp.DeparturePlace;
+                        schedule.Description = scheduleTemp.Description;
+                        schedule.EmployeeId = scheduleTemp.EmployeeId;
+                        schedule.EndDate = scheduleTemp.EndDate;
+                        schedule.IsHoliday = scheduleTemp.IsHoliday;
+                        schedule.MaxCapacity = scheduleTemp.MaxCapacity;
+                        schedule.MinCapacity = scheduleTemp.MinCapacity;
+
+                        schedule.PromotionId = scheduleTemp.PromotionId;
+                        schedule.ReturnDate = scheduleTemp.ReturnDate;
+                        schedule.Vat = scheduleTemp.Vat;
+
+                       
+                        schedule.TimePromotion = scheduleTemp.TimePromotion;
                         #endregion
 
-                        _db.Places.Remove(placeTemp);
+                        _db.Schedules.Remove(scheduleTemp);
                     }
-                    else if (place.TypeAction == "insert")
+                    else if (schedule.TypeAction == "insert")
                     {
-                        place.IdAction = null;
-                        place.TypeAction = null;
-                        place.Approve = (int)ApproveStatus.Refused;
+                        schedule.IdAction = null;
+                        schedule.TypeAction = null;
+                        schedule.Approve = (int)ApproveStatus.Refused;
                     }
-                    else if (place.TypeAction == "restore")
+                    else if (schedule.TypeAction == "restore")
                     {
-                        place.IdAction = null;
-                        place.TypeAction = null;
-                        place.IsDelete = true;
-                        place.Approve = (int)ApproveStatus.Approved;
+                        schedule.IdAction = null;
+                        schedule.TypeAction = null;
+                        schedule.Isdelete = true;
+                        schedule.Approve = (int)ApproveStatus.Approved;
                     }
                     else // delete
                     {
-                        place.IdAction = null;
-                        place.TypeAction = null;
-                        place.IsDelete = false;
-                        place.Approve = (int)ApproveStatus.Approved;
+                        schedule.IdAction = null;
+                        schedule.TypeAction = null;
+                        schedule.Isdelete = false;
+                        schedule.Approve = (int)ApproveStatus.Approved;
                     }
                     _db.SaveChanges();
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
@@ -1636,7 +1655,6 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-
         public Response Update(UpdateScheduleViewModel input)
         {
             try
@@ -1661,9 +1679,21 @@ namespace Travel.Data.Repositories
                 #region setdata
                 schedule.IdAction = scheduleOld.IdSchedule.ToString();
                 schedule.IdUserModify = input.IdUserModify;
-                schedule.TypeAction = input.TypeAction;
+                schedule.TypeAction = input.TypeAction; // update
                 schedule.Approve = (int)ApproveStatus.Waiting;
 
+                schedule.BeginDate = input.BeginDate;
+                schedule.CarId = input.CarId;
+                schedule.DepartureDate = input.DepartureDate;
+                schedule.DeparturePlace = input.DeparturePlace;
+                schedule.Description = input.Description;
+                schedule.EmployeeId = input.EmployeeId;
+                schedule.EndDate = input.EndDate;
+                schedule.IsHoliday = input.IsHoliday;
+                schedule.MaxCapacity = input.MaxCapacity;
+                schedule.MinCapacity = input.MinCapacity;
+                schedule.ReturnDate = input.ReturnDate;
+                schedule.Vat = input.Vat;
                 #endregion
 
                 _db.SaveChanges();
@@ -1675,8 +1705,26 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-
-
         #endregion
+
+        private bool CheckAnyBookingInSchedule(string idSchedule) // chỉ dùng khi thay đổi thông tin tour
+        {
+            // cách 1
+            var scheduleInTour = (from x in _db.Schedules
+                                  where x.IdSchedule == idSchedule
+                                  && x.QuantityCustomer == 0
+                                  && x.Isdelete == false
+                                  && x.Status == (int)Enums.StatusSchedule.Free 
+                                  && x.Approve == (int)Enums.ApproveStatus.Approved
+                                  select x).FirstOrDefault();
+            if (scheduleInTour != null) // có dữ liệu, tức là ko có tour
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }

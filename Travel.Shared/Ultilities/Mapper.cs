@@ -144,6 +144,7 @@ namespace Travel.Shared.Ultilities
                               .ForMember(dto => dto.IsTempData, opt => opt.MapFrom(src => false))
                .ForMember(dto => dto.IdUserModify, opt => opt.MapFrom(src => src.IdUserModify))
                .ForMember(dto => dto.TypeAction, opt => opt.MapFrom(src => "insert"))
+               .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => Enums.ApproveStatus.Waiting))
                ;
 
                 cfg.CreateMap<UpdateScheduleViewModel, Schedule>()
