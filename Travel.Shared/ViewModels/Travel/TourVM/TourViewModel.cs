@@ -28,6 +28,7 @@ namespace Travel.Shared.ViewModels.Travel
         private bool isDelete;
         private bool isActive;
 
+        private string typeAction;
         private int quantityBooked;
 
 
@@ -48,5 +49,6 @@ namespace Travel.Shared.ViewModels.Travel
         public string IdTour { get => idTour; set => idTour = value; }
         public TourDetailViewModel TourDetail { get => tourDetail; set => tourDetail = value; }
         public int QuantityBooked { get => quantityBooked; set => quantityBooked = value; }
+        public string TypeAction { get => typeAction; set => typeAction = value; }
     }
 }

@@ -597,12 +597,12 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Approve(string id)
+        public Response Approve(string idTour)
         {
             try
             {
                 var tour = (from x in _db.Tour
-                             where x.IdTour == id
+                             where x.IdTour == idTour
                              && x.ApproveStatus == (int)ApproveStatus.Waiting
                              select x).FirstOrDefault();
                 if (tour != null)
@@ -746,6 +746,7 @@ namespace Travel.Data.Repositories
                 {
                     tour.IsDelete = false;
                     tour.IdUserModify = userLogin.IdEmployee;
+                    tour.ApproveStatus = (int)ApproveStatus.Waiting;
                     tour.TypeAction = "restore";
                     tour.ModifyBy = userLogin.NameEmployee;
                     tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);

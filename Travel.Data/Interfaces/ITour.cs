@@ -21,7 +21,7 @@ namespace Travel.Data.Interfaces
         Response GetTour(string idTour);
         Response Delete(string idTour,Guid idUser);
         Response RestoreTour(string idTour, Guid idUser);
-        Response Approve(string id);
+        Response Approve(string idTour);
         Response Refused(string id);
         Task<Response> GetsTourWithSchedule();
         Task<Response> GetTourById(string idTour);

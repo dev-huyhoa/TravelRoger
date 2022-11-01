@@ -96,12 +96,12 @@ namespace TravelApi.Controllers
 
 
         // POST api/<TourController>
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("approve-tour")]
-        public object Approve(string id)
+        public object Approve(string idTour)
         {
-            res = _tourRes.Approve(id);
+            res = _tourRes.Approve(idTour);
             return Ok(res);
         }
         [HttpGet]
