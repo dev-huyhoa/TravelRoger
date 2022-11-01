@@ -884,21 +884,12 @@ namespace Travel.Data.Repositories
         #region Place
         public Response CreatePlace(CreatePlaceViewModel input)
         {
-            try
-            {
-                Place place
-                 = Mapper.MapCreatePlace(input);
-                place.TypeAction = "insert";
-                _db.Places.Add(place);
-                _db.SaveChanges();
-                res = Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
-                return res;
-            }
-            catch (Exception e)
-            {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
-            }
+            Place place
+                           = Mapper.MapCreatePlace(input);
+            _db.Places.Add(place);
+            _db.SaveChanges();
+            Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+            return res;
         }
         public Response GetsPlace()
         {
