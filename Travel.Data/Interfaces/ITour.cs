@@ -22,7 +22,7 @@ namespace Travel.Data.Interfaces
         Response Delete(string idTour,Guid idUser);
         Response RestoreTour(string idTour, Guid idUser);
         Response Approve(string idTour);
-        Response Refused(string id);
+        Response Refused(string idTour);
         Task<Response> GetsTourWithSchedule();
         Task<Response> GetTourById(string idTour);
         Task<Response> GetsTourByRating();

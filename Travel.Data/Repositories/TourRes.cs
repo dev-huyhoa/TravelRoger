@@ -670,12 +670,12 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
-        public Response Refused(string id)
+        public Response Refused(string idTour)
         {
             try
             {
                 var tour = (from x in _db.Tour
-                             where x.IdTour == id
+                             where x.IdTour == idTour
                              && x.ApproveStatus == (int)ApproveStatus.Waiting
                              select x).FirstOrDefault();
                 if (tour != null)

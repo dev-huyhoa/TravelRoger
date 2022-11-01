@@ -104,6 +104,16 @@ namespace TravelApi.Controllers
             res = _tourRes.Approve(idTour);
             return Ok(res);
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("refused-tour")]
+        public object Refused(string idTour)
+        {
+            res = _tourRes.Refused(idTour);
+            return Ok(res);
+        }
+
         [HttpGet]
         [Authorize]
         [Route("delete-tour")]
