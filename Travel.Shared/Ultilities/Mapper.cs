@@ -265,6 +265,7 @@ namespace Travel.Shared.Ultilities
                    .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
                    .ForMember(dto => dto.QuantityBooked, opt => opt.MapFrom(src => src.QuantityBooked))
                    .ForMember(dto => dto.TypeAction, opt => opt.MapFrom(src => src.TypeAction))
+                   .ForMember(dto => dto.IdUserModify, opt => opt.MapFrom(src => src.IdUserModify))
                    ;
 
 

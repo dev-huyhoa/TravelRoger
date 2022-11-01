@@ -127,6 +127,7 @@ namespace Travel.Data.Repositories
             {
                 Tour tour =
                 tour = Mapper.MapCreateTour(input);
+                tour.TypeAction = "insert";
                 _db.Tour.Add(tour);
                 _db.SaveChanges();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
@@ -441,6 +442,7 @@ namespace Travel.Data.Repositories
                 tour.NameTour = input.NameTour;
                 tour.Thumbnail = input.Thumbnail;
                 tour.ToPlace = input.ToPlace;
+                tour.TypeAction = "update";
                 #endregion
 
                 _db.SaveChanges();
@@ -510,6 +512,7 @@ namespace Travel.Data.Repositories
                             if (tour.TypeAction == "insert")
                             {
                                 _db.Tour.Remove(tour);
+                                _db.SaveChanges();
                                 res = Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
                             }
                             else if (tour.TypeAction == "update")
@@ -551,6 +554,7 @@ namespace Travel.Data.Repositories
                                 tour.TypeAction = null;
                                 tour.IsDelete = false;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
+                                _db.SaveChanges();
                                 res = Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                             }
                         }
