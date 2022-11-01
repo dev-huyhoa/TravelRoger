@@ -13,6 +13,6 @@ namespace Travel.Context.Models
         public long ToDate { get; set; }
         public long FromDate { get; set; }
         public int Approve { get; set; }
-        public virtual ICollection<Schedule> Schedules { get; set; }
+        public  ICollection<Schedule> Schedules { get; set; }
     }
 }

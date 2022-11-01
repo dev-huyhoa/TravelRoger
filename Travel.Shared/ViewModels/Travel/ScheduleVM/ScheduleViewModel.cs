@@ -61,7 +61,7 @@ namespace Travel.Shared.ViewModels.Travel
         // service
 
 
-        private CostTour costTour;
+        //private CostTour costTour;
         private Tour tour;
         private ICollection<Timeline> timelines;
 
@@ -95,7 +95,7 @@ namespace Travel.Shared.ViewModels.Travel
         public float TotalCostTourNotService { get => totalCostTourNotService; set => totalCostTourNotService = value; }
         public float AdditionalPrice { get => additionalPrice; set => additionalPrice = value; }
         public float AdditionalPriceHoliday { get => additionalPriceHoliday; set => additionalPriceHoliday = value; }
-        public CostTour CostTour { get => costTour; set => costTour = value; }
+        //public CostTour CostTour { get => costTour; set => costTour = value; }
         public string Description { get => description; set => description = value; }
 
         public string Alias { get => alias; set => alias = value; }
