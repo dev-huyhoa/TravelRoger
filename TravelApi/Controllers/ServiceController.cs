@@ -89,7 +89,7 @@ namespace TravelApi.Controllers
             res = _serviceRes.RefusedHotel(idHotel);
             return Ok(res);
         }
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("delete-hotel")]
         public object DeleteHotel(Guid idHotel, Guid idUser)

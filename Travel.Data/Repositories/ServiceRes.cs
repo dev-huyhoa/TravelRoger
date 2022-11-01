@@ -273,7 +273,8 @@ namespace Travel.Data.Repositories
                     hotel.IdUserModify = userLogin.IdEmployee;
                     hotel.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     hotel.Approve = (int)ApproveStatus.Waiting;
-
+                    // bổ sung isdelete
+                    hotel.IsDelete = true;
                     res = Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
