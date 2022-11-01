@@ -223,7 +223,7 @@ namespace Travel.Data.Repositories
                                       QuantityBooked = x.QuantityBooked,
                                       Schedules = (from s in _db.Schedules
                                                    where s.TourId == x.IdTour
-                                                   && s.BeginDate >= dateTimeNow
+                                                   && s.EndDate <= dateTimeNow
                                                    && s.Status == (int)Enums.StatusSchedule.Free
                                                    orderby s.DepartureDate
                                                    select new Schedule {
@@ -319,7 +319,7 @@ namespace Travel.Data.Repositories
                                      QuantityBooked = x.QuantityBooked,
                                      Schedules = (from s in _db.Schedules
                                                   where s.TourId == x.IdTour
-                                                  && s.EndDate < dateTimeNow
+                                                  && s.EndDate <= dateTimeNow
                                                   && s.Status == (int)Enums.StatusSchedule.Free
                                                   select new Schedule
                                                   {
@@ -790,7 +790,7 @@ namespace Travel.Data.Repositories
                                       QuantityBooked = x.QuantityBooked,
                                       Schedules = (from s in _db.Schedules
                                                    where s.TourId == x.IdTour
-                                                   && s.BeginDate >= dateTimeNow
+                                                   && s.EndDate <= dateTimeNow
                                                    && s.Status == (int)Enums.StatusSchedule.Free
                                                    orderby s.DepartureDate
                                                    select new Schedule
