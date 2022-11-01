@@ -350,7 +350,8 @@ namespace Travel.Data.Repositories
                             where s.TourId == idTour
                             && s.Isdelete == false
                             && s.EndDate > dateTimeNow
-                            && s.IsTempData == false
+                            && s.Status == (int)Enums.StatusSchedule.Free
+                            && s.IsTempData == false 
                             orderby s.DepartureDate
                             select new Schedule
                             {
