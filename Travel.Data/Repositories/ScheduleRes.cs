@@ -1151,28 +1151,26 @@ namespace Travel.Data.Repositories
                                    where x.IdSchedule != idSchedule
                                    && x.EndDate > dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
-                                   && (x.FinalPrice >= closetPrice1 || x.FinalPrice <= closetPrice2)
+                                   && (x.FinalPrice >= closetPrice1 && x.FinalPrice <= closetPrice2)
                                    && x.Isdelete == false
                                    && x.Approve == (int)Enums.ApproveStatus.Approved
                                    && x.IsTempData == false
                                    select x).ToListAsync();
                 var list2 = await (from x in _db.Schedules
                                    where x.IdSchedule != idSchedule
-                               && x.EndDate > dateTimeNow
+                                   && !(from s in list1 select s.IdSchedule).Contains(x.IdSchedule) 
+                                   && x.EndDate > dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
                                    && (x.Status == (int)StatusSchedule.Free && x.QuantityCustomer <= x.MinCapacity)
-                                       && x.Isdelete == false
-                                    && x.Approve == (int)Enums.ApproveStatus.Approved
-                                    && x.IsTempData == false
+                                   && x.Isdelete == false
+                                   && x.Approve == (int)Enums.ApproveStatus.Approved
+                                   && x.IsTempData == false
                                    select x).OrderBy(x => x.BeginDate).ToListAsync();
                 var rd = new Random();
-                list1 = list1.Shuffle(rd);
-                list2 = list2.Shuffle(rd);
+                var lsFinal = list1.Concat(list2).ToList();
+                lsFinal = lsFinal.Shuffle(rd);
 
-
-                var list = await (from s in _db.Schedules
-                                  where s.Isdelete == false
-                                  && s.Approve == (int)Enums.ApproveStatus.Approved
+                var list =   (from s in lsFinal
                                   select new Schedule
                                   {
                                       Alias = s.Alias,
@@ -1227,7 +1225,7 @@ namespace Travel.Data.Repositories
                                                   Status = t.Status
                                               }).First(),
 
-                                  }).OrderBy(x => x.DepartureDate).ToListAsync();
+                                  }).OrderBy(x => x.DepartureDate).ToList();
 
 
                 var result = Mapper.MapSchedule(list);
