@@ -21,15 +21,21 @@ namespace TravelApi.Controllers
     public class TourBookingController : Controller
     {
         private ITourBooking _tourbooking;
+        private readonly ISchedule _schedule;
+
         private Notification message;
         private Response res;
         private IHubContext<TravelHub, ITravelHub> _messageHub;
-        public TourBookingController(ITourBooking tourbooking, IHubContext<TravelHub, ITravelHub> messageHub)
+        public TourBookingController(ITourBooking tourbooking,
+            ISchedule schedule,
+            IHubContext<TravelHub, ITravelHub> messageHub)
         {
             _tourbooking = tourbooking;
+            _schedule = schedule;
             res = new Response();
             _messageHub = messageHub;
         }
+
         [HttpGet]
         [AllowAnonymous]
         [Route("get-tourbooking")]
@@ -49,6 +55,10 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateTourBookingViewModel>(result);
+                int adult = createObj.BookingDetails.Adult;
+                int child = createObj.BookingDetails.Child;
+                int baby = createObj.BookingDetails.Baby;
+                await _schedule.UpdateCapacity(createObj.ScheduleId, adult, child, baby);
                 res =await   _tourbooking.Create(createObj);
                 await _messageHub.Clients.All.Init();
             }

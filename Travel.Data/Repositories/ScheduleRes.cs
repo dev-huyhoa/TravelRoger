@@ -585,22 +585,21 @@ namespace Travel.Data.Repositories
             }
         }
         // chưa cập nhật
-        public async Task<string> UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0)
+        public async Task UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0)
         {
             try
             {
                 var schedule = await (from x in _db.Schedules where x.IdSchedule == idSchedule select x).FirstAsync();
-                int quantity = (adult + child + baby % 2);
+                int availableQuantity = schedule.QuantityCustomer;
+                int quantity = availableQuantity + (adult + child);
                 schedule.QuantityAdult = adult;
                 schedule.QuantityBaby = baby;
                 schedule.QuantityChild = child;
                 schedule.QuantityCustomer = quantity;
                 await _db.SaveChangesAsync();
-                return "Success";
             }
             catch (Exception e)
             {
-                return e.Message;
             }
         }
 
@@ -1529,15 +1528,8 @@ namespace Travel.Data.Repositories
                 schedule.IsHoliday = input.IsHoliday;
                 schedule.MaxCapacity = input.MaxCapacity;
                 schedule.MinCapacity = input.MinCapacity;
-
-                schedule.PromotionId = input.PromotionId;
                 schedule.ReturnDate = input.ReturnDate;
                 schedule.Vat = input.Vat;
-
-                var promotion = (from x in _db.Promotions
-                                 where x.IdPromotion == input.PromotionId
-                                 select x).FirstOrDefault();
-                schedule.TimePromotion = promotion.ToDate;
                 #endregion
 
                 _db.SaveChanges();

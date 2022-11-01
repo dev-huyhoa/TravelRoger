@@ -101,8 +101,6 @@ namespace TravelApi.Controllers
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
-
-
         [HttpGet]
         [AllowAnonymous]
         [Route("gets-schedule")]
