@@ -144,6 +144,23 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
+        [Route("cus-gets-schedule")]
+        public async Task<object> GetsSchedule()
+        {
+            res = await _schedule.GetsSchedule();
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("gets-schedule-promotion")]
+        public async Task<object> GetsSchedulePromotion()
+        {
+            res = await _schedule.GetsSchedulePromotion();
+            return Ok(res);
+        }
+        [HttpGet]
+        [AllowAnonymous]
         [Route("gets-schedule-flash-sale")]
         public async Task<object> GetsScheduleFlashSale()
         {

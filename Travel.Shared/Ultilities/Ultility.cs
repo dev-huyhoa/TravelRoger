@@ -27,7 +27,7 @@ namespace Travel.Shared.Ultilities
             for (var i = list.Count; i > 0; i--)
                 list.Swap(0, rnd.Next(0, i));
 
-            return list.Take(2).ToList();
+            return list.Take(4).ToList();
         }
         public static void Swap<T>(this List<T> list, int i, int j)
         {

@@ -27,7 +27,9 @@ namespace Travel.Data.Interfaces
         Task<Response> SearchTour(string? from, string? to, DateTime? departureDate, DateTime? returnDate);
 
 
+        Task<Response> GetsSchedule();
         Task<Response> GetsScheduleFlashSale();
+        Task<Response> GetsSchedulePromotion();
         Task<Response> GetsRelatedSchedule(string idSchedule);
     }
 }
