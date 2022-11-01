@@ -15,8 +15,10 @@ namespace Travel.Data.Interfaces
         Response Gets();
         Response Create(CreateScheduleViewModel input);
         Response Update(UpdateScheduleViewModel input);
-        Response Delete(string idSchedule);
-        Response RestoreShedule(string idSchedule);
+        Response Delete(string idSchedule, Guid idUser);
+        Response Refused(string idSchedule);
+        Response Approve(string idSchedule);
+        Response RestoreShedule(string idSchedule, Guid idUser);
         Response UpdatePromotion(string idSchedule, int idPromotion);
         Task<string> UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0);
         Response GetsSchedulebyIdTour(string idTour, bool isDelete);

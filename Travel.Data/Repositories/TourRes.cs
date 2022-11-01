@@ -36,7 +36,6 @@ namespace Travel.Data.Repositories
                 JObject frmData = JObject.Parse(frmdata["data"]);
                 if(frmData != null)
                 {
-
                     var tourName = PrCommon.GetString("nameTour", frmData);
                     if (String.IsNullOrEmpty(tourName))
                     {
@@ -50,14 +49,23 @@ namespace Travel.Data.Repositories
                         idTour = Ultility.GenerateId(tourName);
                     }
 
+                    #region check update info tour when having booking
+
+                    if (isUpdate)
+                    {
+                        idTour = PrCommon.GetString("idTour", frmData);
+                        if (CheckAnyBookingInTour(idTour))
+                        {
+                            _message = Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString()).Notification;
+                            return  null;
+                        }
+                    }
+
+                    #endregion
+
                     var thumbnail = PrCommon.GetString("thumbnail", frmData);
                     if (String.IsNullOrEmpty(thumbnail))
                     {
-                    }
-                    var fromPlace = PrCommon.GetString("fromPlace", frmData);
-                    if (String.IsNullOrEmpty(fromPlace))
-                    {
-
                     }
                     var toPlace = PrCommon.GetString("toPlace", frmData);
                     if (String.IsNullOrEmpty(toPlace))
@@ -401,6 +409,8 @@ namespace Travel.Data.Repositories
         {
             try
             {
+
+
                 Tour tour = (from x in _db.Tour
                              where x.IdTour == input.IdTour
                              && x.IsDelete == false
@@ -768,8 +778,6 @@ namespace Travel.Data.Repositories
         }
 
         #endregion
-
-
         public async Task<Response> GetsTourByRating()
         {
             try
@@ -866,6 +874,26 @@ namespace Travel.Data.Repositories
             catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+
+        private bool CheckAnyBookingInTour(string idTour) // chỉ dùng khi thay đổi thông tin tour
+        {
+            // cách 1
+            var scheduleInTour = (from x in _db.Schedules
+                                  where x.TourId == idTour
+                                  && x.Isdelete == false
+                                  && x.Approve == (int)Enums.ApproveStatus.Approved
+                                  && (x.Status == (int)Enums.StatusSchedule.Finished || (x.Status == (int)Enums.StatusSchedule.Free && x.QuantityCustomer == 0))
+                                  select x).ToList();
+            if (scheduleInTour.Count != 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
             }
         }
 

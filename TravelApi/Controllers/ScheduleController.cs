@@ -63,6 +63,46 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+
+        [HttpGet]
+        [Authorize]
+        [Route("delete-schedule")]
+        public object DeleteTour(string idSchedule, Guid idUser)
+        {
+            res = _schedule.Delete(idSchedule, idUser);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+        [HttpGet]
+        [Authorize]
+        [Route("restore-schedule")]
+        public object RestoreSchedule(string idSchedule, Guid idUser)
+        {
+            res = _schedule.RestoreShedule(idSchedule, idUser);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("approve-schedule")]
+        public object ApproveSchedule(string idSchedule)
+        {
+            res = _schedule.Approve(idSchedule);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+        [HttpGet]
+        [Authorize]
+        [Route("refused-schedule")]
+        public object RefusedSchedule(string idSchedule)
+        {
+            res = _schedule.Refused(idSchedule);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+
+
         [HttpGet]
         [AllowAnonymous]
         [Route("gets-schedule")]
@@ -106,24 +146,7 @@ namespace TravelApi.Controllers
         }
 
 
-        [HttpGet]
-        [Authorize]
-        [Route("delete-schedule")]
-        public object DeleteTour(string idSchedule)
-        {
-            res = _schedule.Delete(idSchedule);
-            _messageHub.Clients.All.Init();
-            return Ok(res);
-        }
-        [HttpGet]
-        [Authorize]
-        [Route("restore-schedule")]
-        public object RestoreSchedule(string idSchedule)
-        {
-            res = _schedule.RestoreShedule(idSchedule);
-            _messageHub.Clients.All.Init();
-            return Ok(res);
-        }
+
         [HttpGet]
         [AllowAnonymous]
         [Route("cus-search-schedule")]
