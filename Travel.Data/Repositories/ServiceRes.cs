@@ -331,9 +331,8 @@ namespace Travel.Data.Repositories
                             hotel.TypeAction = null;
                             hotel.IsDelete = false;
                             hotel.Approve = (int)ApproveStatus.Approved;
+                            res = Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                         }
-                        hotel.Approve = (int)ApproveStatus.Approved;
-                        res = Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                     }
                     else
                     {
