@@ -22,11 +22,13 @@ namespace Travel.Data.Repositories
         private readonly TravelContext _db;
         private Notification message;
         private readonly IConfiguration _config;
+        private Response res;
         public CustomerRes(TravelContext db, IConfiguration config)
         {
             _db = db;
             message = new Notification();
             _config = config;
+            res = new Response();
         }
 
         public string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate)
@@ -47,8 +49,14 @@ namespace Travel.Data.Repositories
                     }
 
                     var email = PrCommon.GetString("email", frmData);
-                    if (String.IsNullOrEmpty(email))
+                    if (!String.IsNullOrEmpty(email) && isUpdate == false)
                     {
+                        var check = CheckEmailCustomer(email);
+                        if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
+                        {
+                            _message = check.Notification;
+                            return string.Empty;
+                        }
                     }
 
 
@@ -332,6 +340,30 @@ namespace Travel.Data.Repositories
             catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response CheckEmailCustomer(string email)
+        {
+            try
+            {
+                var cus = (from x in _db.Customers where x.IsDelete == false && x.Email == email select x).Count();
+                if (cus > 0)
+                {
+                    res.Notification.DateTime = DateTime.Now;
+                    res.Notification.Description = "Email";
+                    res.Notification.Messenge = "[" + email + "] này đã được đăng ký !";
+                    res.Notification.Type = "Validation";
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
             }
         }
     }
