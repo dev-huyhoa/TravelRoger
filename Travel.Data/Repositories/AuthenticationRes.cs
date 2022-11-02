@@ -214,10 +214,13 @@ namespace Travel.Data.Responsives
                            where x.IsDelete == false &&
                                  x.IdCustomer == idCus
                            select x).FirstOrDefault();
-                cus.AccessToken = null;
-                cus.GoogleToken = null;
-                cus.FbToken = null;
-                _db.SaveChanges();
+                if (cus != null)
+                {
+                    cus.AccessToken = null;
+                    cus.GoogleToken = null;
+                    cus.FbToken = null;
+                    _db.SaveChanges();
+                }
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Đăng xuất thành công !";
                 res.Notification.Type = "Success";
@@ -368,6 +371,18 @@ namespace Travel.Data.Responsives
                                     x.IsBlock == true &&
                                     x.Email == email
                               select x).FirstOrDefault();
+
+                if (result != null)
+                {
+                    var dateNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    if (result.TimeBlock <= dateNow)
+                    {
+                        result.IsBlock = false;
+                        result.TimeBlock = 0;
+                        _db.SaveChanges();
+                        return null;
+                    }
+                }
                 return result;
             }
             catch (Exception)
