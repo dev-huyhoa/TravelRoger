@@ -8,6 +8,7 @@ using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,14 +17,14 @@ using Travel.Shared.ViewModels;
 
 namespace Travel.Shared.Ultilities
 {
-   
+
     public static class Ultility
     {
         private static Notification message = new Notification();
         private static Image image = new Image();
 
         public static List<T> Shuffle<T>(this List<T> list, Random rnd)
-{
+        {
             for (var i = list.Count; i > 0; i--)
                 list.Swap(0, rnd.Next(0, i));
 
@@ -37,16 +38,22 @@ namespace Travel.Shared.Ultilities
         }
         public static T DeepCopy<T>(this T self)
         {
-            var serialized = JsonSerializer.Serialize(self);
-            return JsonSerializer.Deserialize<T>(serialized);
+            var serialized = JsonSerializer.Serialize(self, new JsonSerializerOptions()
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            });
+            return JsonSerializer.Deserialize<T>(serialized, new JsonSerializerOptions()
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            });
         }
-        public static Response Responses(string message, string type,object content = null, string description = null)
+        public static Response Responses(string message, string type, object content = null, string description = null)
         {
             Response res = new Response();
             res.Notification.DateTime = DateTime.Now;
             res.Notification.Description = description;
             res.Content = content;
-            res.Notification.Messenge =  message;
+            res.Notification.Messenge = message;
             res.Notification.Type = type;
             return res;
         }
@@ -90,7 +97,7 @@ namespace Travel.Shared.Ultilities
             }
             return url;
         }
-        public static string GenerateId(string phraseName )
+        public static string GenerateId(string phraseName)
         {
             string[] words = phraseName.Split(' ');
             var resultString = new StringBuilder();
@@ -288,7 +295,7 @@ namespace Travel.Shared.Ultilities
         {
             try
             {
-          
+
                 string body = $@"<div style='max-width: 60vw; min-height:50%; background-color: whitesmoke; padding: 50px; border-radius:20px; margin: auto'><h1>EMAIL FROM TRAVELROVER</h1><h4>TravelRover. Xin chào quý khách. Cảm ơn đã sử dụng dịch vụ của chúng tôi</h4><h5>{subjectBody}</h5><hr><span>{textHead}:</span> <span style='font-size:32px ;' ><b>{content}</b></span></div>";
 
                 return (body);
@@ -300,7 +307,7 @@ namespace Travel.Shared.Ultilities
                 return null;
             }
         }
-        public static void sendEmail(string htmlString, string toEmail, string mailSubject, string emailSend,string keySecurity)
+        public static void sendEmail(string htmlString, string toEmail, string mailSubject, string emailSend, string keySecurity)
         {
             try
             {
@@ -425,7 +432,7 @@ namespace Travel.Shared.Ultilities
             Random random = new Random();
             return random.Next(min, max);
         }
-        public static bool IsNumber( this string Strnumber)
+        public static bool IsNumber(this string Strnumber)
         {
             double n;
             return double.TryParse(Strnumber, out n);
