@@ -905,13 +905,12 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateRating(double rating, string idTour)
+        public Response UpdateRating(int rating, string idTour)
         {
             try
             {
                 var tour = (from x in _db.Tour
                             where x.IdTour == idTour
-                            && x.IsDelete == false
                             select x).FirstOrDefault();
                
                 if (tour != null)
@@ -919,18 +918,17 @@ namespace Travel.Data.Repositories
                     tour.Rating =(rating);                 
                     _db.SaveChanges();
 
-                   res = Ultility.Responses($"đổi thành công !", Enums.TypeCRUD.Success.ToString());
+                    return Ultility.Responses($"Đổi thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
-                    res = Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                
             }
         }
     } 

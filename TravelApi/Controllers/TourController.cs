@@ -164,7 +164,7 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("update-rating-tour")]
-        public object UpdateRatingTour(double rating, string idTour)
+        public object UpdateRatingTour(int rating, string idTour)
         {
             res = _tourRes.UpdateRating(rating, idTour);
             _messageHub.Clients.All.Init();
