@@ -21,6 +21,10 @@ namespace Travel.Context.Models
         public int Point { get; set; }
         public string FbToken { get; set; }
         public string GoogleToken { get; set; }
+        public int Legit { get; set; }
+        public long TimeBlock { get; set; }
+        public bool IsBlock { get; set; }
+        public bool IsBlackList { get; set; }
         public bool IsDelete { get; set; }
     }
 }
