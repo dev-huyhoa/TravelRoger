@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -76,6 +77,23 @@ namespace TravelApi
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Token:Key"]))
                 };
             });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             // add automapper
             Travel.Shared.Ultilities.Mapper.RegisterMappings();

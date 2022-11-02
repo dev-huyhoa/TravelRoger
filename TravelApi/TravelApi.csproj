@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.Calendar.v3" Version="1.50.0.2224" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.17">
@@ -28,6 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Cre\" />
+    <Folder Include="token.json\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
