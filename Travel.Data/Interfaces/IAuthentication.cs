@@ -27,5 +27,13 @@ namespace Travel.Data.Interfaces
         Response CusChangePassword(Guid idCus, string password, string newPassword);
         Response CusForgotPassword(string email, string password);
         string Encryption(string password);
+
+        Response EmpUnBlock(string email);
+        Employee EmpCheckBlock(string email);
+        Response EmpBlock(string email);
+
+        Response CusUnBlock(string email);
+        Customer CusCheckBlock(string email);
+        Response CusBlock(string email);
     }
 }

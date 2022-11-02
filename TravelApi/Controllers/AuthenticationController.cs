@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.Json;
 using Travel.Context.Models;
 using Travel.Data.Interfaces;
+using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 
 namespace TravelApi.Controllers
@@ -38,21 +39,24 @@ namespace TravelApi.Controllers
             {
                 string email = PrCommon.GetString("email", frmData);
                 string password = PrCommon.GetString("password", frmData);
-                var result = authentication.EmpLogin(email);
-                if (result != null)
+                var result = authentication.EmpCheckBlock(email);
+                if (result == null)
                 {
-                    string encryption = authentication.Encryption(password);
-                    result = authentication.EmpLogin(email, encryption);
+                     result = authentication.EmpLogin(email);
                     if (result != null)
                     {
-                        var isNew = authentication.EmpIsNew(email);
-                        if (isNew)
+                        string encryption = authentication.Encryption(password);
+                        result = authentication.EmpLogin(email, encryption);
+                        if (result != null)
                         {
-                            var active = authentication.EmpActive(email);
-                            if (active)
+                            var isNew = authentication.EmpIsNew(email);
+                            if (isNew)
                             {
-                                var claim = new[]
+                                var active = authentication.EmpActive(email);
+                                if (active)
                                 {
+                                    var claim = new[]
+                                    {
                                     new Claim(JwtRegisteredClaimNames.Sub, configuration["Token:Subject"]),
                                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
@@ -61,79 +65,57 @@ namespace TravelApi.Controllers
                                     new Claim("EmployeeId", result.IdEmployee.ToString())
                                 };
 
-                                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));
-                                var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                                var token = new JwtSecurityToken(configuration["Token:Issuer"],
-                                    configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(60),
-                                    //configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(525600),
-                                    signingCredentials: signIn);
+                                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));
+                                    var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                                    var token = new JwtSecurityToken(configuration["Token:Issuer"],
+                                        configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(60),
+                                        //configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(525600),
+                                        signingCredentials: signIn);
 
-                                var tokenJWT = new JwtSecurityTokenHandler().WriteToken(token);
+                                    var tokenJWT = new JwtSecurityTokenHandler().WriteToken(token);
 
-                                authentication.EmpAddToken(tokenJWT, result.IdEmployee);
+                                    authentication.EmpAddToken(tokenJWT, result.IdEmployee);
 
-                                Authentication auth = new Authentication();
-                                auth.Token = tokenJWT;
-                                auth.RoleId = result.RoleId;
-                                auth.Id = result.IdEmployee;
-                                auth.Name = result.NameEmployee;
-                                auth.Image = result.Image;
-                                auth.Email = result.Email;
+                                    Authentication auth = new Authentication();
+                                    auth.Token = tokenJWT;
+                                    auth.RoleId = result.RoleId;
+                                    auth.Id = result.IdEmployee;
+                                    auth.Name = result.NameEmployee;
+                                    auth.Image = result.Image;
+                                    auth.Email = result.Email;
 
-                                res.Content = auth;
-                                res.Notification.DateTime = DateTime.Now;
-                                res.Notification.Description = null;
-                                res.Notification.Messenge = "Đăng nhập thành công !";
-                                res.Notification.Type = "Success";
-
-                                return Ok(res);
+                                    return Ok(Ultility.Responses("Đăng nhập thành công !", Enums.TypeCRUD.Success.ToString(), auth));
+                                }
+                                else
+                                {
+                                    return Ok(Ultility.Responses("Tài khoản của bạn chưa được kích hoạt !", Enums.TypeCRUD.Error.ToString()));
+                                }
                             }
                             else
                             {
-
-                                res.Notification.DateTime = DateTime.Now;
-                                res.Notification.Description = null;
-                                res.Notification.Messenge = "Tài khoản của bạn chưa được kích hoạt !";
-                                res.Notification.Type = "Error";
-                                return Ok(res);
+                                return Ok(Ultility.Responses("Tài khoản của bạn chưa xác nhận email !", Enums.TypeCRUD.Error.ToString()));
                             }
+
                         }
                         else
                         {
-                            res.Notification.DateTime = DateTime.Now;
-                            res.Notification.Description = null;
-                            res.Notification.Messenge = "Tài khoản của bạn chưa xác nhận email !";
-                            res.Notification.Type = "Error";
-                            return Ok(res);
+                            return Ok(Ultility.Responses("Sai mật khẩu !", Enums.TypeCRUD.Error.ToString()));
                         }
 
                     }
                     else
                     {
-                        res.Notification.DateTime = DateTime.Now;
-                        res.Notification.Description = null;
-                        res.Notification.Messenge = "Sai mật khẩu !";
-                        res.Notification.Type = "Error";
-                        return Ok(res);
+                        return Ok(Ultility.Responses("Không tìm thấy email [" + email + "] trên hệ thống !", Enums.TypeCRUD.Error.ToString()));
                     }
-
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Description = null;
-                    res.Notification.Messenge = "Không tìm thấy email [" + email + "] trên hệ thống !";
-                    res.Notification.Type = "Error";
-                    return Ok(res);
+                    return Ok(Ultility.Responses("", Enums.TypeCRUD.Block.ToString(), result.TimeBlock));
                 }
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Đăng nhập thất bại !";
-                res.Notification.Type = "Error";
-                return Ok(res);
+                return Ok(Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Block.ToString(), description: e.Message));
             }
 
         }
@@ -149,47 +131,47 @@ namespace TravelApi.Controllers
                 string password = PrCommon.GetString("password", frmData);
                 string googleToken = PrCommon.GetString("googleToken", frmData);
 
-                var result = authentication.CusLogin(email);
+                var result = authentication.CusCheckBlock(email);
 
-                if (result == null && !string.IsNullOrEmpty(googleToken))
+                if (result == null)
                 {
-                    result = new Customer();
-                    result.Email = PrCommon.GetString("email", frmData);
-                    result.Password = googleToken;
-                    result.NameCustomer = PrCommon.GetString("nameCustomer", frmData);
-                    var status = authentication.CreateAccountGoogle(result);
-                    if (!status)
+                    result = authentication.CusLogin(email);
+                    if (result == null && !string.IsNullOrEmpty(googleToken))
                     {
-                        res.Notification.DateTime = DateTime.Now;
-                        res.Notification.Messenge = "Đăng nhập bằng google thất bại !";
-                        res.Notification.Type = "Error";
-                        return Ok(res);
-                    }
-                }
-
-                if (result != null)
-                {
-                    if (string.IsNullOrEmpty(googleToken))
-                    {
-                        string encryption = authentication.Encryption(password);
-                        result = authentication.CusLogin(email, encryption);
-                    }
-                    else
-                    {
-                        var status = authentication.CusAddTokenGoogle(googleToken, result.IdCustomer);
+                        result = new Customer();
+                        result.Email = PrCommon.GetString("email", frmData);
+                        result.Password = googleToken;
+                        result.NameCustomer = PrCommon.GetString("nameCustomer", frmData);
+                        var status = authentication.CreateAccountGoogle(result);
                         if (!status)
                         {
-                            res.Notification.DateTime = DateTime.Now;
-                            res.Notification.Messenge = "Đăng nhập bằng google thất bại !";
-                            res.Notification.Type = "Error";
-                            return Ok(res);
+                            return Ok(Ultility.Responses("Đăng nhập bằng google thất bại!", Enums.TypeCRUD.Error.ToString()));
                         }
                     }
 
                     if (result != null)
                     {
-                        var claim = new[]
-                                {
+                        if (string.IsNullOrEmpty(googleToken))
+                        {
+                            string encryption = authentication.Encryption(password);
+                            result = authentication.CusLogin(email, encryption);
+                        }
+                        else
+                        {
+                            var status = authentication.CusAddTokenGoogle(googleToken, result.IdCustomer);
+                            if (!status)
+                            {
+                                res.Notification.DateTime = DateTime.Now;
+                                res.Notification.Messenge = "Đăng nhập bằng google thất bại !";
+                                res.Notification.Type = "Error";
+                                return Ok(res);
+                            }
+                        }
+
+                        if (result != null)
+                        {
+                            var claim = new[]
+                                    {
                                     new Claim(JwtRegisteredClaimNames.Sub, configuration["Token:Subject"]),
                                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
@@ -197,57 +179,44 @@ namespace TravelApi.Controllers
                                     new Claim("CustomerId", result.IdCustomer.ToString())
                                 };
 
-                        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));
-                        var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                        var token = new JwtSecurityToken(configuration["Token:Issuer"],
-                            configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(60),
-                            //configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(525600),
-                            signingCredentials: signIn);
+                            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));
+                            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                            var token = new JwtSecurityToken(configuration["Token:Issuer"],
+                                configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(60),
+                                //configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(525600),
+                                signingCredentials: signIn);
 
-                        var tokenJWT = new JwtSecurityTokenHandler().WriteToken(token);
+                            var tokenJWT = new JwtSecurityTokenHandler().WriteToken(token);
 
-                        authentication.CusAddToken(tokenJWT, result.IdCustomer);
+                            authentication.CusAddToken(tokenJWT, result.IdCustomer);
 
-                        Authentication auth = new Authentication();
-                        auth.Token = tokenJWT;
-                        auth.Id = result.IdCustomer;
-                        auth.Name = result.NameCustomer;
-                        auth.Email = result.Email;
+                            Authentication auth = new Authentication();
+                            auth.Token = tokenJWT;
+                            auth.Id = result.IdCustomer;
+                            auth.Name = result.NameCustomer;
+                            auth.Email = result.Email;
 
-                        res.Content = auth;
-                        res.Notification.DateTime = DateTime.Now;
-                        res.Notification.Description = null;
-                        res.Notification.Messenge = "Đăng nhập thành công !";
-                        res.Notification.Type = "Success";
+                            return Ok(Ultility.Responses("Đăng nhập thành công !", Enums.TypeCRUD.Success.ToString(), auth));
+                        }
+                        else
+                        {
+                            return Ok(Ultility.Responses("Sai mật khẩu !", Enums.TypeCRUD.Error.ToString()));
+                        }
 
-                        return Ok(res);
                     }
                     else
                     {
-                        res.Notification.DateTime = DateTime.Now;
-                        res.Notification.Description = null;
-                        res.Notification.Messenge = "Sai mật khẩu !";
-                        res.Notification.Type = "Error";
-                        return Ok(res);
+                        return Ok(Ultility.Responses("Không tìm thấy email [" + email + "] trên hệ thống !", Enums.TypeCRUD.Error.ToString()));
                     }
-
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Description = null;
-                    res.Notification.Messenge = "Không tìm thấy email [" + email + "] trên hệ thống !";
-                    res.Notification.Type = "Error";
-                    return Ok(res);
+                    return Ok(Ultility.Responses("", Enums.TypeCRUD.Block.ToString(), result.TimeBlock));
                 }
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Đăng nhập thất bại !";
-                res.Notification.Type = "Error";
-                return Ok(res);
+                return Ok(Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Block.ToString(), description: e.Message));
             }
 
         }
@@ -285,6 +254,25 @@ namespace TravelApi.Controllers
         public object CusForgotPass(string email, string password)
         {
             res = authentication.CusForgotPassword(email, password);
+            return Ok(res);
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("block-customer")]
+        public object CusBlock(string email)
+        {
+            res = authentication.CusBlock(email);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("block-employee")]
+        public object EmpBlock(string email)
+        {
+            res = authentication.EmpBlock(email);
             return Ok(res);
         }
     }

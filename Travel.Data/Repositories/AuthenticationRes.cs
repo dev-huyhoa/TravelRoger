@@ -102,6 +102,71 @@ namespace Travel.Data.Responsives
             }
         }
 
+        public Response EmpBlock(string email)
+        {
+            try
+            {
+                var timeBlock = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(30));
+                var result = (from x in _db.Employees
+                              where x.IsDelete == false &&
+                                    x.Email == email    
+                              select x).FirstOrDefault();
+                if (result != null)
+                {
+                    result.IsBlock = true;
+                    result.TimeBlock = timeBlock;
+                    _db.SaveChanges();
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                }
+                return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Employee EmpCheckBlock(string email)
+        {
+            try
+            {
+                var result = (from x in _db.Employees
+                              where x.IsDelete == false &&
+                                    x.IsBlock == true &&
+                                    x.Email == email
+                              select x).FirstOrDefault();
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public Response EmpUnBlock(string email)
+        {
+            try
+            {
+                var result = (from x in _db.Employees
+                              where x.IsDelete == false &&
+                                    x.IsBlock == true &&
+                                    x.Email == email
+                              select x).FirstOrDefault();
+                if (result != null)
+                {
+                    result.IsBlock = false;
+                    result.TimeBlock = 0;
+                    _db.SaveChanges();
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                }
+                return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
         public bool EmpIsNew(string email)
         {
             try
@@ -294,6 +359,71 @@ namespace Travel.Data.Responsives
         //        return false;
         //    }
         //}
+        public Customer CusCheckBlock(string email)
+        {
+            try
+            {
+                var result = (from x in _db.Customers
+                              where x.IsDelete == false &&
+                                    x.IsBlock == true &&
+                                    x.Email == email
+                              select x).FirstOrDefault();
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public Response CusBlock(string email)
+        {
+            try
+            {
+                var timeBlock = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(30));
+                var result = (from x in _db.Customers
+                              where x.IsDelete == false &&
+                                    x.Email == email
+                              select x).FirstOrDefault();
+                if (result != null)
+                {
+                    result.IsBlock = true;
+                    result.TimeBlock = timeBlock;
+                    _db.SaveChanges();
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                }
+                return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response CusUnBlock(string email)
+        {
+            try
+            {
+                var result = (from x in _db.Customers
+                              where x.IsDelete == false &&
+                                    x.IsBlock == true &&
+                                    x.Email == email
+                              select x).FirstOrDefault();
+                if (result != null)
+                {
+                    result.IsBlock = false;
+                    result.TimeBlock = 0;
+                    _db.SaveChanges();
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                }
+                return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
 
         public Response CusChangePassword(Guid idCus, string password, string newPassword)
         {

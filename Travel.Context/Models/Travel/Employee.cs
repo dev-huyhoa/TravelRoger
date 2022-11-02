@@ -24,6 +24,8 @@ namespace Travel.Context.Models
         public bool IsDelete { get; set; }
         public bool IsActive { get; set; }
         public bool IsOnline { get; set; }
+        public long TimeBlock { get; set; }
+        public bool IsBlock { get; set; }
         public virtual Role Role { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
 

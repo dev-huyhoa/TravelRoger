@@ -180,6 +180,10 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Point).HasDefaultValue(0);
                 entity.Property(e => e.Birthday).HasDefaultValue(0);
                 entity.Property(e => e.IsDelete).HasDefaultValue(0);
+                entity.Property(e => e.IsBlackList).HasDefaultValue(0);
+                entity.Property(e => e.IsBlock).HasDefaultValue(0);
+                entity.Property(e => e.TimeBlock).HasDefaultValue(0);
+                entity.Property(e => e.Legit).HasDefaultValue(0);
             });
 
             modelBuilder.Entity<Banner>(entity =>
@@ -289,6 +293,8 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.Phone).HasMaxLength(15).IsRequired(true);
                 entity.Property(e => e.Image).HasMaxLength(255).IsRequired(false);
                 entity.Property(e => e.ModifyBy).HasMaxLength(50);
+                entity.Property(e => e.IsBlock).HasDefaultValue(0);
+                entity.Property(e => e.TimeBlock).HasDefaultValue(0);
                 entity.HasOne(e => e.Role)
                 .WithMany(e => e.Employees)
                 .HasForeignKey(e => e.RoleId);
