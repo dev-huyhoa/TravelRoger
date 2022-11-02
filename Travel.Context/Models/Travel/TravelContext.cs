@@ -73,9 +73,9 @@ namespace Travel.Context.Models.Travel
                 entity.HasKey(e => e.IdTourbooking);
                 entity.Property(e => e.ScheduleId).HasMaxLength(50);
 
-                entity.HasOne(e => e.Schedule)
-                .WithMany(e => e.TourBookings)
-                .HasForeignKey(e => e.ScheduleId);
+                //entity.HasOne(e => e.Schedule)
+                //.WithMany(e => e.TourBookings)
+                //.HasForeignKey(e => e.ScheduleId);
 
 
                 entity.HasOne(e => e.Payment)
