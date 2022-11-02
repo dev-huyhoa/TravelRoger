@@ -160,5 +160,16 @@ namespace TravelApi.Controllers
             res = await _tourRes.GetsTourByRating();
             return Ok(res);
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("update-rating-tour")]
+        public object UpdateRatingTour(double rating, string idTour)
+        {
+            res = _tourRes.UpdateRating(rating, idTour);
+            _messageHub.Clients.All.Init();
+            return Ok(res);
+        }
+
     }
 }

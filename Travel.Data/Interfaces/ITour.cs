@@ -21,10 +21,11 @@ namespace Travel.Data.Interfaces
         Response GetTour(string idTour);
         Response Delete(string idTour,Guid idUser);
         Response RestoreTour(string idTour, Guid idUser);
-        Response Approve(string idTour);
+        Response Approve(string idTour );
         Response Refused(string idTour);
         Task<Response> GetsTourWithSchedule();
         Task<Response> GetTourById(string idTour);
         Task<Response> GetsTourByRating();
+        Response UpdateRating(double rating , string idTour);
     }
 }
