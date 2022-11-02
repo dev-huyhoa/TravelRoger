@@ -102,7 +102,7 @@ namespace Travel.Data.Repositories
                         uHotelObj.SingleRoomPrice = float.Parse(singleRoomPrice);
                         uHotelObj.Star = Convert.ToInt16(star);
                         uHotelObj.IdUserModify = Guid.Parse(idUserModify);
-                        uHotelObj.TypeAction = typeAction;
+                        uHotelObj.TypeAction = "update";
                         return JsonSerializer.Serialize(uHotelObj);
 
                     }
@@ -114,7 +114,7 @@ namespace Travel.Data.Repositories
                         uRestaurantObj.Phone = phone;
                         uRestaurantObj.IdUserModify = Guid.Parse(idUserModify);
                         uRestaurantObj.ComboPrice = float.Parse(comboPrice);
-                        uRestaurantObj.TypeAction = typeAction;
+                        uRestaurantObj.TypeAction = "update";
                         return JsonSerializer.Serialize(uRestaurantObj);
                     }
                     else
@@ -125,7 +125,7 @@ namespace Travel.Data.Repositories
                         uPlaceObj.Name = name;
                         uPlaceObj.Phone = phone;
                         uPlaceObj.IdUserModify = Guid.Parse(idUserModify);
-                        uPlaceObj.TypeAction = typeAction;
+                        uPlaceObj.TypeAction = "update";
                         return JsonSerializer.Serialize(uPlaceObj);
                     }
                 }
@@ -331,12 +331,12 @@ namespace Travel.Data.Repositories
                             hotel.TypeAction = null;
                             hotel.IsDelete = false;
                             hotel.Approve = (int)ApproveStatus.Approved;
-                            res = Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                            return Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                         }
                     }
                     else
                     {
-                        res = Ultility.Responses("Bạn không thể thực thi hành động này !", Enums.TypeCRUD.Success.ToString());
+                        return Ultility.Responses("Bạn không thể thực thi hành động này !", Enums.TypeCRUD.Success.ToString());
                     }
                 }
                 _db.SaveChanges();
@@ -412,7 +412,6 @@ namespace Travel.Data.Repositories
                              select x).FirstOrDefault();
                 if (hotel != null)
                 {
-
 
                     if (hotel.TypeAction == "update")
                     {
