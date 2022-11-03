@@ -364,6 +364,40 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+        public async Task<Response> CancelBooking(string idTourBooking)
+        {
+            try
+            {
+                var tourbooking = await (from tb in _db.Tourbookings
+                                   where tb.IdTourbooking == idTourBooking
+                                   && tb.Status == (int)Enums.StatusBooking.Paying
+                                   select tb).FirstOrDefaultAsync();
+                if (tourbooking != null)
+                {
+                    tourbooking.Status = (int)Enums.StatusBooking.Cancel;
+                    _db.SaveChanges();
+                    //#region sendMail
+
+                    //var emailSend = _config["emailSend"];
+                    //var keySecurity = _config["keySecurity"];
+                    //var stringHtml = Ultility.getHtml($"{bookingNo} <br> Vui lòng ghi nhớ mã BookingNo này", "Thanh toán thành công", "BookingNo");
+
+                    //Ultility.sendEmail(stringHtml, tourbooking.Email, "Thanh toán dịch vụ", emailSend, keySecurity);
+                    //#endregion
+                    return Ultility.Responses("Đã hủy booking !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Hủy booking thất bại !", Enums.TypeCRUD.Error.ToString());
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 
 }

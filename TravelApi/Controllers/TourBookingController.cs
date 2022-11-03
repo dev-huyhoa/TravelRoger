@@ -43,7 +43,14 @@ namespace TravelApi.Controllers
             res = _tourbooking.DoPayment(idTourBooking);
             return Ok(res);
         }
-
+        [HttpGet]
+        [Authorize]
+        [Route("get-tourbooking-by-date")]
+        public object GetTourBookingFromDateToDate(DateTime? fromDateInput, DateTime? toDateInput)
+        {
+            res = _tourbooking.GetTourBookingFromDateToDate(fromDateInput, toDateInput);
+            return Ok(res);
+        }
         [HttpGet]
         [AllowAnonymous]
         [Route("get-tourbooking")]
@@ -85,12 +92,14 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+     
+
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-tourbooking-by-date")]
-        public object GetTourBookingFromDateToDate(DateTime? fromDateInput, DateTime? toDateInput)
+        [Route("cancel-booking")]
+        public async Task<object> CancelBooking(string idTourBooking)
         {
-            res = _tourbooking.GetTourBookingFromDateToDate(fromDateInput, toDateInput);
+            res =await _tourbooking.CancelBooking(idTourBooking);
             return Ok(res);
         }
     }
