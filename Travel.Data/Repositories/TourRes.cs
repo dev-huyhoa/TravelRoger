@@ -414,8 +414,6 @@ namespace Travel.Data.Repositories
         {
             try
             {
-
-
                 Tour tour = (from x in _db.Tour
                              where x.IdTour == input.IdTour
                              && x.IsDelete == false
@@ -430,7 +428,6 @@ namespace Travel.Data.Repositories
                 tourOld.IdAction = tourOld.IdTour.ToString();
                 tourOld.IdTour = $"{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}TempData";
                 tourOld.IsTempdata = true;
-
                 _db.Tour.Add(tourOld);
 
 
@@ -516,7 +513,6 @@ namespace Travel.Data.Repositories
                             if (tour.TypeAction == "insert")
                             {
                                 _db.Tour.Remove(tour);
-                                _db.SaveChanges();
                                 res = Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
                             }
                             else if (tour.TypeAction == "update")
@@ -536,7 +532,7 @@ namespace Travel.Data.Repositories
                                 tour.NameTour = tourTemp.NameTour;
                                 tour.Thumbnail = tourTemp.Thumbnail;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
-
+                                tour.ToPlace = tourTemp.ToPlace;
                                 #endregion
                                 _db.Tour.Remove(tourTemp);
                                 res = Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
@@ -558,9 +554,9 @@ namespace Travel.Data.Repositories
                                 tour.TypeAction = null;
                                 tour.IsDelete = false;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
-                                _db.SaveChanges();
                                 res = Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                             }
+                            _db.SaveChanges();
                         }
                         else
                         {
@@ -710,6 +706,7 @@ namespace Travel.Data.Repositories
                         tour.Alias = tourTemp.Alias;
                         tour.NameTour = tourTemp.NameTour;
                         tour.Thumbnail = tourTemp.Thumbnail;
+                        tour.ToPlace = tourTemp.ToPlace;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         #endregion
                         _db.Tour.Remove(tourTemp);
