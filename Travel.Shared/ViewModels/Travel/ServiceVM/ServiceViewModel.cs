@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Shared.ViewModels.Travel.ContractVM;
 
 namespace Travel.Shared.ViewModels.Travel.ServiceVM
 {
@@ -39,7 +40,7 @@ namespace Travel.Shared.ViewModels.Travel.ServiceVM
            // public string NamePlace { get => namePlace; set => namePlace = value; }
             public float PriceTicket { get => priceTicket; set => priceTicket = value; }
         }
-        public class ParentProperty
+        public class ParentProperty : UpdateApproveData
         {
             private Guid contractId;
             private string modifyBy;
@@ -47,13 +48,14 @@ namespace Travel.Shared.ViewModels.Travel.ServiceVM
             private string phone;
             private string address;
             private string name;
-
+            private string approve;
             public string ModifyBy { get => modifyBy; set => modifyBy = value; }
             public long ModifyDate { get => modifyDate; set => modifyDate = value; }
             public string Phone { get => phone; set => phone = value; }
             public string Address { get => address; set => address = value; }
             public string Name { get => name; set => name = value; }
             public Guid ContractId { get => contractId; set => contractId = value; }
+            public string Approve { get => approve; set => approve = value; }
         }
     }
 }

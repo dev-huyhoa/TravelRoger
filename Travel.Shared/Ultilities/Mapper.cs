@@ -583,7 +583,8 @@ namespace Travel.Shared.Ultilities
                               .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
                               .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                               .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.NameHotel))
-
+                              .ForMember(dto => dto.TypeAction, opt => opt.MapFrom(src => src.TypeAction))
+                              .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => src.Approve))
                ;
                 // create costtour
                 cfg.CreateMap<CreateCostViewModel, CostTour>()
