@@ -3,19 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Travel.Context.Models;
 
 namespace TravelApi.Hubs
 {
-    public class TravelHub : Hub<ITravelHub>
+    public class TravelHub : Hub
     {
-        public async Task SendOffersToUser(List<string> message)
-        {
-            await Clients.All.SendOffersToUser(message);
-        }
+        public string GetConnectionId() => Context.ConnectionId;
+
         public async Task Init()
         {
-            await Clients.All.Init();
+            await Clients.All.SendAsync("Init");
         }
     }
-   
 }

@@ -21,10 +21,9 @@ namespace TravelApi.Controllers
         private IRole role;
         private Notification message;
         private Response res;
-        private IHubContext<TravelHub, ITravelHub> _messageHub;
-        public RoleController(IRole _role, IHubContext<TravelHub, ITravelHub> messageHub)
+
+        public RoleController(IRole _role)
         {
-            _messageHub = messageHub;
             role = _role;
             res = new Response();
         }
@@ -59,7 +58,7 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateRoleViewModel>(result);
                 res = role.CreateRole(createObj);
-              _messageHub.Clients.All.Init();
+               
             }
             else
             {
@@ -81,7 +80,6 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateRoleViewModel>(result);
                 res = role.UpdateRole(updateObj);
-                _messageHub.Clients.All.Init();
             }
             else
             {
@@ -97,7 +95,7 @@ namespace TravelApi.Controllers
         public object RestoreRole(int idRole)
         {
             res = role.RestoreRole(idRole);
-            _messageHub.Clients.All.Init();
+             
             return Ok(res);
         }
         [HttpGet]
@@ -106,7 +104,7 @@ namespace TravelApi.Controllers
         public object DeleteRole(int idRole)
         {
             res = role.DeleteRole(idRole);
-            _messageHub.Clients.All.Init();
+             
             return Ok(res);
         }
     }

@@ -25,15 +25,12 @@ namespace TravelApi.Controllers
 
         private Notification message;
         private Response res;
-        private IHubContext<TravelHub, ITravelHub> _messageHub;
         public TourBookingController(ITourBooking tourbooking,
-            ISchedule schedule,
-            IHubContext<TravelHub, ITravelHub> messageHub)
+            ISchedule schedule)
         {
             _tourbooking = tourbooking;
             _schedule = schedule;
             res = new Response();
-            _messageHub = messageHub;
         }
         [HttpGet]
         [Authorize]
@@ -75,7 +72,6 @@ namespace TravelApi.Controllers
                 int baby = createObj.BookingDetails.Baby;
                 await _schedule.UpdateCapacity(createObj.ScheduleId, adult, child, baby);
                 res =await   _tourbooking.Create(createObj);
-                await _messageHub.Clients.All.Init();
             }
             else
             {

@@ -23,13 +23,11 @@ namespace TravelApi.Controllers
         private readonly ISchedule _schedule;
         private Notification message;
         private Response res;
-        private IHubContext<TravelHub, ITravelHub> _messageHub;
 
-        public ScheduleController(ISchedule schedule, IHubContext<TravelHub, ITravelHub> messageHub)
+        public ScheduleController(ISchedule schedule)
         {
             _schedule = schedule;
             res = new Response();
-            _messageHub = messageHub;
 
         }
 
@@ -70,7 +68,6 @@ namespace TravelApi.Controllers
         public object DeleteTour(string idSchedule, Guid idUser)
         {
             res = _schedule.Delete(idSchedule, idUser);
-            _messageHub.Clients.All.Init();
             return Ok(res);
         }
         [HttpGet]
@@ -79,7 +76,6 @@ namespace TravelApi.Controllers
         public object RestoreSchedule(string idSchedule, Guid idUser)
         {
             res = _schedule.RestoreShedule(idSchedule, idUser);
-            _messageHub.Clients.All.Init();
             return Ok(res);
         }
 
@@ -89,7 +85,6 @@ namespace TravelApi.Controllers
         public object ApproveSchedule(string idSchedule)
         {
             res = _schedule.Approve(idSchedule);
-            _messageHub.Clients.All.Init();
             return Ok(res);
         }
         [HttpGet]
@@ -98,7 +93,6 @@ namespace TravelApi.Controllers
         public object RefusedSchedule(string idSchedule)
         {
             res = _schedule.Refused(idSchedule);
-            _messageHub.Clients.All.Init();
             return Ok(res);
         }
         [HttpGet]
@@ -151,7 +145,6 @@ namespace TravelApi.Controllers
         public async Task<object> SearchSchedule(string from = null, string to = null,DateTime? departureDate = null, DateTime? returnDate = null)
         {
             res = await _schedule.SearchTour(from,to,departureDate,returnDate);
-            await _messageHub.Clients.All.Init();
             return Ok(res);
         }
 

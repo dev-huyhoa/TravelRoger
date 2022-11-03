@@ -10,6 +10,7 @@ using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
 using Travel.Data.Repositories;
 using Travel.Data.Responsives;
+using TravelApi.Hubs.HubServices;
 
 namespace TravelApi.Extensions
 {
@@ -63,6 +64,8 @@ namespace TravelApi.Extensions
    .AddScoped<ITourBooking, TourBookingRes>();
             services
                 .AddScoped<IPromotions, PromotionRes>();
+            services
+          .AddScoped<IHubRepository, HubRepository>();
             return services;
         
 

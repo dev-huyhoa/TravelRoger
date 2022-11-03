@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -15,6 +14,7 @@ using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 using TravelApi.Hubs;
+using TravelApi.Hubs.HubServices;
 
 namespace TravelApi.Controllers
 {
@@ -25,12 +25,12 @@ namespace TravelApi.Controllers
         private IEmployee employee;
         private Notification message;
         private Response res;
-        private IHubContext<TravelHub, ITravelHub> _messageHub;
-        public EmployeeController(IEmployee _employee,
-                 IHubContext<TravelHub, ITravelHub> messageHub)
+        private IHubRepository _hubRepo;
+
+        public EmployeeController(IEmployee _employee, IHubRepository hubRepo)
         {
             employee = _employee;
-            _messageHub = messageHub;
+            _hubRepo = hubRepo;
             res = new Response();
         }
 
@@ -63,7 +63,7 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateEmployeeViewModel>(result);
                 res = employee.CreateEmployee(createObj);
-                _messageHub.Clients.All.Init();
+                _hubRepo.Send();
             }
             else
             {
@@ -85,7 +85,6 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateEmployeeViewModel>(result);
                 res = employee.UpdateEmployee(updateObj);
-                _messageHub.Clients.All.Init();
             }
             else
             {
@@ -99,7 +98,6 @@ namespace TravelApi.Controllers
         public object DeleteEmployee(Guid idEmployee)
         {
             res = employee.DeleteEmployee(idEmployee);
-            _messageHub.Clients.All.Init();
             return Ok(res);
         }
 
@@ -109,7 +107,6 @@ namespace TravelApi.Controllers
         public object RestoreEmployee(Guid idEmployee)
         {
             res = employee.RestoreEmployee(idEmployee);
-            _messageHub.Clients.All.Init();
             return Ok(res);
         }
 
@@ -119,7 +116,6 @@ namespace TravelApi.Controllers
         public object GetEmployee(Guid idEmployee)
         {
             res = employee.GetEmployee(idEmployee);
-            _messageHub.Clients.All.Init();
             return Ok(res);
         }
 

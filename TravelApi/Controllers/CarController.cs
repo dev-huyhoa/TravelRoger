@@ -21,12 +21,10 @@ namespace TravelApi.Controllers
         private ICars car;
         private Notification message;
         private Response res;
-        private IHubContext<TravelHub, ITravelHub> _messageHub;
-        public CarController(ICars _car, IHubContext<TravelHub, ITravelHub> messageHub)
+        public CarController(ICars _car)
         {
             car = _car;
             res = new Response();
-            _messageHub = messageHub;
         }
 
         [HttpGet]
@@ -58,7 +56,6 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateCarViewModel>(result);
                 res = car.Create(createObj);
-                _messageHub.Clients.All.Init();
             }
             else
             {

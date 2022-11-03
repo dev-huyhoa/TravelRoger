@@ -19,13 +19,10 @@ namespace TravelApi.Controllers
     {
         
         private readonly TravelContext _db;
-        private IHubContext<TravelHub, ITravelHub> _messageHub;
 
-        public WeatherForecastController(TravelContext db
-            , IHubContext<TravelHub, ITravelHub> messageHub)
+        public WeatherForecastController(TravelContext db)
         {
             _db = db;
-            _messageHub = messageHub;
         }
         private static readonly string[] Summaries = new[]
         {
@@ -40,7 +37,6 @@ namespace TravelApi.Controllers
             offers.Add("20% Off on IPhone 12");
             offers.Add("15% Off on HP Pavillion");
             offers.Add("25% Off on Samsung Smart TV");
-             _messageHub.Clients.All.SendOffersToUser(offers);
         }
     }
 }

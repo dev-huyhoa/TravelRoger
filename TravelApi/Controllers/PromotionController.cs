@@ -21,13 +21,11 @@ namespace TravelApi.Controllers
         private IPromotions promotion;
         private Notification message;
         private Response res;
-        private IHubContext<TravelHub, ITravelHub> _messageHub;
 
-        public PromotionController(IPromotions _promotion, IHubContext<TravelHub, ITravelHub> messageHub)
+        public PromotionController(IPromotions _promotion)
         {
             promotion = _promotion;
             res = new Response();
-            _messageHub = messageHub;
         }
 
         [HttpGet]
@@ -75,7 +73,6 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdatePromotionViewModel>(result);
                 res = promotion.UpdatePromotion(id,updateObj);
-                _messageHub.Clients.All.Init();
             }
             else
             {

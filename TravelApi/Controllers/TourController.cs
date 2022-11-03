@@ -25,13 +25,12 @@ namespace TravelApi.Controllers
         private readonly ITour _tourRes;
         private Notification message;
         private Response res;
-        private IHubContext<TravelHub, ITravelHub> _messageHub;
 
-        public TourController(ITour tourRes, IHubContext<TravelHub, ITravelHub> messageHub)
+
+        public TourController(ITour tourRes)
         {
             _tourRes = tourRes;
             res = new Response();
-            _messageHub = messageHub;   
         }
 
         [HttpPost]
@@ -45,7 +44,6 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateTourViewModel>(result);
                 res = _tourRes.Create(createObj);
-                _messageHub.Clients.All.Init();
             }
             return Ok(res);
         }
@@ -61,7 +59,6 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<UpdateTourViewModel>(result);
                 res = _tourRes.Update(createObj);
-                _messageHub.Clients.All.Init();
             }
             return Ok(res);
         }
@@ -120,7 +117,6 @@ namespace TravelApi.Controllers
         public object DeleteTour(string idTour, Guid idUser)
         {
             res = _tourRes.Delete(idTour, idUser);
-            _messageHub.Clients.All.Init();
             return Ok(res);
         }
 
@@ -131,7 +127,6 @@ namespace TravelApi.Controllers
         public object RestoreTour(string idTour,Guid idUser)
         {
             res = _tourRes.RestoreTour(idTour, idUser);
-            _messageHub.Clients.All.Init();
             return Ok(res);
         }
         [HttpGet]
@@ -140,7 +135,6 @@ namespace TravelApi.Controllers
         public async Task<object> GetTourWithSchedule()
         {
             res = await _tourRes.GetsTourWithSchedule();
-            await _messageHub.Clients.All.Init();
             return Ok(res);
         }
         [HttpGet]
@@ -176,7 +170,6 @@ namespace TravelApi.Controllers
         public object UpdateRatingTour(int rating, string idTour)
         {
             res = _tourRes.UpdateRating(rating, idTour);
-            _messageHub.Clients.All.Init();
             return Ok(res);
         }
       
