@@ -26,6 +26,7 @@ namespace Travel.Data.Interfaces
         Task<Response> GetsTourWithSchedule();
         Task<Response> GetTourById(string idTour);
         Task<Response> GetsTourByRating();
+        Task<Response> SearchAutoComplete(string key);
         Response UpdateRating(int rating , string idTour);
     }
 }

@@ -162,6 +162,15 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
+        [Route("search-complete")]
+        public async Task<object> SearchComplete(string key)
+        {
+            res = await _tourRes.SearchAutoComplete(key);
+            return Ok(res);
+        }
+
+        [HttpGet]
         [Authorize]
         [Route("update-rating-tour")]
         public object UpdateRatingTour(int rating, string idTour)
@@ -170,6 +179,6 @@ namespace TravelApi.Controllers
             _messageHub.Clients.All.Init();
             return Ok(res);
         }
-
+      
     }
 }
