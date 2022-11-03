@@ -349,6 +349,39 @@ namespace Travel.Data.Repositories
                 return res;
             }
         }
+        public Response RestoreHotel(Guid id, Guid idUser)
+        {
+            try
+            {
+                var hotel = (from x in _db.Hotels
+                             where x.IdHotel == id
+                             select x).FirstOrDefault();
+
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                if (hotel.Approve == (int)ApproveStatus.Approved)
+                {
+                    hotel.ModifyBy = userLogin.NameEmployee;
+                    hotel.TypeAction = "restore";
+                    hotel.IdUserModify = userLogin.IdEmployee;
+                    hotel.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    hotel.Approve = (int)ApproveStatus.Waiting;
+                    // bổ sung isdelete
+                    hotel.IsDelete = false;
+                    res = Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+                }
+                _db.SaveChanges();
+                return res;
+
+            }
+            catch (Exception e)
+            {
+                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+                return res;
+            }
+        }
+
         public Response UpdateHotel(UpdateHotelViewModel input)
         {
             try

@@ -36,6 +36,7 @@ namespace Travel.Data.Interfaces
         Response DeleteHotel(Guid id, Guid idUser);
         Response ApproveHotel(Guid id);
         Response RefusedHotel(Guid id);
+        Response RestoreHotel(Guid id, Guid idUser);
 
         Response RefusedRestaurant(Guid id);
         Response ApproveRestaurant(Guid id);

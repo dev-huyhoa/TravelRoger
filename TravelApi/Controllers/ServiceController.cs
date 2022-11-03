@@ -97,6 +97,14 @@ namespace TravelApi.Controllers
             res = _serviceRes.DeleteHotel(idHotel, idUser);
             return Ok(res);
         }
+        [HttpGet]
+        [Authorize]
+        [Route("restore-hotel")]
+        public object RestoreHotel(Guid idHotel, Guid idUser)
+        {
+            res = _serviceRes.RestoreHotel(idHotel, idUser);
+            return Ok(res);
+        }
         #endregion
 
         #region restaurant

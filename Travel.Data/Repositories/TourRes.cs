@@ -928,5 +928,30 @@ namespace Travel.Data.Repositories
                 
             }
         }
+
+        public async Task<Response> SearchAutoComplete(string key)
+        {
+            try
+            {
+                var keyUnSign = Ultility.removeVietnameseSign(key);
+                var dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                var result = await (from x in _db.Tour
+                              where x.IsDelete == false
+                              && x.IsActive == true
+                              && x.ApproveStatus == (int)ApproveStatus.Approved
+                              && (from s in _db.Schedules
+                                  where s.TourId == x.IdTour
+                                  && s.EndDate >= dateTimeNow
+                                  select s.IdSchedule).Count() > 0
+                                    select x).OrderByDescending(x => x.Rating).ToListAsync();
+
+                return Ultility.Responses($"", Enums.TypeCRUD.Success.ToString(),content:result);
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     } 
 }

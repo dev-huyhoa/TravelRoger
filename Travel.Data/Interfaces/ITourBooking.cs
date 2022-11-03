@@ -19,5 +19,7 @@ namespace Travel.Data.Interfaces
         Response DoPayment(string idTourBooking);
         // customer
         Task<Response> CancelBooking(string idTourBooking);
+        Task<Response> RestoreBooking(string idTourBooking);
+        Task<Response> TourBookingByBookingNo(string bookingNo);
     }
 }

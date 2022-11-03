@@ -377,6 +377,31 @@ namespace Travel.Data.Repositories
                 {
                     tourbooking.Status = (int)Enums.StatusBooking.Cancel;
                     _db.SaveChanges();
+                    return Ultility.Responses("Đã hủy booking !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Hủy booking thất bại !", Enums.TypeCRUD.Error.ToString());
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+        public async Task<Response> RestoreBooking(string idTourBooking)
+        {
+            try
+            {
+                var tourbooking = await (from tb in _db.Tourbookings
+                                         where tb.IdTourbooking == idTourBooking
+                                         && tb.Status == (int)Enums.StatusBooking.Cancel
+                                         select tb).FirstOrDefaultAsync();
+                if (tourbooking != null)
+                {
+                    tourbooking.Status = (int)Enums.StatusBooking.Paying;
+                    _db.SaveChanges();
                     //#region sendMail
 
                     //var emailSend = _config["emailSend"];
@@ -392,6 +417,65 @@ namespace Travel.Data.Repositories
                     return Ultility.Responses("Hủy booking thất bại !", Enums.TypeCRUD.Error.ToString());
                 }
 
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public async Task<Response> TourBookingByBookingNo(string bookingNo)
+        {
+            try
+            {
+                var tourbooking = await (from x in _db.Tourbookings
+                                        where x.BookingNo == bookingNo
+                                         select new Tourbooking
+                                        {
+                                            LastDate = x.LastDate,
+                                            NameCustomer = x.NameCustomer,
+                                            NameContact = x.NameContact,
+                                            Pincode = x.Pincode,
+                                            Email = x.Email,
+                                            Phone = x.Phone,
+                                            Address = x.Address,
+                                            AdditionalPrice = x.AdditionalPrice,
+                                            BookingNo = x.BookingNo,
+                                            DateBooking = x.DateBooking,
+                                            TotalPrice = x.TotalPrice,
+                                            TotalPricePromotion = x.TotalPricePromotion,
+                                            VoucherCode = x.VoucherCode,
+                                            ValuePromotion = x.ValuePromotion,
+                                            Payment = (from p in _db.Payment
+                                                       where p.IdPayment == x.PaymentId
+                                                       select p).First(),
+                                            TourbookingDetails = (from tbd in _db.tourbookingDetails
+                                                                  where tbd.IdTourbookingDetails == x.IdTourbooking
+                                                                  select tbd).First(),
+                                            Schedule = (from s in _db.Schedules
+                                                        where s.IdSchedule == x.ScheduleId
+                                                        select new Schedule
+                                                        {
+                                                            DepartureDate = s.DepartureDate,
+                                                            ReturnDate = s.ReturnDate,
+                                                            DeparturePlace = s.DeparturePlace,
+                                                            Description = s.Description,
+                                                            QuantityCustomer = s.QuantityCustomer,
+                                                            IdSchedule = s.IdSchedule,
+                                                            Tour = (from t in _db.Tour
+                                                                    where t.IdTour == s.TourId
+                                                                    select t).First(),
+
+                                                        }).First()
+                                        }).FirstAsync();
+                if (tourbooking != null)
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
+                }
+                else
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
+                }
             }
             catch (Exception e)
             {

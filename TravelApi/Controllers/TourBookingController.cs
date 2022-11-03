@@ -92,7 +92,15 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-     
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("tour-booking-by-booking-no")]
+        public async Task<object> TourBookingByBookingNo(string bookingNo)
+        {
+            res = await _tourbooking.TourBookingByBookingNo(bookingNo);
+            return Ok(res);
+        }
+
 
         [HttpGet]
         [AllowAnonymous]
@@ -100,6 +108,15 @@ namespace TravelApi.Controllers
         public async Task<object> CancelBooking(string idTourBooking)
         {
             res =await _tourbooking.CancelBooking(idTourBooking);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("restore-booking")]
+        public async Task<object> RestoreBooking(string idTourBooking)
+        {
+            res = await _tourbooking.RestoreBooking(idTourBooking);
             return Ok(res);
         }
     }
