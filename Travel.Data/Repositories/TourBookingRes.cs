@@ -14,6 +14,7 @@ using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.TourBookingVM;
+using Microsoft.Extensions.Configuration;
 
 namespace Travel.Data.Repositories
 {
@@ -22,12 +23,15 @@ namespace Travel.Data.Repositories
         private readonly TravelContext _db;
         private readonly ISchedule _schedule;
         private Notification message;
+        private readonly IConfiguration _config;
         public TourBookingRes(TravelContext db,
-            ISchedule schedule)
+            ISchedule schedule,
+            IConfiguration config)
         {
             _db = db;
             message = new Notification();
             _schedule = schedule;
+            _config = config;
         }
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
@@ -270,7 +274,6 @@ namespace Travel.Data.Repositories
             }
         }
 
-
         public async Task<Response> TourBookingById(string idTourbooking)
         {
             try
@@ -322,6 +325,39 @@ namespace Travel.Data.Repositories
                 {
                     return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
                 }
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+        public Response DoPayment(string idTourBooking) // for admin if customer payment
+        {
+            try
+            {
+                var tourbooking = (from tb in _db.Tourbookings
+                                   where tb.IdTourbooking == idTourBooking
+                                   && tb.Status == (int)Enums.StatusBooking.Paying
+                                   select tb).FirstOrDefault();
+                if (tourbooking != null)
+                {
+                    var bookingNo = $"{tourbooking.IdTourbooking}NO";
+                    tourbooking.Status = (int)Enums.StatusBooking.Paid;
+                    tourbooking.BookingNo = bookingNo;
+                    _db.SaveChanges();
+                    #region sendMail
+
+                    var emailSend = _config["emailSend"];
+                    var keySecurity = _config["keySecurity"];
+                    var stringHtml = Ultility.getHtml($"{bookingNo} <br> Vui lòng ghi nhớ mã BookingNo này", "Thanh toán thành công", "BookingNo");
+
+                    Ultility.sendEmail(stringHtml, tourbooking.Email, "Thanh toán dịch vụ", emailSend, keySecurity);
+                    #endregion
+                    return Ultility.Responses("Thanh toán thành công !", Enums.TypeCRUD.Success.ToString());
+
+                }
+                return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
+
             }
             catch (Exception e)
             {

@@ -16,5 +16,6 @@ namespace Travel.Data.Interfaces
         Task<Response> Create(CreateTourBookingViewModel input);
         Task<Response> TourBookingById(string idTourbooking);
         Response GetTourBookingFromDateToDate(DateTime? fromDate, DateTime? toDate);
+        Response DoPayment(string idTourBooking);
     }
 }

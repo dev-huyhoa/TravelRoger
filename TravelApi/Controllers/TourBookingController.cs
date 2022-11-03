@@ -35,6 +35,14 @@ namespace TravelApi.Controllers
             res = new Response();
             _messageHub = messageHub;
         }
+        [HttpGet]
+        [Authorize]
+        [Route("do-payment")]
+        public object DoPayment(string idTourBooking)
+        {
+            res = _tourbooking.DoPayment(idTourBooking);
+            return Ok(res);
+        }
 
         [HttpGet]
         [AllowAnonymous]
