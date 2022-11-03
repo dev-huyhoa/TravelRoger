@@ -233,14 +233,7 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -339,14 +332,7 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -426,14 +412,7 @@ namespace Travel.Data.Repositories
 
                 //var result = Mapper.MapSchedule(list);
                 var result = list;
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -509,14 +488,7 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -654,14 +626,7 @@ namespace Travel.Data.Repositories
                                                   where x.TourId == tour.IdTour
                                                   select tour).FirstOrDefault()
                                       }).FirstAsync();
-                if (schedule != null)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), schedule);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), schedule);
             }
             catch (Exception e)
             {
@@ -765,14 +730,7 @@ namespace Travel.Data.Repositories
                                 select x).OrderByDescending(x => x.DepartureDate).ToList();
                     }
                     var result = Mapper.MapSchedule(list);
-                    if (result.Count > 0)
-                    {
-                        return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                    }
-                    else
-                    {
-                        return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                    }
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
                 else if (departureDate == null && returnDate == null)
                 {
@@ -853,14 +811,7 @@ namespace Travel.Data.Repositories
                                  select x).OrderByDescending(x => x.DepartureDate).ToList();
                     }
                     var result = Mapper.MapSchedule(list2);
-                    if (result.Count > 0)
-                    {
-                        return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                    }
-                    else
-                    {
-                        return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                    }
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
 
                 }
                 else
@@ -974,14 +925,7 @@ namespace Travel.Data.Repositories
                                  select x).OrderByDescending(x => x.DepartureDate).ToList();
                     }
                     var result1 = Mapper.MapSchedule(list1);
-                    if (result1.Count > 0)
-                    {
-                        return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result1);
-                    }
-                    else
-                    {
-                        return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                    }
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result1);
                 }
                 //var list = await (from s in _db.Schedules
                 //            where s.Isdelete == false
@@ -1117,14 +1061,7 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -1202,14 +1139,7 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
 
             }
             catch (Exception e)
@@ -1284,14 +1214,7 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -1391,14 +1314,7 @@ namespace Travel.Data.Repositories
 
 
                 var result = Mapper.MapSchedule(list);
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
 
             }
             catch (Exception e)

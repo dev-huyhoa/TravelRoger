@@ -216,14 +216,8 @@ namespace Travel.Data.Repositories
             {
                 var ListTourBooking = _db.Tourbookings.OrderByDescending(x=> x.DateBooking).ToList();
                 var result = Mapper.MapTourBooking(ListTourBooking);
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
             }
             catch (Exception e)
             {
@@ -259,14 +253,7 @@ namespace Travel.Data.Repositories
                             && x.DateBooking <= toDate
                             select x).OrderByDescending(x=> x.DateBooking).ToList();
                 var result = Mapper.MapTourBooking(list);
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -317,14 +304,8 @@ namespace Travel.Data.Repositories
 
                                                          }).First()
                                          }).FirstAsync();
-                if (tourbooking != null)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
+
             }
             catch (Exception e)
             {
@@ -356,8 +337,11 @@ namespace Travel.Data.Repositories
                     return Ultility.Responses("Thanh toán thành công !", Enums.TypeCRUD.Success.ToString());
 
                 }
-                return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
+                else
+                {
+                    return Ultility.Responses("Không tìm thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString(), null);
 
+                }
             }
             catch (Exception e)
             {
@@ -468,14 +452,8 @@ namespace Travel.Data.Repositories
 
                                                         }).First()
                                         }).FirstAsync();
-                if (tourbooking != null)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
+
             }
             catch (Exception e)
             {

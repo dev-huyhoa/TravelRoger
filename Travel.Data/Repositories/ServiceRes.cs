@@ -197,14 +197,7 @@ namespace Travel.Data.Repositories
                                    select x).ToList();
                 }
                 var result = Mapper.MapHotel(listWaiting);
-                if (listWaiting.Count() > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -223,14 +216,7 @@ namespace Travel.Data.Repositories
                             
                             select x).ToList();
                 var result = Mapper.MapHotel(list);
-                if (list.Count() > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -581,14 +567,7 @@ namespace Travel.Data.Repositories
                             x.Approve == Convert.ToInt16(ApproveStatus.Approved)
                             select x).ToList();
                 var result = Mapper.MapRestaurant(list);
-                if (list.Count() > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
 
             }
             catch (Exception e)
@@ -619,14 +598,7 @@ namespace Travel.Data.Repositories
 
                 var result = Mapper.MapRestaurant(listWaiting);
 
-                if (listWaiting.Count() > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -939,14 +911,7 @@ namespace Travel.Data.Repositories
                             x.Approve == Convert.ToInt16(ApproveStatus.Approved)
                             select x).ToList();
                 var result = Mapper.MapPlace(list);
-                if (list.Count() > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -974,14 +939,7 @@ namespace Travel.Data.Repositories
                 }
                 var result = Mapper.MapPlace(listWaiting);
 
-                if (listWaiting.Count() > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {

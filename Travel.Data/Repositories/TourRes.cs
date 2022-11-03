@@ -151,14 +151,7 @@ namespace Travel.Data.Repositories
                             && x.IsTempdata == false
                             select x).ToList();
                 var result = Mapper.MapTour(list);
-                if (result.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -177,14 +170,7 @@ namespace Travel.Data.Repositories
                              where x.IdTour == idTour
                              select x).FirstOrDefault();
                 var result = Mapper.MapTour(tour);
-                if (result != null)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
@@ -296,14 +282,7 @@ namespace Travel.Data.Repositories
                                                                    select e).First()
                                                    }).ToList()
                                   }).ToListAsync();
-                if (list.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
             }
             catch (Exception e)
             {
@@ -393,14 +372,7 @@ namespace Travel.Data.Repositories
                                                                    select e).First()
                                                    }).ToList()
                                   }).FirstAsync();
-                if (list != null)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
             }
             catch (Exception e)
             {
@@ -867,14 +839,7 @@ namespace Travel.Data.Repositories
                                                    }).ToList()
                                   }).OrderByDescending(x => x.Rating).ToListAsync();
 
-                if (list.Count > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString());
-                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
             }
             catch (Exception e)
             {
