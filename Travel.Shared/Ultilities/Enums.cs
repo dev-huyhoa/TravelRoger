@@ -72,8 +72,9 @@ namespace Travel.Shared.Ultilities
             Success = 1,
             Error=  2,
             Warning = 3,
-            Validation = 4,
-            Block = 5
+            Info = 4,
+            Validation = 5,
+            Block = 6
         }
     }
 }

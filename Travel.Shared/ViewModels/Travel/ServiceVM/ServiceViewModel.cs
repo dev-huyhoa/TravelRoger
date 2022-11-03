@@ -48,14 +48,16 @@ namespace Travel.Shared.ViewModels.Travel.ServiceVM
             private string phone;
             private string address;
             private string name;
-            private string approve;
+            private int approve;
+            private bool isDelete;
             public string ModifyBy { get => modifyBy; set => modifyBy = value; }
             public long ModifyDate { get => modifyDate; set => modifyDate = value; }
             public string Phone { get => phone; set => phone = value; }
             public string Address { get => address; set => address = value; }
             public string Name { get => name; set => name = value; }
             public Guid ContractId { get => contractId; set => contractId = value; }
-            public string Approve { get => approve; set => approve = value; }
+            public int Approve { get => approve; set => approve = value; }
+            public bool IsDelete { get => isDelete; set => isDelete = value; }
         }
     }
 }

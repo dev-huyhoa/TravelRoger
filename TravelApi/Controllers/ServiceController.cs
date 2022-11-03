@@ -44,9 +44,9 @@ namespace TravelApi.Controllers
         [HttpGet()]
         [Authorize]
         [Route("gets-hotel")]
-        public object GetHotel()
+        public object GetHotel(bool isDelete)
         {
-            res = _serviceRes.GetsHotel();
+            res = _serviceRes.GetsHotel(isDelete);
             return Ok(res);
         }
         [HttpGet()]
@@ -72,7 +72,7 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("approve-hotel")]
         public object ApproveHotel(Guid idHotel)
@@ -81,7 +81,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("refuse-hotel")]
         public object RefuseHotel(Guid idHotel)
@@ -97,6 +97,8 @@ namespace TravelApi.Controllers
             res = _serviceRes.DeleteHotel(idHotel, idUser);
             return Ok(res);
         }
+
+
         #endregion
 
         #region restaurant
@@ -112,9 +114,9 @@ namespace TravelApi.Controllers
         [HttpGet()]
         [Authorize]
         [Route("gets-restaurant")]
-        public object GetRestaurant()
+        public object GetRestaurant(bool isDelete)
         {
-            res = _serviceRes.GetsRestaurant();
+            res = _serviceRes.GetsRestaurant(isDelete);
             return Ok(res);
         }
         [HttpPost]
@@ -188,9 +190,9 @@ namespace TravelApi.Controllers
         [HttpGet()]
         [AllowAnonymous]
         [Route("gets-place")]
-        public object GetPlace()
+        public object GetPlace(bool isDelete)
         {
-            res = _serviceRes.GetsPlace();
+            res = _serviceRes.GetsPlace(isDelete);
             return Ok(res);
         }
         [HttpPost]
