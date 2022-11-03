@@ -203,7 +203,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), null);
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
                 }
             }
             catch (Exception e)
@@ -229,7 +229,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), null);
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
                 }
             }
             catch (Exception e)
@@ -369,16 +369,14 @@ namespace Travel.Data.Repositories
                     hotel.Approve = (int)ApproveStatus.Waiting;
                     // bổ sung isdelete
                     hotel.IsDelete = false;
-                    res = Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
                 }
                 _db.SaveChanges();
-                return res;
+                return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -589,7 +587,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), null);
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
                 }
 
             }
@@ -627,7 +625,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), null);
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
                 }
             }
             catch (Exception e)
@@ -947,7 +945,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), null);
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
                 }
             }
             catch (Exception e)
@@ -982,7 +980,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), null);
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), null);
                 }
             }
             catch (Exception e)
