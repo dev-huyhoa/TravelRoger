@@ -966,10 +966,11 @@ namespace Travel.Data.Repositories
                 if (place.Approve == (int)ApproveStatus.Approved)
                 {
                     place.ModifyBy = userLogin.NameEmployee;
+                    place.TypeAction = "delete";
                     place.IdUserModify = userLogin.IdEmployee;
                     place.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     place.Approve = (int)ApproveStatus.Waiting;
-
+                    place.IsDelete = true;
                     _db.SaveChanges();
 
                     return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());

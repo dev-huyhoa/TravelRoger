@@ -222,7 +222,7 @@ namespace TravelApi.Controllers
         public object UpdatePlace([FromBody] JObject frmData)
         {
             message = null;
-            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, true);
+            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Place, true);
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdatePlaceViewModel>(result);
@@ -230,7 +230,7 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("approve-place")]
         public object ApprovePlace(Guid idPlace)
@@ -239,7 +239,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("refuse-place")]
         public object RefusePlace(Guid idPlace)
@@ -247,7 +247,7 @@ namespace TravelApi.Controllers
             res = _serviceRes.RefusedPlace(idPlace);
             return Ok(res);
         }
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("delete-place")]
         public object DeletePlace(Guid idPlace, Guid idUser)
