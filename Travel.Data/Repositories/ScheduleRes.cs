@@ -581,7 +581,8 @@ namespace Travel.Data.Repositories
             {
                 int approve = Convert.ToInt16(Enums.ApproveStatus.Approved);
                 var schedule = await (from x in _db.Schedules
-                                      where x.EndDate > dateTimeNow
+                                      where x.EndDate >= dateTimeNow
+                                      && x.BeginDate >= dateTimeNow
                                       && x.Isdelete == false
                                       && x.Approve == approve
                                       && x.IdSchedule == idSchedule
@@ -668,6 +669,8 @@ namespace Travel.Data.Repositories
                                 select x).ToList();
                     }
                     list = (from s in list
+                            where s.BeginDate >= dateTimeNow
+                               && s.EndDate >= dateTimeNow
                             select new Schedule
                             {
                                 Alias = s.Alias,
@@ -1002,6 +1005,8 @@ namespace Travel.Data.Repositories
                 var list = (from s in _db.Schedules
                             where s.Isdelete == false &&
                             s.Approve == (int)Enums.ApproveStatus.Approved
+                            && s.EndDate >= dateTimeNow
+                            && s.BeginDate >= dateTimeNow
                             && s.PromotionId == 1
                             select new Schedule
                             {
@@ -1075,11 +1080,11 @@ namespace Travel.Data.Repositories
             try
             {
                 var flashSaleDay = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(Ultility.GetDateZeroTime(DateTime.Now.AddDays(3))); // sau này gắn config
-                var dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 var list = await (from s in _db.Schedules
                                   where s.Isdelete == false
                                   && s.Approve == (int)Enums.ApproveStatus.Approved
                                   && s.EndDate >= dateTimeNow
+                                  && s.BeginDate >= dateTimeNow
                                   && s.EndDate <= flashSaleDay
                                   select new Schedule
                                   {
@@ -1155,6 +1160,8 @@ namespace Travel.Data.Repositories
                 var list = (from s in _db.Schedules
                             where s.Isdelete == false &&
                             s.Approve == (int)Enums.ApproveStatus.Approved
+                            && s.EndDate >= dateTimeNow
+                            && s.BeginDate >= dateTimeNow
                             && s.PromotionId > 1
                             select new Schedule
                             {
@@ -1234,7 +1241,8 @@ namespace Travel.Data.Repositories
                 var closetPrice2 = (schedule.FinalPrice + 200000);
                 var list1 = await (from x in _db.Schedules
                                    where x.IdSchedule != idSchedule
-                                   && x.EndDate > dateTimeNow
+                                   && x.EndDate >= dateTimeNow
+                                   && x.BeginDate >= dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
                                    && (x.FinalPrice >= closetPrice1 && x.FinalPrice <= closetPrice2)
                                    && x.Isdelete == false
@@ -1244,7 +1252,8 @@ namespace Travel.Data.Repositories
                 var list2 = await (from x in _db.Schedules
                                    where x.IdSchedule != idSchedule
                                    && !(from s in list1 select s.IdSchedule).Contains(x.IdSchedule)
-                                   && x.EndDate > dateTimeNow
+                                   && x.EndDate >= dateTimeNow
+                                   && x.BeginDate >= dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
                                    && (x.Status == (int)StatusSchedule.Free && x.QuantityCustomer <= x.MinCapacity)
                                    && x.Isdelete == false

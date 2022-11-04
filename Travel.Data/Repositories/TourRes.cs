@@ -21,14 +21,14 @@ namespace Travel.Data.Repositories
 {
     public class TourRes : ITour
     {
+        private long dateTimeNow;
         private readonly TravelContext _db;
         private Notification message;
-        private Response res;
         public TourRes(TravelContext db)
         {
             _db = db;
             message = new Notification();
-            res = new Response();
+            dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(-3));
         }
         public string CheckBeforSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate)
         {
@@ -419,14 +419,11 @@ namespace Travel.Data.Repositories
                 #endregion
 
                 _db.SaveChanges();
-                res = Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
-                return res;
+                return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
-
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -471,11 +468,11 @@ namespace Travel.Data.Repositories
                             tour.ModifyBy = userLogin.NameEmployee;
                             tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                             _db.SaveChanges();
-                            res = Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                            return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                         }
                         else
                         {
-                            res = Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString());
+                            return Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString());
                         }
                     }
                     else
@@ -485,7 +482,10 @@ namespace Travel.Data.Repositories
                             if (tour.TypeAction == "insert")
                             {
                                 _db.Tour.Remove(tour);
-                                res = Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
+                                _db.SaveChanges();
+
+
+                                return Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
                             }
                             else if (tour.TypeAction == "update")
                             {
@@ -507,7 +507,10 @@ namespace Travel.Data.Repositories
                                 tour.ToPlace = tourTemp.ToPlace;
                                 #endregion
                                 _db.Tour.Remove(tourTemp);
-                                res = Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
+
+                                _db.SaveChanges();
+
+                                return Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
 
                             }
 
@@ -517,7 +520,10 @@ namespace Travel.Data.Repositories
                                 tour.TypeAction = null;
                                 tour.IsDelete = true;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
-                                res = Ultility.Responses("Đã hủy yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+
+                                _db.SaveChanges();
+
+                                return Ultility.Responses("Đã hủy yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
                             }
                             else // delete
@@ -526,26 +532,26 @@ namespace Travel.Data.Repositories
                                 tour.TypeAction = null;
                                 tour.IsDelete = false;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
-                                res = Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+
+                                _db.SaveChanges();
+
+                                return Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                             }
-                            _db.SaveChanges();
                         }
                         else
                         {
-                            res = Ultility.Responses("Bạn không thể thực thi hành động này !", Enums.TypeCRUD.Success.ToString());
+                            return Ultility.Responses("Bạn không thể thực thi hành động này !", Enums.TypeCRUD.Success.ToString());
                         }
                     }
                 }
                 else
                 {
-                    res = Ultility.Responses("Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+                    return Ultility.Responses("Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
         public Response GetWaiting(Guid idUser)
@@ -570,16 +576,12 @@ namespace Travel.Data.Repositories
                                    select x).ToList();
                 }
                 var result = Mapper.MapTour(listWaiting);
-                if (listWaiting.Count() > 0)
-                {
-                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -631,19 +633,16 @@ namespace Travel.Data.Repositories
                         tour.IsDelete = true;
                     }
                     _db.SaveChanges();
-                    res = Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
+                    return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
-                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                    return Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
-
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
         public Response Refused(string idTour)
@@ -701,19 +700,16 @@ namespace Travel.Data.Repositories
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                     }
                     _db.SaveChanges();
-                    res = Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
+                    return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
-                    res = Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                    return Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
-
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -739,18 +735,16 @@ namespace Travel.Data.Repositories
                     tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     _db.SaveChanges();
 
-                    res = Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+                    return Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
-                    res = Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -759,7 +753,6 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 var list = await (from x in _db.Tour
                                   where x.Rating >= 9
                                   && x.IsDelete == false
@@ -778,6 +771,7 @@ namespace Travel.Data.Repositories
                                       Schedules = (from s in _db.Schedules
                                                    where s.TourId == x.IdTour
                                                    && s.EndDate >= dateTimeNow
+                                                   && s.BeginDate >= dateTimeNow
                                                    && s.Status == (int)Enums.StatusSchedule.Free
                                                    orderby s.DepartureDate
                                                    select new Schedule
