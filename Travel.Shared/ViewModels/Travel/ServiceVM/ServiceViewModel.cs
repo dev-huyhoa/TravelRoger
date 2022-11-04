@@ -13,6 +13,9 @@ namespace Travel.Shared.ViewModels.Travel.ServiceVM
         {
             private Guid idRestaurant;
             public Guid IdRestaurant { get => idRestaurant; set => idRestaurant = value; }
+            public float ComboPrice { get => comboPrice; set => comboPrice = value; }
+
+            private float comboPrice;
         }
         public class HotelViewModel : ParentProperty
         {

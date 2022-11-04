@@ -32,6 +32,8 @@ namespace Travel.Data.Repositories
             {
                 var priceTicket = PrCommon.GetString("priceTicket", frmData) ?? "0";
                 var idHotel = PrCommon.GetString("idHotel", frmData);
+                var idRestaurant = PrCommon.GetString("idRestaurant", frmData)  ?? "0";
+
                 if (String.IsNullOrEmpty(idHotel))
                 {
                 }
@@ -107,6 +109,7 @@ namespace Travel.Data.Repositories
                     else if (type == TypeService.Restaurant)
                     {
                         UpdateRestaurantViewModel uRestaurantObj = new UpdateRestaurantViewModel();
+                        uRestaurantObj.IdRestaurant = Guid.Parse(idRestaurant);
                         uRestaurantObj.Address = address;
                         uRestaurantObj.Name = name;
                         uRestaurantObj.Phone = phone;
@@ -152,6 +155,7 @@ namespace Travel.Data.Repositories
                         restaurantObj.Name = name;
                         restaurantObj.Phone = phone;
                         restaurantObj.NameContract = nameContract;
+                        restaurantObj.ComboPrice = float.Parse(comboPrice);
                         restaurantObj.IdUserModify = Guid.Parse(idUserModify);
                         return JsonSerializer.Serialize(restaurantObj);
                     }
@@ -749,8 +753,10 @@ namespace Travel.Data.Repositories
         {
             Restaurant restaurant
                          = Mapper.MapCreateRestaurant(input);
-
+            restaurant.TypeAction = "insert";
+            restaurant.ContractId = Guid.Empty;
             _db.Restaurants.Add(restaurant);
+
             _db.SaveChanges();
             return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
         }

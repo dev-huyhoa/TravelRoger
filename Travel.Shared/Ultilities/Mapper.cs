@@ -521,6 +521,7 @@ namespace Travel.Shared.Ultilities
                               .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
                               .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                               .ForMember(dto => dto.NameRestaurant, opt => opt.MapFrom(src => src.Name))
+                              .ForMember(dto => dto.ComboPrice, opt => opt.MapFrom(src => src.ComboPrice))
                               .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => ApproveStatus.Waiting))
                               .ForMember(dto => dto.IsTempdata, opt => opt.MapFrom(src => false))
                               .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
@@ -536,7 +537,6 @@ namespace Travel.Shared.Ultilities
                               .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
                               .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                               .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.NameRestaurant))
-                              .ForMember(dto => dto.ContractId, opt => opt.MapFrom(src => src.ContractId))
                ;
                 // create hotel
                 cfg.CreateMap<CreateHotelViewModel, Hotel>()
