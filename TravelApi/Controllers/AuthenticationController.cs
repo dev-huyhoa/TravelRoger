@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
@@ -13,6 +14,7 @@ using Travel.Context.Models;
 using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
+using TravelApi.Hubs.HubServices;
 
 namespace TravelApi.Controllers
 {
@@ -22,12 +24,15 @@ namespace TravelApi.Controllers
     {
         private IConfiguration configuration;
         private IAuthentication authentication;
+        private IHubRepository hubRepo;
         private Response res;
-        public AuthenticationController(IConfiguration _configuration, IAuthentication _authentication)
+        public AuthenticationController(IConfiguration _configuration, IAuthentication _authentication, IHubRepository _hubRepo)
         {
             configuration = _configuration;
             authentication = _authentication;
+            hubRepo = _hubRepo;
             res = new Response();
+
         }
 
         [HttpPost]
@@ -55,6 +60,7 @@ namespace TravelApi.Controllers
                                 var active = authentication.EmpActive(email);
                                 if (active)
                                 {
+                                    var roleName = authentication.RoleName(result.RoleId);
                                     var claim = new[]
                                     {
                                     new Claim(JwtRegisteredClaimNames.Sub, configuration["Token:Subject"]),
@@ -62,13 +68,13 @@ namespace TravelApi.Controllers
                                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                                     new Claim(JwtRegisteredClaimNames.Aud, configuration["Token:Audience"]),
                                     new Claim(ClaimTypes.Role, result.RoleId.ToString()),
+                                    new Claim(ClaimTypes.NameIdentifier, result.IdEmployee.ToString()),
                                     new Claim("EmployeeId", result.IdEmployee.ToString())
                                 };
-
                                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));
                                     var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                                     var token = new JwtSecurityToken(configuration["Token:Issuer"],
-                                        configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(60),
+                                        configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddDays(60),
                                         //configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(525600),
                                         signingCredentials: signIn);
 

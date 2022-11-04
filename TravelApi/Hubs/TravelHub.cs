@@ -9,10 +9,9 @@ namespace TravelApi.Hubs
 {
     public class TravelHub : Hub
     {
-        public string GetConnectionId() => Context.ConnectionId;
-
-        public async Task Init()
+        public async Task Send()
         {
+            var httpContext = Context.GetHttpContext();
             await Clients.All.SendAsync("Init");
         }
     }
