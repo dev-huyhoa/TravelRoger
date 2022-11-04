@@ -140,7 +140,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("approve-restaurant")]
         public object ApproveRestaurant(Guid idRestaurant)
@@ -149,7 +149,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("refuse-restaurant")]
         public object RefuseRestaurant(Guid idRestaurant)
@@ -157,12 +157,12 @@ namespace TravelApi.Controllers
             res = _serviceRes.RefusedRestaurant(idRestaurant);
             return Ok(res);
         }
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         [Route("delete-restaurant")]
-        public object DeleteRestaurant(Guid idHotel, Guid idUser)
+        public object DeleteRestaurant(Guid idRestaurant, Guid idUser)
         {
-            res = _serviceRes.DeleteRestaurant(idHotel, idUser);
+            res = _serviceRes.DeleteRestaurant(idRestaurant, idUser);
             return Ok(res);
         }
 
@@ -173,7 +173,7 @@ namespace TravelApi.Controllers
         {
 
             message = null;
-            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, true);
+            var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Restaurant, true);
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateRestaurantViewModel>(result);
