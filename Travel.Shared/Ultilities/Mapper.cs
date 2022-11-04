@@ -212,7 +212,9 @@ namespace Travel.Shared.Ultilities
                .ForMember(dto => dto.ValuePromotion, opt => opt.MapFrom(src => src.Promotions.Value))
                .ForMember(dto => dto.TotalCostTourNotService, opt => opt.MapFrom(src => src.TotalCostTourNotService))
                .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => src.Isdelete))
-
+               .ForMember(dto => dto.TypeAction, opt => opt.MapFrom(src => src.TypeAction))
+               .ForMember(dto => dto.IdUserModify, opt => opt.MapFrom(src => src.IdUserModify))
+               .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => src.Approve))
                //          private float totalCostTour;
                //private int profit;
                //private float vat;

@@ -462,6 +462,7 @@ namespace Travel.Data.Repositories
                                 TimePromotion = s.TimePromotion,
                                 Vat = s.Vat,
                                 TotalCostTourNotService = s.TotalCostTourNotService,
+                                TypeAction = s.TypeAction,
                                 CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
                                 Tour = (from t in _db.Tour
@@ -1340,7 +1341,7 @@ namespace Travel.Data.Repositories
                 {
                     schedule.IdUserModify = userLogin.IdEmployee;
                     schedule.Approve = (int)ApproveStatus.Waiting;
-
+                    schedule.TypeAction = "delete";
                     _db.SaveChanges();
 
                     return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
