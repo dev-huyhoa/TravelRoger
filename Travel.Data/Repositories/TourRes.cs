@@ -406,7 +406,6 @@ namespace Travel.Data.Repositories
                 #region setdata
                 tour.IdAction = tourOld.IdTour.ToString();
                 tour.IdUserModify = input.IdUserModify;
-                tour.TypeAction = input.TypeAction;
                 tour.ApproveStatus = (int)ApproveStatus.Waiting;
                 tour.ModifyBy = userLogin.NameEmployee;
                 tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
