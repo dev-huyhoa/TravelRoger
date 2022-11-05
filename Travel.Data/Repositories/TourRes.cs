@@ -387,10 +387,10 @@ namespace Travel.Data.Repositories
             try
             {
                 Tour tour = (from x in _db.Tour
-                             where x.IdTour == input.IdTour
-                             && x.IsDelete == false
-                             && x.ApproveStatus == (int)ApproveStatus.Approved
-                             select x).FirstOrDefault();
+                              where x.IdTour == input.IdTour
+                              && x.IsDelete == false
+                              && x.ApproveStatus == (int)ApproveStatus.Approved
+                              select x).FirstOrDefault();
                 var userLogin = (from x in _db.Employees
                                  where x.IdEmployee == input.IdUserModify
                                  select x).FirstOrDefault();
@@ -400,6 +400,10 @@ namespace Travel.Data.Repositories
                 tourOld.IdAction = tourOld.IdTour.ToString();
                 tourOld.IdTour = $"{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}TempData";
                 tourOld.IsTempdata = true;
+
+                //Chống cháy
+                tourOld.Schedules = null;
+
                 _db.Tour.Add(tourOld);
 
 
