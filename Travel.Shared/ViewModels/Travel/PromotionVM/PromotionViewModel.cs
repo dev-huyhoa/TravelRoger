@@ -3,24 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Travel.Context.Models;
+using Travel.Shared.ViewModels.Travel.ContractVM;
 
-namespace Travel.Shared.ViewModels.Travel.TourVM
+namespace Travel.Shared.ViewModels.Travel.PromotionVM
 {
     public class PromotionViewModel
     {
         private int idPromotion;
         private int value;
-        private string idSchedule;
         private long toDate;
         private long fromDate;
-
+        private string modifyBy;
+        private long modifyDate;
+        private int approve;
+        private bool isDelete;
         public int IdPromotion { get => idPromotion; set => idPromotion = value; }
         public int Value { get => value; set => this.value = value; }
-        public string IdSchedule { get => idSchedule; set => idSchedule = value; }
         public long ToDate { get => toDate; set => toDate = value; }
         public long FromDate { get => fromDate; set => fromDate = value; }
-        //private virtual Schedule Schedules;
-
+        public string ModifyBy { get => modifyBy; set => modifyBy = value; }
+        public long ModifyDate { get => modifyDate; set => modifyDate = value; }
+        public int Approve { get => approve; set => approve = value; }
+        public bool IsDelete { get => isDelete; set => isDelete = value; }
     }
 }

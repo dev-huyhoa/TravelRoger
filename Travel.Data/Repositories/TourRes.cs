@@ -404,6 +404,10 @@ namespace Travel.Data.Repositories
                 tourOld.IdAction = tourOld.IdTour.ToString();
                 tourOld.IdTour = $"{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}TempData";
                 tourOld.IsTempdata = true;
+
+                //Chống cháy
+                tourOld.Schedules = null;
+
                 _db.Tour.Add(tourOld);
 
 

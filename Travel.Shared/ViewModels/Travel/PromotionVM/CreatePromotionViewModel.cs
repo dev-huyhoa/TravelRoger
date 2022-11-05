@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Shared.ViewModels.Travel.ContractVM;
 
-namespace Travel.Shared.ViewModels.Travel
+namespace Travel.Shared.ViewModels.Travel.PromotionVM
 {
-    public class UpdatePromotionViewModel : CreatePromotionViewModel
-    {
-
-    }
-
-    public class CreatePromotionViewModel
+    public class CreatePromotionViewModel: UpdateApproveData
     {
         private int idPromotion;
         private int value;
@@ -22,8 +18,9 @@ namespace Travel.Shared.ViewModels.Travel
         public int Value { get => value; set => this.value = value; }
         public long ToDate { get => toDate; set => toDate = value; }
         public long FromDate { get => fromDate; set => fromDate = value; }
-        //private virtual Schedule Schedules;
-
+    }
+    public class UpdatePromotionViewModel : CreatePromotionViewModel
+    {
 
     }
 }
