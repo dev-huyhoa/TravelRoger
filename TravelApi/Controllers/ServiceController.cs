@@ -181,6 +181,14 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+        [HttpGet]
+        [Authorize]
+        [Route("restore-restaurant")]
+        public object RestoreRestaurant(Guid idRestaurant, Guid idUser)
+        {
+            res = _serviceRes.RestoreRestaurant(idRestaurant, idUser);
+            return Ok(res);
+        }
         #endregion
 
         #region place
@@ -254,6 +262,15 @@ namespace TravelApi.Controllers
         {
             res = _serviceRes.DeletePlace(idPlace, idUser);
             return Ok(res); 
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("restore-place")]
+        public object RestorePlace(Guid idPlace, Guid idUser)
+        {
+            res = _serviceRes.RestorePlace(idPlace, idUser);
+            return Ok(res);
         }
         #endregion
 
