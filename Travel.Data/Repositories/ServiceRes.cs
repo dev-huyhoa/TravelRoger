@@ -32,7 +32,7 @@ namespace Travel.Data.Repositories
             {
                 var priceTicket = PrCommon.GetString("priceTicket", frmData) ?? "0";
                 var idHotel = PrCommon.GetString("idHotel", frmData);
-                var idRestaurant = PrCommon.GetString("idRestaurant", frmData)  ?? "0";
+                var idRestaurant = PrCommon.GetString("idRestaurant", frmData) ?? "0";
 
                 if (String.IsNullOrEmpty(idHotel))
                 {
@@ -190,7 +190,8 @@ namespace Travel.Data.Repositories
                 var listWaiting = new List<Hotel>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
-                    listWaiting = (from x in _db.Hotels where x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
+                    listWaiting = (from x in _db.Hotels
+                                   where x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
                                    select x).ToList();
                 }
                 else
@@ -213,11 +214,11 @@ namespace Travel.Data.Repositories
             try
             {
                 var list = (from x in _db.Hotels
-                            where 
+                            where
                             x.IsDelete == isDelete &&
                             x.IsTempdata == false &&
                             x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
-                            
+
                             select x).ToList();
                 var result = Mapper.MapHotel(list);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -307,7 +308,7 @@ namespace Travel.Data.Repositories
                             return Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
 
                         }
-                    
+
                         else if (hotel.TypeAction == "restore")
                         {
                             hotel.IdAction = null;
@@ -567,7 +568,7 @@ namespace Travel.Data.Repositories
                 var list = (from x in _db.Restaurants
                             where
                             x.IsDelete == isDelete &&
-                            x.IsTempdata == false && 
+                            x.IsTempdata == false &&
                             x.Approve == Convert.ToInt16(ApproveStatus.Approved)
                             select x).ToList();
                 var result = Mapper.MapRestaurant(list);
@@ -819,7 +820,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-    public Response RefusedRestaurant(Guid id)
+        public Response RefusedRestaurant(Guid id)
         {
             try
             {
@@ -899,8 +900,8 @@ namespace Travel.Data.Repositories
                 _db.SaveChanges();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
-          
-        
+
+
             catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
@@ -911,7 +912,7 @@ namespace Travel.Data.Repositories
             try
             {
                 var list = (from x in _db.Places
-                            where 
+                            where
                             x.IsDelete == isDelete &&
                             x.IsTempdata == false &&
                             x.Approve == Convert.ToInt16(ApproveStatus.Approved)
@@ -1137,9 +1138,9 @@ namespace Travel.Data.Repositories
                     }
                     else
                     {
-                       place.IdAction = null;
-                       place.TypeAction = null;
-                       place.Approve = (int)ApproveStatus.Approved;
+                        place.IdAction = null;
+                        place.TypeAction = null;
+                        place.Approve = (int)ApproveStatus.Approved;
                         place.IsDelete = true;
                     }
 
@@ -1296,6 +1297,95 @@ namespace Travel.Data.Repositories
                 _db.SaveChanges();
                 return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response SearchHotel(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var isDelete = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.IsDelete = Boolean.Parse(isDelete);
+                }
+                var kwName = PrCommon.GetString("name", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwName))
+                {
+                    keywords.KwName = kwName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+
+                }
+                var kwPhone = PrCommon.GetString("phone", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwPhone))
+                {
+                    keywords.KwPhone = kwPhone.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwPhone = "";
+
+                }
+                var KwAddress = PrCommon.GetString("address", frmData).Trim();
+                if (!String.IsNullOrEmpty(KwAddress))
+                {
+                    keywords.KwAddress = KwAddress.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwAddress = "";
+
+                }
+                var kwStar = PrCommon.GetString("star", frmData);
+                keywords.KwStar = PrCommon.getListInt(kwStar, ',', false);
+                var listHotel = new List<Hotel>();
+
+                if (keywords.KwStar.Count > 0)
+                {
+                    listHotel = (from x in _db.Hotels
+                                where x.IsDelete == keywords.IsDelete &&
+                                                x.NameHotel.ToLower().Contains(keywords.KwName) &&
+                                                x.Address.ToLower().Contains(keywords.KwAddress) &&
+                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                x.IsTempdata == false &&
+                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
+                                                keywords.KwStar.Contains(x.Star)
+                                select x).ToList();
+                }
+                else
+                {
+                    listHotel = (from x in _db.Hotels
+                                 where x.IsDelete == keywords.IsDelete &&
+                                                 x.NameHotel.ToLower().Contains(keywords.KwName) &&
+                                                 x.Address.ToLower().Contains(keywords.KwAddress) &&
+                                                 x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                              x.IsTempdata == false &&
+                                                 x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
+
+                                 orderby x.Star
+                                 select new Hotel
+                                 {
+                                     NameHotel = x.NameHotel,
+                                     Address = x.Address,
+                                     Phone = x.Phone,
+                                     Star = x.Star,
+                                     SingleRoomPrice = x.SingleRoomPrice,
+                                     DoubleRoomPrice =x.DoubleRoomPrice,
+                                     QuantityDBR =x.QuantityDBR,
+                                     QuantitySR = x.QuantitySR
+                                 }).ToList();    
+                }
+                var result = Mapper.MapHotel(listHotel);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {

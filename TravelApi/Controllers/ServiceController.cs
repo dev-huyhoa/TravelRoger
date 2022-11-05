@@ -274,5 +274,14 @@ namespace TravelApi.Controllers
         }
         #endregion
 
+        [HttpPost]
+        [Authorize]
+        [Route("search-hotel")]
+        public object SearchHotel([FromBody] JObject frmData)
+        {
+            res = _serviceRes.SearchHotel(frmData);
+            return Ok(res);
+        }
+
     }
 }
