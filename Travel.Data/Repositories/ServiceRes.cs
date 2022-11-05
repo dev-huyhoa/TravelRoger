@@ -706,6 +706,8 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+
         public Response UpdateRestaurant(UpdateRestaurantViewModel input)
         {
             try
@@ -803,10 +805,6 @@ namespace Travel.Data.Repositories
                         restaurant.Approve = (int)ApproveStatus.Approved;
                         restaurant.IsDelete = true;
                     }
-
-
-
-
                     _db.SaveChanges();
                     return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
@@ -821,7 +819,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response RefusedRestaurant(Guid id)
+    public Response RefusedRestaurant(Guid id)
         {
             try
             {
@@ -886,6 +884,8 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+
         #endregion
         #region Place
         public Response CreatePlace(CreatePlaceViewModel input)
@@ -1235,6 +1235,67 @@ namespace Travel.Data.Repositories
                 _db.Contracts.Add(contract);
                 _db.SaveChanges();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+        public Response RestorePlace(Guid id, Guid idUser)
+        {
+            try
+            {
+                var place = (from x in _db.Places
+                             where x.IdPlace == id
+                             select x).FirstOrDefault();
+
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                if (place.Approve == (int)ApproveStatus.Approved)
+                {
+                    place.ModifyBy = userLogin.NameEmployee;
+                    place.TypeAction = "restore";
+                    place.IdUserModify = userLogin.IdEmployee;
+                    place.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    place.Approve = (int)ApproveStatus.Waiting;
+                    // bổ sung isdelete
+                    place.IsDelete = false;
+                }
+                _db.SaveChanges();
+                return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response RestoreRestaurant(Guid id, Guid idUser)
+        {
+            try
+            {
+                var place = (from x in _db.Restaurants
+                             where x.IdRestaurant == id
+                             select x).FirstOrDefault();
+
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                if (place.Approve == (int)ApproveStatus.Approved)
+                {
+                    place.ModifyBy = userLogin.NameEmployee;
+                    place.TypeAction = "restore";
+                    place.IdUserModify = userLogin.IdEmployee;
+                    place.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    place.Approve = (int)ApproveStatus.Waiting;
+                    // bổ sung isdelete
+                    place.IsDelete = false;
+                }
+                _db.SaveChanges();
+                return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+
             }
             catch (Exception e)
             {
