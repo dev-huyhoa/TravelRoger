@@ -26,6 +26,12 @@ namespace Travel.Data.Repositories
             _db = db;
             message = new Notification();
         }
+        private Employee GetCurrentUser(Guid IdUserModify)
+        {
+           return (from x in _db.Employees
+                             where x.IdEmployee == IdUserModify
+                             select x).FirstOrDefault();
+        }
         public string CheckBeforSave(JObject frmData, ref Notification _message, TypeService type, bool isUpdate = false)
         {
             try
@@ -231,6 +237,8 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var user = GetCurrentUser(input.IdUserModify);
+                input.ModifyBy = user.NameEmployee;
                 Hotel hotel
                  = Mapper.MapCreateHotel(input);
                 hotel.TypeAction = "insert";
@@ -374,9 +382,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var userLogin = (from x in _db.Employees
-                                 where x.IdEmployee == input.IdUserModify
-                                 select x).FirstOrDefault();
+                var userLogin = GetCurrentUser(input.IdUserModify);
 
                 var hotel = (from x in _db.Hotels
                              where x.IdHotel == input.IdHotel
@@ -712,9 +718,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var userLogin = (from x in _db.Employees
-                                 where x.IdEmployee == input.IdUserModify
-                                 select x).FirstOrDefault();
+                var userLogin = GetCurrentUser(input.IdUserModify);
 
                 var restaurant = (from x in _db.Restaurants
                                   where x.IdRestaurant == input.IdRestaurant
@@ -753,8 +757,11 @@ namespace Travel.Data.Repositories
         }
         public Response CreateRestaurant(CreateRestaurantViewModel input)
         {
+            var user = GetCurrentUser(input.IdUserModify);
+            input.ModifyBy = user.NameEmployee;
             Restaurant restaurant
                          = Mapper.MapCreateRestaurant(input);
+
             restaurant.TypeAction = "insert";
             restaurant.ContractId = Guid.Empty;
             _db.Restaurants.Add(restaurant);
@@ -892,6 +899,8 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var user = GetCurrentUser(input.IdUserModify);
+                input.ModifyBy = user.NameEmployee;
                 Place place
                          = Mapper.MapCreatePlace(input);
                 place.TypeAction = "insert";
@@ -1053,9 +1062,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var userLogin = (from x in _db.Employees
-                                 where x.IdEmployee == input.IdUserModify
-                                 select x).FirstOrDefault();
+                var userLogin = GetCurrentUser(input.IdUserModify);
 
                 var place = (from x in _db.Places
                              where x.IdPlace == input.IdPlace

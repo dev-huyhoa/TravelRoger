@@ -13,6 +13,7 @@ using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using Travel.Shared.ViewModels.Travel.PromotionVM;
 using static Travel.Shared.Ultilities.Enums;
 
 namespace Travel.Data.Repositories
@@ -21,24 +22,22 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private Notification message;
-        private Response res;
+
         public PromotionRes(TravelContext db)
         {
             _db = db;
             message = new Notification();
-            res = new Response();
         }
 
-        public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
+        public string CheckBeforSave(JObject frmData, ref Notification _message, TypeService type, bool isUpdate = false)
         {
             try
             {
-                var idPromotion = PrCommon.GetString("idPromotion", frmData);
-                if (!String.IsNullOrEmpty(idPromotion))
+                var idPromotion = PrCommon.GetString("idPromotion", frmData) ?? "0";
+
+                if (String.IsNullOrEmpty(idPromotion))
                 {
-                    
                 }
-               
                 var value = PrCommon.GetString("value", frmData);
                 if (String.IsNullOrEmpty(value))
                 {
@@ -46,141 +45,397 @@ namespace Travel.Data.Repositories
                 var toDate = PrCommon.GetString("toDate", frmData);
                 if (String.IsNullOrEmpty(toDate))
                 {
-
                 }
                 var fromDate = PrCommon.GetString("fromDate", frmData);
                 if (String.IsNullOrEmpty(fromDate))
                 {
                 }
 
-                if (isUpdate)
+                var typeAction = PrCommon.GetString("typeAction", frmData);
+                if (String.IsNullOrEmpty(typeAction))
                 {
-                    UpdatePromotionViewModel objUpdate = new UpdatePromotionViewModel();
-                    objUpdate.IdPromotion =  int.Parse(idPromotion);
-                    objUpdate.Value = Convert.ToInt16(value);
-                    objUpdate.FromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(fromDate));
-                    objUpdate.ToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(toDate));
-
-                    return JsonSerializer.Serialize(objUpdate);
+                }
+                var idUserModify = PrCommon.GetString("idUserModify", frmData);
+                if (String.IsNullOrEmpty(idUserModify))
+                {
                 }
 
-
-                CreatePromotionViewModel objCreate = new CreatePromotionViewModel();
-                objCreate.Value = Convert.ToInt16(value);
-                objCreate.ToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(toDate));
-                objCreate.FromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(fromDate));
-                //obj.IdPromotion = Convert.ToInt16(idPromotion);
-                return JsonSerializer.Serialize(objCreate);
-            }
-            catch (Exception e)
-            {
-                message.DateTime = DateTime.Now;
-                message.Description = e.Message;
-                message.Messenge = "Có lỗi xảy ra !";
-                message.Type = "Error";
-                _message = message;
-                return null;
-            }
-        }
-
-        public Response Gets()
-        {
-            try
-            {
-                var list = (from x in _db.Promotions where x.Approve == Convert.ToInt16(ApproveStatus.Approved) select x).ToList();
-                var result = Mapper.MapPromotion(list);
-                if (result.Count() > 0)
+                if (isUpdate)
                 {
-                    res.Content = result;
+                    UpdatePromotionViewModel uPromotionObj = new UpdatePromotionViewModel();
+                    uPromotionObj.IdPromotion = int.Parse(idPromotion);
+                    uPromotionObj.Value = int.Parse(value);
+                    uPromotionObj.ToDate = long.Parse(toDate);
+                    uPromotionObj.IdUserModify = Guid.Parse(idUserModify);
+                    uPromotionObj.TypeAction = "update";
+                    return JsonSerializer.Serialize(uPromotionObj);
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
+                    CreatePromotionViewModel PromotionObj = new CreatePromotionViewModel();
+                    PromotionObj.Value = int.Parse(value);
+                    PromotionObj.ToDate = long.Parse(toDate);
+                    PromotionObj.FromDate = long.Parse(fromDate);
+                    PromotionObj.IdUserModify = Guid.Parse(idUserModify);
+                    return JsonSerializer.Serialize(PromotionObj);
                 }
-                return res;
+
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                _message = Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message).Notification;
+                return string.Empty;
             }
         }
 
-        public Response Create(CreatePromotionViewModel input)
+        public Response GetsPromotion(bool isDelete)
         {
             try
             {
-                Promotion promotion = new Promotion();
-                promotion = Mapper.MapCreatePromotion(input);
-                _db.Promotions.Add(promotion);
-                _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                var list = (from x in _db.Promotions
+                            where
+                            x.IsDelete == isDelete &&
+                            x.IsTempdata == false &&
+                            x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
+
+                            select x).ToList();
+                var result = Mapper.MapPromotion(list);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
-        public Response GetWaitingPromotion()
+        public Response GetsWaitingPromotion(Guid idUser)
         {
             try
             {
-                var listWaiting = (from x in _db.Promotions where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
-                var result = Mapper.MapPromotion(listWaiting);
-                if (listWaiting.Count() > 0)
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                var listWaiting = new List<Promotion>();
+                if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
-                    res.Content = result;
+                    listWaiting = (from x in _db.Promotions where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                }
+                else
+                {
+                    listWaiting = (from x in _db.Promotions
+                                   where x.IdUserModify == idUser
+                                   && x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
+                                   select x).ToList();
                 }
 
-                return res;
+                var result = Mapper.MapPromotion(listWaiting);
+
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        } 
+         public Response CreatePromotion(CreatePromotionViewModel input)
+        {
+            Promotion promotion
+                        = Mapper.MapCreatePromotion(input);
+            promotion.TypeAction = "insert";
+            _db.Promotions.Add(promotion);
+
+            _db.SaveChanges();
+            return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+        }
+
+        public Response DeletePromotion(int id, Guid idUser)
+        {
+            try
+            {
+                var promotion = (from x in _db.Promotions
+                             where x.IdPromotion == id
+                             select x).FirstOrDefault();
+
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                if (promotion.Approve == (int)ApproveStatus.Approved)
+                {
+                    promotion.ModifyBy = userLogin.NameEmployee;
+                    promotion.TypeAction = "delete";
+                    promotion.IdUserModify = userLogin.IdEmployee;
+                    promotion.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    promotion.Approve = (int)ApproveStatus.Waiting;
+                    promotion.IsDelete = true;
+                    _db.SaveChanges();
+
+                    return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    if (promotion.IdUserModify == idUser)
+                    {
+                        if (promotion.TypeAction == "insert")
+                        {
+                            _db.Promotions.Remove(promotion);
+
+                            _db.SaveChanges();
+
+                            return Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
+                        }
+                        else if (promotion.TypeAction == "update")
+                        {
+                            var idPromotionTemp = promotion.IdAction;
+                            // old hotel
+                            var promotionTemp = (from x in _db.Promotions
+                                             where x.IdPromotion == int.Parse(idPromotionTemp)
+                                             select x).FirstOrDefault();
+                            promotion.Approve = (int)ApproveStatus.Approved;
+                            promotion.IdAction = null;
+                            promotion.TypeAction = null;
+                            #region restore old data
+
+                            promotion.Approve = (int)ApproveStatus.Approved;
+                            promotion.Value = promotionTemp.Value;
+
+                            promotion.ToDate = promotionTemp.ToDate;
+                            promotion.FromDate = promotionTemp.FromDate;
+                            #endregion
+
+                            _db.Promotions.Remove(promotionTemp);
+
+                            _db.SaveChanges();
+
+                            return Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
+                        }
+                        else if (promotion.TypeAction == "restore")
+                        {
+                            promotion.IdAction = null;
+                            promotion.TypeAction = null;
+                            promotion.IsDelete = true;
+                            promotion.Approve = (int)ApproveStatus.Approved;
+
+                            _db.SaveChanges();
+
+                            return Ultility.Responses("Đã hủy yêu cầu khôi phục!", Enums.TypeCRUD.Success.ToString());
+
+                        }
+                        else // delete
+                        {
+                            promotion.IdAction = null;
+                            promotion.TypeAction = null;
+                            promotion.IsDelete = false;
+                            promotion.Approve = (int)ApproveStatus.Approved;
+                            _db.SaveChanges();
+                            return Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                        }
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Bạn không thể thực thi hành động này !", Enums.TypeCRUD.Info.ToString());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
-        public Response UpdatePromotion(int id, UpdatePromotionViewModel input)
+        public Response UpdatePromotion(UpdatePromotionViewModel input)
         {
             try
-            { // tạm thời khoan update đi ông, nó bị ko tương thích với cái automap
+            {
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == input.IdUserModify
+                                 select x).FirstOrDefault();
+
                 var promotion = (from x in _db.Promotions
-                                 where x.IdPromotion == id
-                                 select x).First();
-                // tự gán 
-                promotion = Mapper.MapUpdatePromotion(input);
+                             where x.IdPromotion == input.IdPromotion
+                             select x).FirstOrDefault();
+
+                // clone new object
+                var promotionOld = new Promotion();
+                promotionOld = Ultility.DeepCopy<Promotion>(promotion);
+                promotionOld.IdAction = promotionOld.IdPromotion.ToString();
+                promotionOld.IsTempdata = true;
+
+                _db.Promotions.Add(promotionOld);
+
+                #region setdata
+                promotion.IdAction = promotionOld.IdPromotion.ToString();
+                promotion.IdUserModify = input.IdUserModify;
+                promotion.TypeAction = input.TypeAction;
+                promotion.Approve = (int)ApproveStatus.Waiting;
+                promotion.ModifyBy = userLogin.NameEmployee;
+                promotion.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+
+
+                promotion.Value = input.Value;
+                promotion.ToDate = input.ToDate;
+                promotion.FromDate = input.FromDate;
+                #endregion
+
                 _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+
             }
             catch (Exception e)
             {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+        public Response ApprovePromotion(int id)
+        {
+            try
+            {
+                var promotion = (from x in _db.Promotions
+                             where x.IdPromotion == id
+                             && x.Approve == (int)ApproveStatus.Waiting
+                             select x).FirstOrDefault();
+                if (promotion != null)
+                { 
+                    if (promotion.TypeAction == "update")
+                    {
+                        var idPromotionTemp = promotion.IdAction;
+                        promotion.Approve = (int)ApproveStatus.Approved;
+                        promotion.IdAction = null;
+                        promotion.TypeAction = null;
+                        // delete tempdata
+                        var promotionTemp = (from x in _db.Promotions
+                                         where x.IdPromotion == int.Parse(idPromotionTemp)
+                                         select x).FirstOrDefault();
+                        _db.Promotions.Remove(promotionTemp);
+                    }
+                    else if (promotion.TypeAction == "insert")
+                    {
+                        promotion.IdAction = null;
+                        promotion.TypeAction = null;
+                        promotion.Approve = (int)ApproveStatus.Approved;
+                    }
+                    else if (promotion.TypeAction == "restore")
+                    {
+                        promotion.IdAction = null;
+                        promotion.TypeAction = null;
+                        promotion.Approve = (int)ApproveStatus.Approved;
+                        promotion.IsDelete = false;
+                    }
+                    else
+                    {
+                        promotion.IdAction = null;
+                        promotion.TypeAction = null;
+                        promotion.Approve = (int)ApproveStatus.Approved;
+                        promotion.IsDelete = true;                                       
+                    }
+                    _db.SaveChanges();
+                    return Ultility.Responses("Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response RefusedPromotion(int id)
+        {
+            try
+            {
+                var promotion = (from x in _db.Promotions
+                                  where x.IdPromotion == id
+                                  && x.Approve == (int)ApproveStatus.Waiting
+                                  select x).FirstOrDefault();
+                if (promotion != null)
+                {
+                    if (promotion.TypeAction == "update")
+                    {
+                        var idPromotionTemp = promotion.IdAction;
+                        // old hotel
+                        var promotionTemp = (from x in _db.Promotions
+                                              where x.IdPromotion == int.Parse(idPromotionTemp)
+                                              select x).FirstOrDefault();
+                        promotion.Approve = (int)ApproveStatus.Approved;
+                        promotion.IdAction = null;
+                        promotion.TypeAction = null;
+                        #region restore old data
+
+                        promotion.Approve = (int)ApproveStatus.Approved;
+                        promotion.Value = promotionTemp.Value;
+
+                        promotion.ToDate = promotionTemp.ToDate;
+                        promotion.FromDate = promotionTemp.FromDate;
+                        #endregion
+
+                        _db.Promotions.Remove(promotionTemp);
+                    }
+                    else if (promotion.TypeAction == "insert")
+                    {
+                        promotion.IdAction = null;
+                        promotion.TypeAction = null;
+                        promotion.Approve = (int)ApproveStatus.Refused;
+                    }
+                    else if (promotion.TypeAction == "restore")
+                    {
+                        promotion.IdAction = null;
+                        promotion.TypeAction = null;
+                        promotion.IsDelete = true;
+                        promotion.Approve = (int)ApproveStatus.Approved;
+                    }
+                    else // delete
+                    {
+                        promotion.IdAction = null;
+                        promotion.TypeAction = null;
+                        promotion.IsDelete = false;
+                        promotion.Approve = (int)ApproveStatus.Approved;
+                    }
+                    _db.SaveChanges();
+                    return Ultility.Responses("Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response RestorePromotion(int id, Guid idUser)
+        {
+            try
+            {
+                var promotion = (from x in _db.Promotions
+                             where x.IdPromotion == id
+                             select x).FirstOrDefault();
+
+                var userLogin = (from x in _db.Employees
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                if (promotion.Approve == (int)ApproveStatus.Approved)
+                {
+                    promotion.ModifyBy = userLogin.NameEmployee;
+                    promotion.TypeAction = "restore";
+                    promotion.IdUserModify = userLogin.IdEmployee;
+                    promotion.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    promotion.Approve = (int)ApproveStatus.Waiting;
+                    // bổ sung isdelete
+                    promotion.IsDelete = false;
+                }
+                _db.SaveChanges();
+                return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
     }

@@ -1341,6 +1341,7 @@ namespace Travel.Data.Repositories
                 {
                     schedule.IdUserModify = userLogin.IdEmployee;
                     schedule.Approve = (int)ApproveStatus.Waiting;
+                    schedule.ModifyBy = userLogin.NameEmployee;
                     schedule.TypeAction = "delete";
                     _db.SaveChanges();
 
@@ -1380,7 +1381,7 @@ namespace Travel.Data.Repositories
                             schedule.IsHoliday = scheduleTemp.IsHoliday;
                             schedule.MaxCapacity = scheduleTemp.MaxCapacity;
                             schedule.MinCapacity = scheduleTemp.MinCapacity;
-
+                            schedule.ModifyBy = userLogin.NameEmployee;
                             schedule.PromotionId = scheduleTemp.PromotionId;
                             schedule.ReturnDate = scheduleTemp.ReturnDate;
                             schedule.Vat = scheduleTemp.Vat;
@@ -1611,6 +1612,7 @@ namespace Travel.Data.Repositories
                 schedule.MinCapacity = input.MinCapacity;
                 schedule.ReturnDate = input.ReturnDate;
                 schedule.Vat = input.Vat;
+                schedule.ModifyBy = userLogin.NameEmployee;
                 #endregion
 
                 _db.SaveChanges();
