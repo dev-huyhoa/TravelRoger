@@ -478,7 +478,7 @@ namespace Travel.Data.Repositories
                 var lsTourBookingCancel = (from x in _db.Tourbookings
                                            where x.Status == (int)Enums.StatusBooking.Cancel
                                            select x).Count();
-                var ab = String.Format("Tour Paying : {0}  " + " tour Paid  :  {1} " + "  tour Cancel : {2}  ", lsTourBookingPaying, lsTourBookingPaid, lsTourBookingCancel);
+                var ab = String.Format("tourPaying: {0} && tourPaid: {1} && tourCancel: {2}", lsTourBookingPaying, lsTourBookingPaid, lsTourBookingCancel);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), ab);
             }
             catch (Exception e)
