@@ -30,6 +30,12 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
+        private Employee GetCurrentUser(Guid IdUserModify)
+        {
+            return (from x in _db.Employees
+                    where x.IdEmployee == IdUserModify
+                    select x).FirstOrDefault();
+        }
         public string CheckBeforSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate)
         {
             try
@@ -387,13 +393,11 @@ namespace Travel.Data.Repositories
             try
             {
                 Tour tour = (from x in _db.Tour
-                              where x.IdTour == input.IdTour
-                              && x.IsDelete == false
-                              && x.ApproveStatus == (int)ApproveStatus.Approved
-                              select x).FirstOrDefault();
-                var userLogin = (from x in _db.Employees
-                                 where x.IdEmployee == input.IdUserModify
-                                 select x).FirstOrDefault();
+                             where x.IdTour == input.IdTour
+                             && x.IsDelete == false
+                             && x.ApproveStatus == (int)ApproveStatus.Approved
+                             select x).FirstOrDefault();
+                var userLogin = GetCurrentUser(input.IdUserModify);
                 // clone new object
                 var tourOld = new Tour();
                 tourOld = Ultility.DeepCopy<Tour>(tour);

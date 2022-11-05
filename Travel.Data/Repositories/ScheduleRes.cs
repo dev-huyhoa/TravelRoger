@@ -123,11 +123,11 @@ namespace Travel.Data.Repositories
                     updateObj.Description = description;
                     updateObj.DeparturePlace = departurePlace;
 
-                    updateObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(departureDate));
-                    updateObj.ReturnDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(returnDate));
-                    updateObj.BeginDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(beginDate));
-                    updateObj.EndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(endDate));
-                    updateObj.TimePromotion = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(timePromotion));
+                    updateObj.DepartureDate = long.Parse(departureDate);
+                    updateObj.ReturnDate = long.Parse(returnDate);
+                    updateObj.BeginDate = long.Parse(beginDate);
+                    updateObj.EndDate = long.Parse(endDate);
+                    updateObj.TimePromotion = long.Parse(timePromotion);
 
                     updateObj.MinCapacity = Convert.ToInt16(minCapacity);
                     updateObj.MaxCapacity = Convert.ToInt16(maxCapacity);
@@ -147,11 +147,11 @@ namespace Travel.Data.Repositories
                 createObj.Description = description;
                 createObj.Vat = float.Parse(vat);
                 createObj.DeparturePlace = departurePlace;
-                createObj.DepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(departureDate));
-                createObj.ReturnDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(returnDate));
-                createObj.BeginDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(beginDate));
-                createObj.EndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(endDate));
-                createObj.TimePromotion = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(timePromotion));
+                createObj.DepartureDate = long.Parse(departureDate);
+                createObj.ReturnDate = long.Parse(returnDate);
+                createObj.BeginDate = long.Parse(beginDate);
+                createObj.EndDate = long.Parse(endDate);
+                createObj.TimePromotion = long.Parse(timePromotion);
                 createObj.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                 createObj.IdUserModify = Guid.Parse(idUserModify);
 
@@ -250,6 +250,7 @@ namespace Travel.Data.Repositories
                 schedule = Mapper.MapCreateSchedule(input);
                 string nameTour = (from x in _db.Tour where x.IdTour == input.TourId select x).First().NameTour;
                 schedule.Alias = $"S{Ultility.SEOUrl(nameTour)}";
+                schedule.TypeAction = "insert";
                 _db.Schedules.Add(schedule);
                 _db.SaveChanges();
 
@@ -305,6 +306,7 @@ namespace Travel.Data.Repositories
                                 QuantityCustomer = s.QuantityCustomer,
                                 TimePromotion = s.TimePromotion,
                                 Vat = s.Vat,
+                                IdUserModify = s.IdUserModify,
                                 TotalCostTourNotService = s.TotalCostTourNotService,
                                 CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
@@ -463,6 +465,7 @@ namespace Travel.Data.Repositories
                                 Vat = s.Vat,
                                 TotalCostTourNotService = s.TotalCostTourNotService,
                                 TypeAction = s.TypeAction,
+                                IdUserModify = s.IdUserModify,
                                 CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
                                 Tour = (from t in _db.Tour
@@ -1341,6 +1344,7 @@ namespace Travel.Data.Repositories
                 {
                     schedule.IdUserModify = userLogin.IdEmployee;
                     schedule.Approve = (int)ApproveStatus.Waiting;
+                    schedule.ModifyBy = userLogin.NameEmployee;
                     schedule.TypeAction = "delete";
                     _db.SaveChanges();
 
@@ -1380,7 +1384,7 @@ namespace Travel.Data.Repositories
                             schedule.IsHoliday = scheduleTemp.IsHoliday;
                             schedule.MaxCapacity = scheduleTemp.MaxCapacity;
                             schedule.MinCapacity = scheduleTemp.MinCapacity;
-
+                            schedule.ModifyBy = userLogin.NameEmployee;
                             schedule.PromotionId = scheduleTemp.PromotionId;
                             schedule.ReturnDate = scheduleTemp.ReturnDate;
                             schedule.Vat = scheduleTemp.Vat;
@@ -1596,9 +1600,9 @@ namespace Travel.Data.Repositories
                 #region setdata
                 schedule.IdAction = scheduleOld.IdSchedule.ToString();
                 schedule.IdUserModify = input.IdUserModify;
-                schedule.TypeAction = input.TypeAction; // update
+                
                 schedule.Approve = (int)ApproveStatus.Waiting;
-
+                schedule.TypeAction = "update";
                 schedule.BeginDate = input.BeginDate;
                 schedule.CarId = input.CarId;
                 schedule.DepartureDate = input.DepartureDate;
@@ -1611,6 +1615,7 @@ namespace Travel.Data.Repositories
                 schedule.MinCapacity = input.MinCapacity;
                 schedule.ReturnDate = input.ReturnDate;
                 schedule.Vat = input.Vat;
+                schedule.ModifyBy = userLogin.NameEmployee;
                 #endregion
 
                 _db.SaveChanges();

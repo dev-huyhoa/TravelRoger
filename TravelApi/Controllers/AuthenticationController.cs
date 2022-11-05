@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
@@ -69,8 +70,11 @@ namespace TravelApi.Controllers
                                     new Claim(JwtRegisteredClaimNames.Aud, configuration["Token:Audience"]),
                                     new Claim(ClaimTypes.Role, result.RoleId.ToString()),
                                     new Claim(ClaimTypes.NameIdentifier, result.IdEmployee.ToString()),
+                                    new Claim(ClaimTypes.Name, result.IdEmployee.ToString()),
                                     new Claim("EmployeeId", result.IdEmployee.ToString())
-                                };
+
+                                   
+                                     };
                                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));
                                     var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                                     var token = new JwtSecurityToken(configuration["Token:Issuer"],
