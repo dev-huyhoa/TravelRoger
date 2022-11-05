@@ -25,20 +25,15 @@ namespace TravelApi.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private IEmployee employee;
         private Notification message;
         private Response res;
-        private IHubRepository _hubRepo;
-        private IHubContext<TravelHub> _hub;
 
-        public EmployeeController(IEmployee _employee, IHubRepository hubRepo, IHubContext<TravelHub> hub)
+        public EmployeeController(IEmployee _employee)
         {
             employee = _employee;
-            _hubRepo = hubRepo;
             res = new Response();
-            _hub = hub;
         }
 
         [HttpGet]
@@ -74,7 +69,6 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateEmployeeViewModel>(result);
                 res = employee.CreateEmployee(createObj);
-               _hubRepo.Send("123123");
             }
             else
             {

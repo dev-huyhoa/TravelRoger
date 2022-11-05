@@ -9,7 +9,7 @@ using TravelApi.Helpers;
 
 namespace TravelApi.Hubs.HubServices
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class HubRepository : IHubRepository
     {
         IHubContext<TravelHub> _hubContext;
@@ -20,8 +20,8 @@ namespace TravelApi.Hubs.HubServices
 
         public async Task Send(string idusser)
         {
-            //await _hubContext.Clients.User("4C4683A0-7D4A-4499-8F5B-0DA0ED144398").SendAsync("Init");
-            await _hubContext.Clients.All.SendAsync("Init");
+            await _hubContext.Clients.User("b07a87d7-c378-4e6c-9af8-447a3ee852b1").SendAsync("Init");
+            //await _hubContext.Clients.All.SendAsync("Init");
         }
     }
 }
