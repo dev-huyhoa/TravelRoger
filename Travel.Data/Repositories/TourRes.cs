@@ -63,6 +63,12 @@ namespace Travel.Data.Repositories
                         idTour = PrCommon.GetString("idTour", frmData);
                         if (CheckTourNoSchedule(idTour))
                         {
+
+                            if (!CheckTourProgess(idTour))
+                            {
+                                _message = Ultility.Responses("Tour đang diễn ra !", Enums.TypeCRUD.Warning.ToString()).Notification;
+                                return null;  
+                            }
                             if (CheckAnyBookingInTour(idTour))
                             {
                                 _message = Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString()).Notification;
@@ -472,17 +478,10 @@ namespace Travel.Data.Repositories
                         //                           select s).FirstOrDefault()
                         //           }).ToList();
 
-                        //Check tour đang tham quan
-                        var scheduleInTourProgress = (from x in _db.Schedules
-                                             where x.TourId == idTour
-                                             && x.Isdelete == false
-                                             && x.Approve == (int)Enums.ApproveStatus.Approved
-                                             && (x.Status == (int)Enums.StatusSchedule.Busy || (x.Status == (int)Enums.StatusSchedule.Going))
-                                             select x).ToList();
 
                         if (scheduleInTour.Count != 0 || !CheckTourNoSchedule(idTour))
                         {
-                            if (scheduleInTourProgress.Count == 0)
+                            if (CheckTourProgess(idTour))
                             {
                                 tour.IsDelete = true;
                                 tour.ApproveStatus = (int)ApproveStatus.Waiting;
@@ -907,6 +906,23 @@ namespace Travel.Data.Repositories
             }
         }
 
+        private bool CheckTourProgess(string idTour)// chỉ dùng khi thay đổi thông tin tour
+        {
+            var scheduleInTourProgress = (from x in _db.Schedules
+                                          where x.TourId == idTour
+                                          && x.Isdelete == false
+                                          && x.Approve == (int)Enums.ApproveStatus.Approved
+                                          && (x.Status == (int)Enums.StatusSchedule.Busy || (x.Status == (int)Enums.StatusSchedule.Going))
+                                          select x).ToList();
+            if(scheduleInTourProgress.Count != 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
         public Response UpdateRating(int rating, string idTour)
         {
             try
