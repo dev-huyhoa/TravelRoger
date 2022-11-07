@@ -21,5 +21,8 @@ namespace Travel.Shared.ViewModels
         public string KwStatus { get; set; }
         public bool KwIsActive { get; set; }
         public string KwDescription { get; set; }
+
+        public List<int> KwStar{ get; set; }
+        public string KwAddress { get; set; }
     }
 }

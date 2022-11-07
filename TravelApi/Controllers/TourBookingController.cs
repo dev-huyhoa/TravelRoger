@@ -115,5 +115,13 @@ namespace TravelApi.Controllers
             res = await _tourbooking.RestoreBooking(idTourBooking);
             return Ok(res);
         }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("statistic-tourbooking")]
+        public object StatisticTourBooking()
+        {
+            res = _tourbooking.StatisticTourBooking();
+            return Ok(res);
+        }
     }
 }

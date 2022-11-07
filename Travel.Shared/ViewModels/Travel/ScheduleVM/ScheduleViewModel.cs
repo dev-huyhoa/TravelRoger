@@ -45,6 +45,9 @@ namespace Travel.Shared.ViewModels.Travel
         private float priceChildHoliday;
         private float priceBabyHoliday;
 
+        private int approve;
+        private string idUserModify;
+        private string typeAction;
         private Boolean isHoliday;
         private Boolean isDelete;
         // costtour
@@ -108,5 +111,8 @@ namespace Travel.Shared.ViewModels.Travel
         public float PriceBabyHoliday { get => priceBabyHoliday; set => priceBabyHoliday = value; }
         public bool IsHoliday { get => isHoliday; set => isHoliday = value; }
         public bool IsDelete { get => isDelete; set => isDelete = value; }
+        public string TypeAction { get => typeAction; set => typeAction = value; }
+        public string IdUserModify { get => idUserModify; set => idUserModify = value; }
+        public int Approve { get => approve; set => approve = value; }
     }
 }

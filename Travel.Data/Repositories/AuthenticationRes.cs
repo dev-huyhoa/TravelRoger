@@ -56,7 +56,6 @@ namespace Travel.Data.Responsives
                                     x.Email == email &&
                                     x.Password == password
                               select x).FirstOrDefault();
-
                 return result;
             }
             catch (Exception)
@@ -65,7 +64,10 @@ namespace Travel.Data.Responsives
             }
         }
 
-
+        public string RoleName(int roleId)
+        {
+            return  _db.Roles.Find(roleId).NameRole;
+        }
         public bool EmpAddToken(string token, Guid idEmp)
         {
             try
@@ -93,8 +95,6 @@ namespace Travel.Data.Responsives
                                     x.Email == email
                               select x).FirstOrDefault();
                 return (result != null) ? true : false;
-
-
             }
             catch (Exception)
             {

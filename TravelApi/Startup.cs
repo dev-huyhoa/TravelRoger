@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 using Travel.Context.Models.Notification;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
@@ -36,8 +38,10 @@ namespace TravelApi
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddSignalR();
-            services.AddCors(options => {
+            services.AddSignalR(e => {
+                e.EnableDetailedErrors = true;
+                e.MaximumReceiveMessageSize = 102400000;
+            }); services.AddCors(options => {
                 options.AddPolicy("CORSPolicy", builder => builder.AllowAnyMethod().AllowAnyHeader().AllowCredentials().SetIsOriginAllowed((hosts) => true));
             });
             services.AddControllers();
@@ -74,7 +78,20 @@ namespace TravelApi
                     ClockSkew = TimeSpan.FromHours(8),
                     //ClockSkew = TimeSpan.FromMinutes(525600),
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Token:Key"]))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Token:Key"])),
+             
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        if (!string.IsNullOrEmpty(accessToken))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
@@ -127,7 +144,10 @@ namespace TravelApi
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
                 endpoints.MapHub<TravelHub>("/travelhub");
+
             });
+
+
 
             app.UseEndpoints(endpoints =>
             {

@@ -30,6 +30,7 @@ namespace Travel.Context.Models
         public bool Isdelete { get; set; }
         public bool IsHoliday { get; set; }
         public string Description { get; set; }
+        public string ModifyBy { get; set; }
 
 
         public float TotalCostTourNotService { get; set; }

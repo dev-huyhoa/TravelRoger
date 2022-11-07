@@ -25,6 +25,7 @@ namespace Travel.Data.Interfaces
         Response ApprovePlace(Guid id);
         Response RefusedPlace(Guid id);
 
+        Response RestorePlace(Guid id, Guid idUser);
 
 
 
@@ -41,7 +42,8 @@ namespace Travel.Data.Interfaces
         Response RefusedRestaurant(Guid id);
         Response ApproveRestaurant(Guid id);
         Response UpdateRestaurant(UpdateRestaurantViewModel input);
+        Response RestoreRestaurant(Guid id, Guid idUser);
 
-
+        Response SearchHotel(JObject frmData);
     }
 }

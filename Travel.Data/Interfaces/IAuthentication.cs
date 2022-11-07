@@ -35,5 +35,6 @@ namespace Travel.Data.Interfaces
         Response CusUnBlock(string email);
         Customer CusCheckBlock(string email);
         Response CusBlock(string email);
+        string RoleName(int roleId);
     }
 }

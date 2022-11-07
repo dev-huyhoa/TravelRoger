@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Context.Models;
@@ -13,6 +15,7 @@ using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using TravelApi.Helpers;
 using TravelApi.Hubs;
 using TravelApi.Hubs.HubServices;
 
@@ -22,23 +25,25 @@ namespace TravelApi.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
+
         private IEmployee employee;
         private Notification message;
         private Response res;
-        private IHubRepository _hubRepo;
 
-        public EmployeeController(IEmployee _employee, IHubRepository hubRepo)
+        public EmployeeController(IEmployee _employee)
         {
             employee = _employee;
-            _hubRepo = hubRepo;
             res = new Response();
         }
 
         [HttpGet]
+        //[ClaimRequirement(ClaimTypes.Name, "Admin")]
         [Authorize]
         [Route("gets-employee")]
         public object GetsEmployee(bool isDelete)
         {
+            var userId = this.User.Claims.Where(x=> x.Type == ClaimTypes.NameIdentifier);
+            var userId1 = this.User.FindFirstValue(ClaimTypes.Role);
             res = employee.GetsEmployee(isDelete);
             return Ok(res);
         }
@@ -57,13 +62,13 @@ namespace TravelApi.Controllers
         [Route("create-employee")]
         public object CreateEmployee(IFormCollection frmdata, IFormFile file)
         {
+            var userId = this.User.FindFirstValue(ClaimTypes.Role);
             message = null;
             var result = employee.CheckBeforeSave(frmdata, file, ref message, false);
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateEmployeeViewModel>(result);
                 res = employee.CreateEmployee(createObj);
-                _hubRepo.Send();
             }
             else
             {

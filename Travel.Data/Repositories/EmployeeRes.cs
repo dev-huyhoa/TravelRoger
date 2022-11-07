@@ -494,25 +494,18 @@ namespace Travel.Data.Repositories
                     }
                 }
                 var result = Mapper.MapEmployee(listEmp);
-                if (listEmp.Count() > 0)
+                if (result.Count() > 0)
                 {
-                    res.Content = result;
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy dữ liệu !";
-                    res.Notification.Type = "Warning";
+                    return Ultility.Responses("Không tìm thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 

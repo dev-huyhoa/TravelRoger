@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using Travel.Shared.ViewModels.Travel.PromotionVM;
 using TravelApi.Hubs;
 
 namespace TravelApi.Controllers
@@ -18,31 +19,31 @@ namespace TravelApi.Controllers
     [ApiController]
     public class PromotionController : ControllerBase
     {
-        private IPromotions promotion;
+        private readonly IPromotions _promotion;
         private Notification message;
         private Response res;
 
-        public PromotionController(IPromotions _promotion)
+        public PromotionController(IPromotions promotion)
         {
-            promotion = _promotion;
+            _promotion = promotion;
             res = new Response();
         }
 
         [HttpGet]
         [Authorize]
         [Route("gets-promotion")]
-        public object Gets()
+        public object GetsPromotion(bool isDelete)
         {
-            res = promotion.Gets();
+            res = _promotion.GetsPromotion(isDelete);
             return Ok(res);
         }
 
         [HttpGet]
         [Authorize]
         [Route("gets-promotion-waiting")]
-        public object GetsWaitingPromotion()
+        public object GetsWaitingPromotion(Guid idUser)
         {
-            res = promotion.GetWaitingPromotion();
+            res = _promotion.GetsWaitingPromotion(idUser);
             return Ok(res);
         }
 
@@ -52,11 +53,11 @@ namespace TravelApi.Controllers
         public object Create([FromBody] JObject frmData)
         {
             message = null;
-            var result = promotion.CheckBeforSave(frmData, ref message, false);
+            var result = _promotion .CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, false);
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreatePromotionViewModel>(result);
-                res = promotion.Create(createObj);
+                res = _promotion.CreatePromotion(createObj);
             }
             return Ok(res);
         }
@@ -66,17 +67,13 @@ namespace TravelApi.Controllers
         [Authorize]
         [Route("update-promotion")]
         public object UpdatePromotion(int id,[FromBody] JObject frmData)
-        { 
+        {
             message = null;
-            var result = promotion.CheckBeforSave(frmData, ref message, true);
+            var result = _promotion.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, true);
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdatePromotionViewModel>(result);
-                res = promotion.UpdatePromotion(id,updateObj);
-            }
-            else
-            {
-                res.Notification = message;
+                res = _promotion.UpdatePromotion(updateObj);
             }
             return Ok(res);
         }

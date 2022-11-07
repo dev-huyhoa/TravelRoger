@@ -21,5 +21,6 @@ namespace Travel.Data.Interfaces
         Task<Response> CancelBooking(string idTourBooking);
         Task<Response> RestoreBooking(string idTourBooking);
         Task<Response> TourBookingByBookingNo(string bookingNo);
+        Response StatisticTourBooking();
     }
 }

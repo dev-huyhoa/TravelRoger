@@ -30,6 +30,12 @@ namespace Travel.Data.Repositories
             message = new Notification();
             dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(-3));
         }
+        private Employee GetCurrentUser(Guid IdUserModify)
+        {
+            return (from x in _db.Employees
+                    where x.IdEmployee == IdUserModify
+                    select x).FirstOrDefault();
+        }
         public string CheckBeforSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate)
         {
             try
@@ -55,10 +61,19 @@ namespace Travel.Data.Repositories
                     if (isUpdate)
                     {
                         idTour = PrCommon.GetString("idTour", frmData);
-                        if (CheckAnyBookingInTour(idTour))
+                        if (CheckTourNoSchedule(idTour))
                         {
-                            _message = Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString()).Notification;
-                            return null;
+
+                            if (!CheckTourProgess(idTour))
+                            {
+                                _message = Ultility.Responses("Tour đang diễn ra !", Enums.TypeCRUD.Warning.ToString()).Notification;
+                                return null;  
+                            }
+                            if (CheckAnyBookingInTour(idTour))
+                            {
+                                _message = Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString()).Notification;
+                                return null;
+                            }
                         }
                     }
 
@@ -391,22 +406,23 @@ namespace Travel.Data.Repositories
                              && x.IsDelete == false
                              && x.ApproveStatus == (int)ApproveStatus.Approved
                              select x).FirstOrDefault();
-                var userLogin = (from x in _db.Employees
-                                 where x.IdEmployee == input.IdUserModify
-                                 select x).FirstOrDefault();
+                var userLogin = GetCurrentUser(input.IdUserModify);
                 // clone new object
                 var tourOld = new Tour();
                 tourOld = Ultility.DeepCopy<Tour>(tour);
                 tourOld.IdAction = tourOld.IdTour.ToString();
                 tourOld.IdTour = $"{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}TempData";
                 tourOld.IsTempdata = true;
+
+                //Chống cháy
+                tourOld.Schedules = null;
+
                 _db.Tour.Add(tourOld);
 
 
                 #region setdata
                 tour.IdAction = tourOld.IdTour.ToString();
                 tour.IdUserModify = input.IdUserModify;
-                tour.TypeAction = input.TypeAction;
                 tour.ApproveStatus = (int)ApproveStatus.Waiting;
                 tour.ModifyBy = userLogin.NameEmployee;
                 tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
@@ -459,20 +475,28 @@ namespace Travel.Data.Repositories
                         //                           select s).FirstOrDefault()
                         //           }).ToList();
 
-                        if (scheduleInTour.Count != 0)
+
+                        if (scheduleInTour.Count != 0 || !CheckTourNoSchedule(idTour))
                         {
-                            tour.IsDelete = true;
-                            tour.ApproveStatus = (int)ApproveStatus.Waiting;
-                            tour.TypeAction = "delete";
-                            tour.IdUserModify = idUser;
-                            tour.ModifyBy = userLogin.NameEmployee;
-                            tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
-                            _db.SaveChanges();
-                            return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                            if (CheckTourProgess(idTour))
+                            {
+                                tour.IsDelete = true;
+                                tour.ApproveStatus = (int)ApproveStatus.Waiting;
+                                tour.TypeAction = "delete";
+                                tour.IdUserModify = idUser;
+                                tour.ModifyBy = userLogin.NameEmployee;
+                                tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                                _db.SaveChanges();
+                                res = Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                            }
+                            else
+                            {
+                                res = Ultility.Responses("Tour đang diễn ra !", Enums.TypeCRUD.Warning.ToString());
+                            }
                         }
                         else
                         {
-                            return Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString());
+                            res = Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString());
                         }
                     }
                     else
@@ -861,6 +885,38 @@ namespace Travel.Data.Repositories
             }
         }
 
+        private bool CheckTourNoSchedule(string idTour) // chỉ dùng khi thay đổi thông tin tour
+        {
+            var tourNoSchedule = (from x in _db.Schedules
+                                  where x.TourId == idTour
+                                  select x).ToList();
+            if(tourNoSchedule.Count == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool CheckTourProgess(string idTour)// chỉ dùng khi thay đổi thông tin tour
+        {
+            var scheduleInTourProgress = (from x in _db.Schedules
+                                          where x.TourId == idTour
+                                          && x.Isdelete == false
+                                          && x.Approve == (int)Enums.ApproveStatus.Approved
+                                          && (x.Status == (int)Enums.StatusSchedule.Busy || (x.Status == (int)Enums.StatusSchedule.Going))
+                                          select x).ToList();
+            if(scheduleInTourProgress.Count != 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
         public Response UpdateRating(int rating, string idTour)
         {
             try
