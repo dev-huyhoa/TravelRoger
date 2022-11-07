@@ -487,16 +487,16 @@ namespace Travel.Data.Repositories
                                 tour.ModifyBy = userLogin.NameEmployee;
                                 tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                                 _db.SaveChanges();
-                                res = Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                                return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                             }
                             else
                             {
-                                res = Ultility.Responses("Tour đang diễn ra !", Enums.TypeCRUD.Warning.ToString());
+                                return Ultility.Responses("Tour đang diễn ra !", Enums.TypeCRUD.Warning.ToString());
                             }
                         }
                         else
                         {
-                            res = Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString());
+                            return Ultility.Responses("Tour đang có booking !", Enums.TypeCRUD.Warning.ToString());
                         }
                     }
                     else
