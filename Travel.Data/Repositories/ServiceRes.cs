@@ -36,8 +36,9 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var priceTicket = PrCommon.GetString("priceTicket", frmData) ?? "0";
                 var idHotel = PrCommon.GetString("idHotel", frmData);
+                var idPlace = PrCommon.GetString("idPlace", frmData);
+
                 var idRestaurant = PrCommon.GetString("idRestaurant", frmData) ?? "0";
 
                 if (String.IsNullOrEmpty(idHotel))
@@ -92,7 +93,10 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(idUserModify))
                 {
                 }
-
+                var priceTicket = PrCommon.GetString("priceTicket", frmData);
+                if (String.IsNullOrEmpty(priceTicket))
+                {
+                }
                 if (isUpdate)
                 {
                     if (type == TypeService.Hotel)
@@ -127,6 +131,7 @@ namespace Travel.Data.Repositories
                     else
                     {
                         UpdatePlaceViewModel uPlaceObj = new UpdatePlaceViewModel();
+                        uPlaceObj.IdPlace = Guid.Parse(idPlace);
                         uPlaceObj.PriceTicket = float.Parse(priceTicket);
                         uPlaceObj.Address = address;
                         uPlaceObj.Name = name;
