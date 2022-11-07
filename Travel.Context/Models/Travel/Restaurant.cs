@@ -24,7 +24,7 @@ namespace Travel.Context.Models
         public bool IsDelete { get; set; }
 
         public virtual ICollection<CostTour> CostTours { get; set; }
-        public virtual ICollection<TourbookingDetails> TourBookingDetails { get; set; }
+        public virtual ICollection<TourBookingDetails> TourBookingDetails { get; set; }
 
     }
 }

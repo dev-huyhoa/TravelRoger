@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Travel.Context.Models
 {
-    public class TourbookingDetails
+    public class TourBookingDetails
     {
-        public string IdTourbookingDetails{get;set;}
+        public string IdTourBookingDetails{get;set;}
         public int    Baby{get;set;}
         public int    Child{get;set;}
         public int    Adult{get;set;}
@@ -21,7 +21,7 @@ namespace Travel.Context.Models
         public virtual Hotel Hotel { get; set; }
         public virtual Restaurant Restaurant { get; set; }
         public virtual Place Place { get; set; }
-        public virtual Tourbooking Tourbooking { get; set; }
+        public virtual TourBooking TourBooking { get; set; }
 
     }
 }

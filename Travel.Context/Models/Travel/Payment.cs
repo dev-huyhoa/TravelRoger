@@ -11,6 +11,6 @@ namespace Travel.Context.Models
         public int IdPayment { get; set; }
         public string NamePayment { get; set; }
         public string Type { get; set; }
-        public virtual ICollection<Tourbooking> Tourbooking { get; set; }
+        public virtual ICollection<TourBooking> TourBooking { get; set; }
     }
 }

@@ -586,7 +586,7 @@ namespace Travel.Data.Repositories
                 int approve = Convert.ToInt16(Enums.ApproveStatus.Approved);
                 var schedule = await (from x in _db.Schedules
                                       where x.EndDate >= dateTimeNow
-                                      && x.BeginDate >= dateTimeNow
+                                      && x.BeginDate <= dateTimeNow
                                       && x.Isdelete == false
                                       && x.Approve == approve
                                       && x.IdSchedule == idSchedule
@@ -646,9 +646,12 @@ namespace Travel.Data.Repositories
                 if (departureDate != null && returnDate != null)
                 {
                     var list = await (from x in _db.Schedules
-                                      where x.EndDate > dateTimeNow
-                                      && x.Isdelete == false
+                                      where
+                                      x.Isdelete == false
                                       && x.Approve == (int)Enums.ApproveStatus.Approved
+                                      && x.EndDate >= dateTimeNow
+                                      && x.BeginDate <= dateTimeNow
+                                     
                                       select x
                                       ).ToListAsync();
                     if (departureDate != null)
@@ -673,7 +676,7 @@ namespace Travel.Data.Repositories
                                 select x).ToList();
                     }
                     list = (from s in list
-                            where s.BeginDate >= dateTimeNow
+                            where s.BeginDate <= dateTimeNow
                                && s.EndDate >= dateTimeNow
                             select new Schedule
                             {
@@ -742,9 +745,11 @@ namespace Travel.Data.Repositories
                 else if (departureDate == null && returnDate == null)
                 {
                     var list2 = await (from x in _db.Schedules
-                                       where x.EndDate > dateTimeNow
-                                       && x.Isdelete == false
-                                      && x.Approve == (int)Enums.ApproveStatus.Approved
+                                       where
+                                        x.Isdelete == false
+                                        && x.Approve == (int)Enums.ApproveStatus.Approved
+                                        && x.EndDate >= dateTimeNow
+                                        && x.BeginDate <= dateTimeNow
                                        select x
                                      ).ToListAsync();
 
@@ -830,12 +835,14 @@ namespace Travel.Data.Repositories
                         var toDepartTureDate1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(departureDate.Value.AddDays(1).AddMinutes(-1));
                         // cách 1
                         list1 = await (from x in _db.Schedules
-                                       where x.EndDate > dateTimeNow
-
-                                        && x.DepartureDate >= fromDepartTureDate1
-                                       && x.DepartureDate <= toDepartTureDate1
-                                       && x.Isdelete == false
-                                       && x.Approve == (int)Enums.ApproveStatus.Approved
+                                       where
+                                              x.Isdelete == false
+                                           && x.Approve == (int)Enums.ApproveStatus.Approved
+                                           && x.EndDate >= dateTimeNow
+                                           && x.BeginDate <= dateTimeNow
+                                           && x.DepartureDate >= fromDepartTureDate1
+                                           && x.DepartureDate <= toDepartTureDate1
+                                       
                                        select x
                                       ).ToListAsync();
                         // cách 2 
@@ -852,11 +859,13 @@ namespace Travel.Data.Repositories
                         var fromReturnDate1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(returnDate.Value);
                         var toReturnDate1 = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(returnDate.Value.AddDays(1).AddMinutes(-1));
                         list1 = await (from x in _db.Schedules
-                                       where x.EndDate > dateTimeNow
+                                       where 
+                                       x.Isdelete == false
+                                       && x.Approve == (int)Enums.ApproveStatus.Approved
+                                       && x.EndDate >= dateTimeNow
+                                       && x.BeginDate <= dateTimeNow
                                        && x.ReturnDate >= fromReturnDate1
                                        && x.ReturnDate <= toReturnDate1
-                                       && x.Isdelete == false
-                                       && x.Approve == (int)Enums.ApproveStatus.Approved
                                        select x
                                                              ).ToListAsync();
                     }
@@ -1010,7 +1019,7 @@ namespace Travel.Data.Repositories
                             where s.Isdelete == false &&
                             s.Approve == (int)Enums.ApproveStatus.Approved
                             && s.EndDate >= dateTimeNow
-                            && s.BeginDate >= dateTimeNow
+                            && s.BeginDate <= dateTimeNow
                             && s.PromotionId == 1
                             select new Schedule
                             {
@@ -1088,7 +1097,7 @@ namespace Travel.Data.Repositories
                                   where s.Isdelete == false
                                   && s.Approve == (int)Enums.ApproveStatus.Approved
                                   && s.EndDate >= dateTimeNow
-                                  && s.BeginDate >= dateTimeNow
+                                  && s.BeginDate <= dateTimeNow
                                   && s.EndDate <= flashSaleDay
                                   select new Schedule
                                   {
@@ -1165,7 +1174,7 @@ namespace Travel.Data.Repositories
                             where s.Isdelete == false &&
                             s.Approve == (int)Enums.ApproveStatus.Approved
                             && s.EndDate >= dateTimeNow
-                            && s.BeginDate >= dateTimeNow
+                            && s.BeginDate <= dateTimeNow
                             && s.PromotionId > 1
                             select new Schedule
                             {
@@ -1246,7 +1255,7 @@ namespace Travel.Data.Repositories
                 var list1 = await (from x in _db.Schedules
                                    where x.IdSchedule != idSchedule
                                    && x.EndDate >= dateTimeNow
-                                   && x.BeginDate >= dateTimeNow
+                                   && x.BeginDate <= dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
                                    && (x.FinalPrice >= closetPrice1 && x.FinalPrice <= closetPrice2)
                                    && x.Isdelete == false
@@ -1257,7 +1266,7 @@ namespace Travel.Data.Repositories
                                    where x.IdSchedule != idSchedule
                                    && !(from s in list1 select s.IdSchedule).Contains(x.IdSchedule)
                                    && x.EndDate >= dateTimeNow
-                                   && x.BeginDate >= dateTimeNow
+                                   && x.BeginDate <= dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
                                    && (x.Status == (int)StatusSchedule.Free && x.QuantityCustomer <= x.MinCapacity)
                                    && x.Isdelete == false

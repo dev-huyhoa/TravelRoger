@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Travel.Context.Models
 {
-    public class Tourbooking
+    public class TourBooking
     {
-        public string IdTourbooking{get;set;}
+        public string IdTourBooking{get;set;}
         public int PaymentId { get; set; }
         public Guid CustomerId { get; set; }
 
@@ -40,7 +40,7 @@ namespace Travel.Context.Models
         public  Schedule Schedule { get; set; }
 
         public  Payment Payment { get; set; }
-        public  TourbookingDetails TourbookingDetails { get; set; }
+        public TourBookingDetails TourBookingDetails { get; set; }
 
     }
 }

@@ -168,12 +168,12 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.Tourbookings
+                var list = (from x in _db.TourBookings
                             where x.CustomerId == idCustomer
                             orderby x.DateBooking descending    
-                            select new Tourbooking
+                            select new TourBooking
                             {
-                                IdTourbooking = x.IdTourbooking,
+                                IdTourBooking = x.IdTourBooking,
                                 Status = x.Status,
                                 TotalPrice = x.TotalPrice,
                                 TotalPricePromotion = x.TotalPricePromotion,
@@ -181,8 +181,8 @@ namespace Travel.Data.Repositories
                                 DateBooking = x.DateBooking,
                                 BookingNo = x.BookingNo,
                                 ValuePromotion = x.ValuePromotion,
-                                TourbookingDetails = (from tbd in _db.tourbookingDetails 
-                                                      where tbd.IdTourbookingDetails == x.IdTourbooking 
+                                TourBookingDetails = (from tbd in _db.tourBookingDetails 
+                                                      where tbd.IdTourBookingDetails == x.IdTourBooking 
                                                       select tbd).First(),
                                 Schedule = (from s in _db.Schedules
                                             where x.ScheduleId == s.IdSchedule

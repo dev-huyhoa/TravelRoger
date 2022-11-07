@@ -218,7 +218,6 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 var list = await (from x in _db.Tour
                                   where x.IsDelete == false
                                   && x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved)
@@ -237,6 +236,7 @@ namespace Travel.Data.Repositories
                                                    where s.TourId == x.IdTour
                                                    && s.Isdelete == false
                                                    && s.EndDate >= dateTimeNow
+                                                   && s.BeginDate <= dateTimeNow
                                                    && s.Status == (int)Enums.StatusSchedule.Free
                                                    orderby s.DepartureDate
                                                    select new Schedule
@@ -327,8 +327,9 @@ namespace Travel.Data.Repositories
                                       QuantityBooked = x.QuantityBooked,
                                       Schedules = (from s in _db.Schedules
                                                    where s.TourId == x.IdTour
-                                                   && s.EndDate >= dateTimeNow
                                                    && s.Status == (int)Enums.StatusSchedule.Free
+                                                   && s.EndDate >= dateTimeNow
+                                                   && s.BeginDate <= dateTimeNow
                                                    select new Schedule
                                                    {
                                                        DepartureDate = s.DepartureDate,
@@ -795,7 +796,7 @@ namespace Travel.Data.Repositories
                                       Schedules = (from s in _db.Schedules
                                                    where s.TourId == x.IdTour
                                                    && s.EndDate >= dateTimeNow
-                                                   && s.BeginDate >= dateTimeNow
+                                                   && s.BeginDate <= dateTimeNow
                                                    && s.Status == (int)Enums.StatusSchedule.Free
                                                    orderby s.DepartureDate
                                                    select new Schedule

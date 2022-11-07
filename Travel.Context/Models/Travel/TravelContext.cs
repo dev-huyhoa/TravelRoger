@@ -18,8 +18,8 @@ namespace Travel.Context.Models.Travel
             : base(options)
         {
         }
-        public DbSet<Tourbooking> Tourbookings { get; set; }
-        public DbSet<TourbookingDetails> tourbookingDetails { get; set; }
+        public DbSet<TourBooking> TourBookings { get; set; }
+        public DbSet<TourBookingDetails> tourBookingDetails { get; set; }
         public DbSet<Payment> Payment { get; set; }
         public DbSet<Province> Provinces { get; set; }
         public DbSet<District> Districts { get; set; }
@@ -68,9 +68,9 @@ namespace Travel.Context.Models.Travel
 
             });
 
-            modelBuilder.Entity<Tourbooking>(entity =>
+            modelBuilder.Entity<TourBooking>(entity =>
             {
-                entity.HasKey(e => e.IdTourbooking);
+                entity.HasKey(e => e.IdTourBooking);
                 entity.Property(e => e.ScheduleId).HasMaxLength(50);
 
                 //entity.HasOne(e => e.Schedule)
@@ -79,19 +79,19 @@ namespace Travel.Context.Models.Travel
 
 
                 entity.HasOne(e => e.Payment)
-                .WithMany(e => e.Tourbooking)
+                .WithMany(e => e.TourBooking)
                 .HasForeignKey(e => e.PaymentId);
 
-                entity.HasOne(e => e.TourbookingDetails)
-                .WithOne(e => e.Tourbooking)
-                .HasForeignKey<TourbookingDetails>(e => e.IdTourbookingDetails);
+                entity.HasOne(e => e.TourBookingDetails)
+                .WithOne(e => e.TourBooking)
+                .HasForeignKey<TourBookingDetails>(e => e.IdTourBookingDetails);
 
 
                 entity.Property(e => e.Email).HasMaxLength(100);
                 entity.Property(e => e.Address).HasMaxLength(100);
                 entity.Property(e => e.Phone).HasMaxLength(14);
                 entity.Property(e => e.Pincode).HasMaxLength(20);
-                entity.Property(e => e.IdTourbooking).HasMaxLength(50);
+                entity.Property(e => e.IdTourBooking).HasMaxLength(50);
                 entity.Property(e => e.NameCustomer).HasMaxLength(100);
                 entity.Property(e => e.NameContact).HasMaxLength(100);
                 entity.Property(e => e.VoucherCode).HasMaxLength(10);
@@ -111,10 +111,10 @@ namespace Travel.Context.Models.Travel
             });
 
 
-            modelBuilder.Entity<TourbookingDetails>(entity =>
+            modelBuilder.Entity<TourBookingDetails>(entity =>
             {
-                entity.HasKey(e => e.IdTourbookingDetails);
-                entity.Property(e => e.IdTourbookingDetails).HasMaxLength(50);
+                entity.HasKey(e => e.IdTourBookingDetails);
+                entity.Property(e => e.IdTourBookingDetails).HasMaxLength(50);
 
 
                 entity.HasOne(e => e.Restaurant)

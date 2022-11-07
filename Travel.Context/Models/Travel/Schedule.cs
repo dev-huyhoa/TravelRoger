@@ -68,7 +68,7 @@ namespace Travel.Context.Models
         public Promotion Promotions { get; set; }
         public Tour Tour { get; set; }
         public ICollection<Timeline> Timelines { get; set; }
-        public ICollection<Tourbooking> TourBookings { get; set; }
+        public ICollection<TourBooking> TourBookings { get; set; }
         public Employee Employee { get; set; }
         
     }

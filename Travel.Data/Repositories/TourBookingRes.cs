@@ -186,22 +186,22 @@ namespace Travel.Data.Repositories
             try
             {
                 await transaction.CreateSavepointAsync("BeforeSave");
-                Tourbooking tourbooking = Mapper.MapCreateTourBooking(input);
-                TourbookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
-                tourbooking.TourbookingDetails = tourBookingDetail;
-                _db.Tourbookings.Add(tourbooking);
+                TourBooking tourbooking = Mapper.MapCreateTourBooking(input);
+                TourBookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
+                tourbooking.TourBookingDetails = tourBookingDetail;
+                _db.TourBookings.Add(tourbooking);
                 await _db.SaveChangesAsync();
                 var payment = await (from x in _db.Payment where x.IdPayment == input.PaymentId select x).FirstAsync();
                 tourbooking.Payment = payment;
 
                 // cập nhật số lượng
-                int quantityAdult = tourbooking.TourbookingDetails.Adult;
-                int quantityChild = tourbooking.TourbookingDetails.Child;
-                int quantityBaby = tourbooking.TourbookingDetails.Baby;
+                int quantityAdult = tourbooking.TourBookingDetails.Adult;
+                int quantityChild = tourbooking.TourBookingDetails.Child;
+                int quantityBaby = tourbooking.TourBookingDetails.Baby;
                 await _schedule.UpdateCapacity(input.ScheduleId, quantityAdult, quantityChild, quantityBaby);
                 transaction.Commit();
                 transaction.Dispose();
-                return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourbooking);
+                return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
             }
             catch (Exception e)
             {
@@ -215,7 +215,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var ListTourBooking = _db.Tourbookings.OrderByDescending(x => x.DateBooking).ToList();
+                var ListTourBooking = _db.TourBookings.OrderByDescending(x => x.DateBooking).ToList();
                 var result = Mapper.MapTourBooking(ListTourBooking);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
 
@@ -249,7 +249,7 @@ namespace Travel.Data.Repositories
                     toDate = long.MaxValue; // nếu toDate ko gán thì cho nó dữ liệu max, để ngày nào nó cũng lấy 
                 }
 
-                var list = (from x in _db.Tourbookings
+                var list = (from x in _db.TourBookings
                             where x.DateBooking >= fromDate
                             && x.DateBooking <= toDate
                             select x).OrderByDescending(x => x.DateBooking).ToList();
@@ -266,16 +266,18 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourbooking = await (from x in _db.Tourbookings
-                                         where x.IdTourbooking == idTourbooking
-                                         select new Tourbooking
+                var tourbooking = await (from x in _db.TourBookings
+                                         where x.IdTourBooking == idTourbooking
+                                         select new TourBooking
                                          {
+                                             IdTourBooking = x.IdTourBooking,
                                              LastDate = x.LastDate,
                                              NameCustomer = x.NameCustomer,
                                              NameContact = x.NameContact,
                                              Pincode = x.Pincode,
                                              Email = x.Email,
                                              Phone = x.Phone,
+                                             Status = x.Status,
                                              Address = x.Address,
                                              AdditionalPrice = x.AdditionalPrice,
                                              BookingNo = x.BookingNo,
@@ -287,8 +289,8 @@ namespace Travel.Data.Repositories
                                              Payment = (from p in _db.Payment
                                                         where p.IdPayment == x.PaymentId
                                                         select p).First(),
-                                             TourbookingDetails = (from tbd in _db.tourbookingDetails
-                                                                   where tbd.IdTourbookingDetails == x.IdTourbooking
+                                             TourBookingDetails = (from tbd in _db.tourBookingDetails
+                                                                   where tbd.IdTourBookingDetails == x.IdTourBooking
                                                                    select tbd).First(),
                                              Schedule = (from s in _db.Schedules
                                                          where s.IdSchedule == x.ScheduleId
@@ -318,13 +320,13 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourbooking = (from tb in _db.Tourbookings
-                                   where tb.IdTourbooking == idTourBooking
+                var tourbooking = (from tb in _db.TourBookings
+                                   where tb.IdTourBooking == idTourBooking
                                    && tb.Status == (int)Enums.StatusBooking.Paying
                                    select tb).FirstOrDefault();
                 if (tourbooking != null)
                 {
-                    var bookingNo = $"{tourbooking.IdTourbooking}NO";
+                    var bookingNo = $"{tourbooking.IdTourBooking}NO";
                     tourbooking.Status = (int)Enums.StatusBooking.Paid;
                     tourbooking.BookingNo = bookingNo;
                     _db.SaveChanges();
@@ -355,8 +357,8 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourbooking = await (from tb in _db.Tourbookings
-                                         where tb.IdTourbooking == idTourBooking
+                var tourbooking = await (from tb in _db.TourBookings
+                                         where tb.IdTourBooking == idTourBooking
                                          && tb.Status == (int)Enums.StatusBooking.Paying
                                          select tb).FirstOrDefaultAsync();
                 if (tourbooking != null)
@@ -380,8 +382,8 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourbooking = await (from tb in _db.Tourbookings
-                                         where tb.IdTourbooking == idTourBooking
+                var tourbooking = await (from tb in _db.TourBookings
+                                         where tb.IdTourBooking == idTourBooking
                                          && tb.Status == (int)Enums.StatusBooking.Cancel
                                          select tb).FirstOrDefaultAsync();
                 if (tourbooking != null)
@@ -414,9 +416,9 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourbooking = await (from x in _db.Tourbookings
+                var tourbooking = await (from x in _db.TourBookings
                                          where x.BookingNo == bookingNo
-                                         select new Tourbooking
+                                         select new TourBooking
                                          {
                                              LastDate = x.LastDate,
                                              NameCustomer = x.NameCustomer,
@@ -435,8 +437,8 @@ namespace Travel.Data.Repositories
                                              Payment = (from p in _db.Payment
                                                         where p.IdPayment == x.PaymentId
                                                         select p).First(),
-                                             TourbookingDetails = (from tbd in _db.tourbookingDetails
-                                                                   where tbd.IdTourbookingDetails == x.IdTourbooking
+                                             TourBookingDetails = (from tbd in _db.tourBookingDetails
+                                                                   where tbd.IdTourBookingDetails == x.IdTourBooking
                                                                    select tbd).First(),
                                              Schedule = (from s in _db.Schedules
                                                          where s.IdSchedule == x.ScheduleId
@@ -467,15 +469,15 @@ namespace Travel.Data.Repositories
         {
             try
             {  // Đã đặt tour nhưng chưa thanh toán
-                var lsTourBookingPaying = (from x in _db.Tourbookings
+                var lsTourBookingPaying = (from x in _db.TourBookings
                                            where x.Status == (int)Enums.StatusBooking.Paying
                                            select x).Count();
                 // tour đã thanh toán hết  
-                var lsTourBookingPaid = (from x in _db.Tourbookings
+                var lsTourBookingPaid = (from x in _db.TourBookings
                                          where x.Status == (int)Enums.StatusBooking.Paid
                                          select x).Count();
                 // tourr đã hủy
-                var lsTourBookingCancel = (from x in _db.Tourbookings
+                var lsTourBookingCancel = (from x in _db.TourBookings
                                            where x.Status == (int)Enums.StatusBooking.Cancel
                                            select x).Count();
                 var ab = String.Format("tourPaying: {0} && tourPaid: {1} && tourCancel: {2}", lsTourBookingPaying, lsTourBookingPaid, lsTourBookingCancel);

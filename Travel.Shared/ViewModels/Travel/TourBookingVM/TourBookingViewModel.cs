@@ -36,7 +36,7 @@ namespace Travel.Shared.ViewModels.Travel
 
 
         private Schedule schedule;
-        private TourbookingDetails tourbookingDetails;
+        private TourBookingDetails tourBookingDetails;
         private Payment payment;
 
 
@@ -60,7 +60,7 @@ namespace Travel.Shared.ViewModels.Travel
         public string ModifyBy { get => modifyBy; set => modifyBy = value; }
         public long ModifyDate { get => modifyDate; set => modifyDate = value; }
         public Schedule Schedule { get => schedule; set => schedule = value; }
-        public TourbookingDetails TourbookingDetails { get => tourbookingDetails; set => tourbookingDetails = value; }
+        public TourBookingDetails TourBookingDetails { get => tourBookingDetails; set => tourBookingDetails = value; }
         public Payment Payment { get => payment; set => payment = value; }
         public float TotalPricePromotion { get => totalPricePromotion; set => totalPricePromotion = value; }
     }
