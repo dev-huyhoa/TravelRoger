@@ -22,7 +22,6 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private readonly ISchedule _schedule;
-        private Notification message;
      
         private readonly IConfiguration _config;
         public TourBookingRes(TravelContext db,
@@ -30,7 +29,6 @@ namespace Travel.Data.Repositories
             IConfiguration config)
         {
             _db = db;
-            message = new Notification();
             _schedule = schedule;
             _config = config;
         }
@@ -211,13 +209,54 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Gets()
+        public async Task<Response> Gets()
         {
             try
             {
-                var ListTourBooking = _db.TourBookings.OrderByDescending(x => x.DateBooking).ToList();
-                var result = Mapper.MapTourBooking(ListTourBooking);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var ListTourBooking = await (from x in _db.TourBookings
+                                             orderby x.DateBooking descending
+                                             select new TourBooking
+                                            {
+                                                IdTourBooking = x.IdTourBooking,
+                                                LastDate = x.LastDate,
+                                                NameCustomer = x.NameCustomer,
+                                                NameContact = x.NameContact,
+                                                Pincode = x.Pincode,
+                                                Email = x.Email,
+                                                Phone = x.Phone,
+                                                Status = x.Status,
+                                                Address = x.Address,
+                                                AdditionalPrice = x.AdditionalPrice,
+                                                BookingNo = x.BookingNo,
+                                                IsCalled = x.IsCalled
+                                                DateBooking = x.DateBooking,
+                                                TotalPrice = x.TotalPrice,
+                                                TotalPricePromotion = x.TotalPricePromotion,
+                                                VoucherCode = x.VoucherCode,
+                                                ValuePromotion = x.ValuePromotion,
+                                                Payment = (from p in _db.Payment
+                                                           where p.IdPayment == x.PaymentId
+                                                           select p).First(),
+                                                TourBookingDetails = (from tbd in _db.tourBookingDetails
+                                                                      where tbd.IdTourBookingDetails == x.IdTourBooking
+                                                                      select tbd).First(),
+                                                Schedule = (from s in _db.Schedules
+                                                            where s.IdSchedule == x.ScheduleId
+                                                            select new Schedule
+                                                            {
+                                                                DepartureDate = s.DepartureDate,
+                                                                ReturnDate = s.ReturnDate,
+                                                                DeparturePlace = s.DeparturePlace,
+                                                                Description = s.Description,
+                                                                QuantityCustomer = s.QuantityCustomer,
+                                                                IdSchedule = s.IdSchedule,
+                                                                Tour = (from t in _db.Tour
+                                                                        where t.IdTour == s.TourId
+                                                                        select t).First(),
+
+                                                            }).First()
+                                            }).ToListAsync();
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), ListTourBooking);
 
             }
             catch (Exception e)
@@ -268,6 +307,7 @@ namespace Travel.Data.Repositories
             {
                 var tourbooking = await (from x in _db.TourBookings
                                          where x.IdTourBooking == idTourbooking
+                                         orderby x.DateBooking descending
                                          select new TourBooking
                                          {
                                              IdTourBooking = x.IdTourBooking,
