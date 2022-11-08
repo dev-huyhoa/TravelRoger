@@ -228,7 +228,7 @@ namespace Travel.Data.Repositories
                                                 Address = x.Address,
                                                 AdditionalPrice = x.AdditionalPrice,
                                                 BookingNo = x.BookingNo,
-                                                IsCalled = x.IsCalled
+                                                IsCalled = x.IsCalled,
                                                 DateBooking = x.DateBooking,
                                                 TotalPrice = x.TotalPrice,
                                                 TotalPricePromotion = x.TotalPricePromotion,
@@ -530,17 +530,18 @@ namespace Travel.Data.Repositories
               
             }
         }
+
         public Response CheckCalled(string idTourBooking)
         {
             try
             {
                 var tourbooking = (from tb in _db.TourBookings.AsNoTracking()
-                                        where tb.IdTourBooking == idTourBooking
-                                        select tb).FirstOrDefault();
+                                   where tb.IdTourBooking == idTourBooking
+                                   select tb).FirstOrDefault();
                 if (tourbooking != null)
                 {
                     tourbooking.IsCalled = true;
-                    UpdateDatabase(tourbooking);
+                    _db.SaveChanges();
                     //#region sendMail
 
                     //var emailSend = _config["emailSend"];
@@ -563,20 +564,5 @@ namespace Travel.Data.Repositories
             }
         }
 
-        private void UpdateDatabase(TourBooking tourbooking)
-        {
-            _db.Entry(tourbooking).State = EntityState.Modified;
-            _db.SaveChanges();
-        }
-        private void DeleteDatabase(TourBooking tourbooking)
-        {
-            _db.Entry(tourbooking).State = EntityState.Deleted;
-            _db.SaveChanges();
-        }
-        private void CreateDatabase(TourBooking tourbooking)
-        {
-            _db.TourBookings.Add(tourbooking);
-            _db.SaveChanges();
-        }
     }
 }
