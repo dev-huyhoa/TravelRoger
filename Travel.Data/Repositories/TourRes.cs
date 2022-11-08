@@ -620,7 +620,7 @@ namespace Travel.Data.Repositories
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.IdAction = null;
                         tour.TypeAction = null;
-
+                        UpdateDatabase(tour);
 
                         // delete tempdata
                         var tourTemp = (from x in _db.Tour.AsNoTracking()
