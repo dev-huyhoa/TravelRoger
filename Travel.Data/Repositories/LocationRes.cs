@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
@@ -158,23 +159,21 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listProvince = (from x in _db.Provinces orderby x.NameProvince select x).ToList();
+                var listProvince = (from x in _db.Provinces.AsNoTracking() orderby x.NameProvince select x).ToList();
 
                 var result = Mapper.MapProvince(listProvince);
                 if (result.Count() > 0)
                 {
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
                 }
 
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -182,22 +181,19 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listDistrict = (from x in _db.Districts orderby x.Province.NameProvince, x.NameDistrict select x).ToList();
+                var listDistrict = (from x in _db.Districts.AsNoTracking() orderby x.Province.NameProvince, x.NameDistrict select x).ToList();
                 var result = Mapper.MapDistrict(listDistrict);
                 if (result.Count() > 0)
                 {
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
 
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -205,22 +201,19 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listWard = (from x in _db.Wards orderby x.District.NameDistrict, x.NameWard select x).ToList();
+                var listWard = (from x in _db.Wards.AsNoTracking() orderby x.District.NameDistrict, x.NameWard select x).ToList();
                 var result = Mapper.MapWard(listWard);
                 if (result.Count() > 0)
                 {
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
 
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -253,7 +246,7 @@ namespace Travel.Data.Repositories
                 }
 
                 var listProvince = new List<Province>();
-                listProvince = (from x in _db.Provinces
+                listProvince = (from x in _db.Provinces.AsNoTracking()
                                 where x.IdProvince.ToString().ToLower().Contains(keywords.KwId) &&
                                       x.NameProvince.ToLower().Contains(keywords.KwName)
                                 orderby x.NameProvince
@@ -261,18 +254,17 @@ namespace Travel.Data.Repositories
                 var result = Mapper.MapProvince(listProvince);
                 if (listProvince.Count() > 0)
                 {
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
                 }
 
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -312,7 +304,7 @@ namespace Travel.Data.Repositories
                 var listDistrict = new List<District>();
                 if (keywords.KwIdProvince.Count > 0)
                 {
-                    listDistrict = (from x in _db.Districts
+                    listDistrict = (from x in _db.Districts.AsNoTracking()
                                     where x.IdDistrict.ToString().ToLower().Contains(keywords.KwId) &&
                                            x.NameDistrict.ToLower().Contains(keywords.KwName) &&
                                             keywords.KwIdProvince.Contains(x.ProvinceId.ToString())
@@ -321,7 +313,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    listDistrict = (from x in _db.Districts
+                    listDistrict = (from x in _db.Districts.AsNoTracking()
                                     where x.IdDistrict.ToString().ToLower().Contains(keywords.KwId) &&
                                            x.NameDistrict.ToLower().Contains(keywords.KwName)
                                     orderby x.Province.NameProvince, x.NameDistrict
@@ -330,18 +322,16 @@ namespace Travel.Data.Repositories
                 var result = Mapper.MapDistrict(listDistrict);
                 if (listDistrict.Count() > 0)
                 {
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
 
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -381,7 +371,7 @@ namespace Travel.Data.Repositories
                 var listWard = new List<Ward>();
                 if (keywords.KwIdDistrict.Count > 0)
                 {
-                    listWard = (from x in _db.Wards
+                    listWard = (from x in _db.Wards.AsNoTracking()
                                 where x.IdWard.ToString().ToLower().Contains(keywords.KwId) &&
                                       x.NameWard.ToLower().Contains(keywords.KwName) &&
                                       keywords.KwIdDistrict.Contains(x.DistrictId.ToString())
@@ -390,7 +380,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    listWard = (from x in _db.Wards
+                    listWard = (from x in _db.Wards.AsNoTracking()
                                 where x.IdWard.ToString().ToLower().Contains(keywords.KwId) &&
                                       x.NameWard.ToLower().Contains(keywords.KwName)
                                 orderby x.District.NameDistrict, x.NameWard
@@ -399,18 +389,17 @@ namespace Travel.Data.Repositories
                 var result = Mapper.MapWard(listWard);
                 if (listWard.Count() > 0)
                 {
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
                 }
 
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -422,18 +411,13 @@ namespace Travel.Data.Repositories
                 _db.Provinces.Add(province);
                 _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-                return res;
+
+                return Ultility.Responses($"Tạo mới thành công !", Enums.TypeCRUD.Success.ToString());
+
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -445,18 +429,13 @@ namespace Travel.Data.Repositories
                 _db.Districts.Add(district);
                 _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses($"Tạo mới thành công !", Enums.TypeCRUD.Success.ToString());
+
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -468,18 +447,13 @@ namespace Travel.Data.Repositories
                 _db.Wards.Add(ward);
                 _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses($"Tạo mới thành công !", Enums.TypeCRUD.Success.ToString());
+
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -491,19 +465,13 @@ namespace Travel.Data.Repositories
                 _db.Provinces.Update(province);
                 _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
+                return Ultility.Responses($"Sửa thành công !", Enums.TypeCRUD.Success.ToString());
 
-                return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -515,19 +483,14 @@ namespace Travel.Data.Repositories
                 _db.Districts.Update(district);
                 _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
+                return Ultility.Responses($"Sửa thành công !", Enums.TypeCRUD.Success.ToString());
 
-                return res;
+
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -539,19 +502,12 @@ namespace Travel.Data.Repositories
                 _db.Wards.Update(ward);
                 _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-
-                return res;
+                return Ultility.Responses($"Sửa thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
         public Response DeleteProvince(Guid idProvince)
@@ -563,21 +519,16 @@ namespace Travel.Data.Repositories
                 {
                     _db.Provinces.Remove(province);
                     _db.SaveChanges();
+                    return Ultility.Responses($"Xóa thành công !", Enums.TypeCRUD.Success.ToString());
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Xóa thành công !";
-                    res.Notification.Type = "Success";
                 }
 
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -590,21 +541,16 @@ namespace Travel.Data.Repositories
                 {
                     _db.Districts.Remove(district);
                     _db.SaveChanges();
+                    return Ultility.Responses($"Xóa thành công !", Enums.TypeCRUD.Success.ToString());
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Xóa thành công !";
-                    res.Notification.Type = "Success";
                 }
 
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -617,21 +563,16 @@ namespace Travel.Data.Repositories
                 {
                     _db.Wards.Remove(ward);
                     _db.SaveChanges();
+                    return Ultility.Responses($"Xóa thành công !", Enums.TypeCRUD.Success.ToString());
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Xóa thành công !";
-                    res.Notification.Type = "Success";
                 }
 
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
     }

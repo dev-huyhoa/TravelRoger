@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
@@ -125,7 +126,7 @@ namespace Travel.Data.Repositories
                 //var banner = (from x in _db.Banners where x.IsActive == true select x).FirstOrDefault();
                 //var lsImageBanner = (from x in _db.Images where x.IdService == banner.IdBanner select x).ToList();
                 //var result = _db.Banners.ToList();
-                var result = (from x in _db.Banners where x.IsDelete == false select x).ToList();
+                var result = (from x in _db.Banners.AsNoTracking() where x.IsDelete == false select x).ToList();
                 if (result.Count > 0)
                 {
                     res.Content = result;

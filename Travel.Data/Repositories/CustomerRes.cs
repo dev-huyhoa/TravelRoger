@@ -14,6 +14,7 @@ using Travel.Context.Models;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 namespace Travel.Data.Repositories
 {
@@ -30,7 +31,21 @@ namespace Travel.Data.Repositories
             _config = config;
             res = new Response();
         }
-
+        private void UpdateDatabase(Customer input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+            _db.SaveChanges();
+        }
+        private void DeleteDatabase(Customer input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+            _db.SaveChanges();
+        }
+        private void CreateDatabase(Customer input)
+        {
+            _db.Entry(input).State = EntityState.Added;
+            _db.SaveChanges();
+        }
         public string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
             try
@@ -131,8 +146,7 @@ namespace Travel.Data.Repositories
                 customer.IdCustomer = Guid.NewGuid();
                 customer.Point = 0;
                 customer.IsDelete = false;
-                _db.Customers.Add(customer);
-                _db.SaveChanges();
+                CreateDatabase(customer);
 
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
@@ -147,9 +161,9 @@ namespace Travel.Data.Repositories
         {
             try
             {                       
-                var listCus = (from x in _db.Customers where x.IsDelete == false select x).ToList();
+                var listCus = (from x in _db.Customers.AsNoTracking()
+                               where x.IsDelete == false select x).ToList();
                 var result = Mapper.MapCustomer(listCus);
-
                 if (result.Count() > 0)
                 {
                     return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -168,7 +182,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.TourBookings
+                var list = (from x in _db.TourBookings.AsNoTracking()
                             where x.CustomerId == idCustomer
                             orderby x.DateBooking descending    
                             select new TourBooking
@@ -181,17 +195,17 @@ namespace Travel.Data.Repositories
                                 DateBooking = x.DateBooking,
                                 BookingNo = x.BookingNo,
                                 ValuePromotion = x.ValuePromotion,
-                                TourBookingDetails = (from tbd in _db.tourBookingDetails 
+                                TourBookingDetails = (from tbd in _db.tourBookingDetails.AsNoTracking()
                                                       where tbd.IdTourBookingDetails == x.IdTourBooking 
                                                       select tbd).First(),
-                                Schedule = (from s in _db.Schedules
+                                Schedule = (from s in _db.Schedules.AsNoTracking()
                                             where x.ScheduleId == s.IdSchedule
                                             select new Schedule {
                                                 Description = s.Description,
                                                 DepartureDate = s.DepartureDate,
                                                 DeparturePlace = s.DeparturePlace,
                                                 ReturnDate = s.ReturnDate,
-                                                Tour = (from t in _db.Tour
+                                                Tour = (from t in _db.Tour.AsNoTracking()
                                                         where s.TourId == t.IdTour
                                                         select new Tour { 
                                                         Thumbnail = t.Thumbnail,
@@ -266,7 +280,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var account = (from x in _db.Customers
+                var account = (from x in _db.Customers.AsNoTracking()
                                where x.Email.ToLower() == email.ToLower()
                                select x).FirstOrDefault();
                 if (account != null)
@@ -308,7 +322,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var customer = (from x in _db.Customers
+                var customer = (from x in _db.Customers.AsNoTracking()
                                 where x.IdCustomer == idCustomer
                                 select x).First();
                 var result = Mapper.MapCustomer(customer);
@@ -333,8 +347,7 @@ namespace Travel.Data.Repositories
             try
             {
                 Customer customer = Mapper.MapUpdateCustomer(input);
-                _db.Customers.Update(customer);
-                _db.SaveChanges();
+                UpdateDatabase(customer);
                 return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
@@ -350,20 +363,14 @@ namespace Travel.Data.Repositories
                 var cus = (from x in _db.Customers where x.IsDelete == false && x.Email == email select x).Count();
                 if (cus > 0)
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Description = "Email";
-                    res.Notification.Messenge = "[" + email + "] này đã được đăng ký !";
-                    res.Notification.Type = "Validation";
+                    return Ultility.Responses("[" + email + "] này đã được đăng ký !", Enums.TypeCRUD.Warning.ToString(), description: "Email");
                 }
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
     }

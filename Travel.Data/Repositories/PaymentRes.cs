@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
@@ -81,20 +82,14 @@ namespace Travel.Data.Repositories
 
                 _db.Payment.Add(pay);
                 _db.SaveChanges();
+                return Ultility.Responses($"Thêm mới thành công !", Enums.TypeCRUD.Success.ToString());
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-                return res;
             }
             catch (Exception e)
             {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -105,21 +100,19 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listPayment = (from x in _db.Payment select x).ToList();
+                var listPayment = (from x in _db.Payment.AsNoTracking()
+                                   select x).ToList();
                 var result = Mapper.MapPayment(listPayment);
                 if (result.Count() > 0)
                 {
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             };
         }
 

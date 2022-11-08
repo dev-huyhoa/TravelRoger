@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
@@ -31,6 +32,26 @@ namespace Travel.Data.Repositories
             res = new Response();
 
             _config = config;
+        }
+        private void UpdateDatabase(CostTour input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+            _db.SaveChanges();
+        }
+        private void UpdateDatabaseSchedule(Schedule input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+            _db.SaveChanges();
+        }
+        private void DeleteDatabase(CostTour input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+            _db.SaveChanges();
+        }
+        private void CreateDatabase(CostTour input)
+        {
+            _db.Entry(input).State = EntityState.Added;
+            _db.SaveChanges();
         }
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false)
         {
@@ -154,9 +175,12 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var hotel = (from x in _db.Hotels where x.IdHotel == input.HotelId select x).First();
-                var restaurant = (from x in _db.Restaurants where x.IdRestaurant == input.RestaurantId select x).First();
-                var place = (from x in _db.Places where x.IdPlace == input.PlaceId select x).First();
+                var hotel = (from x in _db.Hotels.AsNoTracking() 
+                             where x.IdHotel == input.HotelId select x).FirstOrDefault();
+                var restaurant = (from x in _db.Restaurants.AsNoTracking()
+                                  where x.IdRestaurant == input.RestaurantId select x).FirstOrDefault();
+                var place = (from x in _db.Places.AsNoTracking()
+                             where x.IdPlace == input.PlaceId select x).FirstOrDefault();
                 CostTour cost =
                 cost = Mapper.MapCreateCost(input);
                 cost.PriceHotelDB = hotel.DoubleRoomPrice;
@@ -164,12 +188,13 @@ namespace Travel.Data.Repositories
                 cost.PriceRestaurant = restaurant.ComboPrice;
                 cost.PriceTicketPlace = place.PriceTicket;
                 //
-                _db.CostTours.Add(cost);
-                _db.SaveChanges();
+                CreateDatabase(cost);
                 // thêm schedule update giá
                 // update price
                 float holidayPercent = Convert.ToInt16(_config["PercentHoliday"]);
-                var schedule = (from x in _db.Schedules where x.IdSchedule == input.IdSchedule select x).First();
+
+                var schedule = (from x in _db.Schedules.AsNoTracking()
+                                where x.IdSchedule == input.IdSchedule select x).First();
                 schedule.AdditionalPrice = cost.PriceHotelSR;
                 schedule.AdditionalPriceHoliday = (cost.PriceHotelSR + (cost.PriceHotelSR * (holidayPercent / 100)));
                 schedule.TotalCostTourNotService = cost.TotalCostTourNotService;
@@ -180,21 +205,14 @@ namespace Travel.Data.Repositories
                 float FinalPrice = (cost.TotalCostTourNotService + CostService) + ((cost.TotalCostTourNotService + CostService) * VAT) + ((cost.TotalCostTourNotService + CostService) * Profit);
                 schedule.FinalPrice = FinalPrice;
                 schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
-                _db.SaveChanges();
+                UpdateDatabaseSchedule(schedule);
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses($"Cập nhật giá cho {schedule.IdSchedule} thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -206,24 +224,19 @@ namespace Travel.Data.Repositories
                 var result = Mapper.MapCost(list);
                 if (list.Count() > 0)
                 {
-                    res.Content = result;
+                   res =      Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
+                    res =  Ultility.Responses("Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
                 }
                 return res;
             }
             catch(Exception e)
             {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -236,24 +249,17 @@ namespace Travel.Data.Repositories
                 var result = Mapper.MapCost(cost);
                 if (result != null)
                 {
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
+                    res = Ultility.Responses("Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
                 }
                 return res;
             }
             catch (Exception e)
             {
-
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -270,8 +276,7 @@ namespace Travel.Data.Repositories
                 cost.PriceHotelSR = hotel.SingleRoomPrice;
                 cost.PriceRestaurant = restaurant.ComboPrice;
                 cost.PriceTicketPlace = place.PriceTicket;
-                _db.CostTours.Update(cost);
-                _db.SaveChanges();
+                UpdateDatabase(cost);
                 // update price
                 float holidayPercent = Convert.ToInt16(_config["PercentHoliday"]);
                 var schedule = (from x in _db.Schedules where x.IdSchedule == input.IdSchedule select x).First();
@@ -291,22 +296,15 @@ namespace Travel.Data.Repositories
                 schedule.PriceAdultHoliday = FinalPriceHoliday;
                 schedule.PriceChildHoliday = FinalPriceHoliday/2;
                 schedule.IsHoliday = input.IsHoliday;
+                UpdateDatabaseSchedule(schedule);
 
-
-                _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 

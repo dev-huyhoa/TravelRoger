@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
@@ -98,55 +99,15 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listCar = (from x in _db.Cars select x).ToList();
+                var listCar = (from x in _db.Cars.AsNoTracking() select x).ToList();
                 var result = Mapper.MapCar(listCar);
-                if (result.Count() > 0)
-                {
-                    res.Content = result;
-                }
-
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-
-        //public Response GetsDelete()
-        //{
-        //    try
-        //    {
-
-        //        var listCar = (from x in _db.Cars select x).ToList();
-        //        var result = Mapper.MapCreateCar(listCar);
-
-        //        if (listCar.Count() > 0)
-        //        {
-        //            res.Content = result;
-        //        }
-        //        else
-        //        {
-        //            res.Notification.DateTime = DateTime.Now;
-        //            res.Notification.Messenge = "Không có dữ liệu trả về !";
-        //            res.Notification.Type = "Warning";
-        //        }
-        //        return res;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        res.Notification.DateTime = DateTime.Now;
-        //        res.Notification.Description = e.Message;
-        //        res.Notification.Messenge = "Có lỗi xảy ra !";
-        //        res.Notification.Type = "Error";
-        //        return res;
-        //    }
-        //}
-
         public Response Create(CreateCarViewModel input)
         {
             try
@@ -155,19 +116,12 @@ namespace Travel.Data.Repositories
                 car = Mapper.MapCreateCar(input);
                 _db.Cars.Add(car);
                 _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -175,31 +129,25 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var lsCarFree = (from x in _db.Cars
+                var lsCarFree = (from x in _db.Cars.AsNoTracking()
                                  where x.Status == (int)Enums.StatusCar.Free
                                  select x).ToList();
-                var lsCarBusy = (from x in _db.Cars
+                var lsCarBusy = (from x in _db.Cars.AsNoTracking()
                                  where x.Status == (int)Enums.StatusCar.Busy
                                  select x).ToList();
 
-                var lsCarFull = (from x in _db.Cars
-                                   where x.Status == (int)Enums.StatusCar.Busy
+                var lsCarFull = (from x in _db.Cars.AsNoTracking()
+                                 where x.Status == (int)Enums.StatusCar.Busy
                                    select x).ToList();
 
                 var lsResult = lsCarFree.Concat(lsCarBusy).Concat(lsCarFull);
-                if (lsResult.Count() > 0)
-                {
-                    res.Content = lsResult;
-                }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), lsResult);
+
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
     }

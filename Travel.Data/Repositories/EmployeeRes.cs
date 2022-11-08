@@ -28,6 +28,11 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
+        private void UpdateDatabase(Employee input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+            _db.SaveChanges();
+        }
         // validate vd create
         public string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate) // hàm đăng nhập  sử cho create update delete
         {
@@ -202,7 +207,7 @@ namespace Travel.Data.Repositories
                 //var b5 = stopWatch5.Elapsed;
                 #endregion
 
-                var listEmp = (from x in _db.Employees
+                var listEmp = (from x in _db.Employees.AsNoTracking()
                                where x.IsDelete == isDelete && x.IsActive
                                orderby x.RoleId
                                select new Employee
@@ -222,26 +227,19 @@ namespace Travel.Data.Repositories
                                    NameEmployee = x.NameEmployee,
                                    Password = x.Password,
                                    Phone = x.Phone,
-                                   Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                                   Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                    RoleId = x.RoleId,
                                }).ToList();
 
                 var result = Mapper.MapEmployee(listEmp);
 
-                if (listEmp.Count() > 0)
-                {
-                    res.Content = result;
-                }
-
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -256,19 +254,11 @@ namespace Travel.Data.Repositories
                 _db.Employees.Add(employee);
                 _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-
-                return res;
+                return Ultility.Responses("Tạo mới thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -279,19 +269,13 @@ namespace Travel.Data.Repositories
                 Employee employee = Mapper.MapCreateEmployee(input);
                 _db.Employees.Update(employee);
                 _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses("Chỉnh sửa thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -367,7 +351,7 @@ namespace Travel.Data.Repositories
                 {
                     if (!string.IsNullOrEmpty(kwIsActive))
                     {
-                        listEmp = (from x in _db.Employees
+                        listEmp = (from x in _db.Employees.AsNoTracking()
                                    where x.IsDelete == keywords.IsDelete &&
                                                    x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
                                                    x.NameEmployee.ToLower().Contains(keywords.KwName) &&
@@ -393,13 +377,14 @@ namespace Travel.Data.Repositories
                                        NameEmployee = x.NameEmployee,
                                        Password = x.Password,
                                        Phone = x.Phone,
-                                       Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                                       Role = (from r in _db.Roles.AsNoTracking()
+                                               where r.IdRole == x.RoleId select r).First(),
                                        RoleId = x.RoleId
                                    }).ToList();
                     }
                     else
                     {
-                        listEmp = (from x in _db.Employees
+                        listEmp = (from x in _db.Employees.AsNoTracking()
                                    where x.IsDelete == keywords.IsDelete &&
                                                    x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
                                                    x.NameEmployee.ToLower().Contains(keywords.KwName) &&
@@ -424,7 +409,7 @@ namespace Travel.Data.Repositories
                                        NameEmployee = x.NameEmployee,
                                        Password = x.Password,
                                        Phone = x.Phone,
-                                       Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                                       Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                        RoleId = x.RoleId
                                    }).ToList();
                     }
@@ -433,7 +418,7 @@ namespace Travel.Data.Repositories
                 {
                     if (!string.IsNullOrEmpty(kwIsActive))
                     {
-                        listEmp = (from x in _db.Employees
+                        listEmp = (from x in _db.Employees.AsNoTracking()
                                    where x.IsDelete == keywords.IsDelete &&
                                                    x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
                                                    x.NameEmployee.ToLower().Contains(keywords.KwName) &&
@@ -458,13 +443,13 @@ namespace Travel.Data.Repositories
                                        NameEmployee = x.NameEmployee,
                                        Password = x.Password,
                                        Phone = x.Phone,
-                                       Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                                       Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                        RoleId = x.RoleId
                                    }).ToList();
                     }
                     else
                     {
-                        listEmp = (from x in _db.Employees
+                        listEmp = (from x in _db.Employees.AsNoTracking()
                                    where x.IsDelete == keywords.IsDelete &&
                                                    x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
                                                    x.NameEmployee.ToLower().Contains(keywords.KwName) &&
@@ -488,7 +473,7 @@ namespace Travel.Data.Repositories
                                        NameEmployee = x.NameEmployee,
                                        Password = x.Password,
                                        Phone = x.Phone,
-                                       Role = (from r in _db.Roles where r.IdRole == x.RoleId select r).First(),
+                                       Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                        RoleId = x.RoleId
                                    }).ToList();
                     }
@@ -513,31 +498,29 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var employee = _db.Employees.Find(idEmployee);
+                var employee = (from x in _db.Employees.AsNoTracking()
+                                where x.IdEmployee == idEmployee
+                                select x).FirstOrDefault();
                 if (employee != null)
                 {
                     employee.IsDelete = false;
-                    _db.SaveChanges();
+                    UpdateDatabase(employee);
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Khôi phục thành công !";
-                    res.Notification.Type = "Success";
+
+                    return Ultility.Responses($"Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
+
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+
             }
         }
 
@@ -545,42 +528,37 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var employee = _db.Employees.Find(idEmployee);
+                var employee = (from x in _db.Employees.AsNoTracking()
+                                where x.IdEmployee == idEmployee
+                                select x).FirstOrDefault();
                 if (employee.RoleId != -1)
                 {
                     if (employee != null)
                     {
                         employee.IsDelete = true;
-                        _db.SaveChanges();
+                        UpdateDatabase(employee);
 
-                        res.Notification.DateTime = DateTime.Now;
-                        res.Notification.Messenge = "Xóa thành công !";
-                        res.Notification.Type = "Success";
+                        return Ultility.Responses($"Xóa thành công !", Enums.TypeCRUD.Success.ToString());
+
                     }
                     else
                     {
-                        res.Notification.DateTime = DateTime.Now;
-                        res.Notification.Messenge = "Không tìm thấy !";
-                        res.Notification.Type = "Warning";
+                        return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+
                     }
-                    return res;
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không được xóa Admin !";
-                    res.Notification.Type = "Error";
+                    return Ultility.Responses($"Không được xóa ADMIN !", Enums.TypeCRUD.Warning.ToString());
+
                 }
-                return res;
 
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+
             }
         }
 
@@ -588,23 +566,19 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var emp = (from x in _db.Employees where x.IsDelete == false && x.Email == email select x).Count();
+                var emp = (from x in _db.Employees.AsNoTracking()
+                           where x.IsDelete == false && x.Email == email select x).Count();
                 if (emp > 0)
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Description = "Email";
-                    res.Notification.Messenge = "[" + email + "] này đã được đăng ký !";
-                    res.Notification.Type = "Validation";
+                    return Ultility.Responses("[" + email + "] này đã được đăng ký !", Enums.TypeCRUD.Warning.ToString());
                 }
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -615,17 +589,14 @@ namespace Travel.Data.Repositories
                 if (idEmployee != null) // update
                 {
                     Guid id = Guid.Parse(idEmployee);
-                    string oldPhone = (from x in _db.Employees where x.IdEmployee == id select x).First().Phone;
+                    string oldPhone = (from x in _db.Employees.AsNoTracking()
+                                       where x.IdEmployee == id select x).First().Phone;
                     if (phone != oldPhone) // có thay đổi  sdt
                     {
                         var obj = (from x in _db.Employees where x.Phone != oldPhone && x.Phone == phone select x).Count();
                         if (obj > 0)
                         {
-                            res.Notification.DateTime = DateTime.Now;
-                            res.Notification.Description = "Phone";
-                            res.Notification.Messenge = "[" + phone + "] này đã được đăng ký !";
-                            res.Notification.Type = "Validation";
-                            return res;
+                            return Ultility.Responses("[" + phone + "] này đã được đăng ký !", Enums.TypeCRUD.Warning.ToString());
                         }
                     }
                 }
@@ -634,11 +605,7 @@ namespace Travel.Data.Repositories
                     var emp = (from x in _db.Employees where x.Phone == phone select x).Count();
                     if (emp > 0)
                     {
-                        res.Notification.DateTime = DateTime.Now;
-                        res.Notification.Description = "Phone";
-                        res.Notification.Messenge = "[" + phone + "] này đã được đăng ký !";
-                        res.Notification.Type = "Validation";
-                        return res;
+                        return Ultility.Responses("[" + phone + "] này đã được đăng ký !", Enums.TypeCRUD.Warning.ToString());
                     }
                 }
                 return res;
@@ -646,11 +613,9 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -658,23 +623,20 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var employee = (from x in _db.Employees
+                var employee = (from x in _db.Employees.AsNoTracking()
                                 where x.IdEmployee == idEmployee
                                 select x).First();
                 if (employee != null)
                 {
                     var result = Mapper.MapEmployee(employee);
-                    res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
                 return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -682,33 +644,30 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var lsEmployeeOnline = (from x in _db.Employees
+                var lsEmployeeOnline = (from x in _db.Employees.AsNoTracking()
                                         where x.IsDelete == false
                                         && x.IsOnline == true
                                         select x).ToList();
-                var lsEmployee = (from x in _db.Employees
-                                        where x.IsDelete == false
+                var lsEmployee = (from x in _db.Employees.AsNoTracking()
+                                  where x.IsDelete == false
                                         && x.IsActive == true
                                         select x).ToList();
-                var lsEmployeeUnActive = (from x in _db.Employees
+                var lsEmployeeUnActive = (from x in _db.Employees.AsNoTracking()
                                           where x.IsDelete == false
                                           && x.IsActive == false
                                           select x).ToList();
                 var result = lsEmployeeOnline.Concat(lsEmployee).Concat(lsEmployeeUnActive);
                 if (result.Count() > 0)
                 {
-                     res.Content = result;
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
                 return res;
 
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
     }

@@ -28,7 +28,25 @@ namespace Travel.Data.Repositories
             _db = db;
             message = new Notification();
         }
-
+        private void DeleteDatabaseNotSave(Promotion input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+        }
+        private void UpdateDatabase(Promotion input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+            _db.SaveChanges();
+        }
+        private void DeleteDatabase(Promotion input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+            _db.SaveChanges();
+        }
+        private void CreateDatabase(Promotion input)
+        {
+            _db.Entry(input).State = EntityState.Added;
+            _db.SaveChanges();
+        }
         public string CheckBeforSave(JObject frmData, ref Notification _message, TypeService type, bool isUpdate = false)
         {
             try
@@ -92,7 +110,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.Promotions
+                var list = (from x in _db.Promotions.AsNoTracking()
                             where
                             x.IsDelete == isDelete &&
                             x.IsTempdata == false &&
@@ -112,17 +130,18 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var userLogin = (from x in _db.Employees
+                var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
                 var listWaiting = new List<Promotion>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
-                    listWaiting = (from x in _db.Promotions where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                    listWaiting = (from x in _db.Promotions.AsNoTracking()
+                                   where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
                 }
                 else
                 {
-                    listWaiting = (from x in _db.Promotions
+                    listWaiting = (from x in _db.Promotions.AsNoTracking()
                                    where x.IdUserModify == idUser
                                    && x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
                                    select x).ToList();
@@ -142,9 +161,7 @@ namespace Travel.Data.Repositories
             Promotion promotion
                         = Mapper.MapCreatePromotion(input);
             promotion.TypeAction = "insert";
-            _db.Promotions.Add(promotion);
-
-            _db.SaveChanges();
+            CreateDatabase(promotion);
             return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
         }
 
@@ -152,11 +169,11 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var promotion = (from x in _db.Promotions
-                             where x.IdPromotion == id
+                var promotion = (from x in _db.Promotions.AsNoTracking()
+                                 where x.IdPromotion == id
                              select x).FirstOrDefault();
 
-                var userLogin = (from x in _db.Employees
+                var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
                 if (promotion.Approve == (int)ApproveStatus.Approved)
@@ -167,8 +184,7 @@ namespace Travel.Data.Repositories
                     promotion.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     promotion.Approve = (int)ApproveStatus.Waiting;
                     promotion.IsDelete = true;
-                    _db.SaveChanges();
-
+                    UpdateDatabase(promotion);
                     return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -177,9 +193,7 @@ namespace Travel.Data.Repositories
                     {
                         if (promotion.TypeAction == "insert")
                         {
-                            _db.Promotions.Remove(promotion);
-
-                            _db.SaveChanges();
+                            DeleteDatabase(promotion);
 
                             return Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
                         }
@@ -187,8 +201,8 @@ namespace Travel.Data.Repositories
                         {
                             var idPromotionTemp = promotion.IdAction;
                             // old hotel
-                            var promotionTemp = (from x in _db.Promotions
-                                             where x.IdPromotion == int.Parse(idPromotionTemp)
+                            var promotionTemp = (from x in _db.Promotions.AsNoTracking()
+                                                 where x.IdPromotion == int.Parse(idPromotionTemp)
                                              select x).FirstOrDefault();
                             promotion.Approve = (int)ApproveStatus.Approved;
                             promotion.IdAction = null;
@@ -202,10 +216,7 @@ namespace Travel.Data.Repositories
                             promotion.FromDate = promotionTemp.FromDate;
                             #endregion
 
-                            _db.Promotions.Remove(promotionTemp);
-
-                            _db.SaveChanges();
-
+                            DeleteDatabase(promotionTemp);
                             return Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
                         }
                         else if (promotion.TypeAction == "restore")
@@ -215,7 +226,7 @@ namespace Travel.Data.Repositories
                             promotion.IsDelete = true;
                             promotion.Approve = (int)ApproveStatus.Approved;
 
-                            _db.SaveChanges();
+                                UpdateDatabase(promotion);
 
                             return Ultility.Responses("Đã hủy yêu cầu khôi phục!", Enums.TypeCRUD.Success.ToString());
 
@@ -226,7 +237,7 @@ namespace Travel.Data.Repositories
                             promotion.TypeAction = null;
                             promotion.IsDelete = false;
                             promotion.Approve = (int)ApproveStatus.Approved;
-                            _db.SaveChanges();
+                            UpdateDatabase(promotion);
                             return Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                         }
                     }
@@ -246,12 +257,12 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var userLogin = (from x in _db.Employees
+                var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == input.IdUserModify
                                  select x).FirstOrDefault();
 
-                var promotion = (from x in _db.Promotions
-                             where x.IdPromotion == input.IdPromotion
+                var promotion = (from x in _db.Promotions.AsNoTracking()
+                                 where x.IdPromotion == input.IdPromotion
                              select x).FirstOrDefault();
 
                 // clone new object
@@ -276,7 +287,7 @@ namespace Travel.Data.Repositories
                 promotion.FromDate = input.FromDate;
                 #endregion
 
-                _db.SaveChanges();
+                UpdateDatabase(promotion);
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
             }
@@ -290,7 +301,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var promotion = (from x in _db.Promotions
+                var promotion = (from x in _db.Promotions.AsNoTracking()
                              where x.IdPromotion == id
                              && x.Approve == (int)ApproveStatus.Waiting
                              select x).FirstOrDefault();
@@ -303,10 +314,10 @@ namespace Travel.Data.Repositories
                         promotion.IdAction = null;
                         promotion.TypeAction = null;
                         // delete tempdata
-                        var promotionTemp = (from x in _db.Promotions
+                        var promotionTemp = (from x in _db.Promotions.AsNoTracking()
                                          where x.IdPromotion == int.Parse(idPromotionTemp)
                                          select x).FirstOrDefault();
-                        _db.Promotions.Remove(promotionTemp);
+                        DeleteDatabaseNotSave(promotionTemp);
                     }
                     else if (promotion.TypeAction == "insert")
                     {
@@ -328,7 +339,7 @@ namespace Travel.Data.Repositories
                         promotion.Approve = (int)ApproveStatus.Approved;
                         promotion.IsDelete = true;                                       
                     }
-                    _db.SaveChanges();
+                    UpdateDatabase(promotion);
                     return Ultility.Responses("Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -347,7 +358,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var promotion = (from x in _db.Promotions
+                var promotion = (from x in _db.Promotions.AsNoTracking()
                                   where x.IdPromotion == id
                                   && x.Approve == (int)ApproveStatus.Waiting
                                   select x).FirstOrDefault();
@@ -357,8 +368,8 @@ namespace Travel.Data.Repositories
                     {
                         var idPromotionTemp = promotion.IdAction;
                         // old hotel
-                        var promotionTemp = (from x in _db.Promotions
-                                              where x.IdPromotion == int.Parse(idPromotionTemp)
+                        var promotionTemp = (from x in _db.Promotions.AsNoTracking()
+                                             where x.IdPromotion == int.Parse(idPromotionTemp)
                                               select x).FirstOrDefault();
                         promotion.Approve = (int)ApproveStatus.Approved;
                         promotion.IdAction = null;
@@ -371,9 +382,8 @@ namespace Travel.Data.Repositories
                         promotion.ToDate = promotionTemp.ToDate;
                         promotion.FromDate = promotionTemp.FromDate;
                         #endregion
-
-                        _db.Promotions.Remove(promotionTemp);
-                    }
+                        DeleteDatabaseNotSave(promotionTemp);
+                       }
                     else if (promotion.TypeAction == "insert")
                     {
                         promotion.IdAction = null;
@@ -394,7 +404,7 @@ namespace Travel.Data.Repositories
                         promotion.IsDelete = false;
                         promotion.Approve = (int)ApproveStatus.Approved;
                     }
-                    _db.SaveChanges();
+                    UpdateDatabase(promotion);
                     return Ultility.Responses("Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -412,11 +422,11 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var promotion = (from x in _db.Promotions
+                var promotion = (from x in _db.Promotions.AsNoTracking()
                              where x.IdPromotion == id
                              select x).FirstOrDefault();
 
-                var userLogin = (from x in _db.Employees
+                var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
                 if (promotion.Approve == (int)ApproveStatus.Approved)
@@ -429,7 +439,7 @@ namespace Travel.Data.Repositories
                     // bổ sung isdelete
                     promotion.IsDelete = false;
                 }
-                _db.SaveChanges();
+                UpdateDatabase(promotion);
                 return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
             }
