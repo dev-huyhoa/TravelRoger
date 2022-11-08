@@ -541,7 +541,7 @@ namespace Travel.Data.Repositories
                 if (tourbooking != null)
                 {
                     tourbooking.IsCalled = true;
-                    _db.SaveChanges();
+                    UpdateDatabase(tourbooking);
                     //#region sendMail
 
                     //var emailSend = _config["emailSend"];
@@ -554,7 +554,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    return Ultility.Responses("Hủy booking thất bại !", Enums.TypeCRUD.Error.ToString());
+                    return Ultility.Responses("Gọi thất bại !", Enums.TypeCRUD.Error.ToString());
                 }
 
             }
@@ -564,5 +564,20 @@ namespace Travel.Data.Repositories
             }
         }
 
+        private void UpdateDatabase(TourBooking tourbooking)
+        {
+            _db.Entry(tourbooking).State = EntityState.Modified;
+            _db.SaveChanges();
+        }
+        private void DeleteDatabase(TourBooking tourbooking)
+        {
+            _db.Entry(tourbooking).State = EntityState.Deleted;
+            _db.SaveChanges();
+        }
+        private void CreateDatabase(TourBooking tourbooking)
+        {
+            _db.TourBookings.Add(tourbooking);
+            _db.SaveChanges();
+        }
     }
 }
