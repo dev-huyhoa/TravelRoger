@@ -116,11 +116,19 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         [Route("statistic-tourbooking")]
         public object StatisticTourBooking()
         {
             res = _tourbooking.StatisticTourBooking();
+            return Ok(res);
+        }
+        [HttpGet]
+        [Authorize]
+        [Route("check-called")]
+        public object CheckCalled(string idTourBooking)
+        {
+            res = _tourbooking.CheckCalled(idTourBooking);
             return Ok(res);
         }
     }

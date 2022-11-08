@@ -530,6 +530,53 @@ namespace Travel.Data.Repositories
               
             }
         }
+        public Response CheckCalled(string idTourBooking)
+        {
+            try
+            {
+                var tourbooking = (from tb in _db.TourBookings.AsNoTracking()
+                                        where tb.IdTourBooking == idTourBooking
+                                        select tb).FirstOrDefault();
+                if (tourbooking != null)
+                {
+                    tourbooking.IsCalled = true;
+                    UpdateDatabase(tourbooking);
+                    //#region sendMail
 
+                    //var emailSend = _config["emailSend"];
+                    //var keySecurity = _config["keySecurity"];
+                    //var stringHtml = Ultility.getHtml($"{bookingNo} <br> Vui lòng ghi nhớ mã BookingNo này", "Thanh toán thành công", "BookingNo");
+
+                    //Ultility.sendEmail(stringHtml, tourbooking.Email, "Thanh toán dịch vụ", emailSend, keySecurity);
+                    //#endregion
+                    return Ultility.Responses("Đã gọi !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Hủy booking thất bại !", Enums.TypeCRUD.Error.ToString());
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        private void UpdateDatabase(TourBooking tourbooking)
+        {
+            _db.Entry(tourbooking).State = EntityState.Modified;
+            _db.SaveChanges();
+        }
+        private void DeleteDatabase(TourBooking tourbooking)
+        {
+            _db.Entry(tourbooking).State = EntityState.Deleted;
+            _db.SaveChanges();
+        }
+        private void CreateDatabase(TourBooking tourbooking)
+        {
+            _db.TourBookings.Add(tourbooking);
+            _db.SaveChanges();
+        }
     }
 }
