@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
@@ -76,27 +77,23 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listRole= (from x in _db.Roles where x.IsDelete == isDelete select x).ToList();
+                var listRole= (from x in _db.Roles.AsNoTracking()
+                               where x.IsDelete == isDelete select x).ToList();
                 var result = Mapper.MapRole(listRole);
                 if (result.Count() > 0)
                 {
-                    res.Content = result;
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -108,19 +105,15 @@ namespace Travel.Data.Repositories
                 role = Mapper.MapCreateRole(input);
                 _db.Roles.Add(role);
                 _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Thêm thành công !";
-                res.Notification.Type = "Success";
-                return res;
+
+                return Ultility.Responses($"Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+
             }
             catch (Exception e)
             {
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
         public Response UpdateRole(UpdateRoleViewModel input)
@@ -132,18 +125,13 @@ namespace Travel.Data.Repositories
                 _db.Roles.Update(role);
                 _db.SaveChanges();
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
+                return Ultility.Responses($"Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
 
         }
@@ -158,25 +146,20 @@ namespace Travel.Data.Repositories
                     role.IsDelete = false;
                     _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Khôi phục thành công !";
-                    res.Notification.Type = "Success";
+                    return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
+
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
-                }     
-                return res;
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+
+                }
+                
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
 
         }
@@ -191,25 +174,19 @@ namespace Travel.Data.Repositories
                     role.IsDelete = true;
                     _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Xóa thành công !";
-                    res.Notification.Type = "Success";
+                    return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
+
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+
                 }
-                return res;
             }
             catch (Exception e)
-            { 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
             }
         }
 
@@ -261,7 +238,7 @@ namespace Travel.Data.Repositories
                 var listRole = new List<Role>();
                 if (keywords.KwIdRole.Count > 0)
                 {
-                    listRole = (from x in _db.Roles
+                    listRole = (from x in _db.Roles.AsNoTracking()
                                where x.IsDelete == keywords.IsDelete &&
                                                x.IdRole.ToString().Contains(keywords.KwId) &&
                                                x.NameRole.ToLower().Contains(keywords.KwName) &&
@@ -271,8 +248,8 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    listRole = (from x in _db.Roles
-                               where x.IsDelete == keywords.IsDelete &&
+                    listRole = (from x in _db.Roles.AsNoTracking()
+                                where x.IsDelete == keywords.IsDelete &&
                                                x.IdRole.ToString().Contains(keywords.KwId) &&
                                                x.NameRole.ToLower().Contains(keywords.KwName) &&
                                                x.Description.ToLower().Contains(keywords.KwDescription)
@@ -281,23 +258,18 @@ namespace Travel.Data.Repositories
                 var result = Mapper.MapRole(listRole);
                 if (listRole.Count() > 0)
                 {
-                    res.Content = result;
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không có dữ liệu trả về !";
-                    res.Notification.Type = "Warning";
+                    return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+
             }
         }
     }
