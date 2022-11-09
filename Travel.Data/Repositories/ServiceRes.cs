@@ -1533,7 +1533,8 @@ namespace Travel.Data.Repositories
                 }
                 var listRestaurant = new List<Restaurant>();
 
-                if (keywords.IsDelete == null)
+
+                if (!string.IsNullOrEmpty(isDelete))
                 {
                     listRestaurant = (from x in _db.Restaurants
                                       where x.IsDelete == keywords.IsDelete &&
