@@ -45,5 +45,7 @@ namespace Travel.Data.Interfaces
         Response RestoreRestaurant(Guid id, Guid idUser);
 
         Response SearchHotel(JObject frmData);
+        Response SearchPlace(JObject frmData);
+        Response SearchRestaurant(JObject frmData);
     }
 }

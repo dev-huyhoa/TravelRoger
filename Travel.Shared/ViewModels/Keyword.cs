@@ -24,5 +24,8 @@ namespace Travel.Shared.ViewModels
 
         public List<int> KwStar{ get; set; }
         public string KwAddress { get; set; }
+        public string KwPriceTicket { get; set; }
+
+        public string KwComboPrice{ get; set; }
     }
 }

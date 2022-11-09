@@ -282,6 +282,21 @@ namespace TravelApi.Controllers
             res = _serviceRes.SearchHotel(frmData);
             return Ok(res);
         }
-
+        [HttpPost]
+        [Authorize]
+        [Route("search-place")]
+        public object SearchPlace([FromBody] JObject frmData)
+        {
+            res = _serviceRes.SearchPlace(frmData);
+            return Ok(res);
+        }
+        [HttpPost]
+        [Authorize]
+        [Route("search-Restaurant")]
+        public object SearchRestaurant([FromBody] JObject frmData)
+        {
+            res = _serviceRes.SearchRestaurant(frmData);
+            return Ok(res);
+        }
     }
 }
