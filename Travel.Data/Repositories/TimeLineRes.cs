@@ -27,16 +27,12 @@ namespace Travel.Data.Repositories
             res = new Response();
         }
 
-        public Response Create(CreateTimeLineViewModel input)
+        public Response Create(ICollection<CreateTimeLineViewModel> input)
         {
             try
              {
-                Timeline timeline = new Timeline();
-                timeline = Mapper.MapCreateTimeline(input);
-                timeline.IdTimeline = Guid.NewGuid();
-                timeline.IsDelete = false;
-                timeline.ModifyDate = 202204101007;
-                _db.Timelines.Add(timeline);
+                ICollection<Timeline> timeline = Mapper.MapCreateTimeline(input);
+                _db.Timelines.AddRange(timeline.AsEnumerable());
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
@@ -96,6 +92,10 @@ namespace Travel.Data.Repositories
 
         string ITimeLine.CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
+            var d = PrCommon.GetString("timeline", frmData);
+
+            var timelines = JsonSerializer.Deserialize<List<Timeline>>(d);
+
             CreateTimeLineViewModel timeline = new CreateTimeLineViewModel();
             try
             {
