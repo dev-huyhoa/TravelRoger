@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,29 @@ namespace Travel.Data.Repositories
             _db = db;
             message = new Notification();
         }
+        private void UpdateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+        }
+        private void DeleteDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+        }
+        private void CreateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Added;
+        }
+        private async Task SaveChangeAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
+        private void SaveChange()
+        {
+            _db.SaveChanges();
+        }
         private Employee GetCurrentUser(Guid IdUserModify)
         {
-           return (from x in _db.Employees
+           return (from x in _db.Employees.AsNoTracking()
                              where x.IdEmployee == IdUserModify
                              select x).FirstOrDefault();
         }
@@ -195,19 +216,19 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var userLogin = (from x in _db.Employees
+                var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
                 var listWaiting = new List<Hotel>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
-                    listWaiting = (from x in _db.Hotels
+                    listWaiting = (from x in _db.Hotels.AsNoTracking()
                                    where x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
                                    select x).ToList();
                 }
                 else
                 {
-                    listWaiting = (from x in _db.Hotels
+                    listWaiting = (from x in _db.Hotels.AsNoTracking()
                                    where x.IdUserModify == idUser
                                    && x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
                                    select x).ToList();
@@ -224,7 +245,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.Hotels
+                var list = (from x in _db.Hotels.AsNoTracking()
                             where
                             x.IsDelete == isDelete &&
                             x.IsTempdata == false &&
@@ -248,8 +269,8 @@ namespace Travel.Data.Repositories
                 Hotel hotel
                  = Mapper.MapCreateHotel(input);
                 hotel.TypeAction = "insert";
-                _db.Hotels.Add(hotel);
-                _db.SaveChanges();
+                CreateDatabase<Hotel>(hotel);
+                SaveChange();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
