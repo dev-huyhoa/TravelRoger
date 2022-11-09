@@ -1447,7 +1447,7 @@ namespace Travel.Data.Repositories
                 }
                 var listPlace = new List<Place>();
 
-                if (keywords.IsDelete == null)
+                if (!string.IsNullOrEmpty(isDelete))
                 {
                     listPlace = (from x in _db.Places
                                  where x.IsDelete == keywords.IsDelete &&
