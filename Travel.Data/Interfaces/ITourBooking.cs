@@ -23,5 +23,7 @@ namespace Travel.Data.Interfaces
         Task<Response> TourBookingByBookingNo(string bookingNo);
         Response StatisticTourBooking();
         Response CheckCalled(string idTourBooking);
+
+        Response SearchTourBooking(JObject frmData);
     }
 }

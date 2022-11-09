@@ -1528,7 +1528,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    keywords.KwPriceTicket = "";
+                    keywords.KwComboPrice = "";
 
                 }
                 var listRestaurant = new List<Restaurant>();

@@ -131,5 +131,13 @@ namespace TravelApi.Controllers
             res = _tourbooking.CheckCalled(idTourBooking);
             return Ok(res);
         }
+        [HttpPost]
+        [Authorize]
+        [Route("search-TourBooking")]
+        public object SearchTourBooking([FromBody] JObject frmData)
+        {
+            res = _tourbooking.SearchTourBooking(frmData);
+            return Ok(res);
+        }
     }
 }

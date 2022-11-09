@@ -579,5 +579,103 @@ namespace Travel.Data.Repositories
             _db.TourBookings.Add(tourbooking);
             _db.SaveChanges();
         }
+
+        public Response SearchTourBooking(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+           
+                var kwId = PrCommon.GetString("IdTourBooking", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwId))
+                {
+                    keywords.KwId = kwId.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwId = "";
+
+                }
+                var kwPincode = PrCommon.GetString("Pincode", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwPincode))
+                {
+                    keywords.KwPincode = kwPincode.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwPincode = "";
+
+                }
+                var kwEmail = PrCommon.GetString("Email", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwEmail))
+                {
+                    keywords.KwEmail = kwEmail.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwEmail = "";
+
+                }
+                var kwPhone = PrCommon.GetString("phone", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwPhone))
+                {
+                    keywords.KwPhone = kwPhone.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwPhone = "";
+
+                }
+                var kwDate = PrCommon.GetString("DateBooking", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwDate))
+                {
+                    keywords.KwDate = long.Parse(kwDate);
+                }
+                else
+                {
+
+                    keywords.KwDate = 0;
+                }
+                var kwIsCall = PrCommon.GetString("IsCalled", frmData);
+
+                var listTourBooking = new List<TourBooking>();
+
+                if (!string.IsNullOrEmpty(kwIsCall))
+                {
+                  
+                    listTourBooking = (from x in _db.TourBookings
+                                       where
+                                                       x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                       x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                       x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                           x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                            x.IsCalled != keywords.kwIsCalled
+                                       orderby x.DateBooking
+                                       select x).ToList();
+
+                }
+                else
+                {
+                    listTourBooking = (from x in _db.TourBookings
+                                       where
+                                                       x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                       x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                       x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                           x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                          x.IsCalled == keywords.kwIsCalled
+                                       orderby x.DateBooking
+                                       select x).ToList();
+                }
+
+
+
+                var result = Mapper.MapTourBooking(listTourBooking);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }
