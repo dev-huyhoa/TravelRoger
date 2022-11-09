@@ -14,5 +14,6 @@ namespace Travel.Data.Interfaces
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Create(CreateTimeLineViewModel input);
         Response Get();
+        Response GetTimelineByIdSchedule(string IdSchedule);
     }
 }

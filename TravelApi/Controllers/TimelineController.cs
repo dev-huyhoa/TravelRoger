@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System.Text.Json;
 using Travel.Data.Interfaces;
+using Travel.Data.Repositories;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 
@@ -43,6 +44,15 @@ namespace TravelApi.Controllers
         public object GetTimeline()
         {
             res = _timelineRes.Get();
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("get-timeline-idSchedule")]
+        public object GetGetCostByIdTourDetail(string idSchedule)
+        {
+            res = _timelineRes.GetTimelineByIdSchedule(idSchedule);
             return Ok(res);
         }
     }

@@ -76,6 +76,24 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response GetTimelineByIdSchedule(string IdSchedule)
+        {
+            try
+            {
+                var timeline = (from x in _db.Timelines where x.IdSchedule == IdSchedule select x).ToList();
+                var result = Mapper.MapTimeLine(timeline);
+                if (result != null)
+                {
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
         string ITimeLine.CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
             CreateTimeLineViewModel timeline = new CreateTimeLineViewModel();
