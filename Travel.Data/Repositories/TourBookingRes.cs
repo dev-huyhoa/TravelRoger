@@ -638,6 +638,10 @@ namespace Travel.Data.Repositories
                 }
                 var kwIsCall = PrCommon.GetString("IsCalled", frmData);
 
+                if (!String.IsNullOrEmpty(kwIsCall))
+                {
+                    keywords.kwIsCalled = Boolean.Parse(kwIsCall);
+                }
                 var listTourBooking = new List<TourBooking>();
 
                 if (!string.IsNullOrEmpty(kwIsCall))
@@ -649,7 +653,7 @@ namespace Travel.Data.Repositories
                                                        x.Pincode.ToLower().Contains(keywords.KwPincode) &&
                                                        x.Phone.ToLower().Contains(keywords.KwPhone) &&
                                                            x.Email.ToLower().Contains(keywords.KwEmail) &&
-                                                            x.IsCalled != keywords.kwIsCalled
+                                                            x.IsCalled == keywords.kwIsCalled
                                        orderby x.DateBooking
                                        select x).ToList();
 
