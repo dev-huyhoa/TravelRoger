@@ -235,7 +235,7 @@ namespace Travel.Shared.Ultilities
                 .ForMember(dto => dto.NameTour, opt => opt.MapFrom(src => src.NameTour))
                 .ForMember(dto => dto.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.ToPlace))
-                .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => 10))
+                .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
                 .ForMember(dto => dto.ApproveStatus, opt => opt.MapFrom(src => Enums.ApproveStatus.Waiting))
                 .ForMember(dto => dto.Status, opt => opt.MapFrom(src =>
                  Enums.TourStatus.Normal))

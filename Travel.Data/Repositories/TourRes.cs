@@ -82,6 +82,10 @@ namespace Travel.Data.Repositories
                     if (String.IsNullOrEmpty(description))
                     {
                     }
+                    var rating = PrCommon.GetString("rating", frmData);
+                    if (String.IsNullOrEmpty(description))
+                    {
+                    }
                     if (file != null)
                     {
                         thumbnail = Ultility.WriteFile(file, "Tour", idTour, ref _message).FilePath;
@@ -114,6 +118,7 @@ namespace Travel.Data.Repositories
                     obj.Thumbnail = thumbnail;
                     obj.ToPlace = toPlace;
                     obj.TypeAction = typeAction;
+                    obj.Rating = Convert.ToDouble(rating);
                     obj.IdUserModify = Guid.Parse(idUserModify);
                     // generate ID
                     obj.IdTour = idTour;

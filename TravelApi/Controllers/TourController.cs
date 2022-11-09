@@ -60,6 +60,10 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<UpdateTourViewModel>(result);
                 res = _tourRes.Update(createObj);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
 
