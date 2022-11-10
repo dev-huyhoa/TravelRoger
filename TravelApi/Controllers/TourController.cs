@@ -186,5 +186,14 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("search-tour-waiting")]
+        public object SearchTourWaiting([FromBody] JObject frmData)
+        {
+            res = _tourRes.SearchTourWaiting(frmData);
+            return Ok(res);
+        }
+
     }
 }

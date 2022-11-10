@@ -29,5 +29,6 @@ namespace Travel.Data.Interfaces
         Task<Response> SearchAutoComplete(string key);
         Response UpdateRating(int rating , string idTour);
         Response SearchTour(JObject frmData);
+        Response SearchTourWaiting(JObject frmData);
     }
 }

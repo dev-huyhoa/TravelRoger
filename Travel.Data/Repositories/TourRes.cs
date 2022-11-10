@@ -550,6 +550,7 @@ namespace Travel.Data.Repositories
                                 tour.Thumbnail = tourTemp.Thumbnail;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
                                 tour.ToPlace = tourTemp.ToPlace;
+                                tour.Status = tourTemp.Status;
                                 #endregion
 
                                 _db.Entry(tour).State = EntityState.Modified;
@@ -576,7 +577,7 @@ namespace Travel.Data.Repositories
                                 tour.TypeAction = null;
                                 tour.IsDelete = false;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
-
+                                tour.Status = (int)TourStatus.Promotion;
                                 UpdateDatabase(tour);
 
 
@@ -751,6 +752,7 @@ namespace Travel.Data.Repositories
                         tour.TypeAction = null;
                         tour.IsDelete = false;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
+                        tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
 
                     }
@@ -1090,7 +1092,7 @@ namespace Travel.Data.Repositories
                                         x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
                                         x.IsTempdata == false &&
                                         x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
-                                        x.Status == 0 &&
+                                        x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
                                         x.Rating.Equals(keywords.KwRating)
                                     select x).ToList();
                     }
@@ -1103,8 +1105,8 @@ namespace Travel.Data.Repositories
                                         x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
                                         x.IsTempdata == false &&
                                         x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
-                                        x.Status == 0
-                                select x).ToList();
+                                        x.Status == Convert.ToInt16(Enums.TourStatus.Normal)
+                                    select x).ToList();
                     }
                 }
                 else
@@ -1118,7 +1120,7 @@ namespace Travel.Data.Repositories
                                             x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
                                             x.IsTempdata == false &&
                                             x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
-                                            x.Status == 1 &&
+                                            x.Status == Convert.ToInt16(Enums.TourStatus.Promotion) &&
                                             x.Rating.Equals(keywords.KwRating)
                                         orderby x.Rating
                                         select new Tour
@@ -1140,7 +1142,7 @@ namespace Travel.Data.Repositories
                                             x.IsTempdata == false &&
                                             x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
                                             //x.Rating.Equals(keywords.KwRating) &&
-                                            x.Status == 1
+                                            x.Status == Convert.ToInt16(Enums.TourStatus.Promotion)
                                         orderby x.Rating
                                         select new Tour
                                         {
@@ -1159,6 +1161,142 @@ namespace Travel.Data.Repositories
             catch(Exception e)
             {
                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+
+        }
+
+        public Response SearchTourWaiting(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var kwIdTour = PrCommon.GetString("idTour", frmData);
+                if (!String.IsNullOrEmpty(kwIdTour))
+                {
+                    keywords.KwId = kwIdTour.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwId = "";
+                }
+
+                var KwTourName = PrCommon.GetString("nameTour", frmData);
+                if (!String.IsNullOrEmpty(KwTourName))
+                {
+                    keywords.KwName = KwTourName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+                }
+
+                var KwToPlace = PrCommon.GetString("toPlace", frmData);
+                if (!String.IsNullOrEmpty(KwToPlace))
+                {
+                    keywords.KwToPlace = KwToPlace.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwToPlace = "";
+                }
+
+                var kwRating = PrCommon.GetString("rating", frmData);
+                if (!String.IsNullOrEmpty(kwRating))
+                {
+                    keywords.KwRating = double.Parse(kwRating);
+                }
+
+                var kwTypeAction = PrCommon.GetString("typeAction", frmData);
+                if (!String.IsNullOrEmpty(kwTypeAction))
+                {
+                    keywords.KwTypeAction = kwTypeAction;
+                }
+
+    
+
+                var listTour = new List<Tour>();
+                if (keywords.KwRating != 0)
+                {
+                        listTour = (from x in _db.Tour
+                                where 
+                                    x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                    x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                    x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                    x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                    x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                    x.Rating.Equals(keywords.KwRating)
+                                orderby x.Rating
+                                select new Tour
+                                {
+                                    IdTour = x.IdTour,
+                                    NameTour = x.NameTour,
+                                    ToPlace = x.ToPlace,
+                                    Rating = x.Rating,
+                                    Status = x.Status,
+                                    TypeAction = x.TypeAction,
+                                    ApproveStatus = x.ApproveStatus
+                                }).ToList();
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(kwTypeAction))
+                    {
+                        listTour = (from x in _db.Tour
+                                    where 
+                                        x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                        x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                        x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                        x.IsTempdata == false &&
+                                        x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                        x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                        x.TypeAction.ToLower().Contains(keywords.KwTypeAction)
+
+                                    orderby x.Rating
+                                    select new Tour
+                                    {
+                                        IdTour = x.IdTour,
+                                        NameTour = x.NameTour,
+                                        ToPlace = x.ToPlace,
+                                        Rating = x.Rating,
+                                        Status = x.Status,
+                                        TypeAction = x.TypeAction,
+                                        ApproveStatus = x.ApproveStatus
+                                    }).ToList();
+                    }
+                    else
+                    {
+                        listTour = (from x in _db.Tour
+                                    where 
+                                        x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                        x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                        x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                        x.IsTempdata == false &&
+                                        x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                        x.Status == Convert.ToInt16(Enums.TourStatus.Normal) 
+
+                                    orderby x.Rating
+                                    select new Tour
+                                    {
+                                        IdTour = x.IdTour,
+                                        NameTour = x.NameTour,
+                                        ToPlace = x.ToPlace,
+                                        Rating = x.Rating,
+                                        Status = x.Status,
+                                        TypeAction = x.TypeAction,
+                                        ApproveStatus = x.ApproveStatus
+                                    }).ToList();
+                    }
+                    
+                }
+                var result = Mapper.MapTour(listTour);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
             }
 

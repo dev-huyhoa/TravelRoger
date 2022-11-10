@@ -34,6 +34,7 @@ namespace Travel.Shared.ViewModels
         public string KwToPlace { get; set; }
         public double KwRating { get; set; }
         public string KwTypeAction { get; set; }
+        public int KwAprroveStatus { get; set; }
 
     }
 }
