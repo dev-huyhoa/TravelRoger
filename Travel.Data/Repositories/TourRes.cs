@@ -657,6 +657,7 @@ namespace Travel.Data.Repositories
                         tour.IdAction = null;
                         tour.TypeAction = null;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
+                        tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
                     }
                     else if (tour.TypeAction == "restore")
@@ -665,6 +666,7 @@ namespace Travel.Data.Repositories
                         tour.TypeAction = null;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.IsDelete = false;
+                        tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
 
                     }
@@ -674,6 +676,7 @@ namespace Travel.Data.Repositories
                         tour.TypeAction = null;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.IsDelete = true;
+                        tour.Status = (int)TourStatus.Normal;
                         UpdateDatabase(tour);
                     }
                     return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
@@ -703,6 +706,7 @@ namespace Travel.Data.Repositories
                         tour.ApproveStatus = (int)ApproveStatus.Refused;
                         tour.IdAction = null;
                         tour.TypeAction = null;
+                        tour.Status = (int)TourStatus.Refused;
                         UpdateDatabase(tour);
                     }
                     else if (tour.TypeAction == "update")
