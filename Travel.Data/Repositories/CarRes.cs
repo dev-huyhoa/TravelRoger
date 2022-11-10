@@ -27,7 +27,26 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
-
+        private void UpdateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+        }
+        private void DeleteDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+        }
+        private void CreateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Added;
+        }
+        private async Task SaveChangeAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
+        private void SaveChange()
+        {
+            _db.SaveChanges();
+        }
         public string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate) // hàm đăng nhập  sử cho create update delete
         {
             try
@@ -114,8 +133,10 @@ namespace Travel.Data.Repositories
             {
                 Car car = new Car();
                 car = Mapper.MapCreateCar(input);
-                _db.Cars.Add(car);
-                _db.SaveChanges();
+                CreateDatabase<Car>(car);
+
+                UpdateDatabase<Car>(car);
+                SaveChange();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)

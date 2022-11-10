@@ -12,6 +12,8 @@ using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 using Travel.Context.Models;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+
 namespace Travel.Data.Repositories
 {
     public class TimeLineRes : ITimeLine
@@ -26,7 +28,26 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
-
+        private void UpdateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+        }
+        private void DeleteDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+        }
+        private void CreateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Added;
+        }
+        private async Task SaveChangeAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
+        private void SaveChange()
+        {
+            _db.SaveChanges();
+        }
         public Response Create(CreateTimeLineViewModel input)
         {
             try
@@ -37,7 +58,10 @@ namespace Travel.Data.Repositories
                 timeline.IsDelete = false;
                 timeline.ModifyDate = 202204101007;
                 _db.Timelines.Add(timeline);
-                _db.SaveChanges();
+                CreateDatabase<Timeline>(timeline);
+
+                UpdateDatabase<Timeline>(timeline);
+                SaveChange(); 
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
                 res.Notification.Type = "Success";

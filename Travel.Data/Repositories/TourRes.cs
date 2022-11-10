@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using PrUtility;
@@ -24,6 +23,26 @@ namespace Travel.Data.Repositories
         private long dateTimeNow;
         private readonly TravelContext _db;
         private Notification message;
+        private void UpdateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+        }
+        private void DeleteDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+        }
+        private void CreateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Added;
+        }
+        private async Task SaveChangeAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
+        private void SaveChange()
+        {
+            _db.SaveChanges();
+        }
         public TourRes(TravelContext db)
         {
             _db = db;

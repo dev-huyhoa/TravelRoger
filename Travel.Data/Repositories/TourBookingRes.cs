@@ -24,6 +24,26 @@ namespace Travel.Data.Repositories
         private readonly ISchedule _schedule;
      
         private readonly IConfiguration _config;
+        private void UpdateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+        }
+        private void DeleteDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+        }
+        private void CreateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Added;
+        }
+        private async Task SaveChangeAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
+        private void SaveChange()
+        {
+            _db.SaveChanges();
+        }
         public TourBookingRes(TravelContext db,
             ISchedule schedule,
             IConfiguration config)
@@ -187,8 +207,9 @@ namespace Travel.Data.Repositories
                 TourBooking tourbooking = Mapper.MapCreateTourBooking(input);
                 TourBookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
                 tourbooking.TourBookingDetails = tourBookingDetail;
-                _db.TourBookings.Add(tourbooking);
-                await _db.SaveChangesAsync();
+                CreateDatabase<TourBooking>(tourbooking);
+
+                await SaveChangeAsync();
                 var payment = await (from x in _db.Payment where x.IdPayment == input.PaymentId select x).FirstAsync();
                 tourbooking.Payment = payment;
 
@@ -360,7 +381,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourbooking = (from tb in _db.TourBookings
+                var tourbooking = (from tb in _db.TourBookings.AsNoTracking()
                                    where tb.IdTourBooking == idTourBooking
                                    && tb.Status == (int)Enums.StatusBooking.Paying
                                    select tb).FirstOrDefault();
@@ -369,7 +390,8 @@ namespace Travel.Data.Repositories
                     var bookingNo = $"{tourbooking.IdTourBooking}NO";
                     tourbooking.Status = (int)Enums.StatusBooking.Paid;
                     tourbooking.BookingNo = bookingNo;
-                    _db.SaveChanges();
+                    UpdateDatabase<TourBooking>(tourbooking);
+                    SaveChange();
                     #region sendMail
 
                     var emailSend = _config["emailSend"];
@@ -397,14 +419,15 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourbooking = await (from tb in _db.TourBookings
+                var tourbooking = await (from tb in _db.TourBookings.AsNoTracking()
                                          where tb.IdTourBooking == idTourBooking
                                          && tb.Status == (int)Enums.StatusBooking.Paying
                                          select tb).FirstOrDefaultAsync();
                 if (tourbooking != null)
                 {
                     tourbooking.Status = (int)Enums.StatusBooking.Cancel;
-                    _db.SaveChanges();
+                    UpdateDatabase<TourBooking>(tourbooking);
+                    SaveChange();
                     return Ultility.Responses("Đã hủy booking !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -422,14 +445,15 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourbooking = await (from tb in _db.TourBookings
+                var tourbooking = await (from tb in _db.TourBookings.AsNoTracking()
                                          where tb.IdTourBooking == idTourBooking
                                          && tb.Status == (int)Enums.StatusBooking.Cancel
                                          select tb).FirstOrDefaultAsync();
                 if (tourbooking != null)
                 {
                     tourbooking.Status = (int)Enums.StatusBooking.Paying;
-                    _db.SaveChanges();
+                    UpdateDatabase<TourBooking>(tourbooking);
+                    SaveChange();
                     //#region sendMail
 
                     //var emailSend = _config["emailSend"];
@@ -456,7 +480,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourbooking = await (from x in _db.TourBookings
+                var tourbooking = await (from x in _db.TourBookings.AsNoTracking()
                                          where x.BookingNo == bookingNo
                                          select new TourBooking
                                          {
@@ -474,13 +498,13 @@ namespace Travel.Data.Repositories
                                              TotalPricePromotion = x.TotalPricePromotion,
                                              VoucherCode = x.VoucherCode,
                                              ValuePromotion = x.ValuePromotion,
-                                             Payment = (from p in _db.Payment
+                                             Payment = (from p in _db.Payment.AsNoTracking()
                                                         where p.IdPayment == x.PaymentId
-                                                        select p).First(),
-                                             TourBookingDetails = (from tbd in _db.tourBookingDetails
+                                                        select p).FirstOrDefault(),
+                                             TourBookingDetails = (from tbd in _db.tourBookingDetails.AsNoTracking()
                                                                    where tbd.IdTourBookingDetails == x.IdTourBooking
-                                                                   select tbd).First(),
-                                             Schedule = (from s in _db.Schedules
+                                                                   select tbd).FirstOrDefault(),
+                                             Schedule = (from s in _db.Schedules.AsNoTracking()
                                                          where s.IdSchedule == x.ScheduleId
                                                          select new Schedule
                                                          {
@@ -492,10 +516,10 @@ namespace Travel.Data.Repositories
                                                              IdSchedule = s.IdSchedule,
                                                              Tour = (from t in _db.Tour
                                                                      where t.IdTour == s.TourId
-                                                                     select t).First(),
+                                                                     select t).FirstOrDefault(),
 
-                                                         }).First()
-                                         }).FirstAsync();
+                                                         }).FirstOrDefault()
+                                         }).FirstOrDefaultAsync();
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
 
             }
@@ -509,15 +533,15 @@ namespace Travel.Data.Repositories
         {
             try
             {  // Đã đặt tour nhưng chưa thanh toán
-                var lsTourBookingPaying = (from x in _db.TourBookings
+                var lsTourBookingPaying = (from x in _db.TourBookings.AsNoTracking()
                                            where x.Status == (int)Enums.StatusBooking.Paying
                                            select x).Count();
                 // tour đã thanh toán hết  
-                var lsTourBookingPaid = (from x in _db.TourBookings
+                var lsTourBookingPaid = (from x in _db.TourBookings.AsNoTracking()
                                          where x.Status == (int)Enums.StatusBooking.Paid
                                          select x).Count();
                 // tourr đã hủy
-                var lsTourBookingCancel = (from x in _db.TourBookings
+                var lsTourBookingCancel = (from x in _db.TourBookings.AsNoTracking()
                                            where x.Status == (int)Enums.StatusBooking.Cancel
                                            select x).Count();
                 var ab = String.Format("tourPaying: {0} && tourPaid: {1} && tourCancel: {2}", lsTourBookingPaying, lsTourBookingPaid, lsTourBookingCancel);
@@ -541,7 +565,9 @@ namespace Travel.Data.Repositories
                 if (tourbooking != null)
                 {
                     tourbooking.IsCalled = true;
-                    UpdateDatabase(tourbooking);
+                    UpdateDatabase<TourBooking>(tourbooking);
+                    SaveChange();
+
                     //#region sendMail
 
                     //var emailSend = _config["emailSend"];
@@ -564,20 +590,5 @@ namespace Travel.Data.Repositories
             }
         }
 
-        private void UpdateDatabase(TourBooking tourbooking)
-        {
-            _db.Entry(tourbooking).State = EntityState.Modified;
-            _db.SaveChanges();
-        }
-        private void DeleteDatabase(TourBooking tourbooking)
-        {
-            _db.Entry(tourbooking).State = EntityState.Deleted;
-            _db.SaveChanges();
-        }
-        private void CreateDatabase(TourBooking tourbooking)
-        {
-            _db.TourBookings.Add(tourbooking);
-            _db.SaveChanges();
-        }
     }
 }

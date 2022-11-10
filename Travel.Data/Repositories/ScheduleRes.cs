@@ -1837,7 +1837,6 @@ namespace Travel.Data.Repositories
             }
         }
         #endregion
-
         private bool CheckAnyBookingInSchedule(string idSchedule) // chỉ dùng khi thay đổi thông tin tour
         {
             // cách 1
