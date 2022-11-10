@@ -176,6 +176,15 @@ namespace TravelApi.Controllers
             res = _tourRes.UpdateRating(rating, idTour);
             return Ok(res);
         }
-      
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-tour")]
+        public object SearchTour([FromBody] JObject frmData)
+        {
+            res = _tourRes.SearchTour(frmData);
+            return Ok(res);
+        }
+
     }
 }
