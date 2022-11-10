@@ -139,5 +139,14 @@ namespace TravelApi.Controllers
             res = _tourbooking.SearchTourBooking(frmData);
             return Ok(res);
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("update-tourBooking-status")]
+        public object UpdateStatus(string pincode)
+        {
+            res = _tourbooking.UpdateStatus(pincode);
+            return Ok(res);
+        }
     }
 }
