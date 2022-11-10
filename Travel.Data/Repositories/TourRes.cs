@@ -102,7 +102,7 @@ namespace Travel.Data.Repositories
                     {
                     }
                     var rating = PrCommon.GetString("rating", frmData);
-                    if (String.IsNullOrEmpty(description))
+                    if (String.IsNullOrEmpty(rating))
                     {
                     }
                     if (file != null)
@@ -444,6 +444,7 @@ namespace Travel.Data.Repositories
                 tour.Thumbnail = input.Thumbnail;
                 tour.ToPlace = input.ToPlace;
                 tour.TypeAction = "update";
+                tour.Status = (int)TourStatus.Normal;
                 #endregion
 
                 UpdateDatabase(tour);
@@ -515,6 +516,7 @@ namespace Travel.Data.Repositories
                             tour.IdUserModify = idUser;
                             tour.ModifyBy = userLogin.NameEmployee;
                             tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                            tour.Status = (int)TourStatus.Normal;
                             UpdateDatabase(tour);
                             return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                         }
@@ -548,6 +550,7 @@ namespace Travel.Data.Repositories
                                 tour.Thumbnail = tourTemp.Thumbnail;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
                                 tour.ToPlace = tourTemp.ToPlace;
+                                tour.Status = tourTemp.Status;
                                 #endregion
 
                                 _db.Entry(tour).State = EntityState.Modified;
@@ -574,7 +577,7 @@ namespace Travel.Data.Repositories
                                 tour.TypeAction = null;
                                 tour.IsDelete = false;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
-
+                                tour.Status = (int)TourStatus.Promotion;
                                 UpdateDatabase(tour);
 
 
@@ -644,6 +647,7 @@ namespace Travel.Data.Repositories
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.IdAction = null;
                         tour.TypeAction = null;
+                        tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
 
                         // delete tempdata
@@ -657,6 +661,7 @@ namespace Travel.Data.Repositories
                         tour.IdAction = null;
                         tour.TypeAction = null;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
+                        tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
                     }
                     else if (tour.TypeAction == "restore")
@@ -665,6 +670,7 @@ namespace Travel.Data.Repositories
                         tour.TypeAction = null;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.IsDelete = false;
+                        tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
 
                     }
@@ -674,6 +680,7 @@ namespace Travel.Data.Repositories
                         tour.TypeAction = null;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.IsDelete = true;
+                        tour.Status = (int)TourStatus.Normal;
                         UpdateDatabase(tour);
                     }
                     return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
@@ -703,6 +710,7 @@ namespace Travel.Data.Repositories
                         tour.ApproveStatus = (int)ApproveStatus.Refused;
                         tour.IdAction = null;
                         tour.TypeAction = null;
+                        tour.Status = (int)TourStatus.Refused;
                         UpdateDatabase(tour);
                     }
                     else if (tour.TypeAction == "update")
@@ -723,6 +731,7 @@ namespace Travel.Data.Repositories
                         tour.Thumbnail = tourTemp.Thumbnail;
                         tour.ToPlace = tourTemp.ToPlace;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
+                        tour.Status = tourTemp.Status;
                         #endregion
                         _db.Entry(tour).State = EntityState.Modified;
                         DeleteDatabase(tourTemp);
@@ -743,6 +752,7 @@ namespace Travel.Data.Repositories
                         tour.TypeAction = null;
                         tour.IsDelete = false;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
+                        tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
 
                     }
@@ -1020,6 +1030,276 @@ namespace Travel.Data.Repositories
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
+        }
+
+        public Response SearchTour(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+                var isDelete = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.IsDelete = Boolean.Parse(isDelete);
+                }
+
+                var kwIdTour = PrCommon.GetString("idTour", frmData);
+                if (!String.IsNullOrEmpty(kwIdTour))
+                {
+                    keywords.KwId = kwIdTour.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwId = "";
+                }
+
+                var KwTourName = PrCommon.GetString("nameTour", frmData);
+                if (!String.IsNullOrEmpty(KwTourName))
+                {
+                    keywords.KwName = KwTourName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+                }
+
+                var KwToPlace = PrCommon.GetString("toPlace", frmData);
+                if (!String.IsNullOrEmpty(KwToPlace))
+                {
+                    keywords.KwToPlace = KwToPlace.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwToPlace = "";
+                }
+
+                var kwRating = PrCommon.GetString("rating", frmData);
+                if (!String.IsNullOrEmpty(kwRating))
+                {
+                    keywords.KwRating = double.Parse(kwRating);
+                }
+
+
+                var listTour = new List<Tour>();
+                if (!string.IsNullOrEmpty(isDelete))
+                {
+                    if(keywords.KwRating != 0)
+                    {
+                        listTour = (from x in _db.Tour
+                                    where x.IsDelete == keywords.IsDelete &&
+                                        x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                        x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                        x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                        x.IsTempdata == false &&
+                                        x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
+                                        x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                        x.Rating.Equals(keywords.KwRating)
+                                    select x).ToList();
+                    }
+                    else
+                    {
+                        listTour = (from x in _db.Tour
+                                    where x.IsDelete == keywords.IsDelete &&
+                                        x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                        x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                        x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                        x.IsTempdata == false &&
+                                        x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
+                                        x.Status == Convert.ToInt16(Enums.TourStatus.Normal)
+                                    select x).ToList();
+                    }
+                }
+                else
+                {
+                        if (keywords.KwRating != 0)
+                        {
+                            listTour = (from x in _db.Tour
+                                        where x.IsDelete == keywords.IsDelete &&
+                                            x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                            x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                            x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                            x.IsTempdata == false &&
+                                            x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
+                                            x.Status == Convert.ToInt16(Enums.TourStatus.Promotion) &&
+                                            x.Rating.Equals(keywords.KwRating)
+                                        orderby x.Rating
+                                        select new Tour
+                                        {
+                                            IdTour = x.IdTour,
+                                            NameTour = x.NameTour,
+                                            ToPlace = x.ToPlace,
+                                            Rating = x.Rating,
+                                            Status = x.Status
+                                        }).ToList();
+                        }
+                        else
+                        {
+                            listTour = (from x in _db.Tour
+                                        where x.IsDelete == keywords.IsDelete &&
+                                            x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                            x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                            x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                            x.IsTempdata == false &&
+                                            x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
+                                            //x.Rating.Equals(keywords.KwRating) &&
+                                            x.Status == Convert.ToInt16(Enums.TourStatus.Promotion)
+                                        orderby x.Rating
+                                        select new Tour
+                                        {
+                                            IdTour = x.IdTour,
+                                            NameTour = x.NameTour,
+                                            ToPlace = x.ToPlace,
+                                            Rating = x.Rating,
+                                            Status = x.Status
+                                        }).ToList();
+                        } 
+                }
+                var result = Mapper.MapTour(listTour);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
+            }
+            catch(Exception e)
+            {
+               return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+
+        }
+
+        public Response SearchTourWaiting(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var kwIdTour = PrCommon.GetString("idTour", frmData);
+                if (!String.IsNullOrEmpty(kwIdTour))
+                {
+                    keywords.KwId = kwIdTour.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwId = "";
+                }
+
+                var KwTourName = PrCommon.GetString("nameTour", frmData);
+                if (!String.IsNullOrEmpty(KwTourName))
+                {
+                    keywords.KwName = KwTourName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+                }
+
+                var KwToPlace = PrCommon.GetString("toPlace", frmData);
+                if (!String.IsNullOrEmpty(KwToPlace))
+                {
+                    keywords.KwToPlace = KwToPlace.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwToPlace = "";
+                }
+
+                var kwRating = PrCommon.GetString("rating", frmData);
+                if (!String.IsNullOrEmpty(kwRating))
+                {
+                    keywords.KwRating = double.Parse(kwRating);
+                }
+
+                var kwTypeAction = PrCommon.GetString("typeAction", frmData);
+                if (!String.IsNullOrEmpty(kwTypeAction))
+                {
+                    keywords.KwTypeAction = kwTypeAction;
+                }
+
+    
+
+                var listTour = new List<Tour>();
+                if (keywords.KwRating != 0)
+                {
+                        listTour = (from x in _db.Tour
+                                where 
+                                    x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                    x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                    x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                    x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                    x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                    x.Rating.Equals(keywords.KwRating)
+                                orderby x.Rating
+                                select new Tour
+                                {
+                                    IdTour = x.IdTour,
+                                    NameTour = x.NameTour,
+                                    ToPlace = x.ToPlace,
+                                    Rating = x.Rating,
+                                    Status = x.Status,
+                                    TypeAction = x.TypeAction,
+                                    ApproveStatus = x.ApproveStatus
+                                }).ToList();
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(kwTypeAction))
+                    {
+                        listTour = (from x in _db.Tour
+                                    where 
+                                        x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                        x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                        x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                        x.IsTempdata == false &&
+                                        x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                        x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                        x.TypeAction.ToLower().Contains(keywords.KwTypeAction)
+
+                                    orderby x.Rating
+                                    select new Tour
+                                    {
+                                        IdTour = x.IdTour,
+                                        NameTour = x.NameTour,
+                                        ToPlace = x.ToPlace,
+                                        Rating = x.Rating,
+                                        Status = x.Status,
+                                        TypeAction = x.TypeAction,
+                                        ApproveStatus = x.ApproveStatus
+                                    }).ToList();
+                    }
+                    else
+                    {
+                        listTour = (from x in _db.Tour
+                                    where 
+                                        x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                        x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                        x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                        x.IsTempdata == false &&
+                                        x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                        x.Status == Convert.ToInt16(Enums.TourStatus.Normal) 
+
+                                    orderby x.Rating
+                                    select new Tour
+                                    {
+                                        IdTour = x.IdTour,
+                                        NameTour = x.NameTour,
+                                        ToPlace = x.ToPlace,
+                                        Rating = x.Rating,
+                                        Status = x.Status,
+                                        TypeAction = x.TypeAction,
+                                        ApproveStatus = x.ApproveStatus
+                                    }).ToList();
+                    }
+                    
+                }
+                var result = Mapper.MapTour(listTour);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+
         }
     }
 }

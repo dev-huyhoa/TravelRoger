@@ -174,6 +174,8 @@ namespace Travel.Data.Repositories
                 createObj.BeginDate = long.Parse(beginDate);
                 createObj.EndDate = long.Parse(endDate);
                 createObj.TimePromotion = long.Parse(timePromotion);
+                createObj.MinCapacity = Convert.ToInt16(minCapacity);
+                createObj.MaxCapacity = Convert.ToInt16(maxCapacity);
                 createObj.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                 createObj.IdUserModify = Guid.Parse(idUserModify);
 

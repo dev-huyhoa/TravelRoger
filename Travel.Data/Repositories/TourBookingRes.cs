@@ -716,5 +716,38 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+        public Response UpdateStatus(string pincode)
+        {
+            try
+            {
+                var tourBooking = (from x in _db.TourBookings.AsNoTracking()
+                            where x.Pincode == pincode
+                            select x).FirstOrDefault();
+               
+                if (tourBooking != null )
+                {
+                    if(tourBooking.Status == 1)
+                    {
+                        tourBooking.Status = (int)Enums.StatusBooking.Paid;
+                        UpdateDatabase(tourBooking);
+                    }
+                    else
+                    {
+                        return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+                    }
+                    return Ultility.Responses($"Đổi thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
     }
 }

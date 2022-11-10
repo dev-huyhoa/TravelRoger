@@ -29,5 +29,12 @@ namespace Travel.Shared.ViewModels
         public string KwPincode { get; set; }
         public bool kwIsCalled { get; set; }
         public long KwDate { get; set; }
+
+        
+        public string KwToPlace { get; set; }
+        public double KwRating { get; set; }
+        public string KwTypeAction { get; set; }
+        public int KwAprroveStatus { get; set; }
+
     }
 }
