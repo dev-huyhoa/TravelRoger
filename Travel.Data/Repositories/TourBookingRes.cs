@@ -234,7 +234,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var ListTourBooking = await (from x in _db.TourBookings
+                var ListTourBooking = await (from x in _db.TourBookings.AsNoTracking()
                                              orderby x.DateBooking descending
                                              select new TourBooking
                                             {
@@ -255,13 +255,13 @@ namespace Travel.Data.Repositories
                                                 TotalPricePromotion = x.TotalPricePromotion,
                                                 VoucherCode = x.VoucherCode,
                                                 ValuePromotion = x.ValuePromotion,
-                                                Payment = (from p in _db.Payment
+                                                Payment = (from p in _db.Payment.AsNoTracking()
                                                            where p.IdPayment == x.PaymentId
-                                                           select p).First(),
-                                                TourBookingDetails = (from tbd in _db.tourBookingDetails
+                                                           select p).FirstOrDefault(),
+                                                TourBookingDetails = (from tbd in _db.tourBookingDetails.AsNoTracking()
                                                                       where tbd.IdTourBookingDetails == x.IdTourBooking
-                                                                      select tbd).First(),
-                                                Schedule = (from s in _db.Schedules
+                                                                      select tbd).FirstOrDefault(),
+                                                Schedule = (from s in _db.Schedules.AsNoTracking()
                                                             where s.IdSchedule == x.ScheduleId
                                                             select new Schedule
                                                             {
@@ -271,11 +271,11 @@ namespace Travel.Data.Repositories
                                                                 Description = s.Description,
                                                                 QuantityCustomer = s.QuantityCustomer,
                                                                 IdSchedule = s.IdSchedule,
-                                                                Tour = (from t in _db.Tour
+                                                                Tour = (from t in _db.Tour.AsNoTracking()
                                                                         where t.IdTour == s.TourId
-                                                                        select t).First(),
+                                                                        select t).FirstOrDefault(),
 
-                                                            }).First()
+                                                            }).FirstOrDefault()
                                             }).ToListAsync();
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), ListTourBooking);
 
@@ -590,5 +590,122 @@ namespace Travel.Data.Repositories
             }
         }
 
+        private void UpdateDatabase(TourBooking tourbooking)
+        {
+            _db.Entry(tourbooking).State = EntityState.Modified;
+            _db.SaveChanges();
+        }
+        private void DeleteDatabase(TourBooking tourbooking)
+        {
+            _db.Entry(tourbooking).State = EntityState.Deleted;
+            _db.SaveChanges();
+        }
+        private void CreateDatabase(TourBooking tourbooking)
+        {
+            _db.TourBookings.Add(tourbooking);
+            _db.SaveChanges();
+        }
+
+        public Response SearchTourBooking(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+           
+                var kwId = PrCommon.GetString("IdTourBooking", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwId))
+                {
+                    keywords.KwId = kwId.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwId = "";
+
+                }
+                var kwPincode = PrCommon.GetString("Pincode", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwPincode))
+                {
+                    keywords.KwPincode = kwPincode.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwPincode = "";
+
+                }
+                var kwEmail = PrCommon.GetString("Email", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwEmail))
+                {
+                    keywords.KwEmail = kwEmail.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwEmail = "";
+
+                }
+                var kwPhone = PrCommon.GetString("phone", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwPhone))
+                {
+                    keywords.KwPhone = kwPhone.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwPhone = "";
+
+                }
+                var kwDate = PrCommon.GetString("DateBooking", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwDate))
+                {
+                    keywords.KwDate = long.Parse(kwDate);
+                }
+                else
+                {
+
+                    keywords.KwDate = 0;
+                }
+                var kwIsCall = PrCommon.GetString("IsCalled", frmData);
+
+                if (!String.IsNullOrEmpty(kwIsCall))
+                {
+                    keywords.kwIsCalled = Boolean.Parse(kwIsCall);
+                }
+                var listTourBooking = new List<TourBooking>();
+
+                if (!string.IsNullOrEmpty(kwIsCall))
+                {
+                  
+                    listTourBooking = (from x in _db.TourBookings
+                                       where
+                                                       x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                       x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                       x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                           x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                            x.IsCalled == keywords.kwIsCalled
+                                       orderby x.DateBooking
+                                       select x).ToList();
+
+                }
+                else
+                {
+                    listTourBooking = (from x in _db.TourBookings
+                                       where
+                                                       x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                       x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                       x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                           x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                          x.IsCalled == keywords.kwIsCalled
+                                       orderby x.DateBooking
+                                       select x).ToList();
+                }
+
+
+
+                var result = Mapper.MapTourBooking(listTourBooking);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }

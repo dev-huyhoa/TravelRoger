@@ -28,40 +28,14 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
-        private void UpdateDatabase<T>(T input)
-        {
-            _db.Entry(input).State = EntityState.Modified;
-        }
-        private void DeleteDatabase<T>(T input)
-        {
-            _db.Entry(input).State = EntityState.Deleted;
-        }
-        private void CreateDatabase<T>(T input)
-        {
-            _db.Entry(input).State = EntityState.Added;
-        }
-        private async Task SaveChangeAsync()
-        {
-            await _db.SaveChangesAsync();
-        }
-        private void SaveChange()
-        {
-            _db.SaveChanges();
-        }
-        public Response Create(CreateTimeLineViewModel input)
+
+        public Response Create(ICollection<CreateTimeLineViewModel> input)
         {
             try
              {
-                Timeline timeline = new Timeline();
-                timeline = Mapper.MapCreateTimeline(input);
-                timeline.IdTimeline = Guid.NewGuid();
-                timeline.IsDelete = false;
-                timeline.ModifyDate = 202204101007;
-                _db.Timelines.Add(timeline);
-                CreateDatabase<Timeline>(timeline);
-
-                UpdateDatabase<Timeline>(timeline);
-                SaveChange(); 
+                ICollection<Timeline> timeline = Mapper.MapCreateTimeline(input);
+                _db.Timelines.AddRange(timeline.AsEnumerable());
+                _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Thêm thành công !";
                 res.Notification.Type = "Success";
@@ -120,6 +94,10 @@ namespace Travel.Data.Repositories
 
         string ITimeLine.CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
+            var d = PrCommon.GetString("timeline", frmData);
+
+            var timelines = JsonSerializer.Deserialize<List<Timeline>>(d);
+
             CreateTimeLineViewModel timeline = new CreateTimeLineViewModel();
             try
             {

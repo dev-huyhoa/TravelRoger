@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Text.Json;
+using Travel.Context.Models;
 using Travel.Data.Interfaces;
 using Travel.Data.Repositories;
 using Travel.Shared.ViewModels;
@@ -26,13 +28,13 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("create-timeline")]
-        public object Create([FromBody] JObject frmData)
+        public object Create(ICollection<CreateTimeLineViewModel> timelinee)
         {
             message = null;
-            var result = _timelineRes.CheckBeforSave(frmData, ref message, false);
+            //var result = _timelineRes.CheckBeforSave(frmData, ref message, false);
             if (message == null)
             {
-                var createObj = JsonSerializer.Deserialize<CreateTimeLineViewModel>(result);
+                var createObj = timelinee;
                 res = _timelineRes.Create(createObj);
             }
             return Ok(res);

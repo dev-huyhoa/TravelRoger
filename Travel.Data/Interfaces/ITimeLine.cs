@@ -12,7 +12,7 @@ namespace Travel.Data.Interfaces
     public interface ITimeLine
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
-        Response Create(CreateTimeLineViewModel input);
+        Response Create(ICollection<CreateTimeLineViewModel> input);
         Response Get();
         Response GetTimelineByIdSchedule(string IdSchedule);
     }

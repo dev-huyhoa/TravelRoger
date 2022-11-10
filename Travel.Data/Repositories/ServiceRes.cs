@@ -1273,7 +1273,7 @@ namespace Travel.Data.Repositories
             try
             {
                 Contract contract = Mapper.MapCreateContract(input);
-                _db.Contracts.Add(contract);
+                
                 CreateDatabase<Contract>(contract);
 
                 UpdateDatabase<Contract>(contract);
@@ -1436,5 +1436,179 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+        public Response SearchPlace(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var isDelete = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.IsDelete = Boolean.Parse(isDelete);
+                }
+                var kwName = PrCommon.GetString("name", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwName))
+                {
+                    keywords.KwName = kwName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+
+                }
+                var kwPhone = PrCommon.GetString("phone", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwPhone))
+                {
+                    keywords.KwPhone = kwPhone.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwPhone = "";
+
+                }
+                var KwAddress = PrCommon.GetString("address", frmData).Trim();
+                if (!String.IsNullOrEmpty(KwAddress))
+                {
+                    keywords.KwAddress = KwAddress.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwAddress = "";
+
+                }
+                var KwPriceTicket = PrCommon.GetString("priceTicket", frmData).Trim();
+                if (!String.IsNullOrEmpty(KwPriceTicket))
+                {
+                    keywords.KwPriceTicket = KwPriceTicket.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwPriceTicket = "";
+
+                }
+                var listPlace = new List<Place>();
+
+                if (!string.IsNullOrEmpty(isDelete))
+                {
+                    listPlace = (from x in _db.Places
+                                 where x.IsDelete == keywords.IsDelete &&
+                                                 x.NamePlace.ToLower().Contains(keywords.KwName) &&
+                                                 x.Address.ToLower().Contains(keywords.KwAddress) &&
+                                                 x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                 x.IsTempdata == false &&
+                                                 x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
+
+                                 select x).ToList();
+                }
+                else
+                {
+                    listPlace = (from x in _db.Places
+                                 where x.IsDelete == keywords.IsDelete &&
+                                                 x.NamePlace.ToLower().Contains(keywords.KwName) &&
+                                                 x.Address.ToLower().Contains(keywords.KwAddress) &&
+                                                 x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                 x.IsTempdata == false &&
+                                                 x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
+                                 orderby x.PriceTicket
+                                 select x).ToList();
+                }
+                var result = Mapper.MapPlace(listPlace);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response SearchRestaurant(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var isDelete = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.IsDelete = Boolean.Parse(isDelete);
+                }
+                var kwName = PrCommon.GetString("name", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwName))
+                {
+                    keywords.KwName = kwName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+
+                }
+                var kwPhone = PrCommon.GetString("phone", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwPhone))
+                {
+                    keywords.KwPhone = kwPhone.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwPhone = "";
+
+                }
+                var KwAddress = PrCommon.GetString("address", frmData).Trim();
+                if (!String.IsNullOrEmpty(KwAddress))
+                {
+                    keywords.KwAddress = KwAddress.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwAddress = "";
+
+                }
+                var kwComboPrice = PrCommon.GetString("comboPrice", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwComboPrice))
+                {
+                    keywords.KwComboPrice = kwComboPrice.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwComboPrice = "";
+
+                }
+                var listRestaurant = new List<Restaurant>();
+
+
+                if (!string.IsNullOrEmpty(isDelete))
+                {
+                    listRestaurant = (from x in _db.Restaurants
+                                      where x.IsDelete == keywords.IsDelete &&
+                                                      x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
+                                                      x.Address.ToLower().Contains(keywords.KwAddress) &&
+                                                      x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                      x.IsTempdata == false &&
+                                                      x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
+
+                                      select x).ToList();
+                }
+                else
+                {
+                    listRestaurant = (from x in _db.Restaurants
+                                      where x.IsDelete == keywords.IsDelete &&
+                                                      x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
+                                                      x.Address.ToLower().Contains(keywords.KwAddress) &&
+                                                      x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                      x.IsTempdata == false &&
+                                                      x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
+
+                                      select x).ToList();
+                }
+                var result = Mapper.MapRestaurant(listRestaurant);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
     }
 }

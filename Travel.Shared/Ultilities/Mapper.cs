@@ -472,6 +472,10 @@ namespace Travel.Shared.Ultilities
 
 
                 cfg.CreateMap<CreateTimeLineViewModel, Timeline>()
+                                                  .ForMember(dto => dto.IdTimeline, otp => otp.MapFrom(src => Guid.NewGuid()))
+                                                  .ForMember(dto => dto.IsDelete, otp => otp.MapFrom(src => false))
+                                                  .ForMember(dto => dto.ModifyDate, otp => otp.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
+
                                   .ForMember(dto => dto.Description, otp => otp.MapFrom(src => src.Description))
                                   .ForMember(dto => dto.FromTime, otp => otp.MapFrom(src => src.FromTime))
                                    .ForMember(dto => dto.ToTime, opt => opt.MapFrom(src => src.ToTime))
@@ -928,6 +932,10 @@ namespace Travel.Shared.Ultilities
         public static Timeline MapCreateTimeline(CreateTimeLineViewModel data)
         {
             return _mapper.Map<CreateTimeLineViewModel, Timeline>(data);
+        }
+        public static ICollection<Timeline> MapCreateTimeline(ICollection<CreateTimeLineViewModel> data)
+        {
+            return _mapper.Map<ICollection<CreateTimeLineViewModel>, ICollection<Timeline>>(data);
         }
 
 
