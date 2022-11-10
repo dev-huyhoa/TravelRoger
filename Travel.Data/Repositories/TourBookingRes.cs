@@ -208,7 +208,7 @@ namespace Travel.Data.Repositories
                 TourBookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
                 tourbooking.TourBookingDetails = tourBookingDetail;
                 CreateDatabase<TourBooking>(tourbooking);
-
+                CreateDatabase<TourBookingDetails>(tourBookingDetail);
                 await SaveChangeAsync();
                 var payment = await (from x in _db.Payment where x.IdPayment == input.PaymentId select x).FirstAsync();
                 tourbooking.Payment = payment;
@@ -220,6 +220,14 @@ namespace Travel.Data.Repositories
                 await _schedule.UpdateCapacity(input.ScheduleId, quantityAdult, quantityChild, quantityBaby);
                 transaction.Commit();
                 transaction.Dispose();
+
+                //Gửi sms
+                //SpeedSMSAPI api = new SpeedSMSAPI("eHTE2iExhWKHCRk4OvTVT2gFHuPl4wDd");
+                //String[] phones = new String[] { "0769499550" };
+                //String str = "Lụm";
+                //String response = api.sendSMS(phones, str, 5, "d675521d17749e04");
+
+
                 return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
             }
             catch (Exception e)
@@ -336,6 +344,7 @@ namespace Travel.Data.Repositories
                                              NameCustomer = x.NameCustomer,
                                              NameContact = x.NameContact,
                                              Pincode = x.Pincode,
+                                          
                                              Email = x.Email,
                                              Phone = x.Phone,
                                              Status = x.Status,
