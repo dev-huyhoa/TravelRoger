@@ -31,6 +31,7 @@ namespace Travel.Context.Models.Travel
         public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<Banner> Banners { get; set; }
         public DbSet<Contract> Contracts { get; set; }
+        public DbSet<Review> reviews { get; set; }
         //
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -388,6 +389,13 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.NameImage).HasMaxLength(100).IsRequired(true);
                 entity.Property(e => e.Extension).HasMaxLength(5);
                 entity.Property(e => e.FilePath).HasMaxLength(255);
+            });
+            modelBuilder.Entity<Review>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Rating).HasMaxLength(12).IsRequired(true);
+                entity.Property(e => e.DateTime).HasMaxLength(15);
+                entity.Property(e => e.Comment).HasMaxLength(5000);
             });
         }
 

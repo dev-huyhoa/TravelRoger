@@ -19,6 +19,7 @@ using static Travel.Shared.ViewModels.Travel.ServiceVM.ServiceViewModel;
 using static Travel.Shared.Ultilities.Enums;
 using Travel.Shared.ViewModels.Travel.VoucherVM;
 using Travel.Shared.ViewModels.Travel.PromotionVM;
+using Travel.Shared.ViewModels.Travel.ReviewVM;
 
 namespace Travel.Shared.Ultilities
 {
@@ -682,7 +683,17 @@ namespace Travel.Shared.Ultilities
                         (src.Breakfast + src.Water + src.SellCost + src.OtherPrice + src.InsuranceFee) + (src.Depreciation + src.Tolls + (src.FeeGas * src.Distance))
                 ))
                 ;
-
+                // review
+                cfg.CreateMap<CreateReviewModel, Review>()
+                             .ForMember(dto => dto.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                                   .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
+                                   .ForMember(dto => dto.DateTime, opt => opt.MapFrom(src => src.DateTime))
+                                   .ForMember(dto => dto.Comment, opt => opt.MapFrom(src => src.Comment));
+                cfg.CreateMap<ReviewViewModel, Review>()
+                  .ForMember(dto => dto.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                                   .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
+                                   .ForMember(dto => dto.DateTime, opt => opt.MapFrom(src => src.DateTime))
+                                   .ForMember(dto => dto.Comment, opt => opt.MapFrom(src => src.Comment));
 
                 cfg.CreateMap<CreateVoucherViewModel, Voucher>()
                                 .ForMember(dto => dto.IdVoucher, opt => opt.MapFrom(src => Guid.NewGuid()))
@@ -955,6 +966,23 @@ namespace Travel.Shared.Ultilities
         public static List<RestaurantViewModel> MapRestaurant(List<Restaurant> data)
         {
             return _mapper.Map<List<Restaurant>, List<RestaurantViewModel>>(data);
+        }
+        // review
+        public static Review MapCreateReview(CreateReviewModel data)
+        {
+            return _mapper.Map<CreateReviewModel, Review>(data);
+        }
+        public static Review MapUpdateReview(UpdateReviewModel data)
+        {
+            return _mapper.Map<UpdateReviewModel, Review>(data);
+        }
+        public static List<ReviewViewModel> MapReview(List<Review> data)
+        {
+            return _mapper.Map<List<Review>, List<ReviewViewModel>>(data);
+        }
+        public static ReviewViewModel MapReview(Review data)
+        {
+            return _mapper.Map<Review, ReviewViewModel>(data);
         }
         // create hotel
 
