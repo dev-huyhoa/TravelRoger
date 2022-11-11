@@ -80,15 +80,8 @@ namespace Travel.Data.Repositories
                 var listRole= (from x in _db.Roles.AsNoTracking()
                                where x.IsDelete == isDelete select x).ToList();
                 var result = Mapper.MapRole(listRole);
-                if (result.Count() > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
 
-                }
             }
             catch (Exception e)
             {
