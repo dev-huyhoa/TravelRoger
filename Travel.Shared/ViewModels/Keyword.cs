@@ -42,5 +42,6 @@ namespace Travel.Shared.ViewModels
         public float KwFinalPriceHoliday { get; set; }
 
         public string KwIdTour { get; set; }
+        public string KwModifyBy { get; set; }
     }
 }

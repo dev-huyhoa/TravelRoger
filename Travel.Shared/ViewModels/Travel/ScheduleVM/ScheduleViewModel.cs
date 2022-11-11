@@ -47,6 +47,7 @@ namespace Travel.Shared.ViewModels.Travel
 
         private int approve;
         private string idUserModify;
+        private string modifyBy;
         private string typeAction;
         private Boolean isHoliday;
         private Boolean isDelete;
@@ -114,5 +115,6 @@ namespace Travel.Shared.ViewModels.Travel
         public string TypeAction { get => typeAction; set => typeAction = value; }
         public string IdUserModify { get => idUserModify; set => idUserModify = value; }
         public int Approve { get => approve; set => approve = value; }
+        public string ModifyBy { get => modifyBy; set => modifyBy = value; }
     }
 }

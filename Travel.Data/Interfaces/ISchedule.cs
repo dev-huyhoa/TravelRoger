@@ -34,5 +34,7 @@ namespace Travel.Data.Interfaces
         Task<Response> GetsSchedulePromotion();
         Task<Response> GetsRelatedSchedule(string idSchedule);
         Response SearchSchedule(JObject frmData, string idTour);
+
+        Response SearchScheduleWaiting(JObject frmData, string idTour);
     }
 }

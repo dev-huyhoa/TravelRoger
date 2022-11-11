@@ -200,5 +200,14 @@ namespace TravelApi.Controllers
             res = _schedule.SearchSchedule(frmData, idTour);
             return Ok(res);
         }
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-schedule-waiting")]
+        public object SearchScheduleWaiting([FromBody] JObject frmData, string idTour)
+        {
+            res = _schedule.SearchScheduleWaiting(frmData, idTour);
+            return Ok(res);
+        }
     }
 }

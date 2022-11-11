@@ -1208,13 +1208,39 @@ namespace Travel.Data.Repositories
                     keywords.KwRating = double.Parse(kwRating);
                 }
 
-                var kwTypeAction = PrCommon.GetString("typeAction", frmData);
-                if (!String.IsNullOrEmpty(kwTypeAction))
+                var KwModifyBy = PrCommon.GetString("modifyBy", frmData);
+                if (!String.IsNullOrEmpty(KwModifyBy))
                 {
-                    keywords.KwTypeAction = kwTypeAction;
+                    keywords.KwModifyBy = KwModifyBy.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwModifyBy = "";
                 }
 
-    
+                var fromDate = PrCommon.GetString("modifyDateFrom", frmData);
+                if (!String.IsNullOrEmpty(fromDate))
+                {
+                    keywords.KwFromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(fromDate));
+                }
+                else
+                {
+                    keywords.KwFromDate = 0;
+                }
+
+                var toDate = PrCommon.GetString("modifyDateTo", frmData);
+                if (!String.IsNullOrEmpty(toDate))
+                {
+                    keywords.KwToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(toDate).AddDays(1).AddSeconds(-1));
+                }
+                else
+                {
+                    keywords.KwToDate = 0;
+                }
+
+                var typeAction = PrCommon.GetString("typeAction", frmData);
+                keywords.KwTypeActions = PrCommon.getListString(typeAction, ',', false);
+
 
                 var listTour = new List<Tour>();
                 if (keywords.KwRating != 0)
@@ -1224,10 +1250,11 @@ namespace Travel.Data.Repositories
                                     x.IdTour.ToLower().Contains(keywords.KwId) &&
                                     x.NameTour.ToLower().Contains(keywords.KwName) &&
                                     x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                    x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                     x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                     x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
                                     x.Rating.Equals(keywords.KwRating)
-                                orderby x.Rating
+                                 orderby x.ModifyDate descending
                                 select new Tour
                                 {
                                     IdTour = x.IdTour,
@@ -1236,57 +1263,238 @@ namespace Travel.Data.Repositories
                                     Rating = x.Rating,
                                     Status = x.Status,
                                     TypeAction = x.TypeAction,
+                                    ModifyDate = x.ModifyDate,
+                                    ModifyBy = x.ModifyBy,
                                     ApproveStatus = x.ApproveStatus
                                 }).ToList();
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(kwTypeAction))
+                    if (keywords.KwTypeActions.Count > 0)
                     {
-                        listTour = (from x in _db.Tour
-                                    where 
-                                        x.IdTour.ToLower().Contains(keywords.KwId) &&
-                                        x.NameTour.ToLower().Contains(keywords.KwName) &&
-                                        x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
-                                        x.IsTempdata == false &&
-                                        x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
-                                        x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
-                                        x.TypeAction.ToLower().Contains(keywords.KwTypeAction)
-
-                                    orderby x.Rating
-                                    select new Tour
-                                    {
-                                        IdTour = x.IdTour,
-                                        NameTour = x.NameTour,
-                                        ToPlace = x.ToPlace,
-                                        Rating = x.Rating,
-                                        Status = x.Status,
-                                        TypeAction = x.TypeAction,
-                                        ApproveStatus = x.ApproveStatus
-                                    }).ToList();
+                        if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
+                        {
+                            listTour = (from x in _db.Tour
+                                        where
+                                            x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                            x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                            x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                            x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                            x.IsTempdata == false &&
+                                            x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                            x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                             keywords.KwTypeActions.Contains(x.TypeAction) &&
+                                            x.ModifyDate >= keywords.KwFromDate &&
+                                            x.ModifyDate <= keywords.KwToDate
+                                        orderby x.ModifyDate descending
+                                        select new Tour
+                                        {
+                                            IdTour = x.IdTour,
+                                            NameTour = x.NameTour,
+                                            ToPlace = x.ToPlace,
+                                            Rating = x.Rating,
+                                            Status = x.Status,
+                                            TypeAction = x.TypeAction,
+                                            ModifyDate = x.ModifyDate,
+                                            ModifyBy = x.ModifyBy,
+                                            ApproveStatus = x.ApproveStatus
+                                        }).ToList();
+                        }
+                        else
+                        {
+                            if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
+                            {
+                                listTour = (from x in _db.Tour
+                                            where
+                                                x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                                x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                                x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                                x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                x.IsTempdata == false &&
+                                                x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                                 keywords.KwTypeActions.Contains(x.TypeAction) &&
+                                                x.ModifyDate <= keywords.KwToDate
+                                            orderby x.ModifyDate descending
+                                            select new Tour
+                                            {
+                                                IdTour = x.IdTour,
+                                                NameTour = x.NameTour,
+                                                ToPlace = x.ToPlace,
+                                                Rating = x.Rating,
+                                                Status = x.Status,
+                                                TypeAction = x.TypeAction,
+                                                ApproveStatus = x.ApproveStatus
+                                            }).ToList();
+                            }
+                            else
+                            {
+                                if (keywords.KwToDate == 0 && keywords.KwFromDate > 0)
+                                {
+                                    listTour = (from x in _db.Tour
+                                                where
+                                                    x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                                    x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                                    x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                                    x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                    x.IsTempdata == false &&
+                                                    x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                    x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                                     keywords.KwTypeActions.Contains(x.TypeAction) &&
+                                                    x.ModifyDate >= keywords.KwFromDate
+                                                orderby x.ModifyDate descending
+                                                select new Tour
+                                                {
+                                                    IdTour = x.IdTour,
+                                                    NameTour = x.NameTour,
+                                                    ToPlace = x.ToPlace,
+                                                    Rating = x.Rating,
+                                                    Status = x.Status,
+                                                    TypeAction = x.TypeAction,
+                                                    ModifyDate = x.ModifyDate,
+                                                    ApproveStatus = x.ApproveStatus
+                                                }).ToList();
+                                }
+                                else
+                                {
+                                    listTour = (from x in _db.Tour
+                                                where
+                                                    x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                                    x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                                    x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                                    x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                    x.IsTempdata == false &&
+                                                    x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                    x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                                     keywords.KwTypeActions.Contains(x.TypeAction) 
+                                                orderby x.ModifyDate descending
+                                                select new Tour
+                                                {
+                                                    IdTour = x.IdTour,
+                                                    NameTour = x.NameTour,
+                                                    ToPlace = x.ToPlace,
+                                                    Rating = x.Rating,
+                                                    Status = x.Status,
+                                                    TypeAction = x.TypeAction,
+                                                    ModifyDate = x.ModifyDate,
+                                                    ApproveStatus = x.ApproveStatus
+                                                }).ToList();
+                                }
+                            }
+                        }
                     }
                     else
                     {
-                        listTour = (from x in _db.Tour
-                                    where 
-                                        x.IdTour.ToLower().Contains(keywords.KwId) &&
-                                        x.NameTour.ToLower().Contains(keywords.KwName) &&
-                                        x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
-                                        x.IsTempdata == false &&
-                                        x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
-                                        x.Status == Convert.ToInt16(Enums.TourStatus.Normal) 
-
-                                    orderby x.Rating
-                                    select new Tour
-                                    {
-                                        IdTour = x.IdTour,
-                                        NameTour = x.NameTour,
-                                        ToPlace = x.ToPlace,
-                                        Rating = x.Rating,
-                                        Status = x.Status,
-                                        TypeAction = x.TypeAction,
-                                        ApproveStatus = x.ApproveStatus
-                                    }).ToList();
+                        if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
+                        {
+                            listTour = (from x in _db.Tour
+                                        where
+                                            x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                            x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                            x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                            x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                            x.IsTempdata == false &&
+                                            x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                            x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                            x.ModifyDate >= keywords.KwFromDate &&
+                                           x.ModifyDate <= keywords.KwToDate
+                                        orderby x.ModifyDate descending
+                                        select new Tour
+                                        {
+                                            IdTour = x.IdTour,
+                                            NameTour = x.NameTour,
+                                            ToPlace = x.ToPlace,
+                                            Rating = x.Rating,
+                                            Status = x.Status,
+                                            TypeAction = x.TypeAction,
+                                            ModifyDate = x.ModifyDate,
+                                            ModifyBy = x.ModifyBy,
+                                            ApproveStatus = x.ApproveStatus
+                                        }).ToList();
+                        }
+                        else
+                        {
+                            if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
+                            {
+                                listTour = (from x in _db.Tour
+                                            where
+                                                x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                                x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                                x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                                x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                x.IsTempdata == false &&
+                                                x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                                x.ModifyDate <= keywords.KwToDate
+                                            orderby x.ModifyDate descending
+                                            select new Tour
+                                            {
+                                                IdTour = x.IdTour,
+                                                NameTour = x.NameTour,
+                                                ToPlace = x.ToPlace,
+                                                Rating = x.Rating,
+                                                Status = x.Status,
+                                                TypeAction = x.TypeAction,
+                                                ModifyDate = x.ModifyDate,
+                                                ModifyBy = x.ModifyBy,
+                                                ApproveStatus = x.ApproveStatus
+                                            }).ToList();
+                            }
+                            else
+                            {
+                                if (keywords.KwToDate == 0 && keywords.KwFromDate > 0)
+                                {
+                                    listTour = (from x in _db.Tour
+                                                where
+                                                    x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                                    x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                                    x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                                    x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                    x.IsTempdata == false &&
+                                                    x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                    x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
+                                                    x.ModifyDate >= keywords.KwFromDate
+                                                orderby x.ModifyDate descending
+                                                select new Tour
+                                                {
+                                                    IdTour = x.IdTour,
+                                                    NameTour = x.NameTour,
+                                                    ToPlace = x.ToPlace,
+                                                    Rating = x.Rating,
+                                                    Status = x.Status,
+                                                    TypeAction = x.TypeAction,
+                                                    ModifyDate = x.ModifyDate,
+                                                    ModifyBy = x.ModifyBy,
+                                                    ApproveStatus = x.ApproveStatus
+                                                }).ToList();
+                                }
+                                else
+                                {
+                                    listTour = (from x in _db.Tour
+                                                where
+                                                    x.IdTour.ToLower().Contains(keywords.KwId) &&
+                                                    x.NameTour.ToLower().Contains(keywords.KwName) &&
+                                                    x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
+                                                    x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                    x.IsTempdata == false &&
+                                                    x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                    x.Status == Convert.ToInt16(Enums.TourStatus.Normal) 
+                                                orderby x.ModifyDate descending
+                                                select new Tour
+                                                {
+                                                    IdTour = x.IdTour,
+                                                    NameTour = x.NameTour,
+                                                    ToPlace = x.ToPlace,
+                                                    Rating = x.Rating,
+                                                    Status = x.Status,
+                                                    TypeAction = x.TypeAction,
+                                                    ModifyDate = x.ModifyDate,
+                                                    ModifyBy = x.ModifyBy,
+                                                    ApproveStatus = x.ApproveStatus
+                                                }).ToList();
+                                }
+                            }
+                        }    
                     }
                     
                 }
