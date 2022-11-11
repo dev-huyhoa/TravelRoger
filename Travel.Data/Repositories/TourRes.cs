@@ -158,6 +158,9 @@ namespace Travel.Data.Repositories
             {
                 Tour tour =
                 tour = Mapper.MapCreateTour(input);
+                var userLogin = GetCurrentUser(input.IdUserModify);
+                tour.ModifyBy = userLogin.NameEmployee;
+                tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 tour.TypeAction = "insert";
                 CreateDatabase(tour);
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
