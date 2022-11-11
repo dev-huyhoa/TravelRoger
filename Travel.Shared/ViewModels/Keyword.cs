@@ -37,5 +37,10 @@ namespace Travel.Shared.ViewModels
         public string KwTypeAction { get; set; }
         public int KwAprroveStatus { get; set; }
 
+        public float KwTotalCostTourNotService { get; set; }
+        public float KwFinalPrice { get; set; }
+        public float KwFinalPriceHoliday { get; set; }
+
+        public string KwIdTour { get; set; }
     }
 }
