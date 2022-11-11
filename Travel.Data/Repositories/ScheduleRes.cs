@@ -1890,25 +1890,44 @@ namespace Travel.Data.Repositories
                     keywords.KwId = "";
                 }
 
-                var kwBeginDate = PrCommon.GetString("beginDate", frmData);
+                
+                var kwBeginDate = PrCommon.GetString("beginDateFrom", frmData);
                 if (!String.IsNullOrEmpty(kwBeginDate))
                 {
-                    keywords.KwDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(kwBeginDate));
+                    keywords.KwBeginDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(kwBeginDate));
                 }
                 else
                 {
-                    keywords.KwDate = 0;
+                    keywords.KwBeginDate = 0;
                 }
 
-                var kwEndDate = PrCommon.GetString("endDate", frmData);
+                var kwEndDate = PrCommon.GetString("beginDateTo", frmData);
                 if (!String.IsNullOrEmpty(kwEndDate))
                 {
-                    keywords.KwEndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(kwEndDate)); 
+                    keywords.KwEndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(kwEndDate).AddDays(1).AddSeconds(-1));
                 }
                 else
                 {
                     keywords.KwEndDate = 0;
                 }
+                //var kwBeginDate = PrCommon.GetString("beginDate", frmData);
+                //if (!String.IsNullOrEmpty(kwBeginDate))
+                //{
+                //    keywords.KwDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(kwBeginDate));
+                //}
+                //else
+                //{
+                //    keywords.KwDate = 0;
+                //}
+                //var kwEndDate = PrCommon.GetString("endDate", frmData);
+                //if (!String.IsNullOrEmpty(kwEndDate))
+                //{
+                //    keywords.KwEndDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(kwEndDate)); 
+                //}
+                //else
+                //{
+                //    keywords.KwEndDate = 0;
+                //}
 
                 var kwTotalCostTourNotSvc = PrCommon.GetString("TotalCostTourNotService", frmData);
                 if (!String.IsNullOrEmpty(kwTotalCostTourNotSvc))
@@ -2174,7 +2193,7 @@ namespace Travel.Data.Repositories
                             }
                             else
                             {
-                                if (keywords.KwDate > 0)
+                                if (keywords.KwBeginDate > 0 && keywords.KwEndDate > 0)
                                 {
                                     listSchedule = (from x in _db.Schedules
                                                     where x.TourId == idTour &&
@@ -2182,7 +2201,8 @@ namespace Travel.Data.Repositories
                                                           x.IdSchedule.ToLower().Contains(keywords.KwId) &&
                                                           x.IsTempData == false &&
                                                           x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
-                                                          x.BeginDate == keywords.KwDate
+                                                          x.BeginDate >= keywords.KwBeginDate &&
+                                                          x.EndDate <= keywords.KwEndDate
                                                     select new Schedule
                                                     {
                                                         IdSchedule = x.IdSchedule,
@@ -2206,7 +2226,7 @@ namespace Travel.Data.Repositories
                                 }
                                 else
                                 {
-                                    if (keywords.KwEndDate > 0)
+                                    if (keywords.KwBeginDate == 0 && keywords.KwEndDate > 0)
                                     {
                                         listSchedule = (from x in _db.Schedules
                                                         where x.TourId == idTour &&
@@ -2214,7 +2234,7 @@ namespace Travel.Data.Repositories
                                                               x.IdSchedule.ToLower().Contains(keywords.KwId) &&
                                                               x.IsTempData == false &&
                                                               x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
-                                                              x.EndDate == keywords.KwEndDate
+                                                              x.EndDate <= keywords.KwEndDate
                                                         select new Schedule
                                                         {
                                                             IdSchedule = x.IdSchedule,
@@ -2238,32 +2258,65 @@ namespace Travel.Data.Repositories
                                     }
                                     else
                                     {
-                                        listSchedule = (from x in _db.Schedules
-                                                        where x.TourId == idTour &&
-                                                              x.Isdelete == keywords.IsDelete &&
-                                                              x.IdSchedule.ToLower().Contains(keywords.KwId) &&
-                                                              x.IsTempData == false &&
-                                                              x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
-                                                        select new Schedule
-                                                        {
-                                                            IdSchedule = x.IdSchedule,
-                                                            BeginDate = x.BeginDate,
-                                                            EndDate = x.EndDate,
-                                                            TotalCostTourNotService = x.TotalCostTourNotService,
-                                                            FinalPrice = x.FinalPrice,
-                                                            FinalPriceHoliday = x.FinalPriceHoliday,
-                                                            EmployeeId = x.EmployeeId,
-                                                            CarId = x.CarId,
-                                                            DepartureDate = x.DepartureDate,
-                                                            ReturnDate = x.ReturnDate,
-                                                            MaxCapacity = x.MaxCapacity,
-                                                            MinCapacity = x.MinCapacity,
-                                                            DeparturePlace = x.DeparturePlace,
-                                                            Description = x.Description,
-                                                            Vat = x.Vat,
-                                                            PromotionId = x.PromotionId,
-                                                            TimePromotion = x.TimePromotion
-                                                        }).ToList();
+                                        if (keywords.KwEndDate == 0 && keywords.KwBeginDate > 0)
+                                        {
+                                            listSchedule = (from x in _db.Schedules
+                                                            where x.TourId == idTour &&
+                                                                  x.Isdelete == keywords.IsDelete &&
+                                                                  x.IdSchedule.ToLower().Contains(keywords.KwId) &&
+                                                                  x.IsTempData == false &&
+                                                                  x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
+                                                                  x.BeginDate >= keywords.KwBeginDate
+                                                            select new Schedule
+                                                            {
+                                                                IdSchedule = x.IdSchedule,
+                                                                BeginDate = x.BeginDate,
+                                                                EndDate = x.EndDate,
+                                                                TotalCostTourNotService = x.TotalCostTourNotService,
+                                                                FinalPrice = x.FinalPrice,
+                                                                FinalPriceHoliday = x.FinalPriceHoliday,
+                                                                EmployeeId = x.EmployeeId,
+                                                                CarId = x.CarId,
+                                                                DepartureDate = x.DepartureDate,
+                                                                ReturnDate = x.ReturnDate,
+                                                                MaxCapacity = x.MaxCapacity,
+                                                                MinCapacity = x.MinCapacity,
+                                                                DeparturePlace = x.DeparturePlace,
+                                                                Description = x.Description,
+                                                                Vat = x.Vat,
+                                                                PromotionId = x.PromotionId,
+                                                                TimePromotion = x.TimePromotion
+                                                            }).ToList();
+                                        }
+                                        else
+                                        {
+                                            listSchedule = (from x in _db.Schedules
+                                                            where x.TourId == idTour &&
+                                                                  x.Isdelete == keywords.IsDelete &&
+                                                                  x.IdSchedule.ToLower().Contains(keywords.KwId) &&
+                                                                  x.IsTempData == false &&
+                                                                  x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
+                                                            select new Schedule
+                                                            {
+                                                                IdSchedule = x.IdSchedule,
+                                                                BeginDate = x.BeginDate,
+                                                                EndDate = x.EndDate,
+                                                                TotalCostTourNotService = x.TotalCostTourNotService,
+                                                                FinalPrice = x.FinalPrice,
+                                                                FinalPriceHoliday = x.FinalPriceHoliday,
+                                                                EmployeeId = x.EmployeeId,
+                                                                CarId = x.CarId,
+                                                                DepartureDate = x.DepartureDate,
+                                                                ReturnDate = x.ReturnDate,
+                                                                MaxCapacity = x.MaxCapacity,
+                                                                MinCapacity = x.MinCapacity,
+                                                                DeparturePlace = x.DeparturePlace,
+                                                                Description = x.Description,
+                                                                Vat = x.Vat,
+                                                                PromotionId = x.PromotionId,
+                                                                TimePromotion = x.TimePromotion
+                                                            }).ToList();
+                                        }
                                     }
                                 }
                                 

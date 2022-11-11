@@ -36,6 +36,7 @@ namespace Travel.Shared.ViewModels
         public double KwRating { get; set; }
         public string KwTypeAction { get; set; }
         public int KwAprroveStatus { get; set; }
+        public long KwBeginDate { get; set; }
         public long KwEndDate { get; set; }
         public float KwTotalCostTourNotService { get; set; }
         public float KwFinalPrice { get; set; }
