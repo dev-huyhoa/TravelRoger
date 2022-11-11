@@ -466,7 +466,8 @@ namespace Travel.Data.Repositories
                 var list = (from s in _db.Schedules.AsNoTracking()
                             where s.TourId == idTour
                             && s.Isdelete == isDelete
-                            && s.Approve == (int)Enums.ApproveStatus.Approved
+                            && s.Approve == (int)Enums.ApproveStatus.Approved &&
+                            s.IsTempData == false
                             select new Schedule
                             {
                                 Alias = s.Alias,
@@ -623,7 +624,7 @@ namespace Travel.Data.Repositories
                 var list = (from s in _db.Schedules.AsNoTracking()
                             where s.TourId == idTour
                             where s.Isdelete == false &&
-                            s.Approve == (int)Enums.ApproveStatus.Waiting
+                            s.Approve == (int)Enums.ApproveStatus.Waiting 
                             select new Schedule
                             {
                                 Alias = s.Alias,
@@ -1961,7 +1962,18 @@ namespace Travel.Data.Repositories
                                             EndDate = x.EndDate,
                                             TotalCostTourNotService = x.TotalCostTourNotService,
                                             FinalPrice = x.FinalPrice,
-                                            FinalPriceHoliday = x.FinalPriceHoliday
+                                            FinalPriceHoliday = x.FinalPriceHoliday,
+                                            EmployeeId = x.EmployeeId,
+                                            CarId = x.CarId,
+                                            DepartureDate = x.DepartureDate,
+                                            ReturnDate = x.ReturnDate,
+                                            MaxCapacity = x.MaxCapacity,
+                                            MinCapacity = x.MinCapacity,
+                                            DeparturePlace = x.DeparturePlace,
+                                            Description = x.Description,
+                                            Vat = x.Vat,
+                                            PromotionId = x.PromotionId,
+                                            TimePromotion = x.TimePromotion
                                         }).ToList();
                     }
                     else
@@ -1983,7 +1995,18 @@ namespace Travel.Data.Repositories
                                                 EndDate = x.EndDate,
                                                 TotalCostTourNotService = x.TotalCostTourNotService,
                                                 FinalPrice = x.FinalPrice,
-                                                FinalPriceHoliday = x.FinalPriceHoliday
+                                                FinalPriceHoliday = x.FinalPriceHoliday,
+                                                EmployeeId = x.EmployeeId,
+                                                CarId = x.CarId,
+                                                DepartureDate = x.DepartureDate,
+                                                ReturnDate = x.ReturnDate,
+                                                MaxCapacity = x.MaxCapacity,
+                                                MinCapacity = x.MinCapacity,
+                                                DeparturePlace = x.DeparturePlace,
+                                                Description = x.Description,
+                                                Vat = x.Vat,
+                                                PromotionId = x.PromotionId,
+                                                TimePromotion = x.TimePromotion
                                             }).ToList();
                         }
                         else
@@ -2006,7 +2029,18 @@ namespace Travel.Data.Repositories
                                                     EndDate = x.EndDate,
                                                     TotalCostTourNotService = x.TotalCostTourNotService,
                                                     FinalPrice = x.FinalPrice,
-                                                    FinalPriceHoliday = x.FinalPriceHoliday
+                                                    FinalPriceHoliday = x.FinalPriceHoliday,
+                                                    EmployeeId = x.EmployeeId,
+                                                    CarId = x.CarId,
+                                                    DepartureDate = x.DepartureDate,
+                                                    ReturnDate = x.ReturnDate,
+                                                    MaxCapacity = x.MaxCapacity,
+                                                    MinCapacity = x.MinCapacity,
+                                                    DeparturePlace = x.DeparturePlace,
+                                                    Description = x.Description,
+                                                    Vat = x.Vat,
+                                                    PromotionId = x.PromotionId,
+                                                    TimePromotion = x.TimePromotion
                                                 }).ToList();
                             }
                             else
@@ -2024,7 +2058,18 @@ namespace Travel.Data.Repositories
                                                     EndDate = x.EndDate,
                                                     TotalCostTourNotService = x.TotalCostTourNotService,
                                                     FinalPrice = x.FinalPrice,
-                                                    FinalPriceHoliday = x.FinalPriceHoliday
+                                                    FinalPriceHoliday = x.FinalPriceHoliday,
+                                                    EmployeeId = x.EmployeeId,
+                                                    CarId  = x.CarId,
+                                                    DepartureDate = x.DepartureDate,
+                                                    ReturnDate = x.ReturnDate,
+                                                    MaxCapacity = x.MaxCapacity,
+                                                    MinCapacity = x.MinCapacity,
+                                                    DeparturePlace = x.DeparturePlace,
+                                                    Description = x.Description,
+                                                    Vat = x.Vat,
+                                                    PromotionId = x.PromotionId,
+                                                    TimePromotion = x.TimePromotion
                                                 }).ToList();
                             }
                                 
