@@ -282,6 +282,16 @@ namespace TravelApi.Controllers
             res = _serviceRes.SearchHotel(frmData);
             return Ok(res);
         }
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-hotel-waiting")]
+        public object SearchHotelWaiting([FromBody] JObject frmData)
+        {
+            res = _serviceRes.SearchHotelWaiting(frmData);
+            return Ok(res);
+        }
+
         [HttpPost]
         [Authorize]
         [Route("search-place")]

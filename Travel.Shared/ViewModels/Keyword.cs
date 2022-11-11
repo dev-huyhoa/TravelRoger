@@ -23,14 +23,15 @@ namespace Travel.Shared.ViewModels
         public string KwDescription { get; set; }
 
         public List<int> KwStar{ get; set; }
+        public List<string> KwTypeActions { get; set; }
         public string KwAddress { get; set; }
         public string KwPriceTicket { get; set; }
         public string KwComboPrice{ get; set; }
         public string KwPincode { get; set; }
         public bool kwIsCalled { get; set; }
         public long KwDate { get; set; }
-
-        
+        public long KwFromDate { get; set; }
+        public long KwToDate { get; set; }
         public string KwToPlace { get; set; }
         public double KwRating { get; set; }
         public string KwTypeAction { get; set; }
