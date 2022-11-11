@@ -33,5 +33,6 @@ namespace Travel.Data.Interfaces
         Task<Response> GetsScheduleFlashSale();
         Task<Response> GetsSchedulePromotion();
         Task<Response> GetsRelatedSchedule(string idSchedule);
+        Response SearchSchedule(JObject frmData, string idTour);
     }
 }

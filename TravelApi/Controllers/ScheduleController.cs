@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
+using Travel.Data.Repositories;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 using TravelApi.Hubs;
@@ -188,6 +189,15 @@ namespace TravelApi.Controllers
         public async Task<object> GetsScheduleRelate(string idSchedule)
         {
             res = await _schedule.GetsRelatedSchedule(idSchedule);
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-schedule")]
+        public object SearchSchedule([FromBody] JObject frmData, string idTour)
+        {
+            res = _schedule.SearchSchedule(frmData, idTour);
             return Ok(res);
         }
     }
