@@ -945,13 +945,9 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var user = GetCurrentUser(input.IdUserModify);
-                input.ModifyBy = user.NameEmployee;
-                Place place
-                         = Mapper.MapCreatePlace(input);
-                place.TypeAction = "insert";
-                _db.Places.Add(place);
-                _db.SaveChanges();
+                Place place = Mapper.MapCreatePlace(input);
+                CreateDatabase<Place>(place);
+                SaveChange();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
 
@@ -979,7 +975,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response GetsWaitingHPlace(Guid idUser)
+        public Response GetsWaitingPlace(Guid idUser)
         {
             try
             {
@@ -1142,9 +1138,6 @@ namespace Travel.Data.Repositories
                 place.Phone = input.Phone;
                 place.PriceTicket = input.PriceTicket;
                 #endregion
-
-
-                UpdateDatabase<Place>(place);
                 UpdateDatabase<Place>(place);
                 SaveChange();
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());

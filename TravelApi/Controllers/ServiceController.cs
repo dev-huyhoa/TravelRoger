@@ -197,7 +197,7 @@ namespace TravelApi.Controllers
         [Route("gets-place-waiting")]
         public object GetPlaceWaiting(Guid idUser)
         {
-            res = _serviceRes.GetsWaitingHPlace(idUser);
+            res = _serviceRes.GetsWaitingPlace(idUser);
             return Ok(res);
         }
 

@@ -506,29 +506,28 @@ namespace Travel.Shared.Ultilities
                        .ForMember(dto => dto.IdPlace, opt => opt.MapFrom(src => src.IdPlace))
                           .ForMember(dto => dto.PriceTicket, opt => opt.MapFrom(src => src.PriceTicket))
                                .ForMember(dto => dto.ContractId, opt => opt.MapFrom(src => src.ContractId))
-                          .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => ""))
-                         .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => 0))
+                          .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
+                         .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
                          .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
                          .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
-                         .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.NamePlace));
+                         .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.NamePlace))
+                  .ForMember(dto => dto.TypeAction, opt => opt.MapFrom(src => src.TypeAction));
                 // create 
 
                 // create Place
                 cfg.CreateMap<CreatePlaceViewModel, Place>()
            .ForMember(dto => dto.IdPlace, opt => opt.MapFrom(src => Guid.NewGuid()))
            .ForMember(dto => dto.PriceTicket, opt => opt.MapFrom(src => src.PriceTicket))
-
-                               .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
-                              .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => 0))
+                              .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
                               .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
                               .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => ApproveStatus.Waiting))
                               .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
                               .ForMember(dto => dto.NamePlace, opt => opt.MapFrom(src => src.Name))
                                          .ForMember(dto => dto.IsTempdata, opt => opt.MapFrom(src => false))
                                          .ForMember(dto => dto.IdUserModify, opt => opt.MapFrom(src => src.IdUserModify))
-                                      .ForMember(dto => dto.TypeAction, opt => opt.MapFrom(src => src.TypeAction))
-                              .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
-.ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
+                                         .ForMember(dto => dto.TypeAction, opt => opt.MapFrom(src => src.TypeAction))
+                                         .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+                                         .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
 
 
                ;
