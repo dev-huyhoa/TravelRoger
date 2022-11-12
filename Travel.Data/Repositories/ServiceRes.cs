@@ -1145,6 +1145,7 @@ namespace Travel.Data.Repositories
 
 
                 UpdateDatabase<Place>(place);
+                UpdateDatabase<Place>(place);
                 SaveChange();
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
