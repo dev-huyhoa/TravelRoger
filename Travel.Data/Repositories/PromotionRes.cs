@@ -22,11 +22,20 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private Notification message;
-
+        private Employee GetCurrentUser(Guid IdUserModify)
+        {
+            return (from x in _db.Employees.AsNoTracking()
+                    where x.IdEmployee == IdUserModify
+                    select x).FirstOrDefault();
+        }
         public PromotionRes(TravelContext db)
         {
             _db = db;
             message = new Notification();
+        }
+        private void CreateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Added;
         }
         private void DeleteDatabaseNotSave(Promotion input)
         {
@@ -53,7 +62,7 @@ namespace Travel.Data.Repositories
             {
                 var idPromotion = PrCommon.GetString("idPromotion", frmData) ?? "0";
 
-                if (String.IsNullOrEmpty(idPromotion))
+                 if (String.IsNullOrEmpty(idPromotion))
                 {
                 }
                 var value = PrCommon.GetString("value", frmData);
@@ -84,6 +93,7 @@ namespace Travel.Data.Repositories
                     uPromotionObj.IdPromotion = int.Parse(idPromotion);
                     uPromotionObj.Value = int.Parse(value);
                     uPromotionObj.ToDate = long.Parse(toDate);
+                    uPromotionObj.FromDate = long.Parse(fromDate);
                     uPromotionObj.IdUserModify = Guid.Parse(idUserModify);
                     uPromotionObj.TypeAction = "update";
                     return JsonSerializer.Serialize(uPromotionObj);
@@ -160,7 +170,10 @@ namespace Travel.Data.Repositories
         {
             Promotion promotion
                         = Mapper.MapCreatePromotion(input);
+            var user = GetCurrentUser(input.IdUserModify);
+            input.ModifyBy = user.NameEmployee;
             promotion.TypeAction = "insert";
+            promotion.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
             CreateDatabase(promotion);
             return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
         }
@@ -271,8 +284,7 @@ namespace Travel.Data.Repositories
                 promotionOld.IdAction = promotionOld.IdPromotion.ToString();
                 promotionOld.IsTempdata = true;
 
-                _db.Promotions.Add(promotionOld);
-
+                CreateDatabase<Promotion>(promotion);
                 #region setdata
                 promotion.IdAction = promotionOld.IdPromotion.ToString();
                 promotion.IdUserModify = input.IdUserModify;

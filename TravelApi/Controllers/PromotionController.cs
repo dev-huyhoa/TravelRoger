@@ -78,5 +78,39 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpGet]
+        [Authorize]
+        [Route("approve-promotion")]
+        public object ApprovePromotion(int idPromotion)
+        {
+            res = _promotion.ApprovePromotion(idPromotion);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("refuse-promotion")]
+        public object RefusePromotion(int idPromotion)
+        {
+            res = _promotion.RefusedPromotion(idPromotion);
+            return Ok(res);
+        }
+        [HttpGet]
+        [Authorize]
+        [Route("delete-promotion")]
+        public object DeletePromotion(int idPromotion, Guid idUser)
+        {
+            res = _promotion.DeletePromotion(idPromotion, idUser);
+            return Ok(res);
+        }
+        [HttpGet]
+        [Authorize]
+        [Route("restore-promotion")]
+        public object RestoreHotel(int idPromotion, Guid idUser)
+        {
+            res = _promotion.RestorePromotion(idPromotion, idUser);
+            return Ok(res);
+        }
+
     }
 }
