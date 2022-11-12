@@ -134,6 +134,8 @@ namespace Travel.Data.Repositories
                         uHotelObj.Star = Convert.ToInt16(star);
                         uHotelObj.IdUserModify = Guid.Parse(idUserModify);
                         uHotelObj.TypeAction = "update";
+                        uHotelObj.ModifyBy = GetCurrentUser(uHotelObj.IdUserModify).NameEmployee;
+                        uHotelObj.ModifyDate =Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                         return JsonSerializer.Serialize(uHotelObj);
 
                     }
@@ -147,6 +149,8 @@ namespace Travel.Data.Repositories
                         uRestaurantObj.IdUserModify = Guid.Parse(idUserModify);
                         uRestaurantObj.ComboPrice = float.Parse(comboPrice);
                         uRestaurantObj.TypeAction = "update";
+                        uRestaurantObj.ModifyBy = GetCurrentUser(uRestaurantObj.IdUserModify).NameEmployee;
+                        uRestaurantObj.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                         return JsonSerializer.Serialize(uRestaurantObj);
                     }
                     else
@@ -159,6 +163,8 @@ namespace Travel.Data.Repositories
                         uPlaceObj.Phone = phone;
                         uPlaceObj.IdUserModify = Guid.Parse(idUserModify);
                         uPlaceObj.TypeAction = "update";
+                        uPlaceObj.ModifyBy = GetCurrentUser(uPlaceObj.IdUserModify).NameEmployee;
+                        uPlaceObj.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                         return JsonSerializer.Serialize(uPlaceObj);
                     }
                 }
@@ -177,6 +183,9 @@ namespace Travel.Data.Repositories
                         hotelObj.Star = Convert.ToInt16(star);
                         hotelObj.NameContract = nameContract;
                         hotelObj.IdUserModify = Guid.Parse(idUserModify);
+                        hotelObj.ModifyBy = GetCurrentUser(hotelObj.IdUserModify).NameEmployee;
+                        hotelObj.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                        hotelObj.TypeAction = "insert";
                         return JsonSerializer.Serialize(hotelObj);
 
                     }
@@ -189,6 +198,9 @@ namespace Travel.Data.Repositories
                         restaurantObj.NameContract = nameContract;
                         restaurantObj.ComboPrice = float.Parse(comboPrice);
                         restaurantObj.IdUserModify = Guid.Parse(idUserModify);
+                        restaurantObj.ModifyBy = GetCurrentUser(restaurantObj.IdUserModify).NameEmployee;
+                        restaurantObj.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                        restaurantObj.TypeAction = "insert";
                         return JsonSerializer.Serialize(restaurantObj);
                     }
                     else
@@ -200,6 +212,9 @@ namespace Travel.Data.Repositories
                         placeObj.Phone = phone;
                         placeObj.NameContract = nameContract;
                         placeObj.IdUserModify = Guid.Parse(idUserModify);
+                        placeObj.ModifyBy = GetCurrentUser(placeObj.IdUserModify).NameEmployee;
+                        placeObj.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                        placeObj.TypeAction = "insert";
                         return JsonSerializer.Serialize(placeObj);
                     }
                 }
@@ -266,11 +281,9 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var user = GetCurrentUser(input.IdUserModify);
-                input.ModifyBy = user.NameEmployee;
-                Hotel hotel
-                 = Mapper.MapCreateHotel(input);
-                hotel.TypeAction = "insert";
+                //var user = GetCurrentUser(input.IdUserModify);
+                //input.ModifyBy = user.NameEmployee;
+                Hotel hotel = Mapper.MapCreateHotel(input);
                 CreateDatabase<Hotel>(hotel);
                 SaveChange();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
@@ -796,7 +809,6 @@ namespace Travel.Data.Repositories
             Restaurant restaurant
                          = Mapper.MapCreateRestaurant(input);
 
-            restaurant.TypeAction = "insert";
             restaurant.ContractId = Guid.Empty;
             _db.Restaurants.Add(restaurant);
 
