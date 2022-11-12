@@ -32,6 +32,8 @@ namespace Travel.Shared.ViewModels
         public long KwDate { get; set; }
         public long KwFromDate { get; set; }
         public long KwToDate { get; set; }
+        public long KwDepartureDate { get; set; }
+        public long KwReturnDate { get; set; }
         public string KwToPlace { get; set; }
         public double KwRating { get; set; }
         public string KwTypeAction { get; set; }

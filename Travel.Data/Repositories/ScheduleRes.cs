@@ -446,6 +446,11 @@ namespace Travel.Data.Repositories
                                    select x).FirstOrDefault().NameTour;
                 schedule.Alias = $"S{Ultility.SEOUrl(nameTour)}";
                 schedule.TypeAction = "insert";
+                var userLogin = (from x in _db.Employees.AsNoTracking()
+                                 where x.IdEmployee == input.IdUserModify
+                                 select x).FirstOrDefault();
+                schedule.ModifyBy = userLogin.NameEmployee;
+                schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 CreateDatabase(schedule);
                 SaveChange();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString(), schedule.IdSchedule);
@@ -662,6 +667,7 @@ namespace Travel.Data.Repositories
                                 TypeAction = s.TypeAction,
                                 IdUserModify = s.IdUserModify,
                                 ModifyBy = s.ModifyBy,
+                                ModifyDate = s.ModifyDate,
                                 CostTour = (from c in _db.CostTours.AsNoTracking()
                                             where c.IdSchedule == s.IdSchedule
                                             select c).First(),
@@ -2343,27 +2349,6 @@ namespace Travel.Data.Repositories
                     keywords.KwId = "";
                 }
 
-                var kwBeginDate = PrCommon.GetString("beginDate", frmData);
-                if (!String.IsNullOrEmpty(kwBeginDate))
-                {
-                    keywords.KwDate = long.Parse(kwBeginDate);
-                }
-                else
-                {
-                    keywords.KwDate = 0;
-                }
-
-                var kwEndDate = PrCommon.GetString("endDate", frmData);
-                if (!String.IsNullOrEmpty(kwEndDate))
-                {
-                    keywords.KwEndDate = long.Parse(kwEndDate);
-                }
-                else
-                {
-                    keywords.KwEndDate = 0;
-                }
-
-
                 var kwFinalPrice = PrCommon.GetString("finalPrice", frmData);
                 if (!String.IsNullOrEmpty(kwFinalPrice))
                 {
@@ -2384,7 +2369,36 @@ namespace Travel.Data.Repositories
                     keywords.KwFinalPriceHoliday = 0;
                 }
 
-                
+                var KwModifyBy = PrCommon.GetString("modifyBy", frmData);
+                if (!String.IsNullOrEmpty(KwModifyBy))
+                {
+                    keywords.KwModifyBy = KwModifyBy.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwModifyBy = "";
+                }
+
+                var fromDate = PrCommon.GetString("modifyDateFrom", frmData);
+                if (!String.IsNullOrEmpty(fromDate))
+                {
+                    keywords.KwFromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(fromDate));
+                }
+                else
+                {
+                    keywords.KwFromDate = 0;
+                }
+
+                var toDate = PrCommon.GetString("modifyDateTo", frmData);
+                if (!String.IsNullOrEmpty(toDate))
+                {
+                    keywords.KwToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(toDate).AddDays(1).AddSeconds(-1));
+                }
+                else
+                {
+                    keywords.KwToDate = 0;
+                }
+
                 var typeAction = PrCommon.GetString("typeAction", frmData);
                 keywords.KwTypeActions = PrCommon.getListString(typeAction, ',', false);
 
@@ -2400,28 +2414,7 @@ namespace Travel.Data.Repositories
                                           x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                           x.FinalPrice.Equals(keywords.KwFinalPrice)
 
-                                    select new Schedule
-                                    {
-                                        IdSchedule = x.IdSchedule,
-                                        BeginDate = x.BeginDate,
-                                        EndDate = x.EndDate,
-                                        TotalCostTourNotService = x.TotalCostTourNotService,
-                                        FinalPrice = x.FinalPrice,
-                                        FinalPriceHoliday = x.FinalPriceHoliday,
-                                        EmployeeId = x.EmployeeId,
-                                        CarId = x.CarId,
-                                        DepartureDate = x.DepartureDate,
-                                        ReturnDate = x.ReturnDate,
-                                        MaxCapacity = x.MaxCapacity,
-                                        MinCapacity = x.MinCapacity,
-                                        DeparturePlace = x.DeparturePlace,
-                                        Description = x.Description,
-                                        Vat = x.Vat,
-                                        PromotionId = x.PromotionId,
-                                        TimePromotion = x.TimePromotion,
-                                        TypeAction = x.TypeAction,
-                                        Approve = x.Approve
-                                    }).ToList();
+                                    select x).ToList();
                 }
                 else
                 {
@@ -2435,28 +2428,7 @@ namespace Travel.Data.Repositories
                                               x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                               x.FinalPriceHoliday.Equals(keywords.KwFinalPriceHoliday)
 
-                                        select new Schedule
-                                        {
-                                            IdSchedule = x.IdSchedule,
-                                            BeginDate = x.BeginDate,
-                                            EndDate = x.EndDate,
-                                            TotalCostTourNotService = x.TotalCostTourNotService,
-                                            FinalPrice = x.FinalPrice,
-                                            FinalPriceHoliday = x.FinalPriceHoliday,
-                                            EmployeeId = x.EmployeeId,
-                                            CarId = x.CarId,
-                                            DepartureDate = x.DepartureDate,
-                                            ReturnDate = x.ReturnDate,
-                                            MaxCapacity = x.MaxCapacity,
-                                            MinCapacity = x.MinCapacity,
-                                            DeparturePlace = x.DeparturePlace,
-                                            Description = x.Description,
-                                            Vat = x.Vat,
-                                            PromotionId = x.PromotionId,
-                                            TimePromotion = x.TimePromotion,
-                                            TypeAction = x.TypeAction,
-                                            Approve = x.Approve
-                                        }).ToList();
+                                        select x).ToList();
                     }
                     else
                     {
@@ -2470,28 +2442,7 @@ namespace Travel.Data.Repositories
                                                   x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                   keywords.KwTypeActions.Contains(x.TypeAction)
 
-                                            select new Schedule
-                                            {
-                                                IdSchedule = x.IdSchedule,
-                                                BeginDate = x.BeginDate,
-                                                EndDate = x.EndDate,
-                                                TotalCostTourNotService = x.TotalCostTourNotService,
-                                                FinalPrice = x.FinalPrice,
-                                                FinalPriceHoliday = x.FinalPriceHoliday,
-                                                EmployeeId = x.EmployeeId,
-                                                CarId = x.CarId,
-                                                DepartureDate = x.DepartureDate,
-                                                ReturnDate = x.ReturnDate,
-                                                MaxCapacity = x.MaxCapacity,
-                                                MinCapacity = x.MinCapacity,
-                                                DeparturePlace = x.DeparturePlace,
-                                                Description = x.Description,
-                                                Vat = x.Vat,
-                                                PromotionId = x.PromotionId,
-                                                TimePromotion = x.TimePromotion,
-                                                TypeAction = x.TypeAction,
-                                                Approve = x.Approve
-                                            }).ToList();
+                                            select x).ToList();
                         }
                         else
                         {
@@ -2500,28 +2451,7 @@ namespace Travel.Data.Repositories
                                                   x.IdSchedule.ToLower().Contains(keywords.KwId) &&
                                                   x.IsTempData == false &&
                                                   x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting)
-                                            select new Schedule
-                                            {
-                                                IdSchedule = x.IdSchedule,
-                                                BeginDate = x.BeginDate,
-                                                EndDate = x.EndDate,
-                                                TotalCostTourNotService = x.TotalCostTourNotService,
-                                                FinalPrice = x.FinalPrice,
-                                                FinalPriceHoliday = x.FinalPriceHoliday,
-                                                EmployeeId = x.EmployeeId,
-                                                CarId = x.CarId,
-                                                DepartureDate = x.DepartureDate,
-                                                ReturnDate = x.ReturnDate,
-                                                MaxCapacity = x.MaxCapacity,
-                                                MinCapacity = x.MinCapacity,
-                                                DeparturePlace = x.DeparturePlace,
-                                                Description = x.Description,
-                                                Vat = x.Vat,
-                                                PromotionId = x.PromotionId,
-                                                TimePromotion = x.TimePromotion,
-                                                TypeAction = x.TypeAction,
-                                                Approve = x.Approve
-                                            }).ToList();
+                                            select x).ToList();
                         }
                             
                     }
