@@ -1041,7 +1041,8 @@ namespace Travel.Data.Repositories
                         {
                             _db.Places.Remove(place);
 
-                            _db.SaveChanges();
+                            UpdateDatabase<Place>(place);
+                            SaveChange();
 
                             return Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
                         }
@@ -1078,7 +1079,8 @@ namespace Travel.Data.Repositories
                             place.IsDelete = true;
                             place.Approve = (int)ApproveStatus.Approved;
 
-                            _db.SaveChanges();
+                            UpdateDatabase<Place>(place);
+                            SaveChange();
 
                             return Ultility.Responses("Đã hủy yêu cầu khôi phục!", Enums.TypeCRUD.Success.ToString());
 
@@ -1090,7 +1092,8 @@ namespace Travel.Data.Repositories
                             place.IsDelete = false;
                             place.Approve = (int)ApproveStatus.Approved;
 
-                            _db.SaveChanges();
+                            UpdateDatabase<Place>(place);
+                            SaveChange();
 
                             return Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
 
@@ -1141,7 +1144,8 @@ namespace Travel.Data.Repositories
                 #endregion
 
 
-                _db.SaveChanges();
+                UpdateDatabase<Place>(place);
+                SaveChange();
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
             }
