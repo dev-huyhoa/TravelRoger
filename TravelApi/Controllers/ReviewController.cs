@@ -26,7 +26,7 @@ namespace TravelApi.Controllers
             res = new Response();
         }
         [HttpGet]
-   
+        [AllowAnonymous]
         [Route("gets-review")]
         public object GetReview()
         {
