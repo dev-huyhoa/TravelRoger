@@ -137,7 +137,7 @@ namespace Travel.Data.Repositories
                     obj.Thumbnail = thumbnail;
                     obj.ToPlace = toPlace;
                     obj.TypeAction = typeAction;
-                    obj.Rating = Convert.ToDouble(rating);
+                    obj.Rating = 0;
                     obj.IdUserModify = Guid.Parse(idUserModify);
                     // generate ID
                     obj.IdTour = idTour;
