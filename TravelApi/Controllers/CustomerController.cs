@@ -81,14 +81,14 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("update-customer")]
-        public object UpdateCustomer([FromBody] JObject frmdata)
+        public async Task<object> UpdateCustomer([FromBody] JObject frmdata)
         {
             message = null;
             var result = customer.CheckBeforeSave(frmdata, ref message, true);
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateCustomerViewModel>(result);
-                res = customer.UpdateCustomer(updateObj);
+                res = await customer.UpdateCustomer(updateObj);
                 //_messageHub.Clients.All.Init();
             }
             else
