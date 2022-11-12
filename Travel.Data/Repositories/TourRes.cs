@@ -1290,18 +1290,7 @@ namespace Travel.Data.Repositories
                                             x.ModifyDate >= keywords.KwFromDate &&
                                             x.ModifyDate <= keywords.KwToDate
                                         orderby x.ModifyDate descending
-                                        select new Tour
-                                        {
-                                            IdTour = x.IdTour,
-                                            NameTour = x.NameTour,
-                                            ToPlace = x.ToPlace,
-                                            Rating = x.Rating,
-                                            Status = x.Status,
-                                            TypeAction = x.TypeAction,
-                                            ModifyDate = x.ModifyDate,
-                                            ModifyBy = x.ModifyBy,
-                                            ApproveStatus = x.ApproveStatus
-                                        }).ToList();
+                                        select x).ToList();
                         }
                         else
                         {
@@ -1319,16 +1308,7 @@ namespace Travel.Data.Repositories
                                                  keywords.KwTypeActions.Contains(x.TypeAction) &&
                                                 x.ModifyDate <= keywords.KwToDate
                                             orderby x.ModifyDate descending
-                                            select new Tour
-                                            {
-                                                IdTour = x.IdTour,
-                                                NameTour = x.NameTour,
-                                                ToPlace = x.ToPlace,
-                                                Rating = x.Rating,
-                                                Status = x.Status,
-                                                TypeAction = x.TypeAction,
-                                                ApproveStatus = x.ApproveStatus
-                                            }).ToList();
+                                            select x).ToList();
                             }
                             else
                             {
@@ -1346,17 +1326,7 @@ namespace Travel.Data.Repositories
                                                      keywords.KwTypeActions.Contains(x.TypeAction) &&
                                                     x.ModifyDate >= keywords.KwFromDate
                                                 orderby x.ModifyDate descending
-                                                select new Tour
-                                                {
-                                                    IdTour = x.IdTour,
-                                                    NameTour = x.NameTour,
-                                                    ToPlace = x.ToPlace,
-                                                    Rating = x.Rating,
-                                                    Status = x.Status,
-                                                    TypeAction = x.TypeAction,
-                                                    ModifyDate = x.ModifyDate,
-                                                    ApproveStatus = x.ApproveStatus
-                                                }).ToList();
+                                                select x).ToList();
                                 }
                                 else
                                 {
@@ -1371,17 +1341,7 @@ namespace Travel.Data.Repositories
                                                     x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
                                                      keywords.KwTypeActions.Contains(x.TypeAction) 
                                                 orderby x.ModifyDate descending
-                                                select new Tour
-                                                {
-                                                    IdTour = x.IdTour,
-                                                    NameTour = x.NameTour,
-                                                    ToPlace = x.ToPlace,
-                                                    Rating = x.Rating,
-                                                    Status = x.Status,
-                                                    TypeAction = x.TypeAction,
-                                                    ModifyDate = x.ModifyDate,
-                                                    ApproveStatus = x.ApproveStatus
-                                                }).ToList();
+                                                select x).ToList();
                                 }
                             }
                         }
@@ -1402,18 +1362,7 @@ namespace Travel.Data.Repositories
                                             x.ModifyDate >= keywords.KwFromDate &&
                                            x.ModifyDate <= keywords.KwToDate
                                         orderby x.ModifyDate descending
-                                        select new Tour
-                                        {
-                                            IdTour = x.IdTour,
-                                            NameTour = x.NameTour,
-                                            ToPlace = x.ToPlace,
-                                            Rating = x.Rating,
-                                            Status = x.Status,
-                                            TypeAction = x.TypeAction,
-                                            ModifyDate = x.ModifyDate,
-                                            ModifyBy = x.ModifyBy,
-                                            ApproveStatus = x.ApproveStatus
-                                        }).ToList();
+                                        select x).ToList();
                         }
                         else
                         {
@@ -1430,18 +1379,7 @@ namespace Travel.Data.Repositories
                                                 x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
                                                 x.ModifyDate <= keywords.KwToDate
                                             orderby x.ModifyDate descending
-                                            select new Tour
-                                            {
-                                                IdTour = x.IdTour,
-                                                NameTour = x.NameTour,
-                                                ToPlace = x.ToPlace,
-                                                Rating = x.Rating,
-                                                Status = x.Status,
-                                                TypeAction = x.TypeAction,
-                                                ModifyDate = x.ModifyDate,
-                                                ModifyBy = x.ModifyBy,
-                                                ApproveStatus = x.ApproveStatus
-                                            }).ToList();
+                                            select x).ToList();
                             }
                             else
                             {
@@ -1458,18 +1396,7 @@ namespace Travel.Data.Repositories
                                                     x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
                                                     x.ModifyDate >= keywords.KwFromDate
                                                 orderby x.ModifyDate descending
-                                                select new Tour
-                                                {
-                                                    IdTour = x.IdTour,
-                                                    NameTour = x.NameTour,
-                                                    ToPlace = x.ToPlace,
-                                                    Rating = x.Rating,
-                                                    Status = x.Status,
-                                                    TypeAction = x.TypeAction,
-                                                    ModifyDate = x.ModifyDate,
-                                                    ModifyBy = x.ModifyBy,
-                                                    ApproveStatus = x.ApproveStatus
-                                                }).ToList();
+                                                select x).ToList();
                                 }
                                 else
                                 {
@@ -1483,18 +1410,7 @@ namespace Travel.Data.Repositories
                                                     x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                     x.Status == Convert.ToInt16(Enums.TourStatus.Normal) 
                                                 orderby x.ModifyDate descending
-                                                select new Tour
-                                                {
-                                                    IdTour = x.IdTour,
-                                                    NameTour = x.NameTour,
-                                                    ToPlace = x.ToPlace,
-                                                    Rating = x.Rating,
-                                                    Status = x.Status,
-                                                    TypeAction = x.TypeAction,
-                                                    ModifyDate = x.ModifyDate,
-                                                    ModifyBy = x.ModifyBy,
-                                                    ApproveStatus = x.ApproveStatus
-                                                }).ToList();
+                                                select x).ToList();
                                 }
                             }
                         }    

@@ -622,82 +622,162 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetSchedulebyIdTourWaiting(string idTour)
+        public Response GetSchedulebyIdTourWaiting(string idTour, Guid idUser)
         {
             try
             {
-                var list = (from s in _db.Schedules.AsNoTracking()
-                            where s.TourId == idTour
-                            where s.Isdelete == false &&
-                            s.Approve == (int)Enums.ApproveStatus.Waiting 
-                            select new Schedule
-                            {
-                                Alias = s.Alias,
-                                Approve = s.Approve,
-                                BeginDate = s.BeginDate,
-                                QuantityAdult = s.QuantityAdult,
-                                QuantityBaby = s.QuantityBaby,
-                                QuantityChild = s.QuantityChild,
-                                CarId = s.CarId,
-                                DepartureDate = s.DepartureDate,
-                                ReturnDate = s.ReturnDate,
-                                DeparturePlace = s.DeparturePlace,
-                                Description = s.Description,
-                                MetaDesc = s.MetaDesc,
-                                MetaKey = s.MetaKey,
-                                EndDate = s.EndDate,
-                                Isdelete = s.Isdelete,
-                                EmployeeId = s.EmployeeId,
-                                IdSchedule = s.IdSchedule,
-                                MaxCapacity = s.MaxCapacity,
-                                MinCapacity = s.MinCapacity,
-                                PromotionId = s.PromotionId,
-                                Status = s.Status,
-                                TourId = s.TourId,
-                                FinalPrice = s.FinalPrice,
-                                FinalPriceHoliday = s.FinalPriceHoliday,
-                                AdditionalPrice = s.AdditionalPrice,
-                                AdditionalPriceHoliday = s.AdditionalPriceHoliday,
-                                IsHoliday = s.IsHoliday,
-                                Profit = s.Profit,
-                                QuantityCustomer = s.QuantityCustomer,
-                                TimePromotion = s.TimePromotion,
-                                Vat = s.Vat,
-                                TotalCostTourNotService = s.TotalCostTourNotService,
-                                TypeAction = s.TypeAction,
-                                IdUserModify = s.IdUserModify,
-                                ModifyBy = s.ModifyBy,
-                                ModifyDate = s.ModifyDate,
-                                CostTour = (from c in _db.CostTours.AsNoTracking()
-                                            where c.IdSchedule == s.IdSchedule
-                                            select c).First(),
-                                Timelines = (from t in _db.Timelines.AsNoTracking()
-                                             where t.IdSchedule == s.IdSchedule
-                                             select t).ToList(),
-                                Tour = (from t in _db.Tour.AsNoTracking()
-                                        where s.TourId == t.IdTour
-                                        select new Tour
-                                        {
-                                            Thumbnail = t.Thumbnail,
-                                            ToPlace = t.ToPlace,
-                                            IdTour = t.IdTour,
-                                            NameTour = t.NameTour,
-                                            Alias = t.Alias,
-                                            ApproveStatus = t.ApproveStatus,
-                                            CreateDate = t.CreateDate,
-                                            IsActive = t.IsActive,
-                                            IsDelete = t.IsDelete,
-                                            ModifyBy = t.ModifyBy,
-                                            ModifyDate = t.ModifyDate,
-                                            Rating = t.Rating,
-                                            Status = t.Status,
-                                            QuantityBooked = t.QuantityBooked,
-                                        }).First(),
+                var userLogin = (from x in _db.Employees.AsNoTracking()
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                var listWaiting = new List<Schedule>();
+                if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
+                {
+                    listWaiting = (from s in _db.Schedules.AsNoTracking()
+                                where s.TourId == idTour
+                                where s.Isdelete == false &&
+                                s.Approve == (int)Enums.ApproveStatus.Waiting
+                                select new Schedule
+                                {
+                                    Alias = s.Alias,
+                                    Approve = s.Approve,
+                                    BeginDate = s.BeginDate,
+                                    QuantityAdult = s.QuantityAdult,
+                                    QuantityBaby = s.QuantityBaby,
+                                    QuantityChild = s.QuantityChild,
+                                    CarId = s.CarId,
+                                    DepartureDate = s.DepartureDate,
+                                    ReturnDate = s.ReturnDate,
+                                    DeparturePlace = s.DeparturePlace,
+                                    Description = s.Description,
+                                    MetaDesc = s.MetaDesc,
+                                    MetaKey = s.MetaKey,
+                                    EndDate = s.EndDate,
+                                    Isdelete = s.Isdelete,
+                                    EmployeeId = s.EmployeeId,
+                                    IdSchedule = s.IdSchedule,
+                                    MaxCapacity = s.MaxCapacity,
+                                    MinCapacity = s.MinCapacity,
+                                    PromotionId = s.PromotionId,
+                                    Status = s.Status,
+                                    TourId = s.TourId,
+                                    FinalPrice = s.FinalPrice,
+                                    FinalPriceHoliday = s.FinalPriceHoliday,
+                                    AdditionalPrice = s.AdditionalPrice,
+                                    AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                                    IsHoliday = s.IsHoliday,
+                                    Profit = s.Profit,
+                                    QuantityCustomer = s.QuantityCustomer,
+                                    TimePromotion = s.TimePromotion,
+                                    Vat = s.Vat,
+                                    TotalCostTourNotService = s.TotalCostTourNotService,
+                                    TypeAction = s.TypeAction,
+                                    IdUserModify = s.IdUserModify,
+                                    ModifyBy = s.ModifyBy,
+                                    ModifyDate = s.ModifyDate,
+                                    CostTour = (from c in _db.CostTours.AsNoTracking()
+                                                where c.IdSchedule == s.IdSchedule
+                                                select c).First(),
+                                    Timelines = (from t in _db.Timelines.AsNoTracking()
+                                                 where t.IdSchedule == s.IdSchedule
+                                                 select t).ToList(),
+                                    Tour = (from t in _db.Tour.AsNoTracking()
+                                            where s.TourId == t.IdTour
+                                            select new Tour
+                                            {
+                                                Thumbnail = t.Thumbnail,
+                                                ToPlace = t.ToPlace,
+                                                IdTour = t.IdTour,
+                                                NameTour = t.NameTour,
+                                                Alias = t.Alias,
+                                                ApproveStatus = t.ApproveStatus,
+                                                CreateDate = t.CreateDate,
+                                                IsActive = t.IsActive,
+                                                IsDelete = t.IsDelete,
+                                                ModifyBy = t.ModifyBy,
+                                                ModifyDate = t.ModifyDate,
+                                                Rating = t.Rating,
+                                                Status = t.Status,
+                                                QuantityBooked = t.QuantityBooked,
+                                            }).First(),
 
-                            }).ToList();
+                                }).ToList();
+                }
+                else
+                {
+                    listWaiting = (from s in _db.Schedules.AsNoTracking()
+                                where s.TourId == idTour && s.IdUserModify == idUser
+                                where s.Isdelete == false &&
+                                s.Approve == (int)Enums.ApproveStatus.Waiting
+                                select new Schedule
+                                {
+                                    Alias = s.Alias,
+                                    Approve = s.Approve,
+                                    BeginDate = s.BeginDate,
+                                    QuantityAdult = s.QuantityAdult,
+                                    QuantityBaby = s.QuantityBaby,
+                                    QuantityChild = s.QuantityChild,
+                                    CarId = s.CarId,
+                                    DepartureDate = s.DepartureDate,
+                                    ReturnDate = s.ReturnDate,
+                                    DeparturePlace = s.DeparturePlace,
+                                    Description = s.Description,
+                                    MetaDesc = s.MetaDesc,
+                                    MetaKey = s.MetaKey,
+                                    EndDate = s.EndDate,
+                                    Isdelete = s.Isdelete,
+                                    EmployeeId = s.EmployeeId,
+                                    IdSchedule = s.IdSchedule,
+                                    MaxCapacity = s.MaxCapacity,
+                                    MinCapacity = s.MinCapacity,
+                                    PromotionId = s.PromotionId,
+                                    Status = s.Status,
+                                    TourId = s.TourId,
+                                    FinalPrice = s.FinalPrice,
+                                    FinalPriceHoliday = s.FinalPriceHoliday,
+                                    AdditionalPrice = s.AdditionalPrice,
+                                    AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                                    IsHoliday = s.IsHoliday,
+                                    Profit = s.Profit,
+                                    QuantityCustomer = s.QuantityCustomer,
+                                    TimePromotion = s.TimePromotion,
+                                    Vat = s.Vat,
+                                    TotalCostTourNotService = s.TotalCostTourNotService,
+                                    TypeAction = s.TypeAction,
+                                    IdUserModify = s.IdUserModify,
+                                    ModifyBy = s.ModifyBy,
+                                    ModifyDate = s.ModifyDate,
+                                    CostTour = (from c in _db.CostTours.AsNoTracking()
+                                                where c.IdSchedule == s.IdSchedule
+                                                select c).First(),
+                                    Timelines = (from t in _db.Timelines.AsNoTracking()
+                                                 where t.IdSchedule == s.IdSchedule
+                                                 select t).ToList(),
+                                    Tour = (from t in _db.Tour.AsNoTracking()
+                                            where s.TourId == t.IdTour
+                                            select new Tour
+                                            {
+                                                Thumbnail = t.Thumbnail,
+                                                ToPlace = t.ToPlace,
+                                                IdTour = t.IdTour,
+                                                NameTour = t.NameTour,
+                                                Alias = t.Alias,
+                                                ApproveStatus = t.ApproveStatus,
+                                                CreateDate = t.CreateDate,
+                                                IsActive = t.IsActive,
+                                                IsDelete = t.IsDelete,
+                                                ModifyBy = t.ModifyBy,
+                                                ModifyDate = t.ModifyDate,
+                                                Rating = t.Rating,
+                                                Status = t.Status,
+                                                QuantityBooked = t.QuantityBooked,
+                                            }).First(),
+
+                                }).ToList();
+                }
+                
 
 
-                var result = Mapper.MapSchedule(list);
+                var result = Mapper.MapSchedule(listWaiting);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
@@ -723,6 +803,7 @@ namespace Travel.Data.Repositories
                     schedule.IdUserModify = userLogin.IdEmployee;
                     schedule.Approve = (int)ApproveStatus.Waiting;
                     schedule.TypeAction = "restore";
+                    schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     UpdateDatabase(schedule);
                     SaveChange();
 
@@ -1562,7 +1643,7 @@ namespace Travel.Data.Repositories
                     schedule.Approve = (int)ApproveStatus.Waiting;
                     schedule.ModifyBy = userLogin.NameEmployee;
                     schedule.TypeAction = "delete";
-
+                    schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     UpdateDatabase(schedule);
                     SaveChange();
 
@@ -1835,6 +1916,7 @@ namespace Travel.Data.Repositories
                 schedule.ReturnDate = input.ReturnDate;
                 schedule.Vat = input.Vat;
                 schedule.ModifyBy = userLogin.NameEmployee;
+                schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 #endregion
 
                 UpdateDatabase(schedule);
@@ -2412,8 +2494,8 @@ namespace Travel.Data.Repositories
                                           x.IdSchedule.ToLower().Contains(keywords.KwId) &&
                                           x.IsTempData == false &&
                                           x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
-                                          x.FinalPrice.Equals(keywords.KwFinalPrice)
-
+                                          x.FinalPrice.Equals(keywords.KwFinalPrice) &&
+                                          x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) 
                                     select x).ToList();
                 }
                 else
@@ -2426,6 +2508,7 @@ namespace Travel.Data.Repositories
                                               x.IdSchedule.ToLower().Contains(keywords.KwId) &&
                                               x.IsTempData == false &&
                                               x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                              x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                               x.FinalPriceHoliday.Equals(keywords.KwFinalPriceHoliday)
 
                                         select x).ToList();
@@ -2434,24 +2517,127 @@ namespace Travel.Data.Repositories
                     {
                         if (keywords.KwTypeActions.Count > 0)
                         {
-                            listSchedule = (from x in _db.Schedules
-                                            where
-                                                  x.TourId == idTour &&
-                                                  x.IdSchedule.ToLower().Contains(keywords.KwId) &&
-                                                  x.IsTempData == false &&
-                                                  x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
-                                                  keywords.KwTypeActions.Contains(x.TypeAction)
-
-                                            select x).ToList();
+                            if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
+                            {
+                                listSchedule = (from x in _db.Schedules
+                                                where
+                                                      x.TourId == idTour &&
+                                                      x.IdSchedule.ToLower().Contains(keywords.KwId) &&
+                                                      x.IsTempData == false &&
+                                                      x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                      keywords.KwTypeActions.Contains(x.TypeAction) &&
+                                                      x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                      x.ModifyDate >= keywords.KwFromDate &&
+                                                       x.ModifyDate <= keywords.KwToDate
+                                                orderby x.ModifyDate descending
+                                                select x).ToList();
+                            }
+                            else
+                            {
+                                if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
+                                {
+                                    listSchedule = (from x in _db.Schedules
+                                                    where
+                                                          x.TourId == idTour &&
+                                                          x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                          x.IdSchedule.ToLower().Contains(keywords.KwId) &&
+                                                          x.IsTempData == false &&
+                                                          x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                          keywords.KwTypeActions.Contains(x.TypeAction) &&
+                                                           x.ModifyDate <= keywords.KwToDate
+                                                    orderby x.ModifyDate descending
+                                                    select x).ToList();
+                                }
+                                else
+                                {
+                                    if (keywords.KwToDate == 0 && keywords.KwFromDate > 0)
+                                    {
+                                        listSchedule = (from x in _db.Schedules
+                                                        where
+                                                              x.TourId == idTour &&
+                                                              x.IdSchedule.ToLower().Contains(keywords.KwId) &&
+                                                              x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                              x.IsTempData == false &&
+                                                              x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                              keywords.KwTypeActions.Contains(x.TypeAction) &&
+                                                              x.ModifyDate >= keywords.KwFromDate 
+                                                        orderby x.ModifyDate descending
+                                                        select x).ToList();
+                                    }
+                                    else
+                                    {
+                                        listSchedule = (from x in _db.Schedules
+                                                        where
+                                                              x.TourId == idTour &&
+                                                              x.IdSchedule.ToLower().Contains(keywords.KwId) &&
+                                                              x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                              x.IsTempData == false &&
+                                                              x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                              keywords.KwTypeActions.Contains(x.TypeAction)
+                                                        orderby x.ModifyDate descending
+                                                        select x).ToList();
+                                    }
+                                }
+                            }
                         }
                         else
                         {
-                            listSchedule = (from x in _db.Schedules
-                                            where x.TourId == idTour &&
-                                                  x.IdSchedule.ToLower().Contains(keywords.KwId) &&
-                                                  x.IsTempData == false &&
-                                                  x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting)
-                                            select x).ToList();
+                            if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
+                            {
+                                listSchedule = (from x in _db.Schedules
+                                                where x.TourId == idTour &&
+                                                      x.IdSchedule.ToLower().Contains(keywords.KwId) &&
+                                                      x.IsTempData == false &&
+                                                      x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                      x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                        x.ModifyDate >= keywords.KwFromDate &&
+                                                        x.ModifyDate <= keywords.KwToDate
+                                        orderby x.ModifyDate descending
+                                        select x).ToList();
+
+                            }
+                            else
+                            {
+                                if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
+                                {
+                                    listSchedule = (from x in _db.Schedules
+                                                    where x.TourId == idTour &&
+                                                          x.IdSchedule.ToLower().Contains(keywords.KwId) &&
+                                                          x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                          x.IsTempData == false &&
+                                                          x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                            x.ModifyDate <= keywords.KwToDate
+                                                    orderby x.ModifyDate descending
+                                                    select x).ToList();
+                                }
+                                else
+                                {
+                                    if (keywords.KwToDate == 0 && keywords.KwFromDate > 0)
+                                    {
+                                        listSchedule = (from x in _db.Schedules
+                                                        where x.TourId == idTour &&
+                                                              x.IdSchedule.ToLower().Contains(keywords.KwId) &&
+                                                              x.IsTempData == false &&
+                                                              x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                              x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                                x.ModifyDate >= keywords.KwFromDate 
+                                                        orderby x.ModifyDate descending
+                                                        select x).ToList();
+                                    }
+                                    else
+                                    {
+                                        listSchedule = (from x in _db.Schedules
+                                                        where x.TourId == idTour &&
+                                                              x.IdSchedule.ToLower().Contains(keywords.KwId) &&
+                                                              x.IsTempData == false &&
+                                                              x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
+                                                              x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting)
+                                                        orderby x.ModifyDate descending
+                                                        select x).ToList();
+                                    }
+                                }
+                            }
+                               
                         }
                             
                     }
