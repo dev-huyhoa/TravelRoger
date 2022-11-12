@@ -1434,7 +1434,14 @@ namespace Travel.Data.Repositories
                                  select x).ToList();
                 }
                 var result = Mapper.MapHotel(listHotel);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                if (result.Count > 0)
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                else
+                {
+                    return Ultility.Responses("Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString(), result);
+                }
             }
             catch (Exception e)
             {
