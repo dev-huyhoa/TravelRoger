@@ -306,6 +306,14 @@ namespace TravelApi.Controllers
         public object SearchRestaurant([FromBody] JObject frmData)
         {
             res = _serviceRes.SearchRestaurant(frmData);
+            return Ok(res); 
+        }
+        [HttpPost]
+        [Authorize]
+        [Route("search-place-waiting")]
+        public object SearchPlaceWaiting([FromBody] JObject frmData)
+        {
+            res = _serviceRes.SearchPlaceWaiting(frmData);
             return Ok(res);
         }
     }

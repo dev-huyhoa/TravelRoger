@@ -983,23 +983,26 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var userLogin = (from x in _db.Employees
+                var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
                 var listWaiting = new List<Place>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
-                    listWaiting = (from x in _db.Places where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                    listWaiting = (from x in _db.Places.AsNoTracking()
+                                   where x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
+                                   orderby x.ModifyDate descending
+                                   select x).ToList();
                 }
                 else
                 {
-                    listWaiting = (from x in _db.Places
+                    listWaiting = (from x in _db.Places.AsNoTracking()
                                    where x.IdUserModify == idUser
                                    && x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
+                                   orderby x.ModifyDate descending
                                    select x).ToList();
                 }
                 var result = Mapper.MapPlace(listWaiting);
-
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
@@ -1784,5 +1787,173 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response SearchPlaceWaiting(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var kwName = PrCommon.GetString("name", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwName))
+                {
+                    keywords.KwName = kwName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+
+                }
+                var kwPhone = PrCommon.GetString("phone", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwPhone))
+                {
+                    keywords.KwPhone = kwPhone.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwPhone = "";
+
+                }
+
+
+                var fromDate = PrCommon.GetString("modifyDateFrom", frmData);
+                if (!String.IsNullOrEmpty(fromDate))
+                {
+                    keywords.KwFromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(fromDate));
+                }
+                else
+                {
+                    keywords.KwFromDate = 0;
+                }
+
+                var toDate = PrCommon.GetString("modifyDateTo", frmData);
+                if (!String.IsNullOrEmpty(toDate))
+                {
+                    keywords.KwToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(toDate).AddDays(1).AddSeconds(-1));
+                }
+                else
+                {
+                    keywords.KwToDate = 0;
+                }
+
+                var typeAction = PrCommon.GetString("typeAction", frmData);
+                keywords.KwTypeActions = PrCommon.getListString(typeAction, ',', false);
+                var listPlace = new List<Place>();
+                if (keywords.KwTypeActions.Count > 0)
+                {
+                    if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
+                    {
+                        listPlace = (from x in _db.Places
+                                     where x.NamePlace.ToLower().Contains(keywords.KwName) &&
+                                           x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                           x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                           keywords.KwTypeActions.Contains(x.TypeAction) &&
+                                           x.ModifyDate >= keywords.KwFromDate &&
+                                           x.ModifyDate <= keywords.KwToDate
+
+                                     orderby x.ModifyDate descending
+                                     select x).ToList();
+                    }
+                    else
+                    {
+                        if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
+                        {
+                            listPlace = (from x in _db.Places
+                                         where x.NamePlace.ToLower().Contains(keywords.KwName) &&
+                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                               x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                keywords.KwTypeActions.Contains(x.TypeAction) &&
+                                               x.ModifyDate <= keywords.KwToDate
+
+                                         orderby x.ModifyDate descending
+                                         select x).ToList();
+                        }
+                        else if (keywords.KwToDate == 0 && keywords.KwFromDate > 0)
+                        {
+                            listPlace = (from x in _db.Places
+                                         where x.NamePlace.ToLower().Contains(keywords.KwName) &&
+                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                               x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                                keywords.KwTypeActions.Contains(x.TypeAction) &&
+                                               x.ModifyDate >= keywords.KwFromDate
+
+                                         orderby x.ModifyDate descending
+                                         select x).ToList();
+                        }
+                        else
+                        {
+                            listPlace = (from x in _db.Places
+                                          where x.NamePlace.ToLower().Contains(keywords.KwName) &&
+                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                               x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                               keywords.KwTypeActions.Contains(x.TypeAction)
+                                         orderby x.ModifyDate descending
+                                         select x).ToList();
+                        }
+                    }
+                }
+                else
+                {
+                    if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
+                    {
+                        listPlace = (from x in _db.Places
+                                     where x.NamePlace.ToLower().Contains(keywords.KwName) &&
+                                       x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                           x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                           x.ModifyDate >= keywords.KwFromDate &&
+                                           x.ModifyDate <= keywords.KwToDate
+
+                                     orderby x.ModifyDate descending
+                                     select x).ToList();
+                    }
+                    else
+                    {
+                        if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
+                        {
+                            listPlace = (from x in _db.Places
+                                         where x.NamePlace.ToLower().Contains(keywords.KwName) &&
+                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                               x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                               x.ModifyDate <= keywords.KwToDate
+
+                                         orderby x.ModifyDate descending
+                                         select x).ToList();
+                        }
+                        else if (keywords.KwToDate == 0 && keywords.KwFromDate > 0)
+                        {
+                            listPlace = (from x in _db.Places
+                                         where x.NamePlace.ToLower().Contains(keywords.KwName) &&
+                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                               x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
+                                               x.ModifyDate >= keywords.KwFromDate
+
+                                         orderby x.ModifyDate descending
+                                         select x).ToList();
+                        }
+                        else
+                        {
+                            listPlace = (from x in _db.Places
+                                         where x.NamePlace.ToLower().Contains(keywords.KwName) &&
+                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                               x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting)
+                                         orderby x.ModifyDate descending
+                                         select x).ToList();
+                        }
+                    }
+                }
+                var result = Mapper.MapPlace(listPlace);
+                if (result.Count > 0)
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                else
+                {
+                    return Ultility.Responses("Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString(), result);
+                }
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }
