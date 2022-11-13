@@ -718,7 +718,7 @@ namespace Travel.Data.Repositories
 
                             _db.Restaurants.Remove(restaurantTemp);
 
-                            UpdateDatabase<Restaurant>(restaurantTemp);
+                            UpdateDatabase<Restaurant>(restaurant);
                             SaveChange();
 
 
@@ -867,7 +867,8 @@ namespace Travel.Data.Repositories
                         restaurant.Approve = (int)ApproveStatus.Approved;
                         restaurant.IsDelete = true;
                     }
-                    _db.SaveChanges();
+                    UpdateDatabase<Restaurant>(restaurant);
+                    SaveChange();
                     return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
