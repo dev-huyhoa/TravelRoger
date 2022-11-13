@@ -524,5 +524,35 @@ namespace Travel.Data.Responsives
             }
             return Encryptdata.ToString();
         }
+
+        public Response EmpChangePassword(Guid idEmp, string password, string newPassword)
+        {
+            try
+            {
+                Employee emp = _db.Employees.Find(idEmp);
+                if (emp != null)
+                {
+
+                    if (emp.Password == Ultility.Encryption(password))
+                    {
+                        emp.Password = Ultility.Encryption(newPassword);
+                        _db.SaveChanges();
+
+
+                        return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Sai Mật Khẩu !", Enums.TypeCRUD.Error.ToString());
+
+                    }
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }

@@ -127,6 +127,7 @@ namespace Travel.Data.Repositories
                     var birthday = PrCommon.GetString("birthday", frmData);
                     if (String.IsNullOrEmpty(birthday))
                     {
+                      
                     }
 
 
@@ -158,7 +159,7 @@ namespace Travel.Data.Repositories
                         objUpdate.Phone = phone;
                         objUpdate.Email = email;
                         objUpdate.Address = address;
-                        if (birthday != "")
+                        if (birthday != "0" && !string.IsNullOrEmpty(birthday))
                         {
                             objUpdate.Birthday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(birthday));
                         }
@@ -193,7 +194,7 @@ namespace Travel.Data.Repositories
                 customer.IsDelete = false;
                 CreateDatabase(customer);
 
-                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+                return Ultility.Responses("Đăng ký thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
@@ -387,13 +388,21 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateCustomer(UpdateCustomerViewModel input)
+        public async Task<Response> UpdateCustomer(UpdateCustomerViewModel input)
         {
             try
             {
-                Customer customer = Mapper.MapUpdateCustomer(input);
+                var customer = await (from x in _db.Customers.AsNoTracking()
+                                      where x.IdCustomer == input.IdCustomer
+                                      select x).FirstOrDefaultAsync();
+                customer.NameCustomer = input.NameCustomer;
+                customer.Phone = input.Phone;
+                customer.Email = input.Email;
+                customer.Address = input.Address;
+                customer.Gender = input.Gender;
+                customer.Birthday = input.Birthday;
                 UpdateDatabase(customer);
-                return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+                return Ultility.Responses("Cập nhật thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {

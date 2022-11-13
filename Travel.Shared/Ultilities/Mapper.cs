@@ -502,33 +502,32 @@ namespace Travel.Shared.Ultilities
 
 
 
-            cfg.CreateMap<Place, PlaceViewModel>()
-                   .ForMember(dto => dto.IdPlace, opt => opt.MapFrom(src => src.IdPlace))
-                      .ForMember(dto => dto.PriceTicket, opt => opt.MapFrom(src => src.PriceTicket))
-                           .ForMember(dto => dto.ContractId, opt => opt.MapFrom(src => src.ContractId))
-                      .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => ""))
-                     .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => 0))
-                     .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
-                     .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
-                     .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.NamePlace));
-            // create 
+                cfg.CreateMap<Place, PlaceViewModel>()
+                       .ForMember(dto => dto.IdPlace, opt => opt.MapFrom(src => src.IdPlace))
+                          .ForMember(dto => dto.PriceTicket, opt => opt.MapFrom(src => src.PriceTicket))
+                               .ForMember(dto => dto.ContractId, opt => opt.MapFrom(src => src.ContractId))
+                          .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
+                         .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+                         .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
+                         .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
+                         .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.NamePlace))
+                  .ForMember(dto => dto.TypeAction, opt => opt.MapFrom(src => src.TypeAction));
+                // create 
 
-            // create Place
-            cfg.CreateMap<CreatePlaceViewModel, Place>()
-       .ForMember(dto => dto.IdPlace, opt => opt.MapFrom(src => Guid.NewGuid()))
-       .ForMember(dto => dto.PriceTicket, opt => opt.MapFrom(src => src.PriceTicket))
-
-                           .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
-                          .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => 0))
-                          .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
-                          .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => ApproveStatus.Waiting))
-                          .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
-                          .ForMember(dto => dto.NamePlace, opt => opt.MapFrom(src => src.Name))
-                                     .ForMember(dto => dto.IsTempdata, opt => opt.MapFrom(src => false))
-                                     .ForMember(dto => dto.IdUserModify, opt => opt.MapFrom(src => src.IdUserModify))
-                                  .ForMember(dto => dto.TypeAction, opt => opt.MapFrom(src => src.TypeAction))
-                          .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
-.ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
+                // create Place
+                cfg.CreateMap<CreatePlaceViewModel, Place>()
+           .ForMember(dto => dto.IdPlace, opt => opt.MapFrom(src => Guid.NewGuid()))
+           .ForMember(dto => dto.PriceTicket, opt => opt.MapFrom(src => src.PriceTicket))
+                              .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
+                              .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
+                              .ForMember(dto => dto.Approve, opt => opt.MapFrom(src => ApproveStatus.Waiting))
+                              .ForMember(dto => dto.Address, opt => opt.MapFrom(src => src.Address))
+                              .ForMember(dto => dto.NamePlace, opt => opt.MapFrom(src => src.Name))
+                                         .ForMember(dto => dto.IsTempdata, opt => opt.MapFrom(src => false))
+                                         .ForMember(dto => dto.IdUserModify, opt => opt.MapFrom(src => src.IdUserModify))
+                                         .ForMember(dto => dto.TypeAction, opt => opt.MapFrom(src => src.TypeAction))
+                                         .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+                                         .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
 
 
            ;
@@ -694,7 +693,18 @@ namespace Travel.Shared.Ultilities
                         (src.Breakfast + src.Water + src.SellCost + src.OtherPrice + src.InsuranceFee) + (src.Depreciation + src.Tolls + (src.FeeGas * src.Distance))
                 ))
                 ;
-                
+                // review
+                cfg.CreateMap<CreateReviewModel, Review>()
+                             .ForMember(dto => dto.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                                   .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
+                                   .ForMember(dto => dto.DateTime, opt => opt.MapFrom(src => src.DateTime))
+                                   .ForMember(dto => dto.Comment, opt => opt.MapFrom(src => src.Comment));
+                cfg.CreateMap<Review, ReviewViewModel>()
+                  .ForMember(dto => dto.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                                   .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
+                                   .ForMember(dto => dto.DateTime, opt => opt.MapFrom(src => src.DateTime))
+                                   .ForMember(dto => dto.Comment, opt => opt.MapFrom(src => src.Comment));
+
                 cfg.CreateMap<CreateVoucherViewModel, Voucher>()
                                 .ForMember(dto => dto.IdVoucher, opt => opt.MapFrom(src => Guid.NewGuid()))
                                    .ForMember(dto => dto.Code, opt => opt.MapFrom(src => src.Code))

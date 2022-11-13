@@ -233,7 +233,6 @@ namespace Travel.Data.Repositories
                 {
                     listRole = (from x in _db.Roles.AsNoTracking()
                                where x.IsDelete == keywords.IsDelete &&
-                                               x.IdRole.ToString().Contains(keywords.KwId) &&
                                                x.NameRole.ToLower().Contains(keywords.KwName) &&
                                                x.Description.ToLower().Contains(keywords.KwDescription)
                                              
@@ -243,7 +242,6 @@ namespace Travel.Data.Repositories
                 {
                     listRole = (from x in _db.Roles.AsNoTracking()
                                 where x.IsDelete == keywords.IsDelete &&
-                                               x.IdRole.ToString().Contains(keywords.KwId) &&
                                                x.NameRole.ToLower().Contains(keywords.KwName) &&
                                                x.Description.ToLower().Contains(keywords.KwDescription)
                                select x).ToList();

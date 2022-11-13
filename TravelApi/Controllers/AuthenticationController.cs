@@ -285,5 +285,14 @@ namespace TravelApi.Controllers
             res = authentication.EmpBlock(email);
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("change-pass-employee")]
+        public object EmpChangePassword(Guid idEmp, string password, string newPassword)
+        {
+            res = authentication.EmpChangePassword(idEmp, password, newPassword);
+            return Ok(res);
+        }
     }
 }
