@@ -40,6 +40,16 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
+        [Route("gets-promotion-exists")]
+        public object GetsPromotionExists()
+        {
+            res = _promotion.GetsPromotionExists();
+            return Ok(res);
+        }
+
+
+        [HttpGet]
+        [Authorize]
         [Route("gets-promotion-waiting")]
         public object GetsWaitingPromotion(Guid idUser)
         {

@@ -97,5 +97,13 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("cus-vote-rating")]
+        public async Task<object> CustomerVoteRateting(string idTour, int rating)
+        {
+            res = await customer.CustomerSendRate(idTour, rating);
+            return Ok(res);
+        }
     }
 }

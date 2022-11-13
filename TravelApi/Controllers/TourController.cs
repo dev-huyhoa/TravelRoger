@@ -169,7 +169,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         [Route("update-rating-tour")]
         public object UpdateRatingTour(int rating, string idTour)
         {

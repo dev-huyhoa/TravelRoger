@@ -968,45 +968,56 @@ namespace Travel.Data.Repositories
         //        return true;
         //    }
         //}
-        private void UpdateDatabase(Tour tour)
-        {
-            _db.Entry(tour).State = EntityState.Modified;
-            _db.SaveChanges();
-        }
-        private void DeleteDatabase(Tour tour)
-        {
-            _db.Entry(tour).State = EntityState.Deleted;
-            _db.SaveChanges();
-        }
-        private void CreateDatabase(Tour tour)
-        {
-            _db.Tour.Add(tour);
-            _db.SaveChanges();
-        }
+
         public Response UpdateRating(int rating, string idTour)
         {
+            using var transaction = _db.Database.BeginTransaction();
+
             try
             {
+
+                 transaction.CreateSavepoint("BeforeSave");
+
                 var tour = (from x in _db.Tour.AsNoTracking()
-                            where x.IdTour == idTour
-                            select x).FirstOrDefault();
+                                 where x.IdTour == idTour
+                                 select x).FirstOrDefault();
 
-                if (tour != null)
-                {
-                    tour.Rating = (rating);
-                    UpdateDatabase(tour);
+                var listReviewByTour = (from x in _db.reviews.AsNoTracking()
+                                             where x.IdTour == idTour
+                                             select x).ToList();
+                var countRating = listReviewByTour.Count();
+                // get current rating
+                var totalValueRating = listReviewByTour.Sum(x => x.Rating);
 
-                    return Ultility.Responses($"Đổi thành công !", Enums.TypeCRUD.Success.ToString());
-                }
-                else
+                var tempDataToGetValueRating = (countRating + 1) * rating;
+
+                var ValueRatingNeeded = tempDataToGetValueRating - totalValueRating;
+
+
+
+                // create review
+                var review = new Review()
                 {
-                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
-                }
+                    Id = Guid.NewGuid(),
+                    Rating = ValueRatingNeeded,
+                    IdTour = idTour
+                };
+                listReviewByTour.Add(review);
+                CreateDatabase(review);
+                tour.Rating = listReviewByTour.Average(x => x.Rating);
+                UpdateDatabase(tour);
+                 SaveChange();
+
+                transaction.Commit();
+                transaction.Dispose();
+
+                return Ultility.Responses("Lượt đánh giá vừa chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
+
             }
             catch (Exception e)
             {
+                transaction.RollbackToSavepoint("BeforeSave");
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-
             }
         }
 

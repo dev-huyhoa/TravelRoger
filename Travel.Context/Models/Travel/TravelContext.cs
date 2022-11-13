@@ -394,8 +394,6 @@ namespace Travel.Context.Models.Travel
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Rating).HasMaxLength(12).IsRequired(true);
-                entity.Property(e => e.DateTime).HasMaxLength(15);
-                entity.Property(e => e.Comment).HasMaxLength(5000);
             });
         }
 

@@ -31,21 +31,66 @@ namespace Travel.Data.Repositories
             _config = config;
             res = new Response();
         }
-        private void UpdateDatabase(Customer input)
+        private void UpdateDatabase<T>(T input)
         {
             _db.Entry(input).State = EntityState.Modified;
             _db.SaveChanges();
         }
-        private void DeleteDatabase(Customer input)
+        private void DeleteDatabase<T>(T input)
         {
             _db.Entry(input).State = EntityState.Deleted;
             _db.SaveChanges();
         }
-        private void CreateDatabase(Customer input)
+        private void CreateDatabase<T>(T input)
         {
             _db.Entry(input).State = EntityState.Added;
             _db.SaveChanges();
         }
+        private async Task SaveChangeAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
+        public async Task<Response> CustomerSendRate(string idTour, int rating)
+        {
+            using var transaction = _db.Database.BeginTransaction();
+
+            try
+            {
+                await transaction.CreateSavepointAsync("BeforeSave");
+
+                var tour = await (from x in _db.Tour.AsNoTracking()
+                                  where x.IdTour == idTour
+                                  select x).FirstOrDefaultAsync();
+
+                var listReviewByTour = await (from x in _db.reviews.AsNoTracking()
+                                              where x.IdTour == idTour
+                                              select x).ToListAsync();
+                // create review0
+                var review = new Review()
+                {
+                    Id = Guid.NewGuid(),
+                    Rating = rating,
+                    IdTour = idTour
+                };
+                listReviewByTour.Add(review);
+                CreateDatabase(review);
+                tour.Rating = listReviewByTour.Average(x => x.Rating);
+                UpdateDatabase(tour);
+                await SaveChangeAsync();
+
+                transaction.Commit();
+                transaction.Dispose();
+
+                return Ultility.Responses("Cảm ơn bạn đã đánh giá !", Enums.TypeCRUD.Success.ToString());
+
+            }
+            catch (Exception e)
+            {
+                transaction.RollbackToSavepoint("BeforeSave");
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
         public string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
             try

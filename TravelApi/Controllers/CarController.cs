@@ -37,6 +37,15 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
+        [Route("gets-selectbox-car")]
+        public object GetsSelectBoxCar(long fromDate, long toDate, string idTour)
+        {
+            res = car.GetsSelectBoxCar(fromDate,toDate, idTour);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Authorize]
         [Route("statistic-car")]
         public object StatisticCar()
         {

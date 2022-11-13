@@ -14,6 +14,7 @@ namespace Travel.Data.Interfaces
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, Shared.Ultilities.Enums.TypeService type, bool isUpdate = false);
         Response GetsPromotion(bool isDelete);
+        Response GetsPromotionExists();
         Response GetsWaitingPromotion(Guid idUser);
 
         Response CreatePromotion(CreatePromotionViewModel input);

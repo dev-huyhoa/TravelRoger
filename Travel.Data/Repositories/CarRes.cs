@@ -47,7 +47,8 @@ namespace Travel.Data.Repositories
         {
             _db.SaveChanges();
         }
-        public string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate) // hàm đăng nhập  sử cho create update delete
+
+        public string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate) // hàm đăng nhập  
         {
             try
             {
@@ -114,10 +115,45 @@ namespace Travel.Data.Repositories
         }
 
 
+      
+        public Response GetsSelectBoxCar(long fromDate , long toDate,string idTour)
+        {
+            try
+            {
+                var unixTimeOneDay = 86400000;
+
+                var listCarInSchedule = (from x in _db.Schedules.AsNoTracking()
+                                         where x.TourId == idTour
+                                         && (fromDate >= x.DepartureDate && fromDate <= (x.ReturnDate + 1))
+                                         orderby x.ReturnDate ascending
+                                         select x.CarId);
+
+                var a = (from x in _db.Schedules
+                         where x.TourId == idTour
+                         && x.DepartureDate > fromDate
+                         //&& !(from s in listCarInSchedule select s).Contains(x.CarId)
+                         && toDate >=  (x.ReturnDate + 1)
+                         select x.CarId);
+
+
+                var listCar = (from x in _db.Cars.AsNoTracking()
+                               where !listCarInSchedule.Any(c => c == x.IdCar)
+                               select x).ToList();
+                var result = Mapper.MapCar(listCar);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
         public Response Gets()
         {
             try
             {
+          
+
                 var listCar = (from x in _db.Cars.AsNoTracking() select x).ToList();
                 var result = Mapper.MapCar(listCar);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);

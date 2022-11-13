@@ -19,5 +19,7 @@ namespace Travel.Data.Interfaces
         Task<Response> SendOTP(string email);
         Response GetCustomer(Guid idCustomer);
         Response UpdateCustomer(UpdateCustomerViewModel input);
+        Task<Response> CustomerSendRate(string idTour, int rating);
+
     }
 }

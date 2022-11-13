@@ -15,5 +15,6 @@ namespace Travel.Data.Interfaces
         Response Gets();
         Response Create(CreateCarViewModel input);
         Response StatisticCar();
+        Response GetsSelectBoxCar(long fromDate, long toDate, string idTour);
     }
 }

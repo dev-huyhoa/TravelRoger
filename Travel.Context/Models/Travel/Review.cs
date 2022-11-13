@@ -11,7 +11,7 @@ namespace Travel.Context.Models
 
         public Guid Id { get; set; }
         public double Rating { get; set; }
-        public long DateTime { get; set; }
-        public string Comment { get; set; }
+        public string IdTour { get; set; }
+
     }
 }

@@ -22,11 +22,12 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private Notification message;
-
+        private long today = 0;
         public PromotionRes(TravelContext db)
         {
             _db = db;
             message = new Notification();
+            today = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
         }
         private void DeleteDatabaseNotSave(Promotion input)
         {
@@ -117,6 +118,28 @@ namespace Travel.Data.Repositories
                             x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
 
                             select x).ToList();
+                var result = Mapper.MapPromotion(list);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response GetsPromotionExists()
+        {
+            try
+            {
+                var list = (from x in _db.Promotions.AsNoTracking()
+                            where
+                            x.Value == 0 ||
+                            (x.ToDate > today &&
+                            x.IsDelete == false &&
+                            x.IsTempdata == false &&
+                            x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved))
+                            select x).ToList();
+
                 var result = Mapper.MapPromotion(list);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }

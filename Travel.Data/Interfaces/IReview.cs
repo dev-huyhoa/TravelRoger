@@ -15,5 +15,6 @@ namespace Travel.Data.Interfaces
         Response GetsReview();
   
         Response CreateReview(CreateReviewModel input);
+
     }
 }

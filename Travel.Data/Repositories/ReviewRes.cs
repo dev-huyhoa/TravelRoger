@@ -27,6 +27,28 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
+        private void CreateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Added;
+        }
+        private void UpdateDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+            _db.SaveChanges();
+        }
+        private void DeleteDatabase<T>(T input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+            _db.SaveChanges();
+        }
+        private async Task SaveChangeAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
+        private void SaveChange()
+        {
+             _db.SaveChanges();
+        }
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
             try
@@ -95,6 +117,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
 
         public Response GetsReview()
         {
