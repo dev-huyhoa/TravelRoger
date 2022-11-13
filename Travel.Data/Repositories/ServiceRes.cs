@@ -680,7 +680,8 @@ namespace Travel.Data.Repositories
                     restaurant.Approve = (int)ApproveStatus.Waiting;
                     restaurant.TypeAction = "delete";
 
-                    _db.SaveChanges();
+                    UpdateDatabase<Restaurant>(restaurant);
+                    SaveChange();
 
                     return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                 }
