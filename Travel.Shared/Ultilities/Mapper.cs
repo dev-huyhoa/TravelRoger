@@ -696,15 +696,11 @@ namespace Travel.Shared.Ultilities
                 // review
                 cfg.CreateMap<CreateReviewModel, Review>()
                              .ForMember(dto => dto.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
-                                   .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
-                                   .ForMember(dto => dto.DateTime, opt => opt.MapFrom(src => src.DateTime))
-                                   .ForMember(dto => dto.Comment, opt => opt.MapFrom(src => src.Comment));
+                                   .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating));
                 cfg.CreateMap<Review, ReviewViewModel>()
                   .ForMember(dto => dto.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                                    .ForMember(dto => dto.Rating, opt => opt.MapFrom(src => src.Rating))
-                                   .ForMember(dto => dto.DateTime, opt => opt.MapFrom(src => src.DateTime))
-                                   .ForMember(dto => dto.Comment, opt => opt.MapFrom(src => src.Comment));
-
+                                   ;
                 cfg.CreateMap<CreateVoucherViewModel, Voucher>()
                                 .ForMember(dto => dto.IdVoucher, opt => opt.MapFrom(src => Guid.NewGuid()))
                                    .ForMember(dto => dto.Code, opt => opt.MapFrom(src => src.Code))

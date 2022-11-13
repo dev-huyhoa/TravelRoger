@@ -1102,7 +1102,7 @@ namespace Travel.Data.Repositories
                                         x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
                                         x.IsTempdata == false &&
                                         x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
-                                        keywords.KwRating.Contains(x.Rating)
+                                        keywords.KwRating.Contains(Convert.ToInt16(x.Rating))
                                     select x).ToList();
                     }
                     else
@@ -1128,7 +1128,7 @@ namespace Travel.Data.Repositories
                                             x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
                                             x.IsTempdata == false &&
                                             x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
-                                            keywords.KwRating.Contains(x.Rating)
+                                            keywords.KwRating.Contains(Convert.ToInt16(x.Rating))
                                         orderby x.Rating
                                         select new Tour
                                         {
@@ -1262,7 +1262,7 @@ namespace Travel.Data.Repositories
                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                     x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                     x.Status == Convert.ToInt16(Enums.TourStatus.Normal) &&
-                                    keywords.KwRating.Contains(x.Rating)
+                                    keywords.KwRating.Contains(Convert.ToInt16(x.Rating))
                                     orderby x.ModifyDate descending
                                 select new Tour
                                 {
