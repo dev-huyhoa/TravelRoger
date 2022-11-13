@@ -717,7 +717,9 @@ namespace Travel.Data.Repositories
                             #endregion
 
                             _db.Restaurants.Remove(restaurantTemp);
-                            _db.SaveChanges();
+
+                            UpdateDatabase<Restaurant>(restaurantTemp);
+                            SaveChange();
 
 
                             return Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
@@ -730,7 +732,9 @@ namespace Travel.Data.Repositories
                             restaurant.IsDelete = true;
                             restaurant.Approve = (int)ApproveStatus.Approved;
 
-                            _db.SaveChanges();
+
+                            UpdateDatabase<Restaurant>(restaurant);
+                            SaveChange();
 
                             return Ultility.Responses("Đã hủy yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
@@ -742,7 +746,9 @@ namespace Travel.Data.Repositories
                             restaurant.IsDelete = false;
                             restaurant.Approve = (int)ApproveStatus.Approved;
 
-                            _db.SaveChanges();
+
+                            UpdateDatabase<Restaurant>(restaurant);
+                            SaveChange();
 
                             return Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
 
@@ -794,7 +800,9 @@ namespace Travel.Data.Repositories
                 restaurant.ComboPrice = input.ComboPrice;
                 #endregion
 
-                _db.SaveChanges();
+
+                UpdateDatabase<Restaurant>(restaurant);
+                SaveChange();
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
             }
@@ -925,7 +933,9 @@ namespace Travel.Data.Repositories
                         restaurant.IsDelete = false;
                         restaurant.Approve = (int)ApproveStatus.Approved;
                     }
-                    _db.SaveChanges();
+
+                    UpdateDatabase<Restaurant>(restaurant);
+                    SaveChange();
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
