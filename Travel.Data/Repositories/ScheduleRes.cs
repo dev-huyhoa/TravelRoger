@@ -2654,6 +2654,45 @@ namespace Travel.Data.Repositories
             }
         }
 
-  
+        public Response GetsSelectBoxCreate(long fromDate, long toDate, string idTour)
+        {
+            try
+            {
+                var unixTimeOneDay = 86400000;
+
+                var listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
+                                            where x.TourId == idTour
+                                            && (fromDate >= x.DepartureDate && fromDate <= (x.ReturnDate + 86400000))
+                                            orderby x.ReturnDate ascending
+                                            select x.CarId);
+
+                var scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
+                                                      where x.TourId == idTour
+                                                      && x.DepartureDate >= fromDate
+                                                      orderby x.DepartureDate ascending
+                                                      select x);
+                var listCarShouldRemove2 = (from x in scheduleDepartDateLargerToDate
+                                            where !(from s in listCarShouldRemove1 select s).Contains(x.CarId)
+                                            && (toDate + 86400000) > x.ReturnDate
+                                            select x.CarId).Distinct();
+
+                var listShouldRemove = listCarShouldRemove1.Concat(listCarShouldRemove2);
+
+                var listCar = (from x in _db.Cars.AsNoTracking()
+                               where !listShouldRemove.Any(c => c == x.IdCar)
+                               select x).ToList();
+                if (listCar.Count() == 0)
+                {
+                    return Ultility.Responses("Ngày bạn chọn hiện tại không có xe !", Enums.TypeCRUD.Warning.ToString());
+                }
+                var result = Mapper.MapCar(listCar);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
     }
 }
