@@ -181,7 +181,7 @@ namespace Travel.Data.Repositories
                 createObj.NameContact = nameContact;
                 createObj.Vat = Convert.ToInt16(vat);
                 createObj.TotalPrice = float.Parse(totalPrice);
-                createObj.Pincode = pincode;
+                createObj.Pincode = $"PIN{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                 createObj.BookingDetails = createDetailObj;
                 createObj.CustomerId = customerId;
                 if (!string.IsNullOrEmpty(valuePromotion))
@@ -211,8 +211,6 @@ namespace Travel.Data.Repositories
                 CreateDatabase<TourBooking>(tourbooking);
                 CreateDatabase<TourBookingDetails>(tourBookingDetail);
                 await SaveChangeAsync();
-                var payment = await (from x in _db.Payment where x.IdPayment == input.PaymentId select x).FirstAsync();
-                tourbooking.Payment = payment;
 
                 // cập nhật số lượng
                 int quantityAdult = tourbooking.TourBookingDetails.Adult;
