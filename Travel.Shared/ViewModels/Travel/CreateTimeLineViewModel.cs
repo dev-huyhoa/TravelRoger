@@ -10,7 +10,9 @@ namespace Travel.Shared.ViewModels.Travel
     {
         public class UpdateTimeLineViewModel : CreateTimeLineViewModel
         {
+            private Guid idTimeLine;
 
+            public Guid IdTimeLine { get => idTimeLine; set => idTimeLine = value; }
         }
         private string description;
         private long fromTime;

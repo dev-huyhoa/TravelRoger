@@ -13,6 +13,7 @@ using Travel.Shared.ViewModels.Travel;
 using Travel.Context.Models;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using static Travel.Shared.ViewModels.Travel.CreateTimeLineViewModel;
 
 namespace Travel.Data.Repositories
 {
@@ -42,6 +43,33 @@ namespace Travel.Data.Repositories
                 return res;
             }
             catch (Exception e)
+            {
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Description = e.Message;
+                res.Notification.Messenge = "Có lỗi xảy ra !";
+                res.Notification.Type = "Error";
+                return res;
+            }
+        }
+
+        public Response Update(ICollection<UpdateTimeLineViewModel> input)
+        {
+            try
+            {
+                ICollection<Timeline> timeline = Mapper.MapUpdateTimeline(input);
+                //foreach (Timeline timelineItem in timeline)
+                //{
+                //    _db.Timelines.Update(timelineItem);
+                //    _db.SaveChanges();
+                //}
+                _db.Timelines.UpdateRange(timeline.AsEnumerable());
+                _db.SaveChanges();
+                res.Notification.DateTime = DateTime.Now;
+                res.Notification.Messenge = "Cập nhật thành công !";
+                res.Notification.Type = "Success";
+                return res;
+            }
+            catch(Exception e)
             {
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Description = e.Message;

@@ -20,6 +20,7 @@ using static Travel.Shared.Ultilities.Enums;
 using Travel.Shared.ViewModels.Travel.VoucherVM;
 using Travel.Shared.ViewModels.Travel.PromotionVM;
 using Travel.Shared.ViewModels.Travel.ReviewVM;
+using static Travel.Shared.ViewModels.Travel.CreateTimeLineViewModel;
 
 namespace Travel.Shared.Ultilities
 {
@@ -495,7 +496,15 @@ namespace Travel.Shared.Ultilities
                                .ForMember(dto => dto.ToTime, opt => opt.MapFrom(src => src.ToTime))
                                .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule));
 
-            cfg.CreateMap<Timeline, TimeLineViewModel>()
+
+                cfg.CreateMap<UpdateTimeLineViewModel, Timeline>()
+                                .ForMember(dto => dto.IdTimeline, otp => otp.MapFrom(src => src.IdTimeLine))
+                             .ForMember(dto => dto.Description, otp => otp.MapFrom(src => src.Description))
+                             .ForMember(dto => dto.FromTime, otp => otp.MapFrom(src => src.FromTime))
+                              .ForMember(dto => dto.ToTime, opt => opt.MapFrom(src => src.ToTime))
+                              .ForMember(dto => dto.IdSchedule, opt => opt.MapFrom(src => src.IdSchedule));
+
+                cfg.CreateMap<Timeline, TimeLineViewModel>()
                     .ForMember(dto => dto.IdTimeLine, otp => otp.MapFrom(src => src.IdTimeline))
                     .ForMember(dto => dto.Description, otp => otp.MapFrom(src => src.Description))
                     .ForMember(dto => dto.FromTime, otp => otp.MapFrom(src => src.FromTime))
@@ -962,7 +971,10 @@ namespace Travel.Shared.Ultilities
             return _mapper.Map<ICollection<CreateTimeLineViewModel>, ICollection<Timeline>>(data);
         }
 
-
+        public static ICollection<Timeline> MapUpdateTimeline(ICollection<UpdateTimeLineViewModel> data)
+        {
+            return _mapper.Map<ICollection<UpdateTimeLineViewModel>, ICollection<Timeline>>(data);
+        }
 
         public static List<TourBookingViewModel> MapTourBooking(List<TourBooking> data)
         {
