@@ -8,6 +8,7 @@ using Travel.Data.Interfaces;
 using Travel.Data.Repositories;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using static Travel.Shared.ViewModels.Travel.CreateTimeLineViewModel;
 
 namespace TravelApi.Controllers
 {
@@ -36,6 +37,21 @@ namespace TravelApi.Controllers
             {
                 var createObj = timelinee;
                 res = _timelineRes.Create(createObj);
+            }
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("update-timeline")]
+        public object update(ICollection<UpdateTimeLineViewModel> timelinee)
+        {
+            message = null;
+            //var result = _timelineRes.CheckBeforSave(frmData, ref message, false);
+            if (message == null)
+            {
+                var createObj = timelinee;
+                res = _timelineRes.Update(createObj);
             }
             return Ok(res);
         }

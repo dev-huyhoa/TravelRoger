@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using static Travel.Shared.ViewModels.Travel.CreateTimeLineViewModel;
 
 namespace Travel.Data.Interfaces
 {
@@ -13,6 +14,7 @@ namespace Travel.Data.Interfaces
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Create(ICollection<CreateTimeLineViewModel> input);
+        Response Update(ICollection<UpdateTimeLineViewModel> input);
         Response Get();
         Response GetTimelineByIdSchedule(string IdSchedule);
     }
