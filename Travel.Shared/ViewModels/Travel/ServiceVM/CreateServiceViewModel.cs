@@ -90,6 +90,8 @@ namespace Travel.Shared.ViewModels.Travel.ContractVM
         private string nameContract;
         private bool isDelete;
 
+
+
         public string ModifyBy { get => modifyBy; set => modifyBy = value; }
         public long ModifyDate { get => modifyDate; set => modifyDate = value; }
         public string Phone { get => phone; set => phone = value; }
@@ -97,5 +99,6 @@ namespace Travel.Shared.ViewModels.Travel.ContractVM
         public string Name { get => name; set => name = value; }
         public string NameContract { get => nameContract; set => nameContract = value; }
         public bool IsDelete { get => isDelete; set => isDelete = value; }
+  
     }
 }

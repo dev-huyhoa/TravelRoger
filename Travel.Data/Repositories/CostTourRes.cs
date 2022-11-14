@@ -175,6 +175,8 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                input.DepartureDate = DateTime.Parse("2023-01-01");
+                input.ReturnDate = DateTime.Parse("2023-01-05");
                 var hotel = (from x in _db.Hotels.AsNoTracking() 
                              where x.IdHotel == input.HotelId select x).FirstOrDefault();
                 var restaurant = (from x in _db.Restaurants.AsNoTracking()
@@ -183,10 +185,10 @@ namespace Travel.Data.Repositories
                              where x.IdPlace == input.PlaceId select x).FirstOrDefault();
                 CostTour cost =
                 cost = Mapper.MapCreateCost(input);
-                cost.PriceHotelDB = hotel.DoubleRoomPrice;
+                cost.PriceHotelDB = hotel.DoubleRoomPrice; // 1
                 cost.PriceHotelSR = hotel.SingleRoomPrice;
-                cost.PriceRestaurant = restaurant.ComboPrice;
-                cost.PriceTicketPlace = place.PriceTicket;
+                cost.PriceRestaurant = restaurant.ComboPrice; // 2000000
+                cost.PriceTicketPlace = place.PriceTicket; // 10000
                 //
                 CreateDatabase(cost);
                 // thêm schedule update giá
@@ -199,10 +201,15 @@ namespace Travel.Data.Repositories
                 schedule.AdditionalPriceHoliday = (cost.PriceHotelSR + (cost.PriceHotelSR * (holidayPercent / 100)));
                 schedule.TotalCostTourNotService = cost.TotalCostTourNotService;
 
-                float CostService = (cost.PriceHotelDB + cost.PriceRestaurant + cost.PriceTicketPlace);
+                // số ngày đi của tour
+                int countDay = Convert.ToInt16(Ultility.CountDay(input.DepartureDate, input.ReturnDate));
+
+                float CostService = (cost.PriceHotelDB   + cost.PriceRestaurant + cost.PriceTicketPlace) * countDay;
                 float VAT = schedule.Vat;
                 int Profit = schedule.Profit;
-                float FinalPrice = (cost.TotalCostTourNotService + CostService) + ((cost.TotalCostTourNotService + CostService) * VAT) + ((cost.TotalCostTourNotService + CostService) * Profit);
+                float totalPriceNotVatAndProfit = cost.TotalCostTourNotService + CostService ;
+                totalPriceNotVatAndProfit = totalPriceNotVatAndProfit + (totalPriceNotVatAndProfit * (VAT / 100));
+                float FinalPrice = totalPriceNotVatAndProfit + (totalPriceNotVatAndProfit * (Profit / 100));
                 schedule.FinalPrice = FinalPrice;
                 schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
                 UpdateDatabaseSchedule(schedule);

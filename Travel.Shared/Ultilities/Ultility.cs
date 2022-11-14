@@ -189,16 +189,16 @@ namespace Travel.Shared.Ultilities
                     var day = (todate.Date - fromdate.Date).TotalDays;
                     result = string.Format("{0}N{1}Đ", day + 1, day);
 
-                    DateTime fDate = fromdate;
-                    while (fDate.ToString("yyyyMMdd") != todate.ToString("yyyyMMdd"))
-                    {
-                        day++;
-                        fDate = fromdate.AddDays(day);
-                    }
-                    result = string.Format("{0}N{1}Đ", day + 1, day);
+                    //DateTime fDate = fromdate;
+                    //while (fDate.ToString("yyyyMMdd") != todate.ToString("yyyyMMdd"))
+                    //{
+                    //    day++;
+                    //    fDate = fromdate.AddDays(day);
+                    //}
+                    //result = string.Format("{0}N{1}Đ", day + 1, day);
                 }
             }
-            return result;
+            return result.Substring(0,1);
         }
         public static DateTime GetDateZeroTime(DateTime date)
         {

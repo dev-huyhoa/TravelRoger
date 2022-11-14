@@ -28,7 +28,8 @@ namespace Travel.Shared.ViewModels.Travel.CostTourVM
         private Guid hotelId;
         private Guid restaurantId;
         private Guid placeId;
-
+        private DateTime departureDate;
+        private DateTime returnDate;
         public string IdSchedule { get => idSchedule; set => idSchedule = value; }
         public float Breakfast { get => breakfast; set => breakfast = value; }
         public float Water { get => water; set => water = value; }
@@ -45,5 +46,7 @@ namespace Travel.Shared.ViewModels.Travel.CostTourVM
         public Guid PlaceId { get => placeId; set => placeId = value; }
         public bool IsHoliday { get => isHoliday; set => isHoliday = value; }
         public float TotalCostTourNotService { get => totalCostTourNotService; set => totalCostTourNotService = value; }
+        public DateTime DepartureDate { get => departureDate; set => departureDate = value; }
+        public DateTime ReturnDate { get => returnDate; set => returnDate = value; }
     }
 }

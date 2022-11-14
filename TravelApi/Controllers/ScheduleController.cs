@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Data.Repositories;
+using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 using TravelApi.Hubs;
@@ -62,6 +63,16 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("sia-sia")]
+        public object Updatecâc(DateTime a, DateTime b)
+        {
+            var caon = Ultility.CountDay(a, b);
+
+            var cut = 1;
+            return 0;
+        }
 
         [HttpGet]
         [Authorize]
