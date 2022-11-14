@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Travel.Context.Models.Travel;
 
-namespace Travel.Context.Migrations
+namespace Travel.Context.Migrations.Travel
 {
     [DbContext(typeof(TravelContext))]
-    partial class TravelContextModelSnapshot : ModelSnapshot
+    [Migration("20221114023438_db3")]
+    partial class db3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,10 +237,25 @@ namespace Travel.Context.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
+                    b.Property<bool>("IsBlackList")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsBlock")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("IsDelete")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
+
+                    b.Property<int>("Legit")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<string>("NameCustomer")
                         .IsRequired()
@@ -257,6 +274,11 @@ namespace Travel.Context.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
+
+                    b.Property<long>("TimeBlock")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L);
 
                     b.HasKey("IdCustomer");
 
@@ -319,6 +341,11 @@ namespace Travel.Context.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsBlock")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -348,6 +375,11 @@ namespace Travel.Context.Migrations
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
+
+                    b.Property<long>("TimeBlock")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L);
 
                     b.HasKey("IdEmployee");
 
@@ -406,6 +438,9 @@ namespace Travel.Context.Migrations
 
                     b.Property<Guid>("IdUserModify")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsTempdata")
                         .HasColumnType("bit");
@@ -523,6 +558,12 @@ namespace Travel.Context.Migrations
                     b.Property<Guid>("IdUserModify")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTempdata")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -565,8 +606,29 @@ namespace Travel.Context.Migrations
                     b.Property<long>("FromDate")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("IdAction")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("IdUserModify")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTempdata")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifyBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ModifyDate")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("ToDate")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("TypeAction")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Value")
                         .HasColumnType("int");
@@ -619,6 +681,12 @@ namespace Travel.Context.Migrations
                     b.Property<Guid>("IdUserModify")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTempdata")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -643,6 +711,24 @@ namespace Travel.Context.Migrations
                     b.HasKey("IdRestaurant");
 
                     b.ToTable("Restaurants");
+                });
+
+            modelBuilder.Entity("Travel.Context.Models.Review", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IdTour")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Rating")
+                        .HasMaxLength(12)
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("reviews");
                 });
 
             modelBuilder.Entity("Travel.Context.Models.Role", b =>
@@ -720,7 +806,13 @@ namespace Travel.Context.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid>("IdUserModify")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsHoliday")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTempData")
                         .HasColumnType("bit");
 
                     b.Property<bool>("Isdelete")
@@ -737,6 +829,12 @@ namespace Travel.Context.Migrations
 
                     b.Property<int>("MinCapacity")
                         .HasColumnType("int");
+
+                    b.Property<string>("ModifyBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ModifyDate")
+                        .HasColumnType("bigint");
 
                     b.Property<float>("PriceAdult")
                         .HasColumnType("real");
@@ -875,6 +973,9 @@ namespace Travel.Context.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsTempdata")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ModifyBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -913,9 +1014,9 @@ namespace Travel.Context.Migrations
                     b.ToTable("Tour");
                 });
 
-            modelBuilder.Entity("Travel.Context.Models.Tourbooking", b =>
+            modelBuilder.Entity("Travel.Context.Models.TourBooking", b =>
                 {
-                    b.Property<string>("IdTourbooking")
+                    b.Property<string>("IdTourBooking")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -974,8 +1075,8 @@ namespace Travel.Context.Migrations
                         .HasColumnType("nvarchar(14)");
 
                     b.Property<string>("Pincode")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<float>("RemainPrice")
                         .HasColumnType("real");
@@ -1003,18 +1104,18 @@ namespace Travel.Context.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.HasKey("IdTourbooking");
+                    b.HasKey("IdTourBooking");
 
                     b.HasIndex("PaymentId");
 
                     b.HasIndex("ScheduleId");
 
-                    b.ToTable("Tourbookings");
+                    b.ToTable("TourBookings");
                 });
 
-            modelBuilder.Entity("Travel.Context.Models.TourbookingDetails", b =>
+            modelBuilder.Entity("Travel.Context.Models.TourBookingDetails", b =>
                 {
-                    b.Property<string>("IdTourbookingDetails")
+                    b.Property<string>("IdTourBookingDetails")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -1046,7 +1147,7 @@ namespace Travel.Context.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("IdTourbookingDetails");
+                    b.HasKey("IdTourBookingDetails");
 
                     b.HasIndex("HotelId");
 
@@ -1054,7 +1155,7 @@ namespace Travel.Context.Migrations
 
                     b.HasIndex("RestaurantId");
 
-                    b.ToTable("tourbookingDetails");
+                    b.ToTable("tourBookingDetails");
                 });
 
             modelBuilder.Entity("Travel.Context.Models.Travel.OTP", b =>
@@ -1254,10 +1355,10 @@ namespace Travel.Context.Migrations
                     b.Navigation("Schedule");
                 });
 
-            modelBuilder.Entity("Travel.Context.Models.Tourbooking", b =>
+            modelBuilder.Entity("Travel.Context.Models.TourBooking", b =>
                 {
                     b.HasOne("Travel.Context.Models.Payment", "Payment")
-                        .WithMany("Tourbooking")
+                        .WithMany("TourBooking")
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1271,7 +1372,7 @@ namespace Travel.Context.Migrations
                     b.Navigation("Schedule");
                 });
 
-            modelBuilder.Entity("Travel.Context.Models.TourbookingDetails", b =>
+            modelBuilder.Entity("Travel.Context.Models.TourBookingDetails", b =>
                 {
                     b.HasOne("Travel.Context.Models.Hotel", "Hotel")
                         .WithMany("TourBookingDetails")
@@ -1279,9 +1380,9 @@ namespace Travel.Context.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Travel.Context.Models.Tourbooking", "Tourbooking")
-                        .WithOne("TourbookingDetails")
-                        .HasForeignKey("Travel.Context.Models.TourbookingDetails", "IdTourbookingDetails")
+                    b.HasOne("Travel.Context.Models.TourBooking", "TourBooking")
+                        .WithOne("TourBookingDetails")
+                        .HasForeignKey("Travel.Context.Models.TourBookingDetails", "IdTourBookingDetails")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1303,7 +1404,7 @@ namespace Travel.Context.Migrations
 
                     b.Navigation("Restaurant");
 
-                    b.Navigation("Tourbooking");
+                    b.Navigation("TourBooking");
                 });
 
             modelBuilder.Entity("Travel.Context.Models.Ward", b =>
@@ -1341,7 +1442,7 @@ namespace Travel.Context.Migrations
 
             modelBuilder.Entity("Travel.Context.Models.Payment", b =>
                 {
-                    b.Navigation("Tourbooking");
+                    b.Navigation("TourBooking");
                 });
 
             modelBuilder.Entity("Travel.Context.Models.Place", b =>
@@ -1387,9 +1488,9 @@ namespace Travel.Context.Migrations
                     b.Navigation("Schedules");
                 });
 
-            modelBuilder.Entity("Travel.Context.Models.Tourbooking", b =>
+            modelBuilder.Entity("Travel.Context.Models.TourBooking", b =>
                 {
-                    b.Navigation("TourbookingDetails");
+                    b.Navigation("TourBookingDetails");
                 });
 #pragma warning restore 612, 618
         }
