@@ -91,6 +91,7 @@ namespace TravelApi.Controllers
                                     auth.RoleId = result.RoleId;
                                     auth.Id = result.IdEmployee;
                                     auth.Name = result.NameEmployee;
+                                    auth.Phone = result.Phone;
                                     auth.Image = result.Image;
                                     auth.Email = result.Email;
 
@@ -204,6 +205,7 @@ namespace TravelApi.Controllers
                             auth.Token = tokenJWT;
                             auth.Id = result.IdCustomer;
                             auth.Name = result.NameCustomer;
+                            auth.Phone = result.Phone;
                             auth.Email = result.Email;
 
                             return Ok(Ultility.Responses("Đăng nhập thành công !", Enums.TypeCRUD.Success.ToString(), auth));

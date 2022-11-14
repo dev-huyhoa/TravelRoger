@@ -120,6 +120,10 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(vat))
                 {
                 }
+                var profit = PrCommon.GetString("profit", frmData);
+                if (String.IsNullOrEmpty(vat))
+                {
+                }
                 var minCapacity = PrCommon.GetString("minCapacity", frmData);
                 if (String.IsNullOrEmpty(minCapacity))
                 {
@@ -159,6 +163,7 @@ namespace Travel.Data.Repositories
 
                     // price 
                     updateObj.Vat = float.Parse(vat);
+                    updateObj.Profit = int.Parse(profit);
                     return JsonSerializer.Serialize(updateObj);
                 }
                 CreateScheduleViewModel createObj = new CreateScheduleViewModel();
@@ -168,6 +173,7 @@ namespace Travel.Data.Repositories
                 createObj.PromotionId = Convert.ToInt32(promotionId);
                 createObj.Description = description;
                 createObj.Vat = float.Parse(vat);
+                createObj.Profit = int.Parse(profit);
                 createObj.DeparturePlace = departurePlace;
                 createObj.DepartureDate = long.Parse(departureDate);
                 createObj.ReturnDate = long.Parse(returnDate);
@@ -1632,7 +1638,9 @@ namespace Travel.Data.Repositories
                 var schedule = (from x in _db.Schedules.AsNoTracking()
                                 where x.IdSchedule == idSchedule
                                 select x).FirstOrDefault();
-
+                var timelines = (from x in _db.Timelines
+                                where x.IdSchedule == idSchedule
+                                select x).ToList();
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
@@ -1654,9 +1662,13 @@ namespace Travel.Data.Repositories
                     {
                         if (schedule.TypeAction == "insert")
                         {
+                            if (timelines.Count > 0)
+                            {
+                                _db.RemoveRange(timelines);
+                                SaveChange();
+                            }
                             DeleteDatabase(schedule);
                             SaveChange();
-
                             return Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
                         }
                         else if (schedule.TypeAction == "update")
@@ -1685,7 +1697,7 @@ namespace Travel.Data.Repositories
                             schedule.PromotionId = scheduleTemp.PromotionId;
                             schedule.ReturnDate = scheduleTemp.ReturnDate;
                             schedule.Vat = scheduleTemp.Vat;
-
+                            schedule.Profit = scheduleTemp.Profit;
 
                             schedule.TimePromotion = scheduleTemp.TimePromotion;
                             #endregion
@@ -1832,7 +1844,7 @@ namespace Travel.Data.Repositories
                         schedule.PromotionId = scheduleTemp.PromotionId;
                         schedule.ReturnDate = scheduleTemp.ReturnDate;
                         schedule.Vat = scheduleTemp.Vat;
-
+                        schedule.Profit = scheduleTemp.Profit;
 
                         schedule.TimePromotion = scheduleTemp.TimePromotion;
                         #endregion
@@ -1914,6 +1926,7 @@ namespace Travel.Data.Repositories
                 schedule.MinCapacity = input.MinCapacity;
                 schedule.ReturnDate = input.ReturnDate;
                 schedule.Vat = input.Vat;
+                schedule.Profit = input.Profit;
                 schedule.ModifyBy = userLogin.NameEmployee;
                 schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 #endregion

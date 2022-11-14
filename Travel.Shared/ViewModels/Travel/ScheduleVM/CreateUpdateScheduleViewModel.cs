@@ -49,6 +49,7 @@ namespace Travel.Shared.ViewModels.Travel
         private int maxCapacity;
         private float quantityChild;
         private float vat;
+        private int profit;
         private int status;
 
 
@@ -78,5 +79,6 @@ namespace Travel.Shared.ViewModels.Travel
         public string Alias { get => alias; set => alias = value; }
         public float Vat { get => vat; set => vat = value; }
         public string DeparturePlace { get => departurePlace; set => departurePlace = value; }
+        public int Profit { get => profit; set => profit = value; }
     }
 }
