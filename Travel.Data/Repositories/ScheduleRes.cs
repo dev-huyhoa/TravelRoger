@@ -132,10 +132,7 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(maxCapacity))
                 {
                 }
-                var profit = PrCommon.GetString("profit", frmData);
-                if (String.IsNullOrEmpty(profit))
-                {
-                }
+              
                 var idUserModify = PrCommon.GetString("idUserModify", frmData);
                 if (String.IsNullOrEmpty(idUserModify))
                 {

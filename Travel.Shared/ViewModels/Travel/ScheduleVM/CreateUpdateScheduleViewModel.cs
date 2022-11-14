@@ -51,7 +51,6 @@ namespace Travel.Shared.ViewModels.Travel
         private float vat;
         private int profit;
         private int status;
-        private int profit;
 
 
 
