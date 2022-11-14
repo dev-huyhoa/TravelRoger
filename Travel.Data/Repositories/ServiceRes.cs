@@ -1489,7 +1489,18 @@ namespace Travel.Data.Repositories
                     keywords.KwPhone = "";
 
                 }
-               
+                var KwModifyBy = PrCommon.GetString("modifyBy", frmData).Trim();
+                if (!String.IsNullOrEmpty(KwModifyBy))
+                {
+                    keywords.KwModifyBy = KwModifyBy.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwModifyBy = "";
+
+                }
+
+
 
                 var fromDate = PrCommon.GetString("modifyDateFrom", frmData);
                 if (!String.IsNullOrEmpty(fromDate))
@@ -1521,6 +1532,7 @@ namespace Travel.Data.Repositories
                         listHotel = (from x in _db.Hotels
                                      where x.NameHotel.ToLower().Contains(keywords.KwName) &&
                                            x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                           x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                            x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                            keywords.KwTypeActions.Contains(x.TypeAction) &&
                                            x.ModifyDate >= keywords.KwFromDate &&
@@ -1536,6 +1548,7 @@ namespace Travel.Data.Repositories
                             listHotel = (from x in _db.Hotels
                                          where x.NameHotel.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                 x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                 keywords.KwTypeActions.Contains(x.TypeAction) &&
                                                x.ModifyDate <= keywords.KwToDate
@@ -1548,6 +1561,7 @@ namespace Travel.Data.Repositories
                             listHotel = (from x in _db.Hotels
                                          where x.NameHotel.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                 x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                 keywords.KwTypeActions.Contains(x.TypeAction) &&
                                                x.ModifyDate >= keywords.KwFromDate
@@ -1560,6 +1574,7 @@ namespace Travel.Data.Repositories
                             listHotel = (from x in _db.Hotels
                                          where x.NameHotel.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                 x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                keywords.KwTypeActions.Contains(x.TypeAction)
                                          orderby x.ModifyDate descending
@@ -1574,6 +1589,7 @@ namespace Travel.Data.Repositories
                         listHotel = (from x in _db.Hotels
                                      where x.NameHotel.ToLower().Contains(keywords.KwName) &&
                                            x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                             x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                            x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                            x.ModifyDate >= keywords.KwFromDate &&
                                            x.ModifyDate <= keywords.KwToDate
@@ -1588,6 +1604,7 @@ namespace Travel.Data.Repositories
                             listHotel = (from x in _db.Hotels
                                          where x.NameHotel.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                 x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                x.ModifyDate <= keywords.KwToDate
 
@@ -1599,6 +1616,7 @@ namespace Travel.Data.Repositories
                             listHotel = (from x in _db.Hotels
                                          where x.NameHotel.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                 x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                x.ModifyDate >= keywords.KwFromDate
 
@@ -1610,6 +1628,7 @@ namespace Travel.Data.Repositories
                             listHotel = (from x in _db.Hotels
                                          where x.NameHotel.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                 x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting)
                                          orderby x.ModifyDate descending
                                          select x).ToList();
@@ -1845,7 +1864,16 @@ namespace Travel.Data.Repositories
 
                 }
 
+                var KwModifyBy = PrCommon.GetString("modifyBy", frmData).Trim();
+                if (!String.IsNullOrEmpty(KwModifyBy))
+                {
+                    keywords.KwModifyBy = KwModifyBy.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwModifyBy = "";
 
+                }
                 var fromDate = PrCommon.GetString("modifyDateFrom", frmData);
                 if (!String.IsNullOrEmpty(fromDate))
                 {
@@ -1875,7 +1903,8 @@ namespace Travel.Data.Repositories
                     {
                         listPlace = (from x in _db.Places
                                      where x.NamePlace.ToLower().Contains(keywords.KwName) &&
-                                           x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                           x.Phone.ToLower().Contains(keywords.KwPhone) && 
+                                           x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                            x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                            keywords.KwTypeActions.Contains(x.TypeAction) &&
                                            x.ModifyDate >= keywords.KwFromDate &&
@@ -1891,6 +1920,7 @@ namespace Travel.Data.Repositories
                             listPlace = (from x in _db.Places
                                          where x.NamePlace.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                 keywords.KwTypeActions.Contains(x.TypeAction) &&
                                                x.ModifyDate <= keywords.KwToDate
@@ -1903,6 +1933,7 @@ namespace Travel.Data.Repositories
                             listPlace = (from x in _db.Places
                                          where x.NamePlace.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                 keywords.KwTypeActions.Contains(x.TypeAction) &&
                                                x.ModifyDate >= keywords.KwFromDate
@@ -1915,6 +1946,7 @@ namespace Travel.Data.Repositories
                             listPlace = (from x in _db.Places
                                           where x.NamePlace.ToLower().Contains(keywords.KwName) &&
                                                 x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                      x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                keywords.KwTypeActions.Contains(x.TypeAction)
                                          orderby x.ModifyDate descending
@@ -1929,6 +1961,7 @@ namespace Travel.Data.Repositories
                         listPlace = (from x in _db.Places
                                      where x.NamePlace.ToLower().Contains(keywords.KwName) &&
                                        x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                             x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                            x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                            x.ModifyDate >= keywords.KwFromDate &&
                                            x.ModifyDate <= keywords.KwToDate
@@ -1943,6 +1976,7 @@ namespace Travel.Data.Repositories
                             listPlace = (from x in _db.Places
                                          where x.NamePlace.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                x.ModifyDate <= keywords.KwToDate
 
@@ -1954,6 +1988,7 @@ namespace Travel.Data.Repositories
                             listPlace = (from x in _db.Places
                                          where x.NamePlace.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                x.ModifyDate >= keywords.KwFromDate
 
@@ -1965,6 +2000,7 @@ namespace Travel.Data.Repositories
                             listPlace = (from x in _db.Places
                                          where x.NamePlace.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting)
                                          orderby x.ModifyDate descending
                                          select x).ToList();
@@ -2014,14 +2050,14 @@ namespace Travel.Data.Repositories
 
                 }
 
-                var KwAddress = PrCommon.GetString("Address", frmData).Trim();
-                if (!String.IsNullOrEmpty(KwAddress))
+                var KwModifyBy = PrCommon.GetString("modifyBy", frmData).Trim();
+                if (!String.IsNullOrEmpty(KwModifyBy))
                 {
-                    keywords.KwAddress = KwAddress.Trim().ToLower();
+                    keywords.KwModifyBy = KwModifyBy.Trim().ToLower();
                 }
                 else
                 {
-                    keywords.KwAddress = "";
+                    keywords.KwModifyBy = "";
 
                 }
 
@@ -2055,6 +2091,7 @@ namespace Travel.Data.Repositories
                         listRes = (from x in _db.Restaurants
                                      where x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
                                            x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                 x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                            x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                            keywords.KwTypeActions.Contains(x.TypeAction) &&
                                            x.ModifyDate >= keywords.KwFromDate &&
@@ -2070,6 +2107,7 @@ namespace Travel.Data.Repositories
                             listRes = (from x in _db.Restaurants
                                          where x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                 keywords.KwTypeActions.Contains(x.TypeAction) &&
                                                x.ModifyDate <= keywords.KwToDate
@@ -2082,6 +2120,7 @@ namespace Travel.Data.Repositories
                             listRes = (from x in _db.Restaurants
                                          where x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                 keywords.KwTypeActions.Contains(x.TypeAction) &&
                                                x.ModifyDate >= keywords.KwFromDate
@@ -2094,6 +2133,7 @@ namespace Travel.Data.Repositories
                             listRes = (from x in _db.Restaurants
                                          where x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                keywords.KwTypeActions.Contains(x.TypeAction)
                                          orderby x.ModifyDate descending
@@ -2108,6 +2148,7 @@ namespace Travel.Data.Repositories
                         listRes = (from x in _db.Restaurants
                                      where x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
                                            x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                 x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                            x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                            x.ModifyDate >= keywords.KwFromDate &&
                                            x.ModifyDate <= keywords.KwToDate
@@ -2122,6 +2163,7 @@ namespace Travel.Data.Repositories
                             listRes = (from x in _db.Restaurants
                                          where x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                x.ModifyDate <= keywords.KwToDate
 
@@ -2133,6 +2175,7 @@ namespace Travel.Data.Repositories
                             listRes = (from x in _db.Restaurants
                                          where x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting) &&
                                                x.ModifyDate >= keywords.KwFromDate
 
@@ -2144,6 +2187,7 @@ namespace Travel.Data.Repositories
                             listRes = (from x in _db.Restaurants
                                          where x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                     x.ModifyBy.ToLower().Contains(keywords.KwModifyBy) &&
                                                x.Approve == Convert.ToInt16(Enums.ApproveStatus.Waiting)
                                          orderby x.ModifyDate descending
                                          select x).ToList();
