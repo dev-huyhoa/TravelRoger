@@ -15,6 +15,7 @@ using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.TourBookingVM;
 using Microsoft.Extensions.Configuration;
+using Travel.Shared.SpeedSMSAPI;
 
 namespace Travel.Data.Repositories
 {
@@ -223,7 +224,7 @@ namespace Travel.Data.Repositories
 
                 //Gửi sms
                 //SpeedSMSAPI api = new SpeedSMSAPI("eHTE2iExhWKHCRk4OvTVT2gFHuPl4wDd");
-                //String[] phones = new String[] { "0769499550" };
+                //String[] phones = new String[] { tourbooking.Phone };
                 //String str = "Lụm";
                 //String response = api.sendSMS(phones, str, 5, "d675521d17749e04");
 

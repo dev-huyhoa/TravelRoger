@@ -163,6 +163,7 @@ namespace Travel.Data.Repositories
                 tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 tour.TypeAction = "insert";
                 CreateDatabase(tour);
+                SaveChange();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
@@ -431,8 +432,8 @@ namespace Travel.Data.Repositories
                 tourOld.IdAction = tourOld.IdTour.ToString();
                 tourOld.IdTour = $"{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}TempData";
                 tourOld.IsTempdata = true;
-
-                _db.Tour.Add(tourOld);
+                CreateDatabase<Tour>(tourOld);
+                SaveChange();
 
 
                 #region setdata
@@ -450,7 +451,9 @@ namespace Travel.Data.Repositories
                 tour.Status = (int)TourStatus.Normal;
                 #endregion
 
-                UpdateDatabase(tour);
+
+                UpdateDatabase<Tour>(tour);
+                SaveChange();
 
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
             }
@@ -521,6 +524,7 @@ namespace Travel.Data.Repositories
                             tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                             tour.Status = (int)TourStatus.Normal;
                             UpdateDatabase(tour);
+                            SaveChange();
                             return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                         }
                     }
@@ -531,7 +535,7 @@ namespace Travel.Data.Repositories
                             if (tour.TypeAction == "insert")
                             {
                                 DeleteDatabase(tour);
-
+                                SaveChange();
 
                                 return Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
                             }
@@ -558,7 +562,7 @@ namespace Travel.Data.Repositories
 
                                 _db.Entry(tour).State = EntityState.Modified;
                                 DeleteDatabase(tourTemp);
-
+                                SaveChange();
                                 return Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
 
                             }
@@ -570,7 +574,7 @@ namespace Travel.Data.Repositories
                                 tour.IsDelete = true;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
                                 UpdateDatabase(tour);
-
+                                SaveChange();
                                 return Ultility.Responses("Đã hủy yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
                             }
@@ -582,7 +586,7 @@ namespace Travel.Data.Repositories
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
                                 tour.Status = (int)TourStatus.Promotion;
                                 UpdateDatabase(tour);
-
+                                SaveChange();
 
                                 return Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                             }
@@ -652,12 +656,13 @@ namespace Travel.Data.Repositories
                         tour.TypeAction = null;
                         tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
-
+                        SaveChange();
                         // delete tempdata
                         var tourTemp = (from x in _db.Tour.AsNoTracking()
                                         where x.IdTour == idTourTemp
                                         select x).FirstOrDefault();
                         DeleteDatabase(tourTemp);
+                        SaveChange();
                     }
                     else if (tour.TypeAction == "insert")
                     {
@@ -666,6 +671,7 @@ namespace Travel.Data.Repositories
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
+                        SaveChange();
                     }
                     else if (tour.TypeAction == "restore")
                     {
@@ -675,7 +681,7 @@ namespace Travel.Data.Repositories
                         tour.IsDelete = false;
                         tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
-
+                        SaveChange();
                     }
                     else
                     {
@@ -685,7 +691,10 @@ namespace Travel.Data.Repositories
                         tour.IsDelete = true;
                         tour.Status = (int)TourStatus.Normal;
                         UpdateDatabase(tour);
+                        SaveChange();
                     }
+
+                    SaveChange();
                     return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -738,6 +747,7 @@ namespace Travel.Data.Repositories
                         #endregion
                         _db.Entry(tour).State = EntityState.Modified;
                         DeleteDatabase(tourTemp);
+                        SaveChange();
                     }
 
                     else if (tour.TypeAction == "restore")
@@ -747,6 +757,7 @@ namespace Travel.Data.Repositories
                         tour.IsDelete = true;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         UpdateDatabase(tour);
+                        SaveChange();
 
                     }
                     else // delete
@@ -757,8 +768,10 @@ namespace Travel.Data.Repositories
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.Status = (int)TourStatus.Promotion;
                         UpdateDatabase(tour);
-
+                        SaveChange();
                     }
+
+                    SaveChange();
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -793,7 +806,7 @@ namespace Travel.Data.Repositories
                     tour.ModifyBy = userLogin.NameEmployee;
                     tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     UpdateDatabase(tour);
-
+                    SaveChange();
                     return Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -1004,6 +1017,8 @@ namespace Travel.Data.Repositories
                 };
                 listReviewByTour.Add(review);
                 CreateDatabase(review);
+                //SaveChange();
+
                 tour.Rating = listReviewByTour.Average(x => x.Rating);
                 UpdateDatabase(tour);
                  SaveChange();
