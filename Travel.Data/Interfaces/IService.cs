@@ -50,5 +50,6 @@ namespace Travel.Data.Interfaces
         Response SearchPlace(JObject frmData);
         Response SearchPlaceWaiting(JObject frmData);
         Response SearchRestaurant(JObject frmData);
+        Response SearchRestaurantWaiting(JObject frmData);
     }
 }
