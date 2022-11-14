@@ -16,6 +16,7 @@ using Travel.Shared.ViewModels.Travel;
 
 namespace Travel.Data.Repositories
 {
+
     public class CarRes : ICars
     {
         private readonly TravelContext _db;
@@ -47,7 +48,12 @@ namespace Travel.Data.Repositories
         {
             _db.SaveChanges();
         }
-
+        private Employee GetCurrentUser(Guid IdUserModify)
+        {
+            return (from x in _db.Employees.AsNoTracking()
+                    where x.IdEmployee == IdUserModify
+                    select x).FirstOrDefault();
+        }
         public string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate) // hàm đăng nhập  
         {
             try
@@ -82,15 +88,25 @@ namespace Travel.Data.Repositories
                 if (!String.IsNullOrEmpty(status))
                 {
                 }
+                var idUserModify = PrCommon.GetString("idUserModify", frmData);
+                if (String.IsNullOrEmpty(idUserModify))
+                {
+                }
 
-                //if (isUpdate)
-                //{
-                //    UpdateRoleViewModel objUpdate = new UpdateRoleViewModel();
-                //    objUpdate.IdRole = int.Parse(idRole);
-                //    objUpdate.NameRole = nameRole;
-                //    objUpdate.Description = description;
-                //    return JsonSerializer.Serialize(objUpdate);
-                //}
+                if (isUpdate)
+                {
+                    UpdateCarViewModel objUpdate = new UpdateCarViewModel();
+                    objUpdate.IdCar = Guid.Parse(idCar);
+                    objUpdate.NameDriver = nameDriver;
+                    objUpdate.AmountSeat = int.Parse(amountSeat);
+                    objUpdate.Status = int.Parse(status);
+                    objUpdate.LiscensePlate = liscenseplate;
+                    objUpdate.Phone = phone;
+                    objUpdate.IdUserModify = Guid.Parse(idUserModify);
+                    objUpdate.ModifyBy = GetCurrentUser(objUpdate.IdUserModify).NameEmployee;
+                    objUpdate.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    return JsonSerializer.Serialize(objUpdate);
+                }
 
                 CreateCarViewModel objCreate = new CreateCarViewModel();
                 //objCreate.IdCar = Guid.Parse(idCar);
@@ -98,7 +114,10 @@ namespace Travel.Data.Repositories
                 objCreate.AmountSeat =  int.Parse(amountSeat);
                 objCreate.Status = 0;
                 objCreate.LiscensePlate = liscenseplate;
-                objCreate.Phone = phone;
+                objCreate.Phone = phone;     
+                objCreate.IdUserModify = Guid.Parse(idUserModify);
+                objCreate.ModifyBy = GetCurrentUser(objCreate.IdUserModify).NameEmployee;
+                objCreate.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 return JsonSerializer.Serialize(objCreate);
 
             }
@@ -120,7 +139,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var unixTimeOneDay = 86400000;
+                //var unixTimeOneDay = 86400000;
 
                 var listCarInSchedule = (from x in _db.Schedules.AsNoTracking()
                                          where x.TourId == idTour
@@ -152,8 +171,6 @@ namespace Travel.Data.Repositories
         {
             try
             {
-          
-
                 var listCar = (from x in _db.Cars.AsNoTracking() select x).ToList();
                 var result = Mapper.MapCar(listCar);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -170,14 +187,11 @@ namespace Travel.Data.Repositories
                 Car car = new Car();
                 car = Mapper.MapCreateCar(input);
                 CreateDatabase<Car>(car);
-
-                UpdateDatabase<Car>(car);
                 SaveChange();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
-
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
@@ -205,6 +219,65 @@ namespace Travel.Data.Repositories
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
+            }
+        }
+
+        public Response UpdateCar(UpdateCarViewModel input)
+        {
+            try
+            {
+               var userLogin = GetCurrentUser(input.IdUserModify);
+
+                var car = (from x in _db.Cars.AsNoTracking()
+                                     where x.IdCar == input.IdCar
+                                     select x).FirstOrDefaultAsync();
+                var objCar = new Car();
+                objCar.Status = input.Status;
+                objCar.LiscensePlate = input.LiscensePlate;
+                objCar.NameDriver = input.NameDriver;
+                objCar.Phone = input.Phone;
+                objCar.AmountSeat = input.AmountSeat;
+                UpdateDatabase<Car>(objCar);
+                SaveChange();
+                return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response DeleteCar(Guid id, Guid idUser)
+        {
+            try
+            {
+                var car = (from x in _db.Cars.AsNoTracking()
+                           where x.IdCar == id
+                           select x).FirstOrDefault();
+                var userLogin = (from x in _db.Employees.AsNoTracking()
+                                 where x.IdEmployee == idUser
+                                 select x).FirstOrDefault();
+                if (car != null)
+                {
+                    car.ModifyBy = userLogin.NameEmployee;
+                    car.IdUserModify = userLogin.IdEmployee;
+                    car.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    car.IsDelete = true;
+                    UpdateDatabase<Car>(car);
+                    SaveChange();
+                    return Ultility.Responses("Đã xóa !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+
+                }
+
+            }
+            catch (Exception e)
+            {
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
     }

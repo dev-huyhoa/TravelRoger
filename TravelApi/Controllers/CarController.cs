@@ -18,12 +18,12 @@ namespace TravelApi.Controllers
     [ApiController]
     public class CarController : ControllerBase
     {
-        private ICars car;
+        private ICars _car;
         private Notification message;
         private Response res;
-        public CarController(ICars _car)
+        public CarController(ICars car)
         {
-            car = _car;
+            _car = car;
             res = new Response();
         }
 
@@ -32,7 +32,7 @@ namespace TravelApi.Controllers
         [Route("gets-car")]
         public object Gets()
         {
-            res = car.Gets();
+            res = _car.Gets();
             return Ok(res);
         }
         [HttpGet]
@@ -40,7 +40,7 @@ namespace TravelApi.Controllers
         [Route("gets-selectbox-car")]
         public object GetsSelectBoxCar(long fromDate, long toDate, string idTour)
         {
-            res = car.GetsSelectBoxCar(fromDate,toDate, idTour);
+            res = _car.GetsSelectBoxCar(fromDate, toDate, idTour);
             return Ok(res);
         }
 
@@ -49,7 +49,7 @@ namespace TravelApi.Controllers
         [Route("statistic-car")]
         public object StatisticCar()
         {
-            res = car.StatisticCar();
+            res = _car.StatisticCar();
             return Ok(res);
         }
 
@@ -60,17 +60,45 @@ namespace TravelApi.Controllers
         {
 
             message = null;
-            var result = car.CheckBeforeSave(frmData, ref message, false);
+            var result = _car.CheckBeforeSave(frmData, ref message, false);
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateCarViewModel>(result);
-                res = car.Create(createObj);
+                res = _car.Create(createObj);
             }
             else
             {
                 res.Notification = message;
             }
 
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("update-car")]
+        public object UpdateRestaurant([FromBody] JObject frmData)
+        {
+            message = null;
+            var result = _car.CheckBeforeSave(frmData, ref message, true);
+            if (message == null)
+            {
+                var updateObj = JsonSerializer.Deserialize<UpdateCarViewModel>(result);
+                res = _car.UpdateCar(updateObj);
+            }
+            else
+            {
+
+            }
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("delete-car")]
+        public object DeleteCar(Guid idCar, Guid idUser)
+        {
+            res = _car.DeleteCar(idCar, idUser);
             return Ok(res);
         }
     }

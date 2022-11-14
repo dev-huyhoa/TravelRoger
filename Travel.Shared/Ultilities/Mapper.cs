@@ -451,7 +451,14 @@ namespace Travel.Shared.Ultilities
                    .ForMember(dto => dto.NameDriver, opt => opt.MapFrom(src => src.NameDriver))
                    .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone));
 
-            cfg.CreateMap<Car, CarViewModel>()
+                cfg.CreateMap<UpdateCarViewModel, Car>()
+                   .ForMember(dto => dto.IdCar, opt => opt.MapFrom(src => src.IdCar))
+                   .ForMember(dto => dto.LiscensePlate, opt => opt.MapFrom(src => src.LiscensePlate))
+                   .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
+                   .ForMember(dto => dto.NameDriver, opt => opt.MapFrom(src => src.NameDriver))
+                   .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))                        
+                   .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
+                cfg.CreateMap<Car, CarViewModel>()
                    .ForMember(dto => dto.IdCar, opt => opt.MapFrom(src => src.IdCar))
                    .ForMember(dto => dto.LiscensePlate, opt => opt.MapFrom(src => src.LiscensePlate))
                    .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
@@ -690,7 +697,7 @@ namespace Travel.Shared.Ultilities
                 .ForMember(dto => dto.IsHoliday, opt => opt.MapFrom(src => src.IsHoliday))
 
                 .ForMember(dto => dto.TotalCostTourNotService, opt => opt.MapFrom(src =>
-                        (src.Breakfast + src.Water + src.SellCost + src.OtherPrice + src.InsuranceFee) + (src.Depreciation + src.Tolls + (src.FeeGas * src.Distance))
+                       (src.FeeGas * (src.Distance / 10)) + (src.Breakfast + src.Water + src.SellCost + src.OtherPrice + src.InsuranceFee + src.Depreciation + src.Tolls)
                 ))
                 ;
                 // review

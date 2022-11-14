@@ -13,7 +13,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Context.Models;
 using Travel.Data.Interfaces;
+using Payment = PayPal.v1.Payments.Payment;
 
 namespace TravelApi.Controllers
 {
@@ -24,13 +26,19 @@ namespace TravelApi.Controllers
         private readonly string _clientIdPaypal;
         private readonly string _secretKeyPaypal;
         private readonly string _urlSandBoxAPI;
+        private readonly ISchedule _schedule;
+        private readonly ITour _tour;
+        private readonly ITourBooking _tourbooking;
         public double TyGiaUSD = 25000;
 
-        public PayController(IConfiguration config, ITourBooking tourBookingRes)
+        public PayController(IConfiguration config, ITourBooking tourBookingRes, ISchedule schedule, ITourBooking tourbooking, ITour tour)
         {
             _clientIdPaypal = config["PaypalSettings:ClientId"];
             _secretKeyPaypal = config["PaypalSettings:SecretKey"];
             _urlSandBoxAPI = config["PaypalSettings:UrlAPI"];
+            _schedule = schedule;
+            _tourbooking = tourbooking;
+            _tour = tour;
         }
         //private HttpClient GetPaypalHttpClient()
         //{
@@ -82,24 +90,54 @@ namespace TravelApi.Controllers
         [Route("checkout-paypal")]
         public async Task<object> PaypalCheckout(string idTourBooking)
         {
+
             var environment = new SandboxEnvironment(_clientIdPaypal, _secretKeyPaypal);
             var client = new PayPalHttpClient(environment);
 
+
+            #region get schedule
+            var tourBookingRes = await _tourbooking.TourBookingById(idTourBooking);
+            var tourBooking = System.Text.Json.JsonSerializer.Deserialize<TourBooking>
+                (System.Text.Json.JsonSerializer.Serialize(tourBookingRes.Content));
+
+            var scheduleRes = await _schedule.Get(tourBooking.ScheduleId);
+            var schedule = System.Text.Json.JsonSerializer.Deserialize<Schedule>
+     (System.Text.Json.JsonSerializer.Serialize(scheduleRes.Content));
+
+
+
+            var tourRes = await _tour.GetTourById(schedule.IdSchedule);
+            var tour = System.Text.Json.JsonSerializer.Deserialize<Tour>
+     (System.Text.Json.JsonSerializer.Serialize(tourRes.Content));
+
+            #endregion
             var itemList = new ItemList()
             {
                 Items = new List<Item>()
             };
-            var total = Math.Round(1500000/TyGiaUSD,2);
-            
+
+            float total = 0;
+
+
+            if (tourBooking.ValuePromotion != 0)
+            {
+                total = (float)(tourBooking.TotalPricePromotion);
+            }
+            else
+            {
+                total = (float)(tourBooking.TotalPrice);
+            }
+
+
             var item = new Item()
             {
-                Name = "Tour du lịch",
-                Description = "tu tu",
+                Name = tour.NameTour,
+                Description = schedule.Description,
                 Currency = "USD",
                 Price = total.ToString(),
                 Quantity = "1",
                 Sku = "sku",
-                Tax = "0"
+                Tax = tourBooking.Vat.ToString()
             };
             itemList.Items.Add(item);
 
@@ -125,7 +163,7 @@ namespace TravelApi.Controllers
                         ItemList = itemList,
                         Description = "Hàn hóa xịn",
                         InvoiceNumber = "ko ko ko ko "
-                            
+
                     }
                 },
                 RedirectUrls = new RedirectUrls()
@@ -136,18 +174,15 @@ namespace TravelApi.Controllers
                 Payer = new Payer()
                 {
                     PaymentMethod = "paypal"
-                }   
+                }
             };
-
             PaymentCreateRequest request = new PaymentCreateRequest();
             request.RequestBody(payment);
-
             try
             {
                 var response = await client.Execute(request);
                 var statusCode = response.StatusCode;
                 Payment result = response.Result<Payment>();
-
                 var links = result.Links.GetEnumerator();
                 string paypalRedirectUrl = null;
                 string paypalRedirectUrlExec = null;
@@ -158,7 +193,8 @@ namespace TravelApi.Controllers
                     if (lnk.Rel.ToLower().Trim().Equals("approval_url"))
                     {
                         paypalRedirectUrl = lnk.Href;
-                    }else if (lnk.Rel.ToLower().Trim().Equals("execute"))
+                    }
+                    else if (lnk.Rel.ToLower().Trim().Equals("execute"))
                     {
                         paypalRedirectUrlExec = lnk.Href;
                     }
@@ -167,15 +203,14 @@ namespace TravelApi.Controllers
                         paypalRedirectUrlFinal = lnk.Href;
                     }
                 }
+
                 return new { status = 1, url = paypalRedirectUrl, urlExecute = paypalRedirectUrlExec, urlFinal = paypalRedirectUrlFinal };
             }
             catch (HttpException httpException)
             {
                 var statusCode = httpException.StatusCode;
                 var debugId = httpException.Headers.GetValues("PayPal-Debug-Id").FirstOrDefault();
-
-                return new { status = 1, url = payment.RedirectUrls.CancelUrl , DebugId = debugId, StatusCode= statusCode};
-
+                return new { status = 1, url = payment.RedirectUrls.CancelUrl, DebugId = debugId, StatusCode = statusCode };
             }
         }
 

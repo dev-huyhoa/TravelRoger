@@ -13,8 +13,11 @@ namespace Travel.Data.Interfaces
     {
         string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate);
         Response Gets();
+        Response UpdateCar(UpdateCarViewModel input);
         Response Create(CreateCarViewModel input);
         Response StatisticCar();
         Response GetsSelectBoxCar(long fromDate, long toDate, string idTour);
+        Response DeleteCar(Guid id, Guid idUser);
+
     }
 }

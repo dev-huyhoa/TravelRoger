@@ -16,7 +16,10 @@ namespace Travel.Context.Models
         public string NameDriver { get; set; }
         public string Phone { get; set; }
 
-
+        public Guid IdUserModify { get; set; }
+        public string ModifyBy { get; set; }
+        public long ModifyDate { get; set; }
+        public bool IsDelete { get; set; }
         public  ICollection<Schedule> Schedules { get; set; }
 
     }
