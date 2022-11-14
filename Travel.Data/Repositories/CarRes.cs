@@ -122,23 +122,31 @@ namespace Travel.Data.Repositories
             {
                 var unixTimeOneDay = 86400000;
 
-                var listCarInSchedule = (from x in _db.Schedules.AsNoTracking()
+                var listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
                                          where x.TourId == idTour
-                                         && (fromDate >= x.DepartureDate && fromDate <= (x.ReturnDate + 1))
+                                         && (fromDate >= x.DepartureDate && fromDate <= (x.ReturnDate + 86400000))
                                          orderby x.ReturnDate ascending
                                          select x.CarId);
 
-                var a = (from x in _db.Schedules
-                         where x.TourId == idTour
-                         && x.DepartureDate > fromDate
-                         //&& !(from s in listCarInSchedule select s).Contains(x.CarId)
-                         && toDate >=  (x.ReturnDate + 1)
-                         select x.CarId);
+                var scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
+                                           where x.TourId == idTour
+                                           && x.DepartureDate >= fromDate
+                                           orderby x.DepartureDate ascending
+                                           select x);
+                var listCarShouldRemove2 = (from x in scheduleDepartDateLargerToDate
+                            where !(from s in listCarShouldRemove1 select s).Contains(x.CarId)
+                            && (toDate + 86400000) > x.ReturnDate
+                            select x.CarId).Distinct();
 
+                var listShouldRemove = listCarShouldRemove1.Concat(listCarShouldRemove2);
 
                 var listCar = (from x in _db.Cars.AsNoTracking()
-                               where !listCarInSchedule.Any(c => c == x.IdCar)
+                               where !listShouldRemove.Any(c => c == x.IdCar)
                                select x).ToList();
+                if (listCar.Count() == 0)
+                {
+                    return Ultility.Responses("Ngày bạn chọn hiện tại không có xe !", Enums.TypeCRUD.Warning.ToString());
+                }
                 var result = Mapper.MapCar(listCar);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
