@@ -128,7 +128,10 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(maxCapacity))
                 {
                 }
-
+                var profit = PrCommon.GetString("profit", frmData);
+                if (String.IsNullOrEmpty(profit))
+                {
+                }
                 var idUserModify = PrCommon.GetString("idUserModify", frmData);
                 if (String.IsNullOrEmpty(idUserModify))
                 {
@@ -155,6 +158,7 @@ namespace Travel.Data.Repositories
                     updateObj.MaxCapacity = Convert.ToInt16(maxCapacity);
                     updateObj.IdSchedule = idSchedule;
                     updateObj.TypeAction = typeAction;
+                    updateObj.Profit = int.Parse(profit);
                     updateObj.IdUserModify = Guid.Parse(idUserModify);
 
                     // price 
@@ -176,6 +180,7 @@ namespace Travel.Data.Repositories
                 createObj.TimePromotion = long.Parse(timePromotion);
                 createObj.MinCapacity = Convert.ToInt16(minCapacity);
                 createObj.MaxCapacity = Convert.ToInt16(maxCapacity);
+                createObj.Profit = int.Parse(profit);
                 createObj.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                 createObj.IdUserModify = Guid.Parse(idUserModify);
 
@@ -196,18 +201,19 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                //var stopWatchEntitya1 = Stopwatch.StartNew();
-                //var schedule = (from x in _db.Schedules.AsNoTracking()
-                //                select x).FirstOrDefault();
-                //var b2 = schedule.Alias;
+                var stopWatchEntitya1 = Stopwatch.StartNew();
+                var schedule = (from x in _db.Schedules.AsNoTracking()
+                                where x.IdSchedule == "1667699141567-x459298"
+                                select x).FirstOrDefault();
+                var b2 = schedule.Alias;
 
-                //schedule.Alias = "Ngay hom nay";
-                //_db.Entry(schedule).State = EntityState.Deleted;
-                //_db.SaveChanges();
-                //var dont1 = stopWatchEntitya1.Elapsed;
+                schedule.Alias = "Ngay hom nay";
+                _db.Entry(schedule).State = EntityState.Deleted;
+                _db.SaveChanges();
+                var dont1 = stopWatchEntitya1.Elapsed;
 
-                //var b = schedule.Alias;
-                //var c = 0;
+                var b = schedule.Alias;
+                var c = 0;
                 //var bab = _db.ChangeTracker.LazyLoadingEnabled;
 
                 //_db.ChangeTracker.LazyLoadingEnabled = false;
@@ -411,11 +417,11 @@ namespace Travel.Data.Repositories
                 // tét
 
 
-                //var stopWatchEntitya2 = Stopwatch.StartNew();
-                //var schedule1 = (from x in _db.Schedules.AsNoTracking()
-                //                 where x.IdSchedule == "DLNT-1666353913295-S1666417503679"
-                //                 select x).FirstOrDefault();
-                //var dont2 = stopWatchEntitya2.Elapsed;
+                var stopWatchEntitya2 = Stopwatch.StartNew();
+                var schedule1 = (from x in _db.Schedules.AsNoTracking()
+                                 where x.IdSchedule == "DLNT-1666353913295-S1666417503679"
+                                 select x).FirstOrDefault();
+                var dont2 = stopWatchEntitya2.Elapsed;
 
 
                 //var stopWatchEntitya1b = Stopwatch.StartNew();
