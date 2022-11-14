@@ -223,10 +223,10 @@ namespace Travel.Data.Repositories
                 transaction.Dispose();
 
                 //Gửi sms
-                SpeedSMSAPI api = new SpeedSMSAPI("eHTE2iExhWKHCRk4OvTVT2gFHuPl4wDd");
-                String[] phones = new String[] { tourbooking.Phone };
-                String str = "Lụm";
-                String response = api.sendSMS(phones, str, 5, "d675521d17749e04");
+                //SpeedSMSAPI api = new SpeedSMSAPI("eHTE2iExhWKHCRk4OvTVT2gFHuPl4wDd");
+                //String[] phones = new String[] { tourbooking.Phone };
+                //String str = "Lụm";
+                //String response = api.sendSMS(phones, str, 5, "d675521d17749e04");
 
 
                 return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
