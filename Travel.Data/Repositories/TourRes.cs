@@ -163,6 +163,7 @@ namespace Travel.Data.Repositories
                 tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 tour.TypeAction = "insert";
                 CreateDatabase(tour);
+                SaveChange();
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
@@ -521,6 +522,7 @@ namespace Travel.Data.Repositories
                             tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                             tour.Status = (int)TourStatus.Normal;
                             UpdateDatabase(tour);
+                            SaveChange();
                             return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                         }
                     }
@@ -531,7 +533,7 @@ namespace Travel.Data.Repositories
                             if (tour.TypeAction == "insert")
                             {
                                 DeleteDatabase(tour);
-
+                                SaveChange();
 
                                 return Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
                             }
@@ -558,7 +560,7 @@ namespace Travel.Data.Repositories
 
                                 _db.Entry(tour).State = EntityState.Modified;
                                 DeleteDatabase(tourTemp);
-
+                                SaveChange();
                                 return Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
 
                             }
@@ -570,7 +572,7 @@ namespace Travel.Data.Repositories
                                 tour.IsDelete = true;
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
                                 UpdateDatabase(tour);
-
+                                SaveChange();
                                 return Ultility.Responses("Đã hủy yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
                             }
@@ -582,7 +584,7 @@ namespace Travel.Data.Repositories
                                 tour.ApproveStatus = (int)ApproveStatus.Approved;
                                 tour.Status = (int)TourStatus.Promotion;
                                 UpdateDatabase(tour);
-
+                                SaveChange();
 
                                 return Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                             }
@@ -686,6 +688,8 @@ namespace Travel.Data.Repositories
                         tour.Status = (int)TourStatus.Normal;
                         UpdateDatabase(tour);
                     }
+
+                    SaveChange();
                     return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -759,6 +763,8 @@ namespace Travel.Data.Repositories
                         UpdateDatabase(tour);
 
                     }
+
+                    SaveChange();
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -793,7 +799,7 @@ namespace Travel.Data.Repositories
                     tour.ModifyBy = userLogin.NameEmployee;
                     tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     UpdateDatabase(tour);
-
+                    SaveChange();
                     return Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -1004,6 +1010,8 @@ namespace Travel.Data.Repositories
                 };
                 listReviewByTour.Add(review);
                 CreateDatabase(review);
+                //SaveChange();
+
                 tour.Rating = listReviewByTour.Average(x => x.Rating);
                 UpdateDatabase(tour);
                  SaveChange();
