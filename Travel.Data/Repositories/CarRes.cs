@@ -238,14 +238,13 @@ namespace Travel.Data.Repositories
 
                 var car = (from x in _db.Cars.AsNoTracking()
                                      where x.IdCar == input.IdCar
-                                     select x).FirstOrDefaultAsync();
-                var objCar = new Car();
-                objCar.Status = input.Status;
-                objCar.LiscensePlate = input.LiscensePlate;
-                objCar.NameDriver = input.NameDriver;
-                objCar.Phone = input.Phone;
-                objCar.AmountSeat = input.AmountSeat;
-                UpdateDatabase<Car>(objCar);
+                                     select x).FirstOrDefault();
+                car.Status = input.Status;
+                car.LiscensePlate = input.LiscensePlate;
+                car.NameDriver = input.NameDriver;
+                car.Phone = input.Phone;
+                car.AmountSeat = input.AmountSeat;
+                UpdateDatabase<Car>(car);
                 SaveChange();
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
             }
