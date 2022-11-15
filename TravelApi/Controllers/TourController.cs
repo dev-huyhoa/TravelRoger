@@ -70,7 +70,7 @@ namespace TravelApi.Controllers
         // GET api/<TourController>/5
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-tour")]
+        [Route("list-tour")]
         public object Get(bool isDelete)
         {
             res = _tourRes.Get(isDelete);
@@ -78,7 +78,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("gets-tour-waiting")]
+        [Route("list-tour-waiting")]
         public object GetWaiting( Guid idUser)
         {
             res = _tourRes.GetWaiting(idUser);
@@ -87,7 +87,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-tour")]
+        [Route("detail-tour")]
         public object GetTour(string idTour)
         {
             res = _tourRes.GetTour(idTour);
@@ -135,7 +135,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-tour-with-schedule")]
+        [Route("list-tour-with-schedule")]
         public async Task<object> GetTourWithSchedule()
         {
             res = await _tourRes.GetsTourWithSchedule();
@@ -143,7 +143,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-tour-by-id")]
+        [Route("detail-tour-by-id")]
         public async Task<object> GetTourById(string idTour)
         {
             res = await _tourRes.GetTourById(idTour);
@@ -152,7 +152,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-tour-by-rating")]
+        [Route("list-tour-by-rating")]
         public async Task<object> GetsTourByRating()
         {
             res = await _tourRes.GetsTourByRating();
