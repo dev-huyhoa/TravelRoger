@@ -39,7 +39,7 @@ namespace TravelApi.Controllers
         [HttpGet]
         //[ClaimRequirement(ClaimTypes.Name, "Admin")]
         [Authorize]
-        [Route("gets-employee")]
+        [Route("list-employee")]
         public object GetsEmployee(bool isDelete)
         {
             var userId = this.User.Claims.Where(x=> x.Type == ClaimTypes.NameIdentifier);
@@ -117,7 +117,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-employee")]
+        [Route("detail-employee")]
         public object GetEmployee(Guid idEmployee)
         {
             res = employee.GetEmployee(idEmployee);

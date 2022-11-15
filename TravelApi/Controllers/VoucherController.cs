@@ -28,7 +28,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-voucher")]
+        [Route("list-voucher")]
         public object GetVoucher(bool isDelete)
         {
             res = _voucher.GetsVoucher(isDelete);

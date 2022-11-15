@@ -31,7 +31,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("gets-promotion")]
+        [Route("list-promotion")]
         public object GetsPromotion(bool isDelete)
         {
             res = _promotion.GetsPromotion(isDelete);
@@ -40,7 +40,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("gets-promotion-exists")]
+        [Route("list-promotion-exists")]
         public object GetsPromotionExists()
         {
             res = _promotion.GetsPromotionExists();
@@ -50,7 +50,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("gets-promotion-waiting")]
+        [Route("list-promotion-waiting")]
         public object GetsWaitingPromotion(Guid idUser)
         {
             res = _promotion.GetsWaitingPromotion(idUser);

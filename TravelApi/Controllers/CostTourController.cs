@@ -30,7 +30,7 @@ namespace TravelApi.Controllers
         
         [HttpGet]
         [Authorize]
-        [Route("gets-cost-tour")]
+        [Route("list-cost-tour")]
         public object Get()
         {
             res = _costTourRes.Get();
@@ -38,7 +38,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("get-cost-tour-idSchedule")] 
+        [Route("detail-cost-tour-idSchedule")] 
         public object GetGetCostByIdTourDetail(string idSchedule)
         {
             res = _costTourRes.GetCostByIdSchedule(idSchedule);

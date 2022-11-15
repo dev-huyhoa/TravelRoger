@@ -29,7 +29,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("gets-car")]
+        [Route("list-car")]
         public object Gets()
         {
             res = _car.Gets();
@@ -37,7 +37,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("gets-selectbox-car")]
+        [Route("list-selectbox-car")]
         public object GetsSelectBoxCar(long fromDate, long toDate, string idTour)
         {
             res = _car.GetsSelectBoxCar(fromDate, toDate, idTour);

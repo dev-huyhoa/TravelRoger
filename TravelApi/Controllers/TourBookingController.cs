@@ -42,7 +42,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("get-tourbooking-by-date")]
+        [Route("list-tourbooking-by-date")]
         public object GetTourBookingFromDateToDate(DateTime? fromDateInput, DateTime? toDateInput)
         {
             res = _tourbooking.GetTourBookingFromDateToDate(fromDateInput, toDateInput);
@@ -50,7 +50,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-tourbooking")]
+        [Route("list-tourbooking")]
         public async Task<object> getsTourBooking()
         {
             res = await _tourbooking.Gets();

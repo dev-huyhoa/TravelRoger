@@ -36,7 +36,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-province")]
+        [Route("list-province")]
         public  object GetsProvince()
         {
        
@@ -46,7 +46,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-district")]
+        [Route("list-district")]
         public object GetsDistrict()
         {
             res = location.GetsDistrict();
@@ -55,7 +55,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-ward")]
+        [Route("list-ward")]
         public object GetsWard()
         {
             res = location.GetsWard();

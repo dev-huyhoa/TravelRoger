@@ -30,7 +30,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-role")]
+        [Route("list-role")]
         public object GetsRole(bool isDelete)
         {
             res = role.GetsRole(isDelete);

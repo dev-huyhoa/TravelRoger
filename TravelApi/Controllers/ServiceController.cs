@@ -43,7 +43,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet()]
         [Authorize]
-        [Route("gets-hotel")]
+        [Route("list-hotel")]
         public object GetHotel(bool isDelete)
         {
             res = _serviceRes.GetsHotel(isDelete);
@@ -51,7 +51,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet()]
         [Authorize]
-        [Route("gets-hotel-waiting")]
+        [Route("list-hotel-waiting")]
         public object GetHotelWaiting(Guid idUser)
         {
             res = _serviceRes.GetsWaitingHotel(idUser);
@@ -110,7 +110,7 @@ namespace TravelApi.Controllers
         #region restaurant
         [HttpGet()]
         [Authorize]
-        [Route("gets-restaurant-waiting")]
+        [Route("list-restaurant-waiting")]
         public object GetWaitingRestaurant(Guid idUser)
         {
             res = _serviceRes.GetsWaitingRestaurant(idUser);
@@ -119,7 +119,7 @@ namespace TravelApi.Controllers
 
         [HttpGet()]
         [Authorize]
-        [Route("gets-restaurant")]
+        [Route("list-restaurant")]
         public object GetRestaurant(bool isDelete)
         {
             res = _serviceRes.GetsRestaurant(isDelete);
@@ -194,7 +194,7 @@ namespace TravelApi.Controllers
         #region place
         [HttpGet()]
         [Authorize]
-        [Route("gets-place-waiting")]
+        [Route("list-place-waiting")]
         public object GetPlaceWaiting(Guid idUser)
         {
             res = _serviceRes.GetsWaitingPlace(idUser);
@@ -203,7 +203,7 @@ namespace TravelApi.Controllers
 
         [HttpGet()]
         [AllowAnonymous]
-        [Route("gets-place")]
+        [Route("list-place")]
         public object GetPlace(bool isDelete)
         {
             res = _serviceRes.GetsPlace(isDelete);

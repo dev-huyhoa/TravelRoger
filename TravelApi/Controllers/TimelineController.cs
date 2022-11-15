@@ -58,7 +58,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("get-timeline")]
+        [Route("list-timeline")]
         public object GetTimeline()
         {
             res = _timelineRes.Get();
@@ -67,7 +67,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("get-timeline-idSchedule")]
+        [Route("list-timeline-idSchedule")]
         public object GetGetCostByIdTourDetail(string idSchedule)
         {
             res = _timelineRes.GetTimelineByIdSchedule(idSchedule);
