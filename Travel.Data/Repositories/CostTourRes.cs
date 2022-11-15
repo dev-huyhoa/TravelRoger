@@ -175,8 +175,6 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                input.DepartureDate = DateTime.Parse("2023-01-01");
-                input.ReturnDate = DateTime.Parse("2023-01-05");
                 var hotel = (from x in _db.Hotels.AsNoTracking() 
                              where x.IdHotel == input.HotelId select x).FirstOrDefault();
                 var restaurant = (from x in _db.Restaurants.AsNoTracking()
