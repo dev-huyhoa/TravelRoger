@@ -2709,5 +2709,17 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public async Task<Schedule> GetScheduleByIdForPayPal(string idSchedule)
+        {
+            try
+            {
+                return await _db.Schedules.FindAsync(idSchedule);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
     }
 }

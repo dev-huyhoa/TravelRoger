@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Context.Models;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.TourBookingVM;
@@ -28,5 +29,6 @@ namespace Travel.Data.Interfaces
         Response SearchTourBooking(JObject frmData);
 
         Response UpdateStatus(string pincode);
+        Task<TourBooking> GetTourBookingByIdForPayPal (string idTourBooking);
     }
 }

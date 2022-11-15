@@ -1456,5 +1456,18 @@ namespace Travel.Data.Repositories
             }
 
         }
+
+        public async Task<Tour> GetTourByIdForPayPal(string idTour)
+        {
+            try
+            {
+                return await _db.Tour.FindAsync(idTour);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
     }
 }
