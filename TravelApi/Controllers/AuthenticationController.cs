@@ -251,7 +251,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("change-pass-customer")]
         public object CusChangePass(Guid idCus, string password, string newPassword)
@@ -260,7 +260,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("forgot-pass-customer")]
         public object CusForgotPass(string email, string password)
@@ -270,7 +270,7 @@ namespace TravelApi.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("block-customer")]
         public object CusBlock(string email)
@@ -279,7 +279,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("block-employee")]
         public object EmpBlock(string email)
@@ -288,7 +288,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("change-pass-employee")]
         public object EmpChangePassword(Guid idEmp, string password, string newPassword)
