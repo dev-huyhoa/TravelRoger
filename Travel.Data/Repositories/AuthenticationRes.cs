@@ -538,16 +538,15 @@ namespace Travel.Data.Responsives
                         emp.Password = Ultility.Encryption(newPassword);
                         _db.SaveChanges();
 
-
-                        return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                        return Ultility.Responses("Đổi mật khẩu thành công, mời đăng nhập lại !", Enums.TypeCRUD.Success.ToString());
                     }
                     else
                     {
-                        return Ultility.Responses("Sai Mật Khẩu !", Enums.TypeCRUD.Error.ToString());
+                        return Ultility.Responses("Sai mật khẩu cũ !", Enums.TypeCRUD.Error.ToString());
 
                     }
                 }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
             }
             catch (Exception e)
             {
