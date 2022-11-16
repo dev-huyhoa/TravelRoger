@@ -48,10 +48,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-schedule")]
-        public object Update([FromBody] JObject frmData)
+        public object Update([FromBody] JObject frmData, string idSchedule)
         {
             message = null;
             var result = _schedule.CheckBeforSave(frmData, ref message, true);
@@ -74,7 +74,7 @@ namespace TravelApi.Controllers
             return 0;
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-schedule")]
         public object DeleteTour(string idSchedule, Guid idUser)
@@ -82,7 +82,7 @@ namespace TravelApi.Controllers
             res = _schedule.Delete(idSchedule, idUser);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("restore-schedule")]
         public object RestoreSchedule(string idSchedule, Guid idUser)
@@ -91,7 +91,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("approve-schedule")]
         public object ApproveSchedule(string idSchedule)
@@ -99,7 +99,7 @@ namespace TravelApi.Controllers
             res = _schedule.Approve(idSchedule);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("refused-schedule")]
         public object RefusedSchedule(string idSchedule)
@@ -123,7 +123,7 @@ namespace TravelApi.Controllers
             res = await _schedule.Get(idSchedule);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Route("update-promotion")]
         public object UpdatePromotion(string idSchedule, int idPromotion)
         {

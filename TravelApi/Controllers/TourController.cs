@@ -48,10 +48,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-tour")]
-        public object Update(IFormCollection frmdata, IFormFile file)
+        public object Update(IFormCollection frmdata, IFormFile file, string idTour)
         {
             message = null;
             var result = _tourRes.CheckBeforSave(frmdata, file, ref message, true);
@@ -97,7 +97,7 @@ namespace TravelApi.Controllers
 
 
         // POST api/<TourController>
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("approve-tour")]
         public object Approve(string idTour)
@@ -106,7 +106,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("refused-tour")]
         public object Refused(string idTour)
@@ -115,7 +115,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-tour")]
         public object DeleteTour(string idTour, Guid idUser)
@@ -125,7 +125,7 @@ namespace TravelApi.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("restore-tour")]
         public object RestoreTour(string idTour,Guid idUser)
@@ -168,7 +168,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("update-rating-tour")]
         public object UpdateRatingTour(int rating, string idTour)

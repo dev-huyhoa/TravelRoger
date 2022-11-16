@@ -49,10 +49,10 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpPost]
+        [HttpPut]
         [AllowAnonymous]
         [Route("update-voucher")]
-        public object UpdateVoucher([FromBody] JObject frmData)
+        public object UpdateVoucher([FromBody] JObject frmData, int id)
         {
 
             message = null;
@@ -65,7 +65,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("restore-voucher")]
         public object RestoreVoucher(int id)
@@ -73,7 +73,7 @@ namespace TravelApi.Controllers
             res = _voucher.RestoreVoucher(id);            
             return Ok(res);
         }
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-role")]
         public object DeleteRole(int id)

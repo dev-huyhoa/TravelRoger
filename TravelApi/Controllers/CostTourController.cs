@@ -61,10 +61,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-cost-tour")]
-        public object Update([FromBody] JObject frmData)
+        public object Update([FromBody] JObject frmData, string IdSchedule)
         {
             message = null;
             var result = _costTourRes.CheckBeforSave(frmData, ref message, true);
