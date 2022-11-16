@@ -73,10 +73,10 @@ namespace TravelApi.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-promotion")]
-        public object UpdatePromotion(int id,[FromBody] JObject frmData)
+        public object UpdatePromotion(int idPromotion, [FromBody] JObject frmData)
         {
             message = null;
             var result = _promotion.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, true);
@@ -88,7 +88,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("approve-promotion")]
         public object ApprovePromotion(int idPromotion)
@@ -97,7 +97,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("refuse-promotion")]
         public object RefusePromotion(int idPromotion)
@@ -105,7 +105,7 @@ namespace TravelApi.Controllers
             res = _promotion.RefusedPromotion(idPromotion);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-promotion")]
         public object DeletePromotion(int idPromotion, Guid idUser)
@@ -113,7 +113,7 @@ namespace TravelApi.Controllers
             res = _promotion.DeletePromotion(idPromotion, idUser);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("restore-promotion")]
         public object RestoreHotel(int idPromotion, Guid idUser)

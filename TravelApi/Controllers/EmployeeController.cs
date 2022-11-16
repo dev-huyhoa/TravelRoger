@@ -79,10 +79,10 @@ namespace TravelApi.Controllers
 
 
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-employee")]
-        public object UpdateEmployee(IFormCollection frmdata, IFormFile file)
+        public object UpdateEmployee(IFormCollection frmdata, IFormFile file, Guid idEmployee)
         {
             message = null;
             var result = employee.CheckBeforeSave(frmdata, file, ref message, true);
@@ -97,7 +97,7 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-employee")]
         public object DeleteEmployee(Guid idEmployee)
@@ -106,7 +106,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("restore-employee")]
         public object RestoreEmployee(Guid idEmployee)

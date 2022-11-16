@@ -78,10 +78,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-customer")]
-        public async Task<object> UpdateCustomer([FromBody] JObject frmdata)
+        public async Task<object> UpdateCustomer([FromBody] JObject frmdata, Guid idCustomer)
         {
             message = null;
             var result = customer.CheckBeforeSave(frmdata, ref message, true);

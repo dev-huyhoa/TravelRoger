@@ -58,10 +58,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-hotel")]
-        public object UpdateHotel([FromBody] JObject frmData)
+        public object UpdateHotel([FromBody] JObject frmData, Guid idHotel)
         {
             message = null;
             var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, true);
@@ -72,7 +72,7 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("approve-hotel")]
         public object ApproveHotel(Guid idHotel)
@@ -81,7 +81,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("refuse-hotel")]
         public object RefuseHotel(Guid idHotel)
@@ -89,7 +89,7 @@ namespace TravelApi.Controllers
             res = _serviceRes.RefusedHotel(idHotel);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-hotel")]
         public object DeleteHotel(Guid idHotel, Guid idUser)
@@ -97,7 +97,7 @@ namespace TravelApi.Controllers
             res = _serviceRes.DeleteHotel(idHotel, idUser);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("restore-hotel")]
         public object RestoreHotel(Guid idHotel, Guid idUser)
@@ -140,7 +140,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("approve-restaurant")]
         public object ApproveRestaurant(Guid idRestaurant)
@@ -149,7 +149,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("refuse-restaurant")]
         public object RefuseRestaurant(Guid idRestaurant)
@@ -157,7 +157,7 @@ namespace TravelApi.Controllers
             res = _serviceRes.RefusedRestaurant(idRestaurant);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-restaurant")]
         public object DeleteRestaurant(Guid idRestaurant, Guid idUser)
@@ -166,10 +166,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-restaurant")]
-        public object UpdateRestaurant([FromBody] JObject frmData)
+        public object UpdateRestaurant([FromBody] JObject frmData, Guid idRestaurant)
         {
 
             message = null;
@@ -181,7 +181,7 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("restore-restaurant")]
         public object RestoreRestaurant(Guid idRestaurant, Guid idUser)
