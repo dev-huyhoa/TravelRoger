@@ -43,7 +43,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet()]
         [Authorize]
-        [Route("gets-hotel")]
+        [Route("list-hotel")]
         public object GetHotel(bool isDelete)
         {
             res = _serviceRes.GetsHotel(isDelete);
@@ -51,17 +51,17 @@ namespace TravelApi.Controllers
         }
         [HttpGet()]
         [Authorize]
-        [Route("gets-hotel-waiting")]
+        [Route("list-hotel-waiting")]
         public object GetHotelWaiting(Guid idUser)
         {
             res = _serviceRes.GetsWaitingHotel(idUser);
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-hotel")]
-        public object UpdateHotel([FromBody] JObject frmData)
+        public object UpdateHotel([FromBody] JObject frmData, Guid idHotel)
         {
             message = null;
             var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Hotel, true);
@@ -72,7 +72,7 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("approve-hotel")]
         public object ApproveHotel(Guid idHotel)
@@ -81,7 +81,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("refuse-hotel")]
         public object RefuseHotel(Guid idHotel)
@@ -89,7 +89,7 @@ namespace TravelApi.Controllers
             res = _serviceRes.RefusedHotel(idHotel);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-hotel")]
         public object DeleteHotel(Guid idHotel, Guid idUser)
@@ -97,7 +97,7 @@ namespace TravelApi.Controllers
             res = _serviceRes.DeleteHotel(idHotel, idUser);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("restore-hotel")]
         public object RestoreHotel(Guid idHotel, Guid idUser)
@@ -110,7 +110,7 @@ namespace TravelApi.Controllers
         #region restaurant
         [HttpGet()]
         [Authorize]
-        [Route("gets-restaurant-waiting")]
+        [Route("list-restaurant-waiting")]
         public object GetWaitingRestaurant(Guid idUser)
         {
             res = _serviceRes.GetsWaitingRestaurant(idUser);
@@ -119,7 +119,7 @@ namespace TravelApi.Controllers
 
         [HttpGet()]
         [Authorize]
-        [Route("gets-restaurant")]
+        [Route("list-restaurant")]
         public object GetRestaurant(bool isDelete)
         {
             res = _serviceRes.GetsRestaurant(isDelete);
@@ -140,7 +140,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("approve-restaurant")]
         public object ApproveRestaurant(Guid idRestaurant)
@@ -149,7 +149,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("refuse-restaurant")]
         public object RefuseRestaurant(Guid idRestaurant)
@@ -157,7 +157,7 @@ namespace TravelApi.Controllers
             res = _serviceRes.RefusedRestaurant(idRestaurant);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-restaurant")]
         public object DeleteRestaurant(Guid idRestaurant, Guid idUser)
@@ -166,10 +166,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-restaurant")]
-        public object UpdateRestaurant([FromBody] JObject frmData)
+        public object UpdateRestaurant([FromBody] JObject frmData, Guid idRestaurant)
         {
 
             message = null;
@@ -181,7 +181,7 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("restore-restaurant")]
         public object RestoreRestaurant(Guid idRestaurant, Guid idUser)
@@ -194,7 +194,7 @@ namespace TravelApi.Controllers
         #region place
         [HttpGet()]
         [Authorize]
-        [Route("gets-place-waiting")]
+        [Route("list-place-waiting")]
         public object GetPlaceWaiting(Guid idUser)
         {
             res = _serviceRes.GetsWaitingPlace(idUser);
@@ -203,7 +203,7 @@ namespace TravelApi.Controllers
 
         [HttpGet()]
         [AllowAnonymous]
-        [Route("gets-place")]
+        [Route("list-place")]
         public object GetPlace(bool isDelete)
         {
             res = _serviceRes.GetsPlace(isDelete);
@@ -224,10 +224,10 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-place")]
-        public object UpdatePlace([FromBody] JObject frmData)
+        public object UpdatePlace([FromBody] JObject frmData, Guid idPlace)
         {
             message = null;
             var result = _serviceRes.CheckBeforSave(frmData, ref message, Travel.Shared.Ultilities.Enums.TypeService.Place, true);
@@ -238,7 +238,7 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("approve-place")]
         public object ApprovePlace(Guid idPlace)
@@ -247,7 +247,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("refuse-place")]
         public object RefusePlace(Guid idPlace)
@@ -255,7 +255,7 @@ namespace TravelApi.Controllers
             res = _serviceRes.RefusedPlace(idPlace);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-place")]
         public object DeletePlace(Guid idPlace, Guid idUser)
@@ -264,7 +264,7 @@ namespace TravelApi.Controllers
             return Ok(res); 
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("restore-place")]
         public object RestorePlace(Guid idPlace, Guid idUser)

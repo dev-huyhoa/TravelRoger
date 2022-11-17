@@ -39,7 +39,7 @@ namespace TravelApi.Controllers
         [HttpGet]
         //[ClaimRequirement(ClaimTypes.Name, "Admin")]
         [Authorize]
-        [Route("gets-employee")]
+        [Route("list-employee")]
         public object GetsEmployee(bool isDelete)
         {
             var userId = this.User.Claims.Where(x=> x.Type == ClaimTypes.NameIdentifier);
@@ -79,10 +79,10 @@ namespace TravelApi.Controllers
 
 
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-employee")]
-        public object UpdateEmployee(IFormCollection frmdata, IFormFile file)
+        public object UpdateEmployee(IFormCollection frmdata, IFormFile file, Guid idEmployee)
         {
             message = null;
             var result = employee.CheckBeforeSave(frmdata, file, ref message, true);
@@ -97,7 +97,7 @@ namespace TravelApi.Controllers
             }
             return Ok(res);
         }
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-employee")]
         public object DeleteEmployee(Guid idEmployee)
@@ -106,7 +106,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("restore-employee")]
         public object RestoreEmployee(Guid idEmployee)
@@ -117,7 +117,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-employee")]
+        [Route("detail-employee")]
         public object GetEmployee(Guid idEmployee)
         {
             res = employee.GetEmployee(idEmployee);

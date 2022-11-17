@@ -120,6 +120,10 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(vat))
                 {
                 }
+                var profit = PrCommon.GetString("profit", frmData);
+                if (String.IsNullOrEmpty(vat))
+                {
+                }
                 var minCapacity = PrCommon.GetString("minCapacity", frmData);
                 if (String.IsNullOrEmpty(minCapacity))
                 {
@@ -128,7 +132,7 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(maxCapacity))
                 {
                 }
-
+              
                 var idUserModify = PrCommon.GetString("idUserModify", frmData);
                 if (String.IsNullOrEmpty(idUserModify))
                 {
@@ -155,10 +159,12 @@ namespace Travel.Data.Repositories
                     updateObj.MaxCapacity = Convert.ToInt16(maxCapacity);
                     updateObj.IdSchedule = idSchedule;
                     updateObj.TypeAction = typeAction;
+                    updateObj.Profit = int.Parse(profit);
                     updateObj.IdUserModify = Guid.Parse(idUserModify);
 
                     // price 
                     updateObj.Vat = float.Parse(vat);
+                    updateObj.Profit = int.Parse(profit);
                     return JsonSerializer.Serialize(updateObj);
                 }
                 CreateScheduleViewModel createObj = new CreateScheduleViewModel();
@@ -168,6 +174,7 @@ namespace Travel.Data.Repositories
                 createObj.PromotionId = Convert.ToInt32(promotionId);
                 createObj.Description = description;
                 createObj.Vat = float.Parse(vat);
+                createObj.Profit = int.Parse(profit);
                 createObj.DeparturePlace = departurePlace;
                 createObj.DepartureDate = long.Parse(departureDate);
                 createObj.ReturnDate = long.Parse(returnDate);
@@ -176,6 +183,7 @@ namespace Travel.Data.Repositories
                 createObj.TimePromotion = long.Parse(timePromotion);
                 createObj.MinCapacity = Convert.ToInt16(minCapacity);
                 createObj.MaxCapacity = Convert.ToInt16(maxCapacity);
+                createObj.Profit = int.Parse(profit);
                 createObj.IdSchedule = $"{tourId}-S{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                 createObj.IdUserModify = Guid.Parse(idUserModify);
 
@@ -196,18 +204,19 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                //var stopWatchEntitya1 = Stopwatch.StartNew();
-                //var schedule = (from x in _db.Schedules.AsNoTracking()
-                //                select x).FirstOrDefault();
-                //var b2 = schedule.Alias;
+                var stopWatchEntitya1 = Stopwatch.StartNew();
+                var schedule = (from x in _db.Schedules.AsNoTracking()
+                                where x.IdSchedule == "1667699141567-x459298"
+                                select x).FirstOrDefault();
+                var b2 = schedule.Alias;
 
-                //schedule.Alias = "Ngay hom nay";
-                //_db.Entry(schedule).State = EntityState.Deleted;
-                //_db.SaveChanges();
-                //var dont1 = stopWatchEntitya1.Elapsed;
+                schedule.Alias = "Ngay hom nay";
+                _db.Entry(schedule).State = EntityState.Deleted;
+                _db.SaveChanges();
+                var dont1 = stopWatchEntitya1.Elapsed;
 
-                //var b = schedule.Alias;
-                //var c = 0;
+                var b = schedule.Alias;
+                var c = 0;
                 //var bab = _db.ChangeTracker.LazyLoadingEnabled;
 
                 //_db.ChangeTracker.LazyLoadingEnabled = false;
@@ -411,11 +420,11 @@ namespace Travel.Data.Repositories
                 // tét
 
 
-                //var stopWatchEntitya2 = Stopwatch.StartNew();
-                //var schedule1 = (from x in _db.Schedules.AsNoTracking()
-                //                 where x.IdSchedule == "DLNT-1666353913295-S1666417503679"
-                //                 select x).FirstOrDefault();
-                //var dont2 = stopWatchEntitya2.Elapsed;
+                var stopWatchEntitya2 = Stopwatch.StartNew();
+                var schedule1 = (from x in _db.Schedules.AsNoTracking()
+                                 where x.IdSchedule == "DLNT-1666353913295-S1666417503679"
+                                 select x).FirstOrDefault();
+                var dont2 = stopWatchEntitya2.Elapsed;
 
 
                 //var stopWatchEntitya1b = Stopwatch.StartNew();
@@ -1632,7 +1641,9 @@ namespace Travel.Data.Repositories
                 var schedule = (from x in _db.Schedules.AsNoTracking()
                                 where x.IdSchedule == idSchedule
                                 select x).FirstOrDefault();
-
+                var timelines = (from x in _db.Timelines
+                                where x.IdSchedule == idSchedule
+                                select x).ToList();
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
@@ -1654,9 +1665,13 @@ namespace Travel.Data.Repositories
                     {
                         if (schedule.TypeAction == "insert")
                         {
+                            if (timelines.Count > 0)
+                            {
+                                _db.RemoveRange(timelines);
+                                SaveChange();
+                            }
                             DeleteDatabase(schedule);
                             SaveChange();
-
                             return Ultility.Responses("Đã xóa!", Enums.TypeCRUD.Success.ToString());
                         }
                         else if (schedule.TypeAction == "update")
@@ -1685,7 +1700,7 @@ namespace Travel.Data.Repositories
                             schedule.PromotionId = scheduleTemp.PromotionId;
                             schedule.ReturnDate = scheduleTemp.ReturnDate;
                             schedule.Vat = scheduleTemp.Vat;
-
+                            schedule.Profit = scheduleTemp.Profit;
 
                             schedule.TimePromotion = scheduleTemp.TimePromotion;
                             #endregion
@@ -1832,7 +1847,7 @@ namespace Travel.Data.Repositories
                         schedule.PromotionId = scheduleTemp.PromotionId;
                         schedule.ReturnDate = scheduleTemp.ReturnDate;
                         schedule.Vat = scheduleTemp.Vat;
-
+                        schedule.Profit = scheduleTemp.Profit;
 
                         schedule.TimePromotion = scheduleTemp.TimePromotion;
                         #endregion
@@ -1914,6 +1929,7 @@ namespace Travel.Data.Repositories
                 schedule.MinCapacity = input.MinCapacity;
                 schedule.ReturnDate = input.ReturnDate;
                 schedule.Vat = input.Vat;
+                schedule.Profit = input.Profit;
                 schedule.ModifyBy = userLogin.NameEmployee;
                 schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 #endregion
@@ -2693,5 +2709,17 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public async Task<Schedule> GetScheduleByIdForPayPal(string idSchedule)
+        {
+            try
+            {
+                return await _db.Schedules.FindAsync(idSchedule);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+        }
     }
 }

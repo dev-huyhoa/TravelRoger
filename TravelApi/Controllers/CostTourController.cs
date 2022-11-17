@@ -30,7 +30,7 @@ namespace TravelApi.Controllers
         
         [HttpGet]
         [Authorize]
-        [Route("gets-cost-tour")]
+        [Route("list-cost-tour")]
         public object Get()
         {
             res = _costTourRes.Get();
@@ -38,7 +38,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("get-cost-tour-idSchedule")] 
+        [Route("detail-cost-tour-idSchedule")] 
         public object GetGetCostByIdTourDetail(string idSchedule)
         {
             res = _costTourRes.GetCostByIdSchedule(idSchedule);
@@ -61,10 +61,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-cost-tour")]
-        public object Update([FromBody] JObject frmData)
+        public object Update([FromBody] JObject frmData, string IdSchedule)
         {
             message = null;
             var result = _costTourRes.CheckBeforSave(frmData, ref message, true);

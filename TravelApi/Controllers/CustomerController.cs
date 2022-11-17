@@ -45,7 +45,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("gets-customer")]
+        [Route("list-customer")]
         public object GetCustomer()
         {
             res = customer.Gets();
@@ -53,7 +53,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("gets-history-booking-bycustomer")]
+        [Route("list-history-booking-bycustomer")]
         public object GetHistoryByIdCustomer(Guid idCustomer)
         {
             res = customer.GetsHistory(idCustomer);
@@ -70,7 +70,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("get-customer")]
+        [Route("detail-customer")]
         public object GetCustomer(Guid idCustomer)
         {
             res = customer.GetCustomer(idCustomer);
@@ -78,10 +78,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-customer")]
-        public async Task<object> UpdateCustomer([FromBody] JObject frmdata)
+        public async Task<object> UpdateCustomer([FromBody] JObject frmdata, Guid idCustomer)
         {
             message = null;
             var result = customer.CheckBeforeSave(frmdata, ref message, true);

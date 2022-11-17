@@ -29,7 +29,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("gets-car")]
+        [Route("list-car")]
         public object Gets()
         {
             res = _car.Gets();
@@ -37,7 +37,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("gets-selectbox-car")]
+        [Route("list-selectbox-car")]
         public object GetsSelectBoxCar(long fromDate, long toDate, string idTour)
         {
             res = _car.GetsSelectBoxCar(fromDate, toDate, idTour);
@@ -74,10 +74,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-car")]
-        public object UpdateRestaurant([FromBody] JObject frmData)
+        public object UpdateRestaurant([FromBody] JObject frmData, Guid idCar)
         {
             message = null;
             var result = _car.CheckBeforeSave(frmData, ref message, true);
@@ -93,7 +93,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-car")]
         public object DeleteCar(Guid idCar, Guid idUser)

@@ -36,7 +36,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-province")]
+        [Route("list-province")]
         public  object GetsProvince()
         {
        
@@ -46,7 +46,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-district")]
+        [Route("list-district")]
         public object GetsDistrict()
         {
             res = location.GetsDistrict();
@@ -55,7 +55,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-ward")]
+        [Route("list-ward")]
         public object GetsWard()
         {
             res = location.GetsWard();
@@ -149,10 +149,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-province")]
-        public object UpdateProvince([FromBody] JObject frmData)
+        public object UpdateProvince([FromBody] JObject frmData, Guid idProvince)
         {
             message = null;
             var result = location.CheckBeforeSaveProvince(frmData, ref message, true);
@@ -169,10 +169,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-district")]
-        public object UpdateDistrict([FromBody] JObject frmData)
+        public object UpdateDistrict([FromBody] JObject frmData, Guid idDistrict)
         {
             message = null;
             var result = location.CheckBeforeSaveDistrict(frmData, ref message, true);
@@ -189,10 +189,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-ward")]
-        public object UpdateWard([FromBody] JObject frmData)
+        public object UpdateWard([FromBody] JObject frmData, Guid idWard)
         {
             message = null;
             var result = location.CheckBeforeSaveWard(frmData, ref message, true);
@@ -209,7 +209,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-province")]
         public object DeleteProvince(Guid idProvince)
@@ -219,7 +219,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-district")]
         public object DeleteDistrict(Guid idDistrict)
@@ -228,7 +228,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-ward")]
         public object DeleteWard(Guid idWard)

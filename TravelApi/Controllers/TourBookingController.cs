@@ -42,7 +42,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("get-tourbooking-by-date")]
+        [Route("list-tourbooking-by-date")]
         public object GetTourBookingFromDateToDate(DateTime? fromDateInput, DateTime? toDateInput)
         {
             res = _tourbooking.GetTourBookingFromDateToDate(fromDateInput, toDateInput);
@@ -50,7 +50,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-tourbooking")]
+        [Route("list-tourbooking")]
         public async Task<object> getsTourBooking()
         {
             res = await _tourbooking.Gets();
@@ -98,7 +98,7 @@ namespace TravelApi.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("cancel-booking")]
         public async Task<object> CancelBooking(string idTourBooking)
@@ -107,7 +107,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("restore-booking")]
         public async Task<object> RestoreBooking(string idTourBooking)
@@ -140,7 +140,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("update-tourBooking-status")]
         public object UpdateStatus(string pincode)

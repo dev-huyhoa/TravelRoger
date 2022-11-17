@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Context.Models;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 
@@ -36,5 +37,6 @@ namespace Travel.Data.Interfaces
         Response SearchSchedule(JObject frmData, string idTour);
 
         Response SearchScheduleWaiting(JObject frmData, string idTour);
+        Task<Schedule> GetScheduleByIdForPayPal(string idSchedule);
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Context.Models;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.TourVM;
 using static Travel.Shared.Ultilities.Enums;
@@ -30,5 +31,6 @@ namespace Travel.Data.Interfaces
         Response UpdateRating(int rating , string idTour);
         Response SearchTour(JObject frmData);
         Response SearchTourWaiting(JObject frmData);
+        Task<Tour> GetTourByIdForPayPal(string idTour);
     }
 }

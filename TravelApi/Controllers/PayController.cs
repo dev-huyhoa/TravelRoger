@@ -96,20 +96,11 @@ namespace TravelApi.Controllers
 
 
             #region get schedule
-            var tourBookingRes = await _tourbooking.TourBookingById(idTourBooking);
-            var tourBooking = System.Text.Json.JsonSerializer.Deserialize<TourBooking>
-                (System.Text.Json.JsonSerializer.Serialize(tourBookingRes.Content));
+            var tourBooking = await _tourbooking.GetTourBookingByIdForPayPal(idTourBooking);
 
-            var scheduleRes = await _schedule.Get(tourBooking.ScheduleId);
-            var schedule = System.Text.Json.JsonSerializer.Deserialize<Schedule>
-     (System.Text.Json.JsonSerializer.Serialize(scheduleRes.Content));
+            var schedule = await _schedule.GetScheduleByIdForPayPal(tourBooking.ScheduleId);
 
-
-
-            var tourRes = await _tour.GetTourById(schedule.IdSchedule);
-            var tour = System.Text.Json.JsonSerializer.Deserialize<Tour>
-     (System.Text.Json.JsonSerializer.Serialize(tourRes.Content));
-
+            var tour = await _tour.GetTourByIdForPayPal(schedule.TourId);
             #endregion
             var itemList = new ItemList()
             {
@@ -121,11 +112,11 @@ namespace TravelApi.Controllers
 
             if (tourBooking.ValuePromotion != 0)
             {
-                total = (float)(tourBooking.TotalPricePromotion);
+                total = (float)((tourBooking.TotalPrice) / TyGiaUSD);
             }
             else
             {
-                total = (float)(tourBooking.TotalPrice);
+                total = (float)((tourBooking.TotalPrice)/TyGiaUSD);
             }
 
 
@@ -169,7 +160,7 @@ namespace TravelApi.Controllers
                 RedirectUrls = new RedirectUrls()
                 {
                     CancelUrl = "https://localhost:4200/Paypal/CheckoutFailed",
-                    ReturnUrl = "https://youtube.com"
+                    ReturnUrl = $"http://localhost:4200/bill/" + idTourBooking
                 },
                 Payer = new Payer()
                 {
@@ -185,8 +176,7 @@ namespace TravelApi.Controllers
                 Payment result = response.Result<Payment>();
                 var links = result.Links.GetEnumerator();
                 string paypalRedirectUrl = null;
-                string paypalRedirectUrlExec = null;
-                string paypalRedirectUrlFinal = null;
+              
                 while (links.MoveNext())
                 {
                     LinkDescriptionObject lnk = links.Current;
@@ -194,17 +184,9 @@ namespace TravelApi.Controllers
                     {
                         paypalRedirectUrl = lnk.Href;
                     }
-                    else if (lnk.Rel.ToLower().Trim().Equals("execute"))
-                    {
-                        paypalRedirectUrlExec = lnk.Href;
-                    }
-                    else
-                    {
-                        paypalRedirectUrlFinal = lnk.Href;
-                    }
                 }
 
-                return new { status = 1, url = paypalRedirectUrl, urlExecute = paypalRedirectUrlExec, urlFinal = paypalRedirectUrlFinal };
+                return new { status = 1, url = paypalRedirectUrl };
             }
             catch (HttpException httpException)
             {

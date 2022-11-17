@@ -48,10 +48,10 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         [Route("update-tour")]
-        public object Update(IFormCollection frmdata, IFormFile file)
+        public object Update(IFormCollection frmdata, IFormFile file, string idTour)
         {
             message = null;
             var result = _tourRes.CheckBeforSave(frmdata, file, ref message, true);
@@ -70,7 +70,7 @@ namespace TravelApi.Controllers
         // GET api/<TourController>/5
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-tour")]
+        [Route("list-tour")]
         public object Get(bool isDelete)
         {
             res = _tourRes.Get(isDelete);
@@ -78,7 +78,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [Authorize]
-        [Route("gets-tour-waiting")]
+        [Route("list-tour-waiting")]
         public object GetWaiting( Guid idUser)
         {
             res = _tourRes.GetWaiting(idUser);
@@ -87,7 +87,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-tour")]
+        [Route("detail-tour")]
         public object GetTour(string idTour)
         {
             res = _tourRes.GetTour(idTour);
@@ -97,7 +97,7 @@ namespace TravelApi.Controllers
 
 
         // POST api/<TourController>
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("approve-tour")]
         public object Approve(string idTour)
@@ -106,7 +106,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("refused-tour")]
         public object Refused(string idTour)
@@ -115,7 +115,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         [Route("delete-tour")]
         public object DeleteTour(string idTour, Guid idUser)
@@ -125,7 +125,7 @@ namespace TravelApi.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPut]
         [Authorize]
         [Route("restore-tour")]
         public object RestoreTour(string idTour,Guid idUser)
@@ -135,7 +135,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-tour-with-schedule")]
+        [Route("list-tour-with-schedule")]
         public async Task<object> GetTourWithSchedule()
         {
             res = await _tourRes.GetsTourWithSchedule();
@@ -143,7 +143,7 @@ namespace TravelApi.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        [Route("get-tour-by-id")]
+        [Route("detail-tour-by-id")]
         public async Task<object> GetTourById(string idTour)
         {
             res = await _tourRes.GetTourById(idTour);
@@ -152,7 +152,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("gets-tour-by-rating")]
+        [Route("list-tour-by-rating")]
         public async Task<object> GetsTourByRating()
         {
             res = await _tourRes.GetsTourByRating();
@@ -168,7 +168,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("update-rating-tour")]
         public object UpdateRatingTour(int rating, string idTour)

@@ -91,6 +91,7 @@ namespace TravelApi.Controllers
                                     auth.RoleId = result.RoleId;
                                     auth.Id = result.IdEmployee;
                                     auth.Name = result.NameEmployee;
+                                    auth.Phone = result.Phone;
                                     auth.Image = result.Image;
                                     auth.Email = result.Email;
                                     auth.DateExpired = dateTimeNow.AddMinutes(TimeExpiredInMinutes);
@@ -204,6 +205,7 @@ namespace TravelApi.Controllers
                             auth.Token = tokenJWT;
                             auth.Id = result.IdCustomer;
                             auth.Name = result.NameCustomer;
+                            auth.Phone = result.Phone;
                             auth.Email = result.Email;
 
                             return Ok(Ultility.Responses("Đăng nhập thành công !", Enums.TypeCRUD.Success.ToString(), auth));
@@ -249,7 +251,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("change-pass-customer")]
         public object CusChangePass(Guid idCus, string password, string newPassword)
@@ -258,7 +260,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("forgot-pass-customer")]
         public object CusForgotPass(string email, string password)
@@ -268,7 +270,7 @@ namespace TravelApi.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("block-customer")]
         public object CusBlock(string email)
@@ -277,7 +279,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("block-employee")]
         public object EmpBlock(string email)
@@ -286,7 +288,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPut]
         [AllowAnonymous]
         [Route("change-pass-employee")]
         public object EmpChangePassword(Guid idEmp, string password, string newPassword)

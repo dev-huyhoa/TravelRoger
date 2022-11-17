@@ -119,6 +119,14 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(isHoliday))
                 {
                 }
+                var returnDate = PrCommon.GetString("returnDate", frmData);
+                if (!String.IsNullOrEmpty(isHoliday))
+                {
+                }
+                var departureDate = PrCommon.GetString("departureDate", frmData);
+                if (!String.IsNullOrEmpty(isHoliday))
+                {
+                }
                 if (isUpdate)
                 {
                     // map data
@@ -157,7 +165,8 @@ namespace Travel.Data.Repositories
                 obj.HotelId = Guid.Parse(hotelId);
                 obj.RestaurantId = Guid.Parse(restaurantId);
                 obj.PlaceId = Guid.Parse(placeId);
-
+                obj.DepartureDate = DateTime.Parse(departureDate);
+                obj.ReturnDate = DateTime.Parse(returnDate);
                 return JsonSerializer.Serialize(obj);
             }
             catch (Exception e)
@@ -175,8 +184,6 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                input.DepartureDate = DateTime.Parse("2023-01-01");
-                input.ReturnDate = DateTime.Parse("2023-01-05");
                 var hotel = (from x in _db.Hotels.AsNoTracking() 
                              where x.IdHotel == input.HotelId select x).FirstOrDefault();
                 var restaurant = (from x in _db.Restaurants.AsNoTracking()

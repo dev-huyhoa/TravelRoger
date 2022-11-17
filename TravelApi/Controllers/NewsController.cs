@@ -60,7 +60,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("gets-banner")]
+        [Route("list-banner")]
         public object GetBanner()
         {
             res = news.GetBanner();
