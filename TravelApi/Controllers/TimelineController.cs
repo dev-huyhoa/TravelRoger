@@ -50,9 +50,18 @@ namespace TravelApi.Controllers
             //var result = _timelineRes.CheckBeforSave(frmData, ref message, false);
             if (message == null)
             {
-                var createObj = timelinee;
-                res = _timelineRes.Update(createObj);
+                var updateObj = timelinee;
+                res = _timelineRes.Update(updateObj);
             }
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("delete-timeline")]
+        public object Delete(ICollection<Timeline> timeline)
+        {
+            res = _timelineRes.Delete(timeline);
             return Ok(res);
         }
 
