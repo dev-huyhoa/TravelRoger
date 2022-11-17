@@ -75,7 +75,7 @@ namespace TravelApi
                     ValidAudience = Configuration["Token:Audience"],
                     ValidIssuer = Configuration["Token:Issuer"],
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromHours(8),
+                    ClockSkew = TimeSpan.FromMinutes(Convert.ToInt16(Configuration["Token:TimeExpired"])),
                     //ClockSkew = TimeSpan.FromMinutes(525600),
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Token:Key"])),

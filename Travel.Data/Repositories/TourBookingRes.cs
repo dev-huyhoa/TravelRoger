@@ -23,7 +23,7 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private readonly ISchedule _schedule;
-     
+        private readonly string keySecurity;
         private readonly IConfiguration _config;
         private void UpdateDatabase<T>(T input)
         {
@@ -52,6 +52,7 @@ namespace Travel.Data.Repositories
             _db = db;
             _schedule = schedule;
             _config = config;
+            keySecurity = _config["keySecurity"];
         }
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
@@ -226,7 +227,9 @@ namespace Travel.Data.Repositories
                 //String str = "Lụm";
                 //String response = api.sendSMS(phones, str, 5, "d675521d17749e04");
 
-
+                #region send mail
+                Ultility.sendEmail("",input.Email,"Thông báo booking","Bạn vừa đặt tour !", keySecurity);
+                #endregion
                 return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
             }
             catch (Exception e)
@@ -328,12 +331,11 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-
         public async Task<Response> TourBookingById(string idTourbooking)
         {
             try
             {
-                var tourbooking = await (from x in _db.TourBookings
+                var tourbooking = await (from x in _db.TourBookings.AsNoTracking()
                                          where x.IdTourBooking == idTourbooking
                                          orderby x.DateBooking descending
                                          select new TourBooking
@@ -343,7 +345,7 @@ namespace Travel.Data.Repositories
                                              NameCustomer = x.NameCustomer,
                                              NameContact = x.NameContact,
                                              Pincode = x.Pincode,
-                                          
+                                            ScheduleId = x.ScheduleId,
                                              Email = x.Email,
                                              Phone = x.Phone,
                                              Status = x.Status,
@@ -355,12 +357,12 @@ namespace Travel.Data.Repositories
                                              TotalPricePromotion = x.TotalPricePromotion,
                                              VoucherCode = x.VoucherCode,
                                              ValuePromotion = x.ValuePromotion,
-                                             Payment = (from p in _db.Payment
+                                             Payment = (from p in _db.Payment.AsNoTracking()
                                                         where p.IdPayment == x.PaymentId
-                                                        select p).First(),
+                                                        select p).FirstOrDefault(),
                                              TourBookingDetails = (from tbd in _db.tourBookingDetails
                                                                    where tbd.IdTourBookingDetails == x.IdTourBooking
-                                                                   select tbd).First(),
+                                                                   select tbd).FirstOrDefault(),
                                              Schedule = (from s in _db.Schedules
                                                          where s.IdSchedule == x.ScheduleId
                                                          select new Schedule
@@ -373,10 +375,10 @@ namespace Travel.Data.Repositories
                                                              IdSchedule = s.IdSchedule,
                                                              Tour = (from t in _db.Tour
                                                                      where t.IdTour == s.TourId
-                                                                     select t).First(),
+                                                                     select t).FirstOrDefault(),
 
-                                                         }).First()
-                                         }).FirstAsync();
+                                                         }).FirstOrDefault()
+                                         }).FirstOrDefaultAsync();
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), tourbooking);
 
             }

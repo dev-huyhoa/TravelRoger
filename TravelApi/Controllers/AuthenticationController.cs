@@ -27,13 +27,14 @@ namespace TravelApi.Controllers
         private IAuthentication authentication;
         private IHubRepository hubRepo;
         private Response res;
+        private readonly int TimeExpiredInMinutes;
         public AuthenticationController(IConfiguration _configuration, IAuthentication _authentication, IHubRepository _hubRepo)
         {
             configuration = _configuration;
             authentication = _authentication;
             hubRepo = _hubRepo;
             res = new Response();
-
+            TimeExpiredInMinutes = Convert.ToInt16(configuration["Token:TimeExpired"]);
         }
 
         [HttpPost]
@@ -43,6 +44,7 @@ namespace TravelApi.Controllers
         {
             try
             {
+                var dateTimeNow = DateTime.Now;
                 string email = PrCommon.GetString("email", frmData);
                 string password = PrCommon.GetString("password", frmData);
                 var result = authentication.EmpCheckBlock(email);
@@ -64,21 +66,19 @@ namespace TravelApi.Controllers
                                     var roleName = authentication.RoleName(result.RoleId);
                                     var claim = new[]
                                     {
-                                    new Claim(JwtRegisteredClaimNames.Sub, configuration["Token:Subject"]),
-                                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                                    new Claim(JwtRegisteredClaimNames.Aud, configuration["Token:Audience"]),
-                                    new Claim(ClaimTypes.Role, result.RoleId.ToString()),
-                                    new Claim(ClaimTypes.NameIdentifier, result.IdEmployee.ToString()),
-                                    new Claim(ClaimTypes.Name, result.IdEmployee.ToString()),
-                                    new Claim("EmployeeId", result.IdEmployee.ToString())
-
-                                   
+                                        new Claim(JwtRegisteredClaimNames.Sub, configuration["Token:Subject"]),
+                                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                                        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                                        new Claim(JwtRegisteredClaimNames.Aud, configuration["Token:Audience"]),
+                                        new Claim(ClaimTypes.Role, result.RoleId.ToString()),
+                                        new Claim(ClaimTypes.NameIdentifier, result.IdEmployee.ToString()),
+                                        new Claim(ClaimTypes.Name, result.IdEmployee.ToString()),
+                                        new Claim("EmployeeId", result.IdEmployee.ToString())
                                      };
                                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));
                                     var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                                     var token = new JwtSecurityToken(configuration["Token:Issuer"],
-                                        configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddDays(60),
+                                        configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(TimeExpiredInMinutes),
                                         //configuration["Token:Audience"], claim, expires: DateTime.UtcNow.AddMinutes(525600),
                                         signingCredentials: signIn);
 
@@ -93,7 +93,7 @@ namespace TravelApi.Controllers
                                     auth.Name = result.NameEmployee;
                                     auth.Image = result.Image;
                                     auth.Email = result.Email;
-
+                                    auth.DateExpired = dateTimeNow.AddMinutes(TimeExpiredInMinutes);
                                     return Ok(Ultility.Responses("Đăng nhập thành công !", Enums.TypeCRUD.Success.ToString(), auth));
                                 }
                                 else
