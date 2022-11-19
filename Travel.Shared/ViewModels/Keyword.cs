@@ -46,5 +46,7 @@ namespace Travel.Shared.ViewModels
 
         public string KwIdTour { get; set; }
         public string KwModifyBy { get; set; }
+        public int KwAmount { get; set; }
+        public string KwLiscensePlate { get; set; }
     }
 }

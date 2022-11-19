@@ -58,32 +58,32 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var idCar = PrCommon.GetString("idCar", frmData); 
-                if (!String.IsNullOrEmpty(idCar))  
-                {                  
+                var idCar = PrCommon.GetString("idCar", frmData);
+                if (!String.IsNullOrEmpty(idCar))
+                {
                 }
-               
+
                 var nameDriver = PrCommon.GetString("nameDriver", frmData);
                 if (!String.IsNullOrEmpty(nameDriver))
                 {
-                }            
+                }
 
                 var amountSeat = PrCommon.GetString("amountSeat", frmData);
                 if (!String.IsNullOrEmpty(amountSeat))
                 {
                 }
-               
+
                 var liscenseplate = PrCommon.GetString("liscenseplate", frmData);
                 if (!String.IsNullOrEmpty(liscenseplate))
                 {
                 }
-          
-           
+
+
                 var phone = PrCommon.GetString("Phone", frmData);
                 if (!String.IsNullOrEmpty(phone))
                 {
-                }      
-                
+                }
+
                 var status = PrCommon.GetString("status", frmData);
                 if (!String.IsNullOrEmpty(status))
                 {
@@ -111,10 +111,10 @@ namespace Travel.Data.Repositories
                 CreateCarViewModel objCreate = new CreateCarViewModel();
                 //objCreate.IdCar = Guid.Parse(idCar);
                 objCreate.NameDriver = nameDriver;
-                objCreate.AmountSeat =  int.Parse(amountSeat);
+                objCreate.AmountSeat = int.Parse(amountSeat);
                 objCreate.Status = 0;
                 objCreate.LiscensePlate = liscenseplate;
-                objCreate.Phone = phone;     
+                objCreate.Phone = phone;
                 objCreate.IdUserModify = Guid.Parse(idUserModify);
                 objCreate.ModifyBy = GetCurrentUser(objCreate.IdUserModify).NameEmployee;
                 objCreate.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
@@ -134,28 +134,28 @@ namespace Travel.Data.Repositories
         }
 
 
-      
-        public Response GetsSelectBoxCar(long fromDate , long toDate,string idTour)
+
+        public Response GetsSelectBoxCar(long fromDate, long toDate, string idTour)
         {
             try
             {
                 //var unixTimeOneDay = 86400000;
 
                 var listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
-                                         where x.TourId == idTour
-                                         && (fromDate >= x.DepartureDate && fromDate <= (x.ReturnDate + 86400000))
-                                         orderby x.ReturnDate ascending
-                                         select x.CarId);
+                                            where x.TourId == idTour
+                                            && (fromDate >= x.DepartureDate && fromDate <= (x.ReturnDate + 86400000))
+                                            orderby x.ReturnDate ascending
+                                            select x.CarId);
 
                 var scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
-                                           where x.TourId == idTour
-                                           && x.DepartureDate >= fromDate
-                                           orderby x.DepartureDate ascending
-                                           select x);
+                                                      where x.TourId == idTour
+                                                      && x.DepartureDate >= fromDate
+                                                      orderby x.DepartureDate ascending
+                                                      select x);
                 var listCarShouldRemove2 = (from x in scheduleDepartDateLargerToDate
-                            where !(from s in listCarShouldRemove1 select s).Contains(x.CarId)
-                            && (toDate + 86400000) > x.ReturnDate
-                            select x.CarId).Distinct();
+                                            where !(from s in listCarShouldRemove1 select s).Contains(x.CarId)
+                                            && (toDate + 86400000) > x.ReturnDate
+                                            select x.CarId).Distinct();
 
                 var listShouldRemove = listCarShouldRemove1.Concat(listCarShouldRemove2);
 
@@ -175,11 +175,13 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Gets()
+        public Response Gets(bool isDelete)
         {
             try
             {
-                var listCar = (from x in _db.Cars.AsNoTracking() select x).ToList();
+                var listCar = (from x in _db.Cars.AsNoTracking()
+                               where x.IsDelete == isDelete
+                               select x).ToList();
                 var result = Mapper.MapCar(listCar);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
@@ -217,7 +219,7 @@ namespace Travel.Data.Repositories
 
                 var lsCarFull = (from x in _db.Cars.AsNoTracking()
                                  where x.Status == (int)Enums.StatusCar.Busy
-                                   select x).ToList();
+                                 select x).ToList();
 
                 var lsResult = lsCarFree.Concat(lsCarBusy).Concat(lsCarFull);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), lsResult);
@@ -234,11 +236,11 @@ namespace Travel.Data.Repositories
         {
             try
             {
-               var userLogin = GetCurrentUser(input.IdUserModify);
+                var userLogin = GetCurrentUser(input.IdUserModify);
 
                 var car = (from x in _db.Cars.AsNoTracking()
-                                     where x.IdCar == input.IdCar
-                                     select x).FirstOrDefault();
+                           where x.IdCar == input.IdCar
+                           select x).FirstOrDefault();
                 car.Status = input.Status;
                 car.LiscensePlate = input.LiscensePlate;
                 car.NameDriver = input.NameDriver;
@@ -246,7 +248,7 @@ namespace Travel.Data.Repositories
                 car.AmountSeat = input.AmountSeat;
                 UpdateDatabase<Car>(car);
                 SaveChange();
-                return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+                return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
@@ -284,6 +286,122 @@ namespace Travel.Data.Repositories
             catch (Exception e)
             {
 
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response RestoreCar(Guid id)
+        {
+            try
+            {
+                var car = (from x in _db.Cars.AsNoTracking()
+                            where x.IdCar == id
+                            select x).FirstOrDefault();
+                if (car != null)
+                {
+                    car.IsDelete = false;
+                    UpdateDatabase<Car>(car);
+                    SaveChange();
+
+                    return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
+
+                }
+                else
+                {
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+
+        }
+
+        public Response SearchCar(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var isDelete = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.IsDelete = Boolean.Parse(isDelete);
+                }
+
+                var kwName = PrCommon.GetString("nameDriver", frmData);
+                if (!String.IsNullOrEmpty(kwName))
+                {
+                    keywords.KwName = kwName.Trim().ToLower();
+                }
+
+                var kwAmountSeat = PrCommon.GetString("amountSeat", frmData);
+                if (!String.IsNullOrEmpty(kwAmountSeat))
+                {
+                    keywords.KwAmount = int.Parse(kwAmountSeat);
+                }
+
+                var kwLiscensePlate = PrCommon.GetString("liscenseplate", frmData);
+                if (!String.IsNullOrEmpty(kwLiscensePlate))
+                {
+                    keywords.KwLiscensePlate = kwLiscensePlate.Trim().ToLower();
+                }
+
+
+                var kwPhone = PrCommon.GetString("phone", frmData);
+                if (!String.IsNullOrEmpty(kwPhone))
+                {
+                    keywords.KwPhone = kwPhone.Trim().ToLower();
+                }
+
+                var status = PrCommon.GetString("status", frmData);
+                if (!String.IsNullOrEmpty(status))
+                {
+                }
+
+                var listCar = new List<Car>();
+                if (!string.IsNullOrEmpty(isDelete))
+                {
+                    listCar = (from x in _db.Cars.AsNoTracking()
+                                where x.IsDelete == keywords.IsDelete &&
+                                                x.NameDriver.ToLower().Contains(keywords.KwName) &&
+                                                x.LiscensePlate.ToLower().Contains(keywords.KwLiscensePlate) &&
+                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                x.AmountSeat == keywords.KwAmount
+                                select x).ToList();
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(kwAmountSeat))
+                    {
+                        listCar = (from x in _db.Cars.AsNoTracking()
+                                   where x.IsDelete == keywords.IsDelete &&
+                                                   x.AmountSeat.Equals(keywords.KwAmount)
+                                   select x).ToList();
+                    }
+                    else
+                    {
+                        listCar = (from x in _db.Cars.AsNoTracking()
+                                   where x.IsDelete == keywords.IsDelete 
+                                   select x).ToList();
+                    }
+                }
+                var result = Mapper.MapCar(listCar);
+                if (listCar.Count() > 0)
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                else
+                {
+                    return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
+                }
+            }
+            catch(Exception e)
+            {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
