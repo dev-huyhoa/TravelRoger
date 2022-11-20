@@ -495,7 +495,6 @@ namespace Travel.Data.Responsives
                 {
                     return Ultility.Responses($"{email} không tồn tại!", Enums.TypeCRUD.Warning.ToString());
                 }
-                return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
             }
             catch (Exception e)
             {
@@ -539,6 +538,31 @@ namespace Travel.Data.Responsives
                     }
                 }
                 return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response EmpForgotPassword(string email, string password)
+        {
+            try
+            {
+                var account = (from x in _db.Employees
+                               where x.Email.ToLower() == email.ToLower()
+                               select x).FirstOrDefault();
+                if (account != null)
+                {
+                    account.Password = Ultility.Encryption(password);
+                    _db.SaveChanges();
+
+                    return Ultility.Responses("Cập nhật mật khẩu thành công, mời đăng nhập lại !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses($"{email} không tồn tại!", Enums.TypeCRUD.Warning.ToString());
+                }
             }
             catch (Exception e)
             {

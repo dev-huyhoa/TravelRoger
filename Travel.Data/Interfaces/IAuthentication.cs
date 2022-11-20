@@ -38,6 +38,6 @@ namespace Travel.Data.Interfaces
         string RoleName(int roleId);
 
         Response EmpChangePassword(Guid idEmp, string password, string newPassword);
-
+        Response EmpForgotPassword(string email, string password);
     }
 }

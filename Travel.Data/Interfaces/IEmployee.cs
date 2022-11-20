@@ -23,5 +23,6 @@ namespace Travel.Data.Interfaces
         Response DeleteEmployee(Guid idEmployee);
         Response StatisticEmployee();
 
+        Task<Response> SendOTP(string email);
     }
 }
