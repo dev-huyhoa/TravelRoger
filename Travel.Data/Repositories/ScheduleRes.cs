@@ -2419,7 +2419,14 @@ namespace Travel.Data.Repositories
                     }
                 }
                 var result = Mapper.MapSchedule(listSchedule);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                if (listSchedule.Count() > 0)
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                else
+                {
+                    return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
+                }
 
             }
             catch (Exception e)
@@ -2663,7 +2670,14 @@ namespace Travel.Data.Repositories
                 }
 
                 var result = Mapper.MapSchedule(listSchedule);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                if (listSchedule.Count() > 0)
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                else
+                {
+                    return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
+                }
 
             }
             catch (Exception e)

@@ -102,7 +102,9 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var timeline = (from x in _db.Timelines where x.IdSchedule == IdSchedule select x).ToList();
+                var timeline = (from x in _db.Timelines where x.IdSchedule == IdSchedule 
+                                orderby x.FromTime
+                                select x).ToList();
                 var result = Mapper.MapTimeLine(timeline);
                 if (result != null)
                 {

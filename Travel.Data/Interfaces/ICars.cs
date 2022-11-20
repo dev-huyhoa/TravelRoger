@@ -12,7 +12,7 @@ namespace Travel.Data.Interfaces
     public interface ICars
     {
         string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate);
-        Response Gets();
+        Response Gets(bool isDelete);
         Response UpdateCar(UpdateCarViewModel input);
         Response Create(CreateCarViewModel input);
         Response StatisticCar();
@@ -21,5 +21,7 @@ namespace Travel.Data.Interfaces
         Response DeleteCar(Guid id, Guid idUser);
         Response GetsSelectBoxCarUpdate(long fromDate, long toDate, string idSchedule);
 
+        Response RestoreCar(Guid id);
+        Response SearchCar(JObject frmData);
     }
 }

@@ -30,9 +30,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("list-car")]
-        public object Gets()
+        public object Gets(bool isDelete)
         {
-            res = _car.Gets();
+            res = _car.Gets(isDelete);
             return Ok(res);
         }
         [HttpGet]
@@ -106,6 +106,24 @@ namespace TravelApi.Controllers
         public object DeleteCar(Guid idCar, Guid idUser)
         {
             res = _car.DeleteCar(idCar, idUser);
+            return Ok(res);
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("restore-car")]
+        public object RestoreCar(Guid idCar)
+        {
+            res = _car.RestoreCar(idCar);
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-car")]
+        public object SearchCar([FromBody] JObject frmData)
+        {
+            res = _car.SearchCar(frmData);
             return Ok(res);
         }
     }

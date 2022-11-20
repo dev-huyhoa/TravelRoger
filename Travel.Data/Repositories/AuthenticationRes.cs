@@ -489,25 +489,16 @@ namespace Travel.Data.Responsives
                     account.Password = Ultility.Encryption(password);
                     _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Cật nhập mật khẩu thành công, mời đăng nhập lại !";
-                    res.Notification.Type = "Success";
+                    return Ultility.Responses("Cập nhật mật khẩu thành công, mời đăng nhập lại !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
-                    res.Notification.Messenge = $"{email} không tồn tại!";
-                    res.Notification.Type = "Error";
-                    res.Notification.DateTime = DateTime.Now;
+                    return Ultility.Responses($"{email} không tồn tại!", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -547,6 +538,31 @@ namespace Travel.Data.Responsives
                     }
                 }
                 return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response EmpForgotPassword(string email, string password)
+        {
+            try
+            {
+                var account = (from x in _db.Employees
+                               where x.Email.ToLower() == email.ToLower()
+                               select x).FirstOrDefault();
+                if (account != null)
+                {
+                    account.Password = Ultility.Encryption(password);
+                    _db.SaveChanges();
+
+                    return Ultility.Responses("Cập nhật mật khẩu thành công, mời đăng nhập lại !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses($"{email} không tồn tại!", Enums.TypeCRUD.Warning.ToString());
+                }
             }
             catch (Exception e)
             {

@@ -662,6 +662,27 @@ namespace Travel.Data.Repositories
                     keywords.KwPhone = "";
 
                 }
+
+                var fromDate = PrCommon.GetString("dateBookingFrom", frmData);
+                if (!String.IsNullOrEmpty(fromDate))
+                {
+                    keywords.KwFromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(fromDate));
+                }
+                else
+                {
+                    keywords.KwFromDate = 0;
+                }
+
+                var toDate = PrCommon.GetString("dateBookingTo", frmData);
+                if (!String.IsNullOrEmpty(toDate))
+                {
+                    keywords.KwToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(toDate).AddDays(1).AddSeconds(-1));
+                }
+                else
+                {
+                    keywords.KwToDate = 0;
+                }
+
                 var kwDate = PrCommon.GetString("DateBooking", frmData).Trim();
                 if (!String.IsNullOrEmpty(kwDate))
                 {
@@ -682,33 +703,125 @@ namespace Travel.Data.Repositories
 
                 if (!string.IsNullOrEmpty(kwIsCall))
                 {
-                  
-                    listTourBooking = (from x in _db.TourBookings
-                                       where
-                                                       x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
-                                                       x.Pincode.ToLower().Contains(keywords.KwPincode) &&
-                                                       x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                                           x.Email.ToLower().Contains(keywords.KwEmail) &&
-                                                            x.IsCalled == keywords.kwIsCalled
-                                       orderby x.DateBooking
-                                       select x).ToList();
+                    if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
+                    {
+                        listTourBooking = (from x in _db.TourBookings
+                                           where
+                                                           x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                           x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                           x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                               x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                                x.IsCalled == keywords.kwIsCalled &&
+                                                                 x.DateBooking >= keywords.KwFromDate &&
+                                               x.DateBooking <= keywords.KwToDate
+                                           orderby x.DateBooking descending
+                                           select x).ToList();
+                    }
+                    else
+                    {
+                        if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
+                        {
 
+                            listTourBooking = (from x in _db.TourBookings
+                                               where
+                                                               x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                               x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                                    x.IsCalled == keywords.kwIsCalled &&
+                                                                    x.DateBooking >= keywords.KwFromDate
+                                               orderby x.DateBooking descending
+                                               select x).ToList();
+                        }
+                        else if (keywords.KwToDate == 0 && keywords.KwFromDate > 0)
+                        {
+                            listTourBooking = (from x in _db.TourBookings
+                                               where
+                                                               x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                               x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                                    x.IsCalled == keywords.kwIsCalled &&
+                                                                  x.DateBooking >= keywords.KwFromDate
+                                               orderby x.DateBooking descending
+                                               select x).ToList();
+                        }
+                        else
+                        {
+                            listTourBooking = (from x in _db.TourBookings
+                                               where
+                                                               x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                               x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                                    x.IsCalled == keywords.kwIsCalled
+
+                                               orderby x.DateBooking descending
+                                               select x).ToList();
+                        }
+                    }
                 }
                 else
                 {
-                    listTourBooking = (from x in _db.TourBookings
-                                       where
-                                                       x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
-                                                       x.Pincode.ToLower().Contains(keywords.KwPincode) &&
-                                                       x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                                           x.Email.ToLower().Contains(keywords.KwEmail) &&
-                                                          x.IsCalled == keywords.kwIsCalled
-                                       orderby x.DateBooking
-                                       select x).ToList();
+                    if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
+                    {
+                        listTourBooking = (from x in _db.TourBookings
+                                           where
+                                                           x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                           x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                           x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                               x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                              x.IsCalled == keywords.kwIsCalled &&
+                                                                x.DateBooking >= keywords.KwFromDate &&
+                                               x.DateBooking <= keywords.KwToDate
+                                           orderby x.DateBooking descending
+                                           select x).ToList();
+                    }
+                    else
+                    {
+                        if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
+                        {
+                            listTourBooking = (from x in _db.TourBookings
+                                               where
+                                                               x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                               x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                                  x.IsCalled == keywords.kwIsCalled &&
+                                                                     x.DateBooking <= keywords.KwToDate
+                                               orderby x.DateBooking descending
+                                               select x).ToList();
+                        }
+                        else if (keywords.KwToDate == 0 && keywords.KwFromDate > 0)
+                        {
+                            listTourBooking = (from x in _db.TourBookings
+                                               where
+                                                               x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                               x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                                    x.IsCalled == keywords.kwIsCalled &&
+                                                                  x.DateBooking >= keywords.KwFromDate
+                                               orderby x.DateBooking descending
+                                               select x).ToList();
+                        }
+                        else
+                        {
+                            listTourBooking = (from x in _db.TourBookings
+                                               where
+                                                               x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
+                                                               x.Pincode.ToLower().Contains(keywords.KwPincode) &&
+                                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                                    x.IsCalled == keywords.kwIsCalled
+
+                                               orderby x.DateBooking descending
+                                               select x).ToList();
+                        }
+                    }
+
+
                 }
-
-
-
                 var result = Mapper.MapTourBooking(listTourBooking);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }

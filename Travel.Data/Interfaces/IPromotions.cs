@@ -26,6 +26,8 @@ namespace Travel.Data.Interfaces
 
         Response RestorePromotion(int id, Guid idUser);
 
+        Response StatisticPromotion();
+
     }
 }
 

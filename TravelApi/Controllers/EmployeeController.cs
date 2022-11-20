@@ -133,5 +133,14 @@ namespace TravelApi.Controllers
             res = employee.StatisticEmployee();
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("send-otp-emp")]
+        public async Task<object> SendOTP(string email)
+        {
+            res = await employee.SendOTP(email);
+            return Ok(res);
+        }
     }
 }

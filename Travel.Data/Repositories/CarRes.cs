@@ -282,7 +282,9 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
         {
             try
             {
-                var listCar = (from x in _db.Cars.AsNoTracking() select x).ToList();
+                var listCar = (from x in _db.Cars.AsNoTracking()
+                               where x.IsDelete == isDelete
+                               select x).ToList();
                 var result = Mapper.MapCar(listCar);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
@@ -349,7 +351,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 car.AmountSeat = input.AmountSeat;
                 UpdateDatabase<Car>(car);
                 SaveChange();
-                return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+                return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
@@ -391,6 +393,120 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
             }
         }
 
+        public Response RestoreCar(Guid id)
+        {
+            try
+            {
+                var car = (from x in _db.Cars.AsNoTracking()
+                            where x.IdCar == id
+                            select x).FirstOrDefault();
+                if (car != null)
+                {
+                    car.IsDelete = false;
+                    UpdateDatabase<Car>(car);
+                    SaveChange();
 
+                    return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
+
+                }
+                else
+                {
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+
+        }
+
+        public Response SearchCar(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+
+                var isDelete = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.IsDelete = Boolean.Parse(isDelete);
+                }
+
+                var kwName = PrCommon.GetString("nameDriver", frmData);
+                if (!String.IsNullOrEmpty(kwName))
+                {
+                    keywords.KwName = kwName.Trim().ToLower();
+                }
+
+                var kwAmountSeat = PrCommon.GetString("amountSeat", frmData);
+                if (!String.IsNullOrEmpty(kwAmountSeat))
+                {
+                    keywords.KwAmount = int.Parse(kwAmountSeat);
+                }
+
+                var kwLiscensePlate = PrCommon.GetString("liscenseplate", frmData);
+                if (!String.IsNullOrEmpty(kwLiscensePlate))
+                {
+                    keywords.KwLiscensePlate = kwLiscensePlate.Trim().ToLower();
+                }
+
+
+                var kwPhone = PrCommon.GetString("phone", frmData);
+                if (!String.IsNullOrEmpty(kwPhone))
+                {
+                    keywords.KwPhone = kwPhone.Trim().ToLower();
+                }
+
+                var status = PrCommon.GetString("status", frmData);
+                if (!String.IsNullOrEmpty(status))
+                {
+                }
+
+                var listCar = new List<Car>();
+                if (!string.IsNullOrEmpty(isDelete))
+                {
+                    listCar = (from x in _db.Cars.AsNoTracking()
+                                where x.IsDelete == keywords.IsDelete &&
+                                                x.NameDriver.ToLower().Contains(keywords.KwName) &&
+                                                x.LiscensePlate.ToLower().Contains(keywords.KwLiscensePlate) &&
+                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                x.AmountSeat == keywords.KwAmount
+                                select x).ToList();
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(kwAmountSeat))
+                    {
+                        listCar = (from x in _db.Cars.AsNoTracking()
+                                   where x.IsDelete == keywords.IsDelete &&
+                                                   x.AmountSeat.Equals(keywords.KwAmount)
+                                   select x).ToList();
+                    }
+                    else
+                    {
+                        listCar = (from x in _db.Cars.AsNoTracking()
+                                   where x.IsDelete == keywords.IsDelete 
+                                   select x).ToList();
+                    }
+                }
+                var result = Mapper.MapCar(listCar);
+                if (listCar.Count() > 0)
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                else
+                {
+                    return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
+                }
+            }
+            catch(Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }

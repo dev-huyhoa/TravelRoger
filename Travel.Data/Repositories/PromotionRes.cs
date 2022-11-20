@@ -485,5 +485,40 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+        public Response StatisticPromotion()
+        {
+            try
+            {
+
+                var dateTimeNow = DateTime.Now;
+                var month = dateTimeNow.Month;
+                var year = dateTimeNow.Year;
+                var day = 1;
+                var firstDayOfMonth = DateTime.Parse($"{year}/{month}/{day}");
+                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+                var firstDay = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond((firstDayOfMonth));
+                var lastDay = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond((lastDayOfMonth));
+
+                var promotionOfMonth = (from x in _db.Promotions.AsNoTracking()
+                               where x.IsTempdata == false && x.IsDelete == false &&
+                               x.FromDate >= firstDay && x.FromDate <= lastDay
+                               select x).Count();
+
+                var promotion = (from x in _db.Promotions.AsNoTracking()
+                                        where x.IsTempdata == false && x.IsDelete == false                                     
+                                        select x).Count();
+                var ab = String.Format("promotion: {0} && promotionOfMonth: {1}", promotion, promotionOfMonth);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), ab);
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+
+
+
+        }
     }
 }

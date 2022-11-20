@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
@@ -22,11 +24,13 @@ namespace Travel.Data.Repositories
         private readonly TravelContext _db;
         private Notification message;
         private Response res;
-        public EmployeeRes(TravelContext db)
+        private readonly IConfiguration _config;
+        public EmployeeRes(TravelContext db, IConfiguration config)
         {
             _db = db;
             message = new Notification();
             res = new Response();
+            _config = config;
         }
         private void UpdateDatabase(Employee input)
         {
@@ -505,6 +509,7 @@ namespace Travel.Data.Repositories
                 {
                     employee.IsDelete = false;
                     UpdateDatabase(employee);
+                    _db.SaveChanges();
 
 
                     return Ultility.Responses($"Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
@@ -537,6 +542,7 @@ namespace Travel.Data.Repositories
                     {
                         employee.IsDelete = true;
                         UpdateDatabase(employee);
+                        _db.SaveChanges();
 
                         return Ultility.Responses($"Xóa thành công !", Enums.TypeCRUD.Success.ToString());
 
@@ -668,6 +674,46 @@ namespace Travel.Data.Repositories
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
+            }
+        }
+
+        public async Task<Response> SendOTP(string email)
+        {
+            try
+            {
+                var account = (from x in _db.Employees.AsNoTracking()
+                               where x.Email.ToLower() == email.ToLower()
+                               select x).FirstOrDefault();
+                if (account != null)
+                {
+                    string otpCode = Ultility.RandomString(8, false);
+                    OTP obj = new OTP();
+                    var dateTime = DateTime.Now;
+                    var begin = dateTime;
+                    var end = dateTime.AddMinutes(2);
+                    obj.BeginTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(begin);
+                    obj.EndTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(end);
+                    obj.OTPCode = otpCode;
+                    await _db.OTPs.AddAsync(obj);
+                    await _db.SaveChangesAsync();
+
+                    var subjectOTP = _config["OTPSubject"];
+                    var emailSend = _config["emailSend"];
+                    var keySecurity = _config["keySecurity"];
+                    var stringHtml = Ultility.getHtml(otpCode, subjectOTP, "OTP");
+
+                    Ultility.sendEmail(stringHtml, email, "Yêu cầu quên mật khẩu", emailSend, keySecurity);
+                    return Ultility.Responses($"Mã OTP đã gửi vào email {email}!", Enums.TypeCRUD.Success.ToString(), obj);
+
+                }
+                else
+                {
+                    return Ultility.Responses($"{email} không tồn tại!", Enums.TypeCRUD.Error.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
     }
