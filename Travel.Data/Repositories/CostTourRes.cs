@@ -201,7 +201,7 @@ namespace Travel.Data.Repositories
                 // thêm schedule update giá
                 // update price
                 float holidayPercent = Convert.ToInt16(_config["PercentHoliday"]);
-
+             
                 var schedule = (from x in _db.Schedules.AsNoTracking()
                                 where x.IdSchedule == input.IdSchedule select x).First();
                 schedule.AdditionalPrice = cost.PriceHotelSR;
@@ -210,16 +210,25 @@ namespace Travel.Data.Repositories
 
                 // số ngày đi của tour
                 int countDay = Convert.ToInt16(Ultility.CountDay(input.DepartureDate, input.ReturnDate));
+                #region test
+                var PriceTicketPlace = cost.PriceTicketPlace.CloneNumber();
 
-                float CostService = (cost.PriceHotelDB   + cost.PriceRestaurant + cost.PriceTicketPlace) * countDay;
-                float VAT = schedule.Vat;
-                int Profit = schedule.Profit;
+                var PriceRestaurant = cost.PriceRestaurant.CloneNumber();
+
+                var PriceHotelDB = cost.PriceHotelDB.CloneNumberTwo();
+                #endregion
+
+
+                float CostService = ((PriceHotelDB + PriceRestaurant + PriceTicketPlace) * countDay).CloneNumber();
+
+                float VAT = (schedule.Vat).CloneNumber();
+                float Profit = (schedule.Profit).CloneNumber();
                 float totalPriceNotVatAndProfit = cost.TotalCostTourNotService + CostService ;
-                totalPriceNotVatAndProfit = totalPriceNotVatAndProfit + (totalPriceNotVatAndProfit * (VAT / 100));
-                float FinalPrice = totalPriceNotVatAndProfit + (totalPriceNotVatAndProfit * (Profit / 100));
-                schedule.FinalPrice = FinalPrice;
-                schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
-                UpdateDatabaseSchedule(schedule);
+                double totalPriceIncludeVAT = (double)(totalPriceNotVatAndProfit + (totalPriceNotVatAndProfit * (VAT / 100)));
+                double FinalPrice = totalPriceIncludeVAT + (totalPriceIncludeVAT * (Profit / 100));
+                //schedule.FinalPrice = FinalPrice;
+                //schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
+                //UpdateDatabaseSchedule(schedule);
 
                 return Ultility.Responses($"Cập nhật giá cho {schedule.IdSchedule} thành công !", Enums.TypeCRUD.Success.ToString());
             }
