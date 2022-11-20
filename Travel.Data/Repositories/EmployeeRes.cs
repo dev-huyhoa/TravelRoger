@@ -505,6 +505,7 @@ namespace Travel.Data.Repositories
                 {
                     employee.IsDelete = false;
                     UpdateDatabase(employee);
+                    _db.SaveChanges();
 
 
                     return Ultility.Responses($"Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
@@ -537,6 +538,7 @@ namespace Travel.Data.Repositories
                     {
                         employee.IsDelete = true;
                         UpdateDatabase(employee);
+                        _db.SaveChanges();
 
                         return Ultility.Responses($"Xóa thành công !", Enums.TypeCRUD.Success.ToString());
 
