@@ -499,7 +499,7 @@ namespace Travel.Data.Repositories
                 var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
                 var firstDay = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond((firstDayOfMonth));
                 var lastDay = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond((lastDayOfMonth));
-
+                var timeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond((dateTimeNow));
                 var promotionOfMonth = (from x in _db.Promotions.AsNoTracking()
                                where x.IsTempdata == false && x.IsDelete == false &&
                                x.FromDate >= firstDay && x.FromDate <= lastDay
@@ -507,8 +507,14 @@ namespace Travel.Data.Repositories
 
                 var promotion = (from x in _db.Promotions.AsNoTracking()
                                         where x.IsTempdata == false && x.IsDelete == false                                     
-                                        select x).Count();
-                var ab = String.Format("promotion: {0} && promotionOfMonth: {1}", promotion, promotionOfMonth);
+                                        select x).Count(); 
+                // còn hiệu lực
+                var promotionOfTime = (from x in _db.Promotions.AsNoTracking()
+                                 where x.IsTempdata == false && x.IsDelete == false &&
+                                  x.FromDate >= timeNow && x.ToDate >= timeNow
+                                       select x).Count();
+                var unPromotionOfTime = promotionOfMonth - promotionOfTime;
+                var ab = String.Format("promotion: {0} && promotionOfMonth: {1} && promotionOfTime: {2} && unPromotionOfTime: {3}", promotion, promotionOfMonth , promotionOfTime , unPromotionOfTime);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), ab);
 
             }
