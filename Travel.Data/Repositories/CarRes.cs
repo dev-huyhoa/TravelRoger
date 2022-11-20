@@ -278,7 +278,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
             }
         }
 
-        public Response Gets()
+        public Response Gets(bool isDelete)
         {
             try
             {
@@ -508,5 +508,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+       
     }
 }
