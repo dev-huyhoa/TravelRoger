@@ -40,11 +40,11 @@ namespace TravelApi.Controllers
         //[ClaimRequirement(ClaimTypes.Name, "Admin")]
         [Authorize]
         [Route("list-employee")]
-        public object GetsEmployee(bool isDelete)
+        public object GetsEmployee(bool isDelete, int pageIndex, int pageSize)
         {
-            var userId = this.User.Claims.Where(x=> x.Type == ClaimTypes.NameIdentifier);
-            var userId1 = this.User.FindFirstValue(ClaimTypes.Role);
-            res = employee.GetsEmployee(isDelete);
+            //var userId = this.User.Claims.Where(x=> x.Type == ClaimTypes.NameIdentifier);
+            //var userId1 = this.User.FindFirstValue(ClaimTypes.Role);
+            res = employee.GetsEmployee(isDelete,pageIndex,pageSize);
             return Ok(res);
         }
 
@@ -62,8 +62,6 @@ namespace TravelApi.Controllers
         [Route("create-employee")]
         public object CreateEmployee(IFormCollection frmdata, IFormFile file)
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.Role);
-            message = null;
             var result = employee.CheckBeforeSave(frmdata, file, ref message, false);
             if (message == null)
             {

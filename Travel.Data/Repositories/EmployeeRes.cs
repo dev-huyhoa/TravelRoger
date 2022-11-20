@@ -190,7 +190,7 @@ namespace Travel.Data.Repositories
                 return string.Empty;
             }
         }
-        public Response GetsEmployee(bool isDelete)
+        public Response GetsEmployee(bool isDelete, int pageIndex = 1, int pageSize = 2)
         {
             try
             {
@@ -233,7 +233,7 @@ namespace Travel.Data.Repositories
                                    Phone = x.Phone,
                                    Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                    RoleId = x.RoleId,
-                               }).ToList();
+                               }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
 
                 var result = Mapper.MapEmployee(listEmp);
 
@@ -288,6 +288,8 @@ namespace Travel.Data.Repositories
             try
             {
                 Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
 
                 var isDelete = PrCommon.GetString("isDelete", frmData);
                 if (!String.IsNullOrEmpty(isDelete))
@@ -325,7 +327,6 @@ namespace Travel.Data.Repositories
                 else
                 {
                     keywords.KwPhone = "";
-
                 }
 
                 var kwEmail = PrCommon.GetString("email", frmData).Trim();
@@ -382,9 +383,9 @@ namespace Travel.Data.Repositories
                                        Password = x.Password,
                                        Phone = x.Phone,
                                        Role = (from r in _db.Roles.AsNoTracking()
-                                               where r.IdRole == x.RoleId select r).First(),
+                                               where r.IdRole == x.RoleId select r).FirstOrDefault(),
                                        RoleId = x.RoleId
-                                   }).ToList();
+                                   }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                     else
                     {
@@ -415,7 +416,7 @@ namespace Travel.Data.Repositories
                                        Phone = x.Phone,
                                        Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                        RoleId = x.RoleId
-                                   }).ToList();
+                                   }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                 }
                 else
@@ -449,7 +450,7 @@ namespace Travel.Data.Repositories
                                        Phone = x.Phone,
                                        Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                        RoleId = x.RoleId
-                                   }).ToList();
+                                   }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                     else
                     {
@@ -479,7 +480,7 @@ namespace Travel.Data.Repositories
                                        Phone = x.Phone,
                                        Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                        RoleId = x.RoleId
-                                   }).ToList();
+                                   }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                 }
                 var result = Mapper.MapEmployee(listEmp);

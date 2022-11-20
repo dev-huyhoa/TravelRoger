@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Travel.Shared.ViewModels
 {
-    public class Keywords
+    public class Keywords: Pagination
     {
         public bool IsDelete { get; set; }
         public string Keyword { get; set; }
@@ -48,5 +48,10 @@ namespace Travel.Shared.ViewModels
         public string KwModifyBy { get; set; }
         public int KwAmount { get; set; }
         public string KwLiscensePlate { get; set; }
+    }
+    public class Pagination
+    {
+        public int pageSize { get; set; }
+        public int pageIndex { get; set; }
     }
 }
