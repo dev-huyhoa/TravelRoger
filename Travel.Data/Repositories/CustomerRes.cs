@@ -417,9 +417,12 @@ namespace Travel.Data.Repositories
                 var cus = (from x in _db.Customers where x.IsDelete == false && x.Email == email select x).Count();
                 if (cus > 0)
                 {
-                    return Ultility.Responses("[" + email + "] này đã được đăng ký !", Enums.TypeCRUD.Warning.ToString(), description: "Email");
+                    return Ultility.Responses("[" + email + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString(), description: "Email");
                 }
-                return res;
+                else
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
