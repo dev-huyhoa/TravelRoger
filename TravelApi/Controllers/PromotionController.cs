@@ -46,6 +46,14 @@ namespace TravelApi.Controllers
             res = _promotion.GetsPromotionExists();
             return Ok(res);
         }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("statistic")]
+        public object GetsProm1otionExists()
+        {
+            res = _promotion.StatisticPromotion();
+            return Ok(res);
+        }
 
 
         [HttpGet]
