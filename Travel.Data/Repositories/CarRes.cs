@@ -135,26 +135,24 @@ namespace Travel.Data.Repositories
 
 
 
-        public Response GetsSelectBoxCar(long fromDate, long toDate, string idTour)
+        public Response GetsSelectBoxCar(long fromDate, long toDate)
         {
             try
             {
-                //var unixTimeOneDay = 86400000;
+                var unixTimeOneDay = 1;
 
                 var listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
-                                            where x.TourId == idTour
-                                            && (fromDate >= x.DepartureDate && fromDate <= (x.ReturnDate + 86400000))
+                                            where (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
                                             orderby x.ReturnDate ascending
                                             select x.CarId);
 
                 var scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
-                                                      where x.TourId == idTour
-                                                      && x.DepartureDate >= fromDate
+                                                      where x.DepartureDate >= fromDate
                                                       orderby x.DepartureDate ascending
                                                       select x);
                 var listCarShouldRemove2 = (from x in scheduleDepartDateLargerToDate
                                             where !(from s in listCarShouldRemove1 select s).Contains(x.CarId)
-                                            && (toDate + 86400000) > x.ReturnDate
+                                            && (toDate + unixTimeOneDay) > x.DepartureDate
                                             select x.CarId).Distinct();
 
                 var listShouldRemove = listCarShouldRemove1.Concat(listCarShouldRemove2);
@@ -174,8 +172,113 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+        public Response ViewSelectBoxCar(string idSchedule)
+        {
+            try
+            {
+                var carOfSchedule = (from x in _db.Schedules.AsNoTracking()
+                                     join
+c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
+                                     where x.IdSchedule == idSchedule
+                                     select new
+                                     {
+                                         LiscensePlate = c.LiscensePlate,
+                                         CarId = x.CarId
+                                     }).FirstOrDefault();
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), carOfSchedule);
 
-        public Response Gets(bool isDelete)
+            }
+            catch (Exception e)
+            {
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+        public Response GetsSelectBoxCarUpdate(long fromDate, long toDate, string idSchedule)
+        {
+            try
+            {
+                var unixTimeOneDay = 1;
+                var carOfSchedule = (from x in _db.Schedules.AsNoTracking()
+                                     where x.IdSchedule == idSchedule
+                                     select x).FirstOrDefault();
+                var fromDateCurrentUpdate = carOfSchedule.DepartureDate;
+                var toDateCurrentUpdate = carOfSchedule.ReturnDate;
+                IQueryable<Guid> listCarShouldRemove1;
+                IQueryable<Schedule> scheduleDepartDateLargerToDate;
+                if (fromDate == fromDateCurrentUpdate && toDate == toDateCurrentUpdate)
+                {
+                    listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
+                                            where x.CarId != carOfSchedule.CarId
+                                            && (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
+                                            orderby x.ReturnDate ascending
+                                            select x.CarId);
+                    scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
+                                                      where x.CarId != carOfSchedule.CarId
+                                                      && x.DepartureDate >= fromDate
+                                                      orderby x.DepartureDate ascending
+                                                      select x);
+                }
+                else
+                {
+                    if ((fromDate >= fromDateCurrentUpdate && fromDate <= toDateCurrentUpdate) || toDate >= fromDateCurrentUpdate && toDate <= toDateCurrentUpdate)
+                    {
+                        listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
+                                                where (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
+                                                && x.IdSchedule != idSchedule
+                                                orderby x.ReturnDate ascending
+                                                select x.CarId);
+
+                        scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
+                                                          where x.DepartureDate >= fromDate
+                                                                && x.IdSchedule != idSchedule
+                                                          orderby x.DepartureDate ascending
+                                                          select x);
+                    }
+                    else
+                    {
+                        listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
+                                                where (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
+                                                orderby x.ReturnDate ascending
+                                                select x.CarId);
+
+                        scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
+                                                          where x.DepartureDate >= fromDate
+                                                          orderby x.DepartureDate ascending
+                                                          select x);
+                    }
+                   
+                }
+
+
+
+
+
+                var listCarShouldRemove2 = (from x in scheduleDepartDateLargerToDate
+                                            where !(from s in listCarShouldRemove1 select s).Contains(x.CarId)
+                                            && (toDate + unixTimeOneDay) > x.DepartureDate
+                                            select x.CarId).Distinct();
+
+                var listShouldRemove = listCarShouldRemove1.Concat(listCarShouldRemove2);
+
+
+                var listCarCanChoose = (from x in _db.Cars.AsNoTracking()
+                                        where !listShouldRemove.Any(c => c == x.IdCar)
+                                        select x).ToList();
+                if (listCarCanChoose.Count() == 0)
+                {
+                    return Ultility.Responses("Ngày bạn chọn hiện tại không có xe !", Enums.TypeCRUD.Warning.ToString());
+                }
+                var result = Mapper.MapCar(listCarCanChoose);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response Gets()
         {
             try
             {

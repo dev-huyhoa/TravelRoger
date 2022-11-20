@@ -72,7 +72,7 @@ namespace TravelApi.Controllers
                                         new Claim(JwtRegisteredClaimNames.Aud, configuration["Token:Audience"]),
                                         new Claim(ClaimTypes.Role, result.RoleId.ToString()),
                                         new Claim(ClaimTypes.NameIdentifier, result.IdEmployee.ToString()),
-                                        new Claim(ClaimTypes.Name, result.IdEmployee.ToString()),
+                                        new Claim(ClaimTypes.Name, roleName),
                                         new Claim("EmployeeId", result.IdEmployee.ToString())
                                      };
                                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));

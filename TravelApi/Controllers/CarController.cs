@@ -38,12 +38,19 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("list-selectbox-car")]
-        public object GetsSelectBoxCar(long fromDate, long toDate, string idTour)
+        public object GetsSelectBoxCar(long fromDate, long toDate)
         {
-            res = _car.GetsSelectBoxCar(fromDate, toDate, idTour);
+            res = _car.GetsSelectBoxCar(fromDate, toDate);
             return Ok(res);
         }
-
+        [HttpGet]
+        [Authorize]
+        [Route("list-selectbox-car-update")]
+        public object GetsSelectBoxCarpdate(long fromDate, long toDate, string idSchedule)
+        {
+            res = _car.GetsSelectBoxCarUpdate(fromDate, toDate,idSchedule);
+            return Ok(res);
+        }
         [HttpGet]
         [Authorize]
         [Route("statistic-car")]
