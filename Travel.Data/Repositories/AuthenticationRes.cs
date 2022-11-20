@@ -489,25 +489,17 @@ namespace Travel.Data.Responsives
                     account.Password = Ultility.Encryption(password);
                     _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Cật nhập mật khẩu thành công, mời đăng nhập lại !";
-                    res.Notification.Type = "Success";
+                    return Ultility.Responses("Cập nhật mật khẩu thành công, mời đăng nhập lại !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
-                    res.Notification.Messenge = $"{email} không tồn tại!";
-                    res.Notification.Type = "Error";
-                    res.Notification.DateTime = DateTime.Now;
+                    return Ultility.Responses($"{email} không tồn tại!", Enums.TypeCRUD.Warning.ToString());
                 }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
