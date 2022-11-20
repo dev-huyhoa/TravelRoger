@@ -231,5 +231,14 @@ namespace TravelApi.Controllers
             res = _schedule.SearchScheduleWaiting(frmData, idTour);
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("cus-search-schedule-filter")]
+        public async Task<object> SearchSchedule([FromBody] JObject frmData)
+        {
+            res = await _schedule.SearchTourFilter(frmData);
+            return Ok(res);
+        }
     }
 }

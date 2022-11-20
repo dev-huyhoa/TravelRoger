@@ -2766,5 +2766,260 @@ namespace Travel.Data.Repositories
 
             }
         }
+
+        public async Task<Response> SearchTourFilter(JObject frmData)
+        {
+            try
+            {
+                Keywords keywords = new Keywords();
+                var kwFrom = PrCommon.GetString("kwFrom", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwFrom))
+                {
+                    keywords.KwFrom = kwFrom.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwFrom = "";
+                }
+
+                var kwTo = PrCommon.GetString("kwTo", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwTo))
+                {
+                    keywords.KwTo = kwTo.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwTo = "";
+                }
+
+                var kwDepartureDate = PrCommon.GetString("kwDepartureDate", frmData);
+                if (!String.IsNullOrEmpty(kwDepartureDate))
+                {
+                    keywords.KwDepartureDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(kwDepartureDate));
+                }
+                else
+                {
+                    keywords.KwDepartureDate = 0;
+                }
+
+                var kwReturnDate = PrCommon.GetString("kwReturnDate", frmData);
+                if (!String.IsNullOrEmpty(kwReturnDate))
+                {
+                    keywords.KwReturnDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(kwReturnDate).AddDays(1).AddSeconds(-1));
+                }
+                else
+                {
+                    keywords.KwReturnDate = 0;
+                }
+
+                var filterList = await (from s in _db.Schedules.AsNoTracking()
+                                        where s.Isdelete == false
+                                         && s.Approve == (int)Enums.ApproveStatus.Approved
+                                        select s).ToListAsync();
+
+                if (keywords.KwReturnDate > 0 || keywords.KwReturnDate > 0)
+                {
+
+                }
+                else
+                {
+                    if(kwFrom != "" && kwTo != "")
+                    {
+                        filterList =  (from s in filterList
+                                            where s.DeparturePlace.ToLower() == keywords.KwFrom
+                                            select new Schedule
+                                            {
+                                                Alias = s.Alias,
+                                                Approve = s.Approve,
+                                                BeginDate = s.BeginDate,
+                                                QuantityAdult = s.QuantityAdult,
+                                                QuantityBaby = s.QuantityBaby,
+                                                QuantityChild = s.QuantityChild,
+                                                CarId = s.CarId,
+                                                Description = s.Description,
+                                                DepartureDate = s.DepartureDate,
+                                                ReturnDate = s.ReturnDate,
+                                                EndDate = s.EndDate,
+                                                Isdelete = s.Isdelete,
+                                                EmployeeId = s.EmployeeId,
+                                                IdSchedule = s.IdSchedule,
+                                                MaxCapacity = s.MaxCapacity,
+                                                MinCapacity = s.MinCapacity,
+                                                PromotionId = s.PromotionId,
+                                                DeparturePlace = s.DeparturePlace,
+                                                Status = s.Status,
+                                                TourId = s.TourId,
+                                                FinalPrice = s.FinalPrice,
+                                                FinalPriceHoliday = s.FinalPriceHoliday,
+                                                AdditionalPrice = s.AdditionalPrice,
+                                                AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                                                IsHoliday = s.IsHoliday,
+                                                Profit = s.Profit,
+                                                QuantityCustomer = s.QuantityCustomer,
+                                                TimePromotion = s.TimePromotion,
+                                                Vat = s.Vat,
+                                                TotalCostTourNotService = s.TotalCostTourNotService,
+                                                CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
+                                                Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
+                                                Tour = (from t in _db.Tour
+                                                        where t.IdTour == s.TourId
+                                                        && t.ToPlace.ToLower() == keywords.KwTo
+                                                        select new Tour
+                                                        {
+                                                            Thumbnail = t.Thumbnail,
+                                                            ToPlace = t.ToPlace,
+                                                            IdTour = t.IdTour,
+                                                            NameTour = t.NameTour,
+                                                            Alias = t.Alias,
+                                                            ApproveStatus = t.ApproveStatus,
+                                                            CreateDate = t.CreateDate,
+                                                            IsActive = t.IsActive,
+                                                            IsDelete = t.IsDelete,
+                                                            ModifyBy = t.ModifyBy,
+                                                            ModifyDate = t.ModifyDate,
+                                                            Rating = t.Rating,
+                                                            Status = t.Status
+                                                        }).FirstOrDefault(),
+                                            }).ToList();
+                    }
+                    else if(kwTo != "")
+                    {
+                        filterList = (from s in filterList
+                                            select new Schedule
+                                            {
+                                                Alias = s.Alias,
+                                                Approve = s.Approve,
+                                                BeginDate = s.BeginDate,
+                                                QuantityAdult = s.QuantityAdult,
+                                                QuantityBaby = s.QuantityBaby,
+                                                QuantityChild = s.QuantityChild,
+                                                CarId = s.CarId,
+                                                Description = s.Description,
+                                                DepartureDate = s.DepartureDate,
+                                                ReturnDate = s.ReturnDate,
+                                                EndDate = s.EndDate,
+                                                Isdelete = s.Isdelete,
+                                                EmployeeId = s.EmployeeId,
+                                                IdSchedule = s.IdSchedule,
+                                                MaxCapacity = s.MaxCapacity,
+                                                MinCapacity = s.MinCapacity,
+                                                PromotionId = s.PromotionId,
+                                                DeparturePlace = s.DeparturePlace,
+                                                Status = s.Status,
+                                                TourId = s.TourId,
+                                                FinalPrice = s.FinalPrice,
+                                                FinalPriceHoliday = s.FinalPriceHoliday,
+                                                AdditionalPrice = s.AdditionalPrice,
+                                                AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                                                IsHoliday = s.IsHoliday,
+                                                Profit = s.Profit,
+                                                QuantityCustomer = s.QuantityCustomer,
+                                                TimePromotion = s.TimePromotion,
+                                                Vat = s.Vat,
+                                                TotalCostTourNotService = s.TotalCostTourNotService,
+                                                CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
+                                                Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
+                                                Tour = (from t in _db.Tour
+                                                        where t.IdTour == s.TourId
+                                                        && t.ToPlace.ToLower() == keywords.KwTo
+                                                        select new Tour
+                                                        {
+                                                            Thumbnail = t.Thumbnail,
+                                                            ToPlace = t.ToPlace,
+                                                            IdTour = t.IdTour,
+                                                            NameTour = t.NameTour,
+                                                            Alias = t.Alias,
+                                                            ApproveStatus = t.ApproveStatus,
+                                                            CreateDate = t.CreateDate,
+                                                            IsActive = t.IsActive,
+                                                            IsDelete = t.IsDelete,
+                                                            ModifyBy = t.ModifyBy,
+                                                            ModifyDate = t.ModifyDate,
+                                                            Rating = t.Rating,
+                                                            Status = t.Status
+                                                        }).FirstOrDefault(),
+                                            }).ToList();
+                    }
+                    else if(kwFrom != "")
+                    {
+
+                        filterList = (from s in filterList
+                                      where s.DeparturePlace.ToLower() == keywords.KwFrom
+                                      select new Schedule
+                                      {
+                                          Alias = s.Alias,
+                                          Approve = s.Approve,
+                                          BeginDate = s.BeginDate,
+                                          QuantityAdult = s.QuantityAdult,
+                                          QuantityBaby = s.QuantityBaby,
+                                          QuantityChild = s.QuantityChild,
+                                          CarId = s.CarId,
+                                          Description = s.Description,
+                                          DepartureDate = s.DepartureDate,
+                                          ReturnDate = s.ReturnDate,
+                                          EndDate = s.EndDate,
+                                          Isdelete = s.Isdelete,
+                                          EmployeeId = s.EmployeeId,
+                                          IdSchedule = s.IdSchedule,
+                                          MaxCapacity = s.MaxCapacity,
+                                          MinCapacity = s.MinCapacity,
+                                          PromotionId = s.PromotionId,
+                                          DeparturePlace = s.DeparturePlace,
+                                          Status = s.Status,
+                                          TourId = s.TourId,
+                                          FinalPrice = s.FinalPrice,
+                                          FinalPriceHoliday = s.FinalPriceHoliday,
+                                          AdditionalPrice = s.AdditionalPrice,
+                                          AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                                          IsHoliday = s.IsHoliday,
+                                          Profit = s.Profit,
+                                          QuantityCustomer = s.QuantityCustomer,
+                                          TimePromotion = s.TimePromotion,
+                                          Vat = s.Vat,
+                                          TotalCostTourNotService = s.TotalCostTourNotService,
+                                          CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
+                                          Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
+                                          Tour = (from t in _db.Tour
+                                                  where t.IdTour == s.TourId
+                                                  select new Tour
+                                                  {
+                                                      Thumbnail = t.Thumbnail,
+                                                      ToPlace = t.ToPlace,
+                                                      IdTour = t.IdTour,
+                                                      NameTour = t.NameTour,
+                                                      Alias = t.Alias,
+                                                      ApproveStatus = t.ApproveStatus,
+                                                      CreateDate = t.CreateDate,
+                                                      IsActive = t.IsActive,
+                                                      IsDelete = t.IsDelete,
+                                                      ModifyBy = t.ModifyBy,
+                                                      ModifyDate = t.ModifyDate,
+                                                      Rating = t.Rating,
+                                                      Status = t.Status
+                                                  }).FirstOrDefault(),
+                                      }).ToList();
+                    }
+                }
+
+
+
+
+                if (filterList.Count() > 0)
+                {
+                    var result = (from s in filterList
+                                  where s.Tour != null
+                                  select s).ToList();
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                }
+                else
+                {
+                    return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }

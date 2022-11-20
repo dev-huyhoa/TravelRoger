@@ -48,6 +48,8 @@ namespace Travel.Shared.ViewModels
         public string KwModifyBy { get; set; }
         public int KwAmount { get; set; }
         public string KwLiscensePlate { get; set; }
+        public string KwFrom { get; set; }
+        public string KwTo { get; set; }
     }
     public class Pagination
     {
