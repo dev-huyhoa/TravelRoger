@@ -38,5 +38,6 @@ namespace Travel.Data.Interfaces
 
         Response SearchScheduleWaiting(JObject frmData, string idTour);
         Task<Schedule> GetScheduleByIdForPayPal(string idSchedule);
+        Task<Response> AutomaticUpdatePromotionForSchedule();
     }
 }

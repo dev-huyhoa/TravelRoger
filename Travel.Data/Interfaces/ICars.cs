@@ -16,8 +16,10 @@ namespace Travel.Data.Interfaces
         Response UpdateCar(UpdateCarViewModel input);
         Response Create(CreateCarViewModel input);
         Response StatisticCar();
-        Response GetsSelectBoxCar(long fromDate, long toDate, string idTour);
+        Response GetsSelectBoxCar(long fromDate, long toDate);
+        Response ViewSelectBoxCar(string idSchedule);
         Response DeleteCar(Guid id, Guid idUser);
+        Response GetsSelectBoxCarUpdate(long fromDate, long toDate, string idSchedule);
 
     }
 }

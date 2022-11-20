@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
@@ -12,6 +13,7 @@ using Travel.Data.Repositories;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using TravelApi.Helpers;
 using TravelApi.Hubs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -124,10 +126,19 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
         [HttpPut]
+        [ClaimRequirement(ClaimTypes.Name, "Admin")]
         [Route("update-promotion")]
         public object UpdatePromotion(string idSchedule, int idPromotion)
         {
             res = _schedule.UpdatePromotion(idSchedule, idPromotion);
+            return Ok(res);
+        }
+        [HttpPost]
+        [ClaimRequirement(ClaimTypes.Name, "Admin")]
+        [Route("automatic-promotion-for-schedule")]
+        public async Task<object> AutomaticUpdatePromotionForSchedule()
+        {
+            res = await _schedule.AutomaticUpdatePromotionForSchedule();
             return Ok(res);
         }
 
