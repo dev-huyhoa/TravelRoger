@@ -211,18 +211,18 @@ namespace Travel.Data.Repositories
                 // số ngày đi của tour
                 int countDay = Convert.ToInt16(Ultility.CountDay(input.DepartureDate, input.ReturnDate));
                 #region test
-                var PriceTicketPlace = cost.PriceTicketPlace.CloneNumber();
+                var PriceTicketPlace = cost.PriceTicketPlace;
 
-                var PriceRestaurant = cost.PriceRestaurant.CloneNumber();
+                var PriceRestaurant = cost.PriceRestaurant;
 
-                var PriceHotelDB = cost.PriceHotelDB.CloneNumberTwo();
+                var PriceHotelDB = cost.PriceHotelDB;
                 #endregion
 
 
-                float CostService = ((PriceHotelDB + PriceRestaurant + PriceTicketPlace) * countDay).CloneNumber();
+                float CostService = ((PriceHotelDB + PriceRestaurant + PriceTicketPlace) * countDay);
 
-                float VAT = (schedule.Vat).CloneNumber();
-                float Profit = (schedule.Profit).CloneNumber();
+                float VAT = (schedule.Vat);
+                float Profit = (schedule.Profit);
                 float totalPriceNotVatAndProfit = cost.TotalCostTourNotService + CostService ;
                 double totalPriceIncludeVAT = (double)(totalPriceNotVatAndProfit + (totalPriceNotVatAndProfit * (VAT / 100)));
                 double FinalPrice = totalPriceIncludeVAT + (totalPriceIncludeVAT * (Profit / 100));
