@@ -349,6 +349,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 car.NameDriver = input.NameDriver;
                 car.Phone = input.Phone;
                 car.AmountSeat = input.AmountSeat;
+                car.Status = input.Status;
                 UpdateDatabase<Car>(car);
                 SaveChange();
                 return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
