@@ -227,31 +227,38 @@ namespace Travel.Data.Repositories
             }
         }
         #region Hotel
-        public Response GetsWaitingHotel(Guid idUser)
+        public Response GetsWaitingHotel(Guid idUser, int pageIndex, int pageSize)
         {
             try
             {
+                var totalResult = 0;
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
                 var listWaiting = new List<Hotel>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
-                    listWaiting = (from x in _db.Hotels.AsNoTracking()
+                    var querylistWaiting = (from x in _db.Hotels.AsNoTracking()
                                    where x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
                                    orderby x.ModifyDate descending
-                                   select x).ToList();
+                                   select x);
+                    totalResult = querylistWaiting.Count();
+                    listWaiting = querylistWaiting.ToList();
                 }
                 else
                 {
-                    listWaiting = (from x in _db.Hotels.AsNoTracking()
+                    var querylistWaiting = (from x in _db.Hotels.AsNoTracking()
                                    where x.IdUserModify == idUser
                                    && x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
                                    orderby x.ModifyDate descending
-                                   select x).ToList();
+                                   select x);
+                    totalResult = querylistWaiting.Count();
+                    listWaiting = querylistWaiting.ToList();
                 }
                 var result = Mapper.MapHotel(listWaiting);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
             }
             catch (Exception e)
             {
@@ -633,29 +640,39 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsWaitingRestaurant(Guid idUser)
+        public Response GetsWaitingRestaurant(Guid idUser, int pageIndex, int pageSize)
         {
             try
             {
+                var totalResult = 0;
                 var userLogin = (from x in _db.Employees
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
                 var listWaiting = new List<Restaurant>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
-                    listWaiting = (from x in _db.Restaurants where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                    var querylistWaiting = (from x in _db.Restaurants 
+                                            where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) 
+                                            select x);
+                    totalResult = querylistWaiting.Count();
+                    listWaiting = querylistWaiting.ToList();
                 }
                 else
                 {
-                    listWaiting = (from x in _db.Restaurants
+                    var querylistWaiting = (from x in _db.Restaurants
                                    where x.IdUserModify == idUser
                                    && x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
-                                   select x).ToList();
+                                   select x);
+
+                    totalResult = querylistWaiting.Count();
+                    listWaiting = querylistWaiting.ToList();
                 }
 
                 var result = Mapper.MapRestaurant(listWaiting);
 
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
             }
             catch (Exception e)
             {
@@ -987,31 +1004,38 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response GetsWaitingPlace(Guid idUser)
+        public Response GetsWaitingPlace(Guid idUser, int pageIndex, int pageSize)
         {
             try
             {
+                var totalResult = 0;
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
                 var listWaiting = new List<Place>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
-                    listWaiting = (from x in _db.Places.AsNoTracking()
+                    var querylistWaiting = (from x in _db.Places.AsNoTracking()
                                    where x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
                                    orderby x.ModifyDate descending
-                                   select x).ToList();
+                                   select x);
+                    totalResult = querylistWaiting.Count();
+                    listWaiting = querylistWaiting.ToList();
                 }
                 else
                 {
-                    listWaiting = (from x in _db.Places.AsNoTracking()
+                   var querylistWaiting = (from x in _db.Places.AsNoTracking()
                                    where x.IdUserModify == idUser
                                    && x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
                                    orderby x.ModifyDate descending
-                                   select x).ToList();
+                                   select x);
+                    totalResult = querylistWaiting.Count();
+                    listWaiting = querylistWaiting.ToList();
                 }
                 var result = Mapper.MapPlace(listWaiting);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
             }
             catch (Exception e)
             {
@@ -1379,7 +1403,11 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var totalResult = 0;
                 Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
+
 
                 var isDelete = PrCommon.GetString("isDelete", frmData);
                 if (!String.IsNullOrEmpty(isDelete))
@@ -1422,7 +1450,7 @@ namespace Travel.Data.Repositories
 
                 if (keywords.KwStar.Count > 0)
                 {
-                    listHotel = (from x in _db.Hotels
+                    var querylistHotel = (from x in _db.Hotels
                                 where x.IsDelete == keywords.IsDelete &&
                                                 x.NameHotel.ToLower().Contains(keywords.KwName) &&
                                                 x.Address.ToLower().Contains(keywords.KwAddress) &&
@@ -1431,11 +1459,13 @@ namespace Travel.Data.Repositories
                                                 x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
                                                 keywords.KwStar.Contains(x.Star)
                                  orderby x.ModifyDate descending
-                                 select x).ToList();
+                                 select x);
+                    totalResult = querylistHotel.Count();
+                    listHotel = querylistHotel.ToList();
                 }
                 else
                 {
-                    listHotel = (from x in _db.Hotels
+                    var querylistHotel = (from x in _db.Hotels
                                  where x.IsDelete == keywords.IsDelete &&
                                                  x.NameHotel.ToLower().Contains(keywords.KwName) &&
                                                  x.Address.ToLower().Contains(keywords.KwAddress) &&
@@ -1444,12 +1474,16 @@ namespace Travel.Data.Repositories
                                                  x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
 
                                  orderby x.ModifyDate descending
-                                 select x).ToList();
+                                 select x);
+                    totalResult = querylistHotel.Count();
+                    listHotel = querylistHotel.ToList();
                 }
                 var result = Mapper.MapHotel(listHotel);
                 if (result.Count > 0)
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
                 else
                 {
@@ -1654,7 +1688,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var totalResult = 0;
                 Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
 
                 var isDelete = PrCommon.GetString("isDelete", frmData);
                 if (!String.IsNullOrEmpty(isDelete))
@@ -1705,7 +1742,7 @@ namespace Travel.Data.Repositories
 
                 if (!string.IsNullOrEmpty(isDelete))
                 {
-                    listPlace = (from x in _db.Places
+                   var querylistPlace = (from x in _db.Places
                                  where x.IsDelete == keywords.IsDelete &&
                                                  x.NamePlace.ToLower().Contains(keywords.KwName) &&
                                                  x.Address.ToLower().Contains(keywords.KwAddress) &&
@@ -1713,11 +1750,13 @@ namespace Travel.Data.Repositories
                                                  x.IsTempdata == false &&
                                                  x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
 
-                                 select x).ToList();
+                                 select x);
+                    totalResult = querylistPlace.Count();
+                    listPlace = querylistPlace.ToList();
                 }
                 else
                 {
-                    listPlace = (from x in _db.Places
+                    var querylistPlace = (from x in _db.Places
                                  where x.IsDelete == keywords.IsDelete &&
                                                  x.NamePlace.ToLower().Contains(keywords.KwName) &&
                                                  x.Address.ToLower().Contains(keywords.KwAddress) &&
@@ -1725,12 +1764,16 @@ namespace Travel.Data.Repositories
                                                  x.IsTempdata == false &&
                                                  x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
                                  orderby x.PriceTicket
-                                 select x).ToList();
+                                 select x);
+                    totalResult = querylistPlace.Count();
+                    listPlace = querylistPlace.ToList();
                 }
                 var result = Mapper.MapPlace(listPlace);
                 if (result.Count > 0)
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
                 else
                 {
@@ -1747,7 +1790,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var totalResult = 0;
                 Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
 
                 var isDelete = PrCommon.GetString("isDelete", frmData);
                 if (!String.IsNullOrEmpty(isDelete))
@@ -1799,19 +1845,20 @@ namespace Travel.Data.Repositories
 
                 if (!string.IsNullOrEmpty(isDelete))
                 {
-                    listRestaurant = (from x in _db.Restaurants
+                    var querylistRestaurant = (from x in _db.Restaurants
                                       where x.IsDelete == keywords.IsDelete &&
                                                       x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
                                                       x.Address.ToLower().Contains(keywords.KwAddress) &&
                                                       x.Phone.ToLower().Contains(keywords.KwPhone) &&
                                                       x.IsTempdata == false &&
                                                       x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
-
-                                      select x).ToList();
+                                      select x);
+                    totalResult = querylistRestaurant.Count();
+                    listRestaurant = querylistRestaurant.ToList();
                 }
                 else
                 {
-                    listRestaurant = (from x in _db.Restaurants
+                    var querylistRestaurant = (from x in _db.Restaurants
                                       where x.IsDelete == keywords.IsDelete &&
                                                       x.NameRestaurant.ToLower().Contains(keywords.KwName) &&
                                                       x.Address.ToLower().Contains(keywords.KwAddress) &&
@@ -1819,12 +1866,16 @@ namespace Travel.Data.Repositories
                                                       x.IsTempdata == false &&
                                                       x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
 
-                                      select x).ToList();
+                                      select x);
+                    totalResult = querylistRestaurant.Count();
+                    listRestaurant = querylistRestaurant.ToList();
                 }
                 var result = Mapper.MapRestaurant(listRestaurant);
                 if (result.Count > 0)
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
                 else
                 {
