@@ -52,9 +52,9 @@ namespace TravelApi.Controllers
         [HttpGet()]
         [Authorize]
         [Route("list-hotel-waiting")]
-        public object GetHotelWaiting(Guid idUser)
+        public object GetHotelWaiting(Guid idUser, int pageIndex, int pageSize)
         {
-            res = _serviceRes.GetsWaitingHotel(idUser);
+            res = _serviceRes.GetsWaitingHotel(idUser,pageIndex,pageSize);
             return Ok(res);
         }
 
@@ -111,9 +111,9 @@ namespace TravelApi.Controllers
         [HttpGet()]
         [Authorize]
         [Route("list-restaurant-waiting")]
-        public object GetWaitingRestaurant(Guid idUser)
+        public object GetWaitingRestaurant(Guid idUser, int pageIndex, int pageSize)
         {
-            res = _serviceRes.GetsWaitingRestaurant(idUser);
+            res = _serviceRes.GetsWaitingRestaurant(idUser,pageIndex,pageSize);
             return Ok(res);
         }
 
@@ -195,9 +195,9 @@ namespace TravelApi.Controllers
         [HttpGet()]
         [Authorize]
         [Route("list-place-waiting")]
-        public object GetPlaceWaiting(Guid idUser)
+        public object GetPlaceWaiting(Guid idUser, int pageIndex, int pageSize)
         {
-            res = _serviceRes.GetsWaitingPlace(idUser);
+            res = _serviceRes.GetsWaitingPlace(idUser,  pageIndex,  pageSize);
             return Ok(res);
         }
 

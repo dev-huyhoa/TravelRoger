@@ -79,9 +79,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("list-tour-waiting")]
-        public object GetWaiting( Guid idUser)
+        public object GetWaiting( Guid idUser, int pageIndex, int pageSize)
         {
-            res = _tourRes.GetWaiting(idUser);
+            res = _tourRes.GetWaiting(idUser,pageIndex,pageSize);
             return Ok(res);
         }
 

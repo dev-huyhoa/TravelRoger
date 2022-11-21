@@ -154,9 +154,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("list-schedule-idtour-waiting")]
-        public object GetsSchedulebyIdTourWaiting(string idtour, Guid idUser)
+        public object GetsSchedulebyIdTourWaiting(string idtour, Guid idUser,int pageIndex, int pageSize)
         {
-            res = _schedule.GetSchedulebyIdTourWaiting(idtour, idUser);
+            res = _schedule.GetSchedulebyIdTourWaiting(idtour, idUser,pageIndex, pageSize);
             return Ok(res);
         }
 
