@@ -18,7 +18,7 @@ namespace Travel.Data.Interfaces
         Response Create(CreateTourViewModel input);
         Response Update(UpdateTourViewModel input);
         Response Get(bool isDelete);
-        Response GetWaiting(Guid idUser);
+        Response GetWaiting(Guid idUser, int pageIndex, int pageSize);
         Response GetTour(string idTour);
         Response Delete(string idTour,Guid idUser);
         Response RestoreTour(string idTour, Guid idUser);

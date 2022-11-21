@@ -607,30 +607,36 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response GetWaiting(Guid idUser)
+        public Response GetWaiting(Guid idUser, int pageIndex, int pageSize)
         {
             try
             {
+                var totalResult = 0;
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
                 var listWaiting = new List<Tour>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
-                    listWaiting = (from x in _db.Tour.AsNoTracking()
+                    var querylistWaiting = (from x in _db.Tour.AsNoTracking()
                                    where x.ApproveStatus == Convert.ToInt16(ApproveStatus.Waiting)
-                                   select x).ToList();
+                                   select x);
+                    totalResult = querylistWaiting.Count();
+                    listWaiting = querylistWaiting.ToList();
                 }
                 else
                 {
-                    listWaiting = (from x in _db.Tour.AsNoTracking()
+                    var querylistWaiting = (from x in _db.Tour.AsNoTracking()
                                    where x.IdUserModify == idUser
                                    && x.ApproveStatus == Convert.ToInt16(ApproveStatus.Waiting)
-                                   select x).ToList();
+                                   select x);
+                    totalResult = querylistWaiting.Count();
+                    listWaiting = querylistWaiting.ToList();
                 }
                 var result = Mapper.MapTour(listWaiting);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
             }
             catch (Exception e)
             {
@@ -1065,7 +1071,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var totalResult = 0;
                 Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
                 var isDelete = PrCommon.GetString("isDelete", frmData);
                 if (!String.IsNullOrEmpty(isDelete))
                 {
@@ -1110,7 +1119,7 @@ namespace Travel.Data.Repositories
                 {
                     if(keywords.KwRating.Count > 0)
                     {
-                        listTour = (from x in _db.Tour
+                        var querylistTour = (from x in _db.Tour
                                     where x.IsDelete == keywords.IsDelete &&
                                         x.IdTour.ToLower().Contains(keywords.KwId) &&
                                         x.NameTour.ToLower().Contains(keywords.KwName) &&
@@ -1118,25 +1127,29 @@ namespace Travel.Data.Repositories
                                         x.IsTempdata == false &&
                                         x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
                                         keywords.KwRating.Contains(Convert.ToInt16(x.Rating))
-                                    select x).ToList();
+                                    select x);
+                        totalResult = querylistTour.Count();
+                        listTour = querylistTour.ToList();
                     }
                     else
                     {
-                        listTour = (from x in _db.Tour
+                        var querylistTour = (from x in _db.Tour
                                     where x.IsDelete == keywords.IsDelete &&
                                         x.IdTour.ToLower().Contains(keywords.KwId) &&
                                         x.NameTour.ToLower().Contains(keywords.KwName) &&
                                         x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
                                         x.IsTempdata == false &&
                                         x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved)
-                                    select x).ToList();
+                                    select x);
+                        totalResult = querylistTour.Count();
+                        listTour = querylistTour.ToList();
                     }
                 }
                 else
                 {
                         if (keywords.KwRating.Count > 0)
                         {
-                            listTour = (from x in _db.Tour
+                            var querylistTour = (from x in _db.Tour
                                         where x.IsDelete == keywords.IsDelete &&
                                             x.IdTour.ToLower().Contains(keywords.KwId) &&
                                             x.NameTour.ToLower().Contains(keywords.KwName) &&
@@ -1152,11 +1165,14 @@ namespace Travel.Data.Repositories
                                             ToPlace = x.ToPlace,
                                             Rating = x.Rating,
                                             Status = x.Status
-                                        }).ToList();
-                        }
+                                        });
+                        totalResult = querylistTour.Count();
+                        listTour = querylistTour.ToList();
+
+                    }
                         else
                         {
-                            listTour = (from x in _db.Tour
+                            var querylistTour = (from x in _db.Tour
                                         where x.IsDelete == keywords.IsDelete &&
                                             x.IdTour.ToLower().Contains(keywords.KwId) &&
                                             x.NameTour.ToLower().Contains(keywords.KwName) &&
@@ -1172,13 +1188,18 @@ namespace Travel.Data.Repositories
                                             ToPlace = x.ToPlace,
                                             Rating = x.Rating,
                                             Status = x.Status
-                                        }).ToList();
-                        } 
+                                        });
+                        totalResult = querylistTour.Count();
+                        listTour = querylistTour.ToList();
+                    } 
+
                 }
                 var result = Mapper.MapTour(listTour);
                 if (result.Count > 0)
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
                 else
                 {
