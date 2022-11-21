@@ -148,7 +148,14 @@ namespace Travel.Data.Repositories
 
                 var totalPrice = PrCommon.GetString("totalPrice", frmData);
                 if (String.IsNullOrEmpty(totalPrice))
-                { }
+                {
+                    totalPrice = "0";
+                }
+                var totalPricePromotion = PrCommon.GetString("totalPricePromotion", frmData);
+                if (String.IsNullOrEmpty(totalPricePromotion))
+                {
+                    totalPricePromotion = "0";
+                }
                 var valuePromotion = PrCommon.GetString("valuePromotion", frmData);
                 if (isUpdate)
                 {
@@ -182,6 +189,7 @@ namespace Travel.Data.Repositories
                 createObj.NameContact = nameContact;
                 createObj.Vat = Convert.ToInt16(vat);
                 createObj.TotalPrice = float.Parse(totalPrice);
+                createObj.TotalPrice = float.Parse(totalPricePromotion);
                 createObj.Pincode = $"PIN{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                 createObj.BookingDetails = createDetailObj;
                 createObj.CustomerId = customerId;

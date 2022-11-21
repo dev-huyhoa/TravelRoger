@@ -224,11 +224,14 @@ namespace Travel.Data.Repositories
                 float VAT = (schedule.Vat);
                 float Profit = (schedule.Profit);
                 float totalPriceNotVatAndProfit = cost.TotalCostTourNotService + CostService ;
-                double totalPriceIncludeVAT = (double)(totalPriceNotVatAndProfit + (totalPriceNotVatAndProfit * (VAT / 100)));
-                double FinalPrice = totalPriceIncludeVAT + (totalPriceIncludeVAT * (Profit / 100));
-                //schedule.FinalPrice = FinalPrice;
-                //schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
-                //UpdateDatabaseSchedule(schedule);
+
+
+                float totalPriceIncludeVAT = (totalPriceNotVatAndProfit + (totalPriceNotVatAndProfit * (VAT / 100)));
+                float FinalPrice = totalPriceIncludeVAT + (totalPriceIncludeVAT * (Profit / 100));
+                schedule.TotalCostTour = totalPriceNotVatAndProfit;
+                schedule.FinalPrice = FinalPrice;
+                schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
+                UpdateDatabaseSchedule(schedule);
 
                 return Ultility.Responses($"Cập nhật giá cho {schedule.IdSchedule} thành công !", Enums.TypeCRUD.Success.ToString());
             }
@@ -302,23 +305,37 @@ namespace Travel.Data.Repositories
                 UpdateDatabase(cost);
                 // update price
                 float holidayPercent = Convert.ToInt16(_config["PercentHoliday"]);
-                var schedule = (from x in _db.Schedules where x.IdSchedule == input.IdSchedule select x).First();
+
+                var schedule = (from x in _db.Schedules.AsNoTracking()
+                                where x.IdSchedule == input.IdSchedule
+                                select x).First();
                 schedule.AdditionalPrice = cost.PriceHotelSR;
                 schedule.AdditionalPriceHoliday = (cost.PriceHotelSR + (cost.PriceHotelSR * (holidayPercent / 100)));
                 schedule.TotalCostTourNotService = cost.TotalCostTourNotService;
 
-                float CostService = (cost.PriceHotelDB + cost.PriceRestaurant + cost.PriceTicketPlace);
-                float VAT = schedule.Vat;
-                int Profit = schedule.Profit;
-                float FinalPrice = (cost.TotalCostTourNotService + CostService) + ((cost.TotalCostTourNotService + CostService) * VAT) + ((cost.TotalCostTourNotService + CostService) * Profit);
+                // số ngày đi của tour
+                int countDay = Convert.ToInt16(Ultility.CountDay(input.DepartureDate, input.ReturnDate));
+                #region test
+                var PriceTicketPlace = cost.PriceTicketPlace;
+
+                var PriceRestaurant = cost.PriceRestaurant;
+
+                var PriceHotelDB = cost.PriceHotelDB;
+                #endregion
+
+
+                float CostService = ((PriceHotelDB + PriceRestaurant + PriceTicketPlace) * countDay);
+
+                float VAT = (schedule.Vat);
+                float Profit = (schedule.Profit);
+                float totalPriceNotVatAndProfit = cost.TotalCostTourNotService + CostService;
+
+
+                float totalPriceIncludeVAT = (totalPriceNotVatAndProfit + (totalPriceNotVatAndProfit * (VAT / 100)));
+                float FinalPrice = totalPriceIncludeVAT + (totalPriceIncludeVAT * (Profit / 100));
+                schedule.TotalCostTour = totalPriceNotVatAndProfit;
                 schedule.FinalPrice = FinalPrice;
-                schedule.PriceAdult = FinalPrice;
-                schedule.PriceChild = FinalPrice/2;
-                float FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
-                schedule.FinalPriceHoliday = FinalPriceHoliday;
-                schedule.PriceAdultHoliday = FinalPriceHoliday;
-                schedule.PriceChildHoliday = FinalPriceHoliday/2;
-                schedule.IsHoliday = input.IsHoliday;
+                schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
                 UpdateDatabaseSchedule(schedule);
 
                 return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());

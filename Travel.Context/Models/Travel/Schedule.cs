@@ -34,6 +34,7 @@ namespace Travel.Context.Models
         public long ModifyDate { get; set; }
 
         public float TotalCostTourNotService { get; set; }
+        public float TotalCostTour { get; set; }
         public int Profit { get; set; }
         public float Vat { get; set; }
 
