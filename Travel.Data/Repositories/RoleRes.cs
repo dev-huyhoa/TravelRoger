@@ -187,7 +187,11 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var totalResult = 0;
                 Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
+
 
                 var isDelete = PrCommon.GetString("isDelete", frmData);
                 if (!String.IsNullOrEmpty(isDelete))
@@ -231,29 +235,36 @@ namespace Travel.Data.Repositories
                 var listRole = new List<Role>();
                 if (keywords.KwIdRole.Count > 0)
                 {
-                    listRole = (from x in _db.Roles.AsNoTracking()
+                    var queryListRole = (from x in _db.Roles.AsNoTracking()
                                where x.IsDelete == keywords.IsDelete &&
                                                x.NameRole.ToLower().Contains(keywords.KwName) &&
                                                x.Description.ToLower().Contains(keywords.KwDescription)
-                                             
-                               select x).ToList();
+                               select x);
+                    totalResult = queryListRole.Count();
+                    listRole = queryListRole.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
-                    listRole = (from x in _db.Roles.AsNoTracking()
+                    var queryListRole = (from x in _db.Roles.AsNoTracking()
                                 where x.IsDelete == keywords.IsDelete &&
                                                x.NameRole.ToLower().Contains(keywords.KwName) &&
                                                x.Description.ToLower().Contains(keywords.KwDescription)
-                               select x).ToList();
+                                select x);
+                    totalResult = queryListRole.Count();
+                    listRole = queryListRole.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 var result = Mapper.MapRole(listRole);
                 if (listRole.Count() > 0)
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
                 else
                 {
-                    return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
             }
             catch (Exception e)

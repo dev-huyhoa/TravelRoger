@@ -25,9 +25,9 @@ namespace Travel.Data.Interfaces
         Response GetsSchedulebyIdTour(string idTour, bool isDelete);
 
         Response CusGetsSchedulebyIdTour(string idTour);
-        Response GetSchedulebyIdTourWaiting(string idTour, Guid idUser);
+        Response GetSchedulebyIdTourWaiting(string idTour, Guid idUser, int pageIndex, int pageSize);
         Task<Response> Get(string idSchedule);
-        Task<Response> SearchTour(string? from, string? to, DateTime? departureDate, DateTime? returnDate);
+        Task<Response> SearchTour(string from, string to, DateTime? departureDate, DateTime? returnDate);
 
 
         Task<Response> GetsSchedule();
