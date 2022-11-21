@@ -190,7 +190,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var totalResult = 0;
                 Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
 
                 var kwId = PrCommon.GetString("idProvince", frmData);
                 if (!String.IsNullOrEmpty(kwId))
@@ -215,20 +218,25 @@ namespace Travel.Data.Repositories
                 }
 
                 var listProvince = new List<Province>();
-                listProvince = (from x in _db.Provinces.AsNoTracking()
+                var queryListProvince = (from x in _db.Provinces.AsNoTracking()
                                 where x.IdProvince.ToString().ToLower().Contains(keywords.KwId) &&
                                       x.NameProvince.ToLower().Contains(keywords.KwName)
                                 orderby x.NameProvince
-                                select x).ToList();
+                                select x);
+                totalResult = queryListProvince.Count();
+                listProvince = queryListProvince.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 var result = Mapper.MapProvince(listProvince);
                 if (result.Count() > 0)
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
                 else
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), result);
+                    var res = Ultility.Responses("Không có dữ liệu !", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
             }
             catch (Exception e)
@@ -243,7 +251,11 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var totalResult = 0;
                 Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
+
 
                 var kwId = PrCommon.GetString("idDistrict", frmData);
                 if (!String.IsNullOrEmpty(kwId))
@@ -275,29 +287,37 @@ namespace Travel.Data.Repositories
                 var listDistrict = new List<District>();
                 if (keywords.KwIdProvince.Count > 0)
                 {
-                    listDistrict = (from x in _db.Districts.AsNoTracking()
+                    var queryListDistrict = (from x in _db.Districts.AsNoTracking()
                                     where x.IdDistrict.ToString().ToLower().Contains(keywords.KwId) &&
                                            x.NameDistrict.ToLower().Contains(keywords.KwName) &&
                                             keywords.KwIdProvince.Contains(x.ProvinceId.ToString())
                                     orderby x.Province.NameProvince, x.NameDistrict
-                                    select x).ToList();
+                                    select x);
+                    totalResult = queryListDistrict.Count();
+                    listDistrict = queryListDistrict.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
-                    listDistrict = (from x in _db.Districts.AsNoTracking()
+                 var   queryListDistrict = (from x in _db.Districts.AsNoTracking()
                                     where x.IdDistrict.ToString().ToLower().Contains(keywords.KwId) &&
                                            x.NameDistrict.ToLower().Contains(keywords.KwName)
                                     orderby x.Province.NameProvince, x.NameDistrict
-                                    select x).ToList();
+                                    select x);
+                    totalResult = queryListDistrict.Count();
+                    listDistrict = queryListDistrict.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 var result = Mapper.MapDistrict(listDistrict);
                 if (result.Count() > 0)
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
                 else
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), result);
+                    var res = Ultility.Responses("Không có dữ liệu !", Enums.TypeCRUD.Warning.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
             }
             catch (Exception e)
@@ -312,7 +332,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var totalResult = 0;
                 Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
 
                 var kwId = PrCommon.GetString("idWard", frmData);
                 if (!String.IsNullOrEmpty(kwId))
@@ -344,30 +367,38 @@ namespace Travel.Data.Repositories
                 var listWard = new List<Ward>();
                 if (keywords.KwIdDistrict.Count > 0)
                 {
-                    listWard = (from x in _db.Wards.AsNoTracking()
+                    var queryListWard = (from x in _db.Wards.AsNoTracking()
                                 where x.IdWard.ToString().ToLower().Contains(keywords.KwId) &&
                                       x.NameWard.ToLower().Contains(keywords.KwName) &&
                                       keywords.KwIdDistrict.Contains(x.DistrictId.ToString())
                                 orderby x.District.NameDistrict, x.NameWard
-                                select x).ToList();
+                                select x);
+                    totalResult = queryListWard.Count();
+                    listWard = queryListWard.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
-                    listWard = (from x in _db.Wards.AsNoTracking()
+                    var queryListWard = (from x in _db.Wards.AsNoTracking()
                                 where x.IdWard.ToString().ToLower().Contains(keywords.KwId) &&
                                       x.NameWard.ToLower().Contains(keywords.KwName)
                                 orderby x.District.NameDistrict, x.NameWard
-                                select x).ToList();
+                                select x);
+
+                    totalResult = queryListWard.Count();
+                    listWard = queryListWard.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 var result = Mapper.MapWard(listWard);
                 if (result.Count() > 0)
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
                 else
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), result);
+                    var res = Ultility.Responses("Không tìm thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
             }
             catch (Exception e)

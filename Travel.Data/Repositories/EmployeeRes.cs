@@ -287,6 +287,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var totalResult = 0;
                 Keywords keywords = new Keywords();
                 var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
                 var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
@@ -356,7 +357,8 @@ namespace Travel.Data.Repositories
                 {
                     if (!string.IsNullOrEmpty(kwIsActive))
                     {
-                        listEmp = (from x in _db.Employees.AsNoTracking()
+
+                        var queryListEmployee = (from x in _db.Employees.AsNoTracking()
                                    where x.IsDelete == keywords.IsDelete &&
                                                    x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
                                                    x.NameEmployee.ToLower().Contains(keywords.KwName) &&
@@ -385,45 +387,49 @@ namespace Travel.Data.Repositories
                                        Role = (from r in _db.Roles.AsNoTracking()
                                                where r.IdRole == x.RoleId select r).FirstOrDefault(),
                                        RoleId = x.RoleId
-                                   }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                                   });
+                        totalResult = queryListEmployee.Count();
+                        listEmp = queryListEmployee.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                     else
                     {
-                        listEmp = (from x in _db.Employees.AsNoTracking()
-                                   where x.IsDelete == keywords.IsDelete &&
-                                                   x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
-                                                   x.NameEmployee.ToLower().Contains(keywords.KwName) &&
-                                                   x.Email.ToLower().Contains(keywords.KwEmail) &&
-                                                   x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                                   keywords.KwIdRole.Contains(x.RoleId)
-                                   orderby x.RoleId
-                                   select new Employee
-                                   {
-                                       CreateDate = x.CreateDate,
-                                       AccessToken = x.AccessToken,
-                                       Address = x.Address,
-                                       Birthday = x.Birthday,
-                                       Email = x.Email,
-                                       IsDelete = x.IsDelete,
-                                       Gender = x.Gender,
-                                       ModifyDate = x.ModifyDate,
-                                       IdEmployee = x.IdEmployee,
-                                       Image = x.Image,
-                                       IsActive = x.IsActive,
-                                       ModifyBy = x.ModifyBy,
-                                       NameEmployee = x.NameEmployee,
-                                       Password = x.Password,
-                                       Phone = x.Phone,
-                                       Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
-                                       RoleId = x.RoleId
-                                   }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                        var queryListEmployee = (from x in _db.Employees.AsNoTracking()
+                                             where x.IsDelete == keywords.IsDelete &&
+                                                             x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
+                                                             x.NameEmployee.ToLower().Contains(keywords.KwName) &&
+                                                             x.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                             x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                             keywords.KwIdRole.Contains(x.RoleId)
+                                             orderby x.RoleId
+                                             select new Employee
+                                             {
+                                                 CreateDate = x.CreateDate,
+                                                 AccessToken = x.AccessToken,
+                                                 Address = x.Address,
+                                                 Birthday = x.Birthday,
+                                                 Email = x.Email,
+                                                 IsDelete = x.IsDelete,
+                                                 Gender = x.Gender,
+                                                 ModifyDate = x.ModifyDate,
+                                                 IdEmployee = x.IdEmployee,
+                                                 Image = x.Image,
+                                                 IsActive = x.IsActive,
+                                                 ModifyBy = x.ModifyBy,
+                                                 NameEmployee = x.NameEmployee,
+                                                 Password = x.Password,
+                                                 Phone = x.Phone,
+                                                 Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
+                                                 RoleId = x.RoleId
+                                             });
+                        totalResult = queryListEmployee.Count();
+                        listEmp = queryListEmployee.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(kwIsActive))
                     {
-                        listEmp = (from x in _db.Employees.AsNoTracking()
+                        var queryListEmployee = (from x in _db.Employees.AsNoTracking()
                                    where x.IsDelete == keywords.IsDelete &&
                                                    x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
                                                    x.NameEmployee.ToLower().Contains(keywords.KwName) &&
@@ -450,11 +456,13 @@ namespace Travel.Data.Repositories
                                        Phone = x.Phone,
                                        Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                        RoleId = x.RoleId
-                                   }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                                   });
+                        totalResult = queryListEmployee.Count();
+                        listEmp = queryListEmployee.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                     else
                     {
-                        listEmp = (from x in _db.Employees.AsNoTracking()
+                        var queryListEmployee = (from x in _db.Employees.AsNoTracking()
                                    where x.IsDelete == keywords.IsDelete &&
                                                    x.IdEmployee.ToString().ToLower().Contains(keywords.KwId) &&
                                                    x.NameEmployee.ToLower().Contains(keywords.KwName) &&
@@ -480,17 +488,23 @@ namespace Travel.Data.Repositories
                                        Phone = x.Phone,
                                        Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                        RoleId = x.RoleId
-                                   }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                                   });
+                        totalResult = queryListEmployee.Count();
+                        listEmp = queryListEmployee.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                 }
                 var result = Mapper.MapEmployee(listEmp);
                 if (result.Count() > 0)
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
                 else
                 {
-                    return Ultility.Responses("Không tìm thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                    var res = Ultility.Responses("Không tìm thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
+                    res.TotalResult = totalResult;
+                    return res;
                 }
             }
             catch (Exception e)

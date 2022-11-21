@@ -11,6 +11,10 @@ namespace Travel.Shared.ViewModels
         public object Content { get; set; }
         public int TotalResult { get; set; }
         public Notification Notification { get; set; } = new Notification();
+        public Response()
+        {
+            TotalResult = 0;
+        }
         
     }
 }
