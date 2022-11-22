@@ -622,7 +622,7 @@ namespace Travel.Data.Repositories
                                    where x.ApproveStatus == Convert.ToInt16(ApproveStatus.Waiting)
                                    select x);
                     totalResult = querylistWaiting.Count();
-                    listWaiting = querylistWaiting.ToList();
+                    listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
@@ -631,7 +631,7 @@ namespace Travel.Data.Repositories
                                    && x.ApproveStatus == Convert.ToInt16(ApproveStatus.Waiting)
                                    select x);
                     totalResult = querylistWaiting.Count();
-                    listWaiting = querylistWaiting.ToList();
+                    listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 var result = Mapper.MapTour(listWaiting);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -1129,7 +1129,7 @@ namespace Travel.Data.Repositories
                                         keywords.KwRating.Contains(Convert.ToInt16(x.Rating))
                                     select x);
                         totalResult = querylistTour.Count();
-                        listTour = querylistTour.ToList();
+                        listTour = querylistTour.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                     else
                     {
@@ -1142,7 +1142,7 @@ namespace Travel.Data.Repositories
                                         x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved)
                                     select x);
                         totalResult = querylistTour.Count();
-                        listTour = querylistTour.ToList();
+                        listTour = querylistTour.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                 }
                 else
@@ -1167,7 +1167,7 @@ namespace Travel.Data.Repositories
                                             Status = x.Status
                                         });
                         totalResult = querylistTour.Count();
-                        listTour = querylistTour.ToList();
+                        listTour = querylistTour.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
 
                     }
                         else
@@ -1190,7 +1190,7 @@ namespace Travel.Data.Repositories
                                             Status = x.Status
                                         });
                         totalResult = querylistTour.Count();
-                        listTour = querylistTour.ToList();
+                        listTour = querylistTour.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     } 
 
                 }

@@ -262,7 +262,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    var res = Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), result);
+                    var res = Ultility.Responses("Không tìm thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
                     res.TotalResult = totalResult;
                     return res;
                 }

@@ -243,7 +243,7 @@ namespace Travel.Data.Repositories
                                    orderby x.ModifyDate descending
                                    select x);
                     totalResult = querylistWaiting.Count();
-                    listWaiting = querylistWaiting.ToList();
+                    listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
@@ -253,7 +253,7 @@ namespace Travel.Data.Repositories
                                    orderby x.ModifyDate descending
                                    select x);
                     totalResult = querylistWaiting.Count();
-                    listWaiting = querylistWaiting.ToList();
+                    listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 var result = Mapper.MapHotel(listWaiting);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -655,7 +655,7 @@ namespace Travel.Data.Repositories
                                             where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) 
                                             select x);
                     totalResult = querylistWaiting.Count();
-                    listWaiting = querylistWaiting.ToList();
+                    listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
@@ -665,7 +665,7 @@ namespace Travel.Data.Repositories
                                    select x);
 
                     totalResult = querylistWaiting.Count();
-                    listWaiting = querylistWaiting.ToList();
+                    listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
 
                 var result = Mapper.MapRestaurant(listWaiting);
@@ -1020,7 +1020,7 @@ namespace Travel.Data.Repositories
                                    orderby x.ModifyDate descending
                                    select x);
                     totalResult = querylistWaiting.Count();
-                    listWaiting = querylistWaiting.ToList();
+                    listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
@@ -1030,7 +1030,7 @@ namespace Travel.Data.Repositories
                                    orderby x.ModifyDate descending
                                    select x);
                     totalResult = querylistWaiting.Count();
-                    listWaiting = querylistWaiting.ToList();
+                    listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 var result = Mapper.MapPlace(listWaiting);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -1461,7 +1461,7 @@ namespace Travel.Data.Repositories
                                  orderby x.ModifyDate descending
                                  select x);
                     totalResult = querylistHotel.Count();
-                    listHotel = querylistHotel.ToList();
+                    listHotel = querylistHotel.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
@@ -1476,7 +1476,7 @@ namespace Travel.Data.Repositories
                                  orderby x.ModifyDate descending
                                  select x);
                     totalResult = querylistHotel.Count();
-                    listHotel = querylistHotel.ToList();
+                    listHotel = querylistHotel.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 var result = Mapper.MapHotel(listHotel);
                 if (result.Count > 0)
@@ -1752,7 +1752,7 @@ namespace Travel.Data.Repositories
 
                                  select x);
                     totalResult = querylistPlace.Count();
-                    listPlace = querylistPlace.ToList();
+                    listPlace = querylistPlace.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
@@ -1766,7 +1766,7 @@ namespace Travel.Data.Repositories
                                  orderby x.PriceTicket
                                  select x);
                     totalResult = querylistPlace.Count();
-                    listPlace = querylistPlace.ToList();
+                    listPlace = querylistPlace.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 var result = Mapper.MapPlace(listPlace);
                 if (result.Count > 0)
@@ -1854,7 +1854,7 @@ namespace Travel.Data.Repositories
                                                       x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
                                       select x);
                     totalResult = querylistRestaurant.Count();
-                    listRestaurant = querylistRestaurant.ToList();
+                    listRestaurant = querylistRestaurant.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
@@ -1868,7 +1868,7 @@ namespace Travel.Data.Repositories
 
                                       select x);
                     totalResult = querylistRestaurant.Count();
-                    listRestaurant = querylistRestaurant.ToList();
+                    listRestaurant = querylistRestaurant.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 var result = Mapper.MapRestaurant(listRestaurant);
                 if (result.Count > 0)
