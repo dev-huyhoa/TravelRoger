@@ -929,23 +929,27 @@ namespace Travel.Data.Repositories
                                                where tbk.Status == (int)Enums.StatusBooking.Paid
                                                && s.ReturnDate <= unixDateTimeNow
                                                select tbk).ToListAsync();
-                foreach (var item in listTourBookingFinished)
+                if (listTourBookingFinished.Count() > 0)
                 {
-                    var point = (item.TotalPrice + item.TotalPricePromotion) / 100000;
-                    var pointAdd = (int)Math.Round(point, 1);
-                    var idCustomer = item.CustomerId;
-                    if (idCustomer != Guid.Empty)
+                    foreach (var item in listTourBookingFinished)
                     {
-                       var isAddedPointSuccess = await _customer.UpdateScoreToCustomer(idCustomer, pointAdd);
-                        if (!isAddedPointSuccess)
+                        var point = (item.TotalPrice + item.TotalPricePromotion) / 100000;
+                        var pointAdd = (int)Math.Round(point);
+                        var idCustomer = item.CustomerId;
+                        if (idCustomer != Guid.Empty)
                         {
-                            return false;
+                            var isAddedPointSuccess = await _customer.UpdateScoreToCustomer(idCustomer, pointAdd);
+                            if (!isAddedPointSuccess)
+                            {
+                                return false;
+                            }
                         }
+                        item.Status = (int)Enums.StatusBooking.Finished;
+                        UpdateDatabase(item);
                     }
-                    item.Status = (int)Enums.StatusBooking.Finished;
-                    UpdateDatabase(item);
+                    SaveChange();
                 }
-                SaveChange();
+                
                 return true;
             }
             catch (Exception e)

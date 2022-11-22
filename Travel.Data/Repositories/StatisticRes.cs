@@ -53,12 +53,12 @@ namespace Travel.Data.Repositories
                 {
                     if (!await CheckReportByDateIsExist(unixYesterday))
                     {
-                        var listTourBookingFinished = (from tbk in _db.TourBookings.AsNoTracking()
+                        var listTourBookingFinished =await (from tbk in _db.TourBookings.AsNoTracking()
                                                        join s in _db.Schedules.AsNoTracking()
                                                        on tbk.ScheduleId equals s.IdSchedule
                                                        where tbk.Status == (int)Enums.StatusBooking.Finished
                                                        && (s.ReturnDate >= unixYesterday && s.ReturnDate <= unixEndOfYesterday)
-                                                       select tbk);
+                                                       select tbk).ToListAsync() ;
 
                         var listGroupingTourbooking = listTourBookingFinished.GroupBy(x => x.ScheduleId);
                         foreach (var item in listGroupingTourbooking)

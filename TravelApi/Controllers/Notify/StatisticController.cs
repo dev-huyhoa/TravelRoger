@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
+using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 
 namespace TravelApi.Controllers.Notify
@@ -36,7 +37,30 @@ namespace TravelApi.Controllers.Notify
         [Route("saving-tourbooking-finished")]
         public async Task<object> SaveReportTourBookingEveryDay(DateTime date)
         {
-            return await _statistic.SaveReportTourBookingEveryDay(date);
+
+            var flag = await _statistic.SaveReportTourBookingEveryDay(date);
+            if (flag)
+            {
+                return Ok(new
+                {
+                    Notification = new
+                    {
+                        Type = Enums.TypeCRUD.Success,
+                        Messenge = "Thành công"
+                    }
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Notification = new
+                    {
+                        Type = Enums.TypeCRUD.Error,
+                        Messenge = "Thất bại"
+                    }
+                });
+            }
         }
     }
 }

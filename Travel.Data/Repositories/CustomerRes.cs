@@ -441,7 +441,12 @@ namespace Travel.Data.Repositories
                 if (customer != null )
                 {
                     customer.Point += point;
+                    
                     customer.Legit += 10;
+                    if (customer.Legit > 100)
+                    {
+                        customer.Legit = 100;
+                    }
                     UpdateDatabase(customer);
                     await SaveChangeAsync();
                     return true;

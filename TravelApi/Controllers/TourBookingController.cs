@@ -72,7 +72,7 @@ namespace TravelApi.Controllers
                 int child = createObj.BookingDetails.Child;
                 int baby = createObj.BookingDetails.Baby;
                 await _schedule.UpdateCapacity(createObj.ScheduleId, adult, child, baby);
-                res =await   _tourbooking.Create(createObj);
+                res = await _tourbooking.Create(createObj);
             }
             else
             {
@@ -85,7 +85,7 @@ namespace TravelApi.Controllers
         [Route("tour-booking-by-id")]
         public async Task<object> TourBookingById(string idTourBooking)
         {
-            res =await _tourbooking.TourBookingById(idTourBooking);
+            res = await _tourbooking.TourBookingById(idTourBooking);
             return Ok(res);
         }
 
@@ -104,7 +104,7 @@ namespace TravelApi.Controllers
         [Route("cancel-booking")]
         public async Task<object> CancelBooking(string idTourBooking)
         {
-            res =await _tourbooking.CancelBooking(idTourBooking);
+            res = await _tourbooking.CancelBooking(idTourBooking);
             return Ok(res);
         }
 
@@ -150,19 +150,21 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Authorize]
         [Route("update-tourBooking-finished")]
         public async Task<object> UpdateTourBookingFinished()
         {
-            var flag =await _tourbooking.UpdateTourBookingFinished();
+            var flag = await _tourbooking.UpdateTourBookingFinished();
             if (flag)
             {
                 return Ok(new
                 {
-                    Status = 1,
-                    Message = "Thành công"
-                }) ;
+                    Notification = new {
+                        Type = Enums.TypeCRUD.Success,
+                        Messenge = "Thành công"
+                    }
+                });
             }
             else
             {
