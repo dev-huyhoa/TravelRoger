@@ -21,5 +21,7 @@ namespace Travel.Data.Interfaces
          Task<Response> UpdateCustomer(UpdateCustomerViewModel input);
         Task<Response> CustomerSendRate(string idTour, int rating);
 
+        Task<bool> UpdateScoreToCustomer(Guid idCustomer, int point);
+
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
+using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 using Travel.Shared.ViewModels.Travel.TourBookingVM;
@@ -147,6 +148,30 @@ namespace TravelApi.Controllers
         {
             res = _tourbooking.UpdateStatus(pincode);
             return Ok(res);
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("update-tourBooking-finished")]
+        public async Task<object> UpdateTourBookingFinished()
+        {
+            var flag =await _tourbooking.UpdateTourBookingFinished();
+            if (flag)
+            {
+                return Ok(new
+                {
+                    Status = 1,
+                    Message = "Thành công"
+                }) ;
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    Status = -1,
+                    Message = "Thất bại"
+                });
+            }
         }
     }
 }

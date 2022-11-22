@@ -67,6 +67,8 @@ namespace TravelApi.Extensions
             services
    .AddScoped<ITourBooking, TourBookingRes>();
             services
+.AddScoped<IStatistic, StatisticRes>();
+            services
                 .AddScoped<IPromotions, PromotionRes>();
             services
           .AddScoped<IHubRepository, HubRepository>();

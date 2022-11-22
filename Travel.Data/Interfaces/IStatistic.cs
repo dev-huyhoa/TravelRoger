@@ -10,6 +10,6 @@ namespace Travel.Data.Interfaces
     public interface IStatistic
     {
         Response StatisticTourBookingFromDateToDate(long fromDate, long toDate);
-        Task<bool> SaveReportTourBooking();
+        Task<bool> SaveReportTourBookingEveryDay(DateTime dateInput);
     }
 }

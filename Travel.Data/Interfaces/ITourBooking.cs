@@ -30,5 +30,8 @@ namespace Travel.Data.Interfaces
 
         Response UpdateStatus(string pincode);
         Task<TourBooking> GetTourBookingByIdForPayPal (string idTourBooking);
+
+        Task<bool> UpdateTourBookingFinished();
+
     }
 }

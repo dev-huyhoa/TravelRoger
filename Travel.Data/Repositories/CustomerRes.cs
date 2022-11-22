@@ -431,6 +431,30 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public async Task<bool> UpdateScoreToCustomer(Guid idCustomer, int point)
+        {
+            try
+            {
+                var customer = await (from x in _db.Customers.AsNoTracking()
+                                      where x.IdCustomer == idCustomer
+                                      select x).FirstOrDefaultAsync();
+                if (customer != null )
+                {
+                    customer.Point += point;
+                    customer.Legit += 10;
+                    UpdateDatabase(customer);
+                    await SaveChangeAsync();
+                    return true;
+
+                }
+                return false;
+            }
+            catch 
+            {
+                return false;
+
+            }
+        }
     }
 
 

@@ -25,6 +25,19 @@ namespace Travel.Data.Repositories
         private readonly ISchedule _schedule;
         private readonly string keySecurity;
         private readonly IConfiguration _config;
+        private readonly ICustomer _customer;
+       
+        public TourBookingRes(TravelContext db,
+            ISchedule schedule,
+            ICustomer customer,
+            IConfiguration config)
+        {
+            _db = db;
+            _schedule = schedule;
+            _customer = customer;
+            _config = config;
+            keySecurity = _config["keySecurity"];
+        }
         private void UpdateDatabase<T>(T input)
         {
             _db.Entry(input).State = EntityState.Modified;
@@ -45,15 +58,7 @@ namespace Travel.Data.Repositories
         {
             _db.SaveChanges();
         }
-        public TourBookingRes(TravelContext db,
-            ISchedule schedule,
-            IConfiguration config)
-        {
-            _db = db;
-            _schedule = schedule;
-            _config = config;
-            keySecurity = _config["keySecurity"];
-        }
+
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate)
         {
             try
@@ -902,6 +907,50 @@ namespace Travel.Data.Repositories
             catch (Exception e)
             {
                 throw;
+            }
+        }
+
+        public async Task<bool> UpdateTourBookingFinished()
+        {
+            try
+            {
+                var currentDate= DateTime.Now;
+                var day = currentDate.Day;
+                var month = currentDate.Month;
+                var year = currentDate.Year;
+
+                var dateTimeNow = DateTime.Parse($"{year}/{month}/{day}");
+                var unixDateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(dateTimeNow.AddDays(1).AddMinutes(-1));
+
+
+                var listTourBookingFinished = await (from tbk in _db.TourBookings.AsNoTracking()
+                                               join s in _db.Schedules.AsNoTracking()
+                                               on tbk.ScheduleId equals s.IdSchedule
+                                               where tbk.Status == (int)Enums.StatusBooking.Paid
+                                               && s.ReturnDate <= unixDateTimeNow
+                                               select tbk).ToListAsync();
+                foreach (var item in listTourBookingFinished)
+                {
+                    var point = (item.TotalPrice + item.TotalPricePromotion) / 100000;
+                    var pointAdd = (int)Math.Round(point, 1);
+                    var idCustomer = item.CustomerId;
+                    if (idCustomer != Guid.Empty)
+                    {
+                       var isAddedPointSuccess = await _customer.UpdateScoreToCustomer(idCustomer, pointAdd);
+                        if (!isAddedPointSuccess)
+                        {
+                            return false;
+                        }
+                    }
+                    item.Status = (int)Enums.StatusBooking.Finished;
+                    UpdateDatabase(item);
+                }
+                SaveChange();
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
             }
         }
     }
