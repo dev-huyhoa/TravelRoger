@@ -50,6 +50,11 @@ namespace Travel.Shared.ViewModels
         public string KwLiscensePlate { get; set; }
         public string KwFrom { get; set; }
         public string KwTo { get; set; }
+        public float KwPriceFrom { get; set; }
+        public float KwPriceTo { get; set; }
+
+        public int KwPromotion { get; set; }
+
     }
     public class Pagination
     {
