@@ -40,11 +40,12 @@ namespace TravelApi.Controllers
         //[ClaimRequirement(ClaimTypes.Name, "Admin")]
         [Authorize]
         [Route("list-employee")]
-        public object GetsEmployee(bool isDelete, int pageIndex, int pageSize)
+        public object GetsEmployee(bool isDelete)
         {
+            var userId1 = this.User.FindFirstValue(ClaimTypes.Role);
             //var userId = this.User.Claims.Where(x=> x.Type == ClaimTypes.NameIdentifier);
             //var userId1 = this.User.FindFirstValue(ClaimTypes.Role);
-            res = employee.GetsEmployee(isDelete,pageIndex,pageSize);
+            res = employee.GetsEmployee(isDelete);
             return Ok(res);
         }
 

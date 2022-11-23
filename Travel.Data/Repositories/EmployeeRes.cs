@@ -190,7 +190,7 @@ namespace Travel.Data.Repositories
                 return string.Empty;
             }
         }
-        public Response GetsEmployee(bool isDelete, int pageIndex = 1, int pageSize = 2)
+        public Response GetsEmployee(bool isDelete)
         {
             try
             {
@@ -233,7 +233,7 @@ namespace Travel.Data.Repositories
                                    Phone = x.Phone,
                                    Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                    RoleId = x.RoleId,
-                               }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                               }).ToList();
 
                 var result = Mapper.MapEmployee(listEmp);
 
