@@ -73,10 +73,7 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreateCarViewModel>(result);
                 res = _car.Create(createObj);
             }
-            else
-            {
-                res.Notification = message;
-            }
+           
 
             return Ok(res);
         }

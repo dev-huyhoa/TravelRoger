@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,6 @@ namespace Travel.Data.Repositories
         {
             _dbNotyf.Entry(input).State = EntityState.Modified;
         }
-
         private void CreateDatabase<T>(T input)
         {
             _dbNotyf.Entry(input).State = EntityState.Added;
@@ -41,7 +41,6 @@ namespace Travel.Data.Repositories
             var month = dateTimeYesterday.Month;
             var year = dateTimeYesterday.Year;
             var input = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(dateInput);
-
             var yesterday = DateTime.Parse($"{year}/{month}/{day}");
             var unixEndOfYesterday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(yesterday.AddDays(1).AddMinutes(-1));
             var unixYesterday = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(yesterday);
@@ -131,6 +130,113 @@ namespace Travel.Data.Repositories
             }
         }
 
-     
+        public Response StatisticTourBookingInThisWeek(long fromDate,long toDate)
+        {
+            try
+            {
+                var lsStatisticByWeek = (from x in _dbNotyf.ReportTourBooking.AsNoTracking()
+                                         where x.DateSave >= fromDate
+                                         && x.DateSave <= toDate
+                                         select x).ToList();
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(),lsStatisticByWeek);
+            }
+            catch (Exception e)
+            {
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+            return null;
+        }
+        private int GetWeekNumber(DateTime now)
+        {
+            CultureInfo ciCurr = CultureInfo.CurrentCulture;
+            int weekNum = ciCurr.Calendar.GetWeekOfYear(now, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+            return weekNum;
+        }
+        public  DateTime FirstDateOfWeekISO8601(int year, int weekOfYear)
+        {
+            DateTime jan1 = new DateTime(year, 1, 1);
+            int daysOffset = DayOfWeek.Thursday - jan1.DayOfWeek;
+
+            // Use first Thursday in January to get first week of the year as
+            // it will never be in Week 52/53
+            DateTime firstThursday = jan1.AddDays(daysOffset);
+            var cal = CultureInfo.CurrentCulture.Calendar;
+            int firstWeek = cal.GetWeekOfYear(firstThursday, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+
+            var weekNum = weekOfYear;
+            // As we're adding days to a date in Week 1,
+            // we need to subtract 1 in order to get the right date for week #1
+            if (firstWeek == 1)
+            {
+                weekNum -= 1;
+            }
+
+            // Using the first Thursday as starting week ensures that we are starting in the right year
+            // then we add number of weeks multiplied with days
+            var result = firstThursday.AddDays(weekNum * 7);
+
+            // Subtract 3 days from Thursday to get Monday, which is the first weekday in ISO8601
+            return result.AddDays(-3);
+        }
+        private async Task<bool> IsWeekExists(int week, int year)
+        {
+            try
+            {
+                var weekNumber = await (from x in _dbNotyf.ReportWeek.AsNoTracking()
+                                  where x.Week == week
+                                  && x.Year == year
+                                  select x).CountAsync();
+                if (weekNumber >0)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch 
+            {
+                return false;
+            }
+        }
+        public async Task SaveReportWeek()
+        {
+            var now = DateTime.Now;
+            var year = now.Year;
+            int weekNumber = GetWeekNumber(now);
+            if (!await IsWeekExists(weekNumber,year))
+            {
+                var firstDateOfWeek = FirstDateOfWeekISO8601(year, weekNumber);
+                var endDateOfWeek = firstDateOfWeek.AddDays(6);
+
+                ReportWeek obj = new ReportWeek
+                {
+                    FromDate = firstDateOfWeek,
+                    ToDate = endDateOfWeek,
+                    IdWeek = Guid.NewGuid(),
+                    Week = weekNumber,
+                    Year = year
+                };
+                CreateDatabase(obj);
+                await SaveChangeAsync();
+            }
+        }
+
+        public Response GetListWeekOfYear(int year)
+        {
+           
+            try
+            {
+                var lsWeek = (from x in _dbNotyf.ReportWeek
+                              where x.Year == year
+                              select x).ToList();
+                return Ultility.Responses("Thanh toán thành công !", Enums.TypeCRUD.Success.ToString(), lsWeek);
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
     }
 }

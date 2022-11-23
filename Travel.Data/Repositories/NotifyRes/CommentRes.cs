@@ -87,6 +87,7 @@ namespace Travel.Data.Repositories.NotifyRes
             {
                 var cmt = await (from x in _notifyContext.Comment.AsNoTracking()
                                  where x.IdTour == idTour
+                                 orderby x.CommentTime descending
                                  select x).ToListAsync();
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), cmt);                   
             }

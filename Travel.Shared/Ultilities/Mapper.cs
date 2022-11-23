@@ -450,7 +450,8 @@ namespace Travel.Shared.Ultilities
                    .ForMember(dto => dto.LiscensePlate, opt => opt.MapFrom(src => src.LiscensePlate))
                    .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
                    .ForMember(dto => dto.NameDriver, opt => opt.MapFrom(src => src.NameDriver))
-                   .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone));
+                   .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
+                   .ForMember(dto => dto.IdUserModify, opt => opt.MapFrom(src => src.IdUserModify));
 
                 cfg.CreateMap<UpdateCarViewModel, Car>()
                    .ForMember(dto => dto.IdCar, opt => opt.MapFrom(src => src.IdCar))
@@ -458,7 +459,8 @@ namespace Travel.Shared.Ultilities
                    .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
                    .ForMember(dto => dto.NameDriver, opt => opt.MapFrom(src => src.NameDriver))
                    .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))                        
-                   .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate));
+                   .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+                   .ForMember(dto => dto.IdUserModify, opt => opt.MapFrom(src => src.IdUserModify));
                 cfg.CreateMap<Car, CarViewModel>()
                    .ForMember(dto => dto.IdCar, opt => opt.MapFrom(src => src.IdCar))
                    .ForMember(dto => dto.LiscensePlate, opt => opt.MapFrom(src => src.LiscensePlate))
