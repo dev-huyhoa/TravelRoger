@@ -112,7 +112,7 @@ namespace Travel.Data.Repositories
                 //objCreate.IdCar = Guid.Parse(idCar);
                 objCreate.NameDriver = nameDriver;
                 objCreate.AmountSeat = int.Parse(amountSeat);
-                objCreate.Status = 0;
+                objCreate.Status = int.Parse(status);
                 objCreate.LiscensePlate = liscenseplate;
                 objCreate.Phone = phone;
                 objCreate.IdUserModify = Guid.Parse(idUserModify);
