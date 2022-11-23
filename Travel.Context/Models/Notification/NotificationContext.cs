@@ -20,6 +20,8 @@ namespace Travel.Context.Models.Notification
         }
         public DbSet<Comment> Comment { get; set; }
         public DbSet<ReportTourBooking> ReportTourBooking { get; set; }
+        public DbSet<ReportWeek> ReportWeek { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +40,10 @@ namespace Travel.Context.Models.Notification
                 entity.Property(e => e.NameTour).HasMaxLength(100);
                 entity.Property(e => e.IdTour).HasMaxLength(50);
 
+            });
+            modelBuilder.Entity<ReportWeek>(entity =>
+            {
+                entity.HasKey(e => e.IdWeek);
             });
         }
 
