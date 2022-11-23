@@ -2843,7 +2843,7 @@ namespace Travel.Data.Repositories
             try
             {
                 Keywords keywords = new Keywords();
-                var kwFrom = PrCommon.GetString("kwFrom", frmData).Trim();
+                var kwFrom = PrCommon.GetString("kwFrom", frmData);
                 if (!String.IsNullOrEmpty(kwFrom))
                 {
                     keywords.KwFrom = kwFrom.Trim().ToLower();
@@ -2853,7 +2853,7 @@ namespace Travel.Data.Repositories
                     keywords.KwFrom = "";
                 }
 
-                var kwTo = PrCommon.GetString("kwTo", frmData).Trim();
+                var kwTo = PrCommon.GetString("kwTo", frmData);
                 if (!String.IsNullOrEmpty(kwTo))
                 {
                     keywords.KwTo = kwTo.Trim().ToLower();

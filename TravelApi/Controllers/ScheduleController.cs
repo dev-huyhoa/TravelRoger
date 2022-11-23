@@ -232,7 +232,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPost]
         [AllowAnonymous]
         [Route("cus-search-schedule-filter")]
         public async Task<object> SearchSchedule([FromBody] JObject frmData)
