@@ -27,7 +27,7 @@ namespace TravelApi.Controllers.Notify
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("list-comment")]
+        [Route("gets-comment")]
         public async Task<object> GetComment(string idTour)
         {
             res = await _comment.Gets(idTour);
@@ -47,9 +47,9 @@ namespace TravelApi.Controllers.Notify
         [HttpDelete]
         [Authorize]
         [Route("delete-comment")]
-        public async Task<object> DeleteComment(Guid idComment, Guid idUser)
+        public async Task<object> DeleteComment(Guid idComment, Guid idCustomer)
         {
-            res = await _comment.Delete(idComment, idUser);
+            res = await _comment.Delete(idComment, idCustomer);
 
             return Ok(res);
         }
