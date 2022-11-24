@@ -1018,6 +1018,7 @@ namespace Travel.Data.Repositories
                                 TimePromotion = s.TimePromotion,
                                 Vat = s.Vat,
                                 TotalCostTourNotService = s.TotalCostTourNotService,
+                                Promotions = (from p in _db.Promotions where p.IdPromotion == s.PromotionId select p).FirstOrDefault(),
                                 CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
                                 Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
                                 Tour = (from t in _db.Tour
@@ -1047,7 +1048,7 @@ namespace Travel.Data.Repositories
                                 where Ultility.removeVietnameseSign(x.Tour.ToPlace.ToLower()).Contains(keyTo)
                                 select x).OrderByDescending(x => x.DepartureDate).ToList();
                     }
-                    var result = Mapper.MapSchedule(list);
+                    var result = list;
                     return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 }
                 else if (departureDate == null && returnDate == null)
@@ -1100,6 +1101,7 @@ namespace Travel.Data.Repositories
                                  TimePromotion = s.TimePromotion,
                                  Vat = s.Vat,
                                  TotalCostTourNotService = s.TotalCostTourNotService,
+                                 Promotions = (from p in _db.Promotions where p.IdPromotion == s.PromotionId select p).FirstOrDefault(),
                                  CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
                                  Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
                                  Tour = (from t in _db.Tour
@@ -1129,7 +1131,7 @@ namespace Travel.Data.Repositories
                                  where Ultility.removeVietnameseSign(x.Tour.ToPlace.ToLower()).Contains(keyTo)
                                  select x).OrderByDescending(x => x.DepartureDate).ToList();
                     }
-                    var result = Mapper.MapSchedule(list2);
+                    var result = list2;
                     return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
 
                 }
@@ -1213,6 +1215,7 @@ namespace Travel.Data.Repositories
                                  TimePromotion = s.TimePromotion,
                                  Vat = s.Vat,
                                  TotalCostTourNotService = s.TotalCostTourNotService,
+                                 Promotions = (from p in _db.Promotions where p.IdPromotion == s.PromotionId select p).FirstOrDefault(),
                                  CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
                                  Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
                                  Tour = (from t in _db.Tour
@@ -1242,7 +1245,7 @@ namespace Travel.Data.Repositories
                                  where Ultility.removeVietnameseSign(x.Tour.ToPlace.ToLower()).Contains(keyTo)
                                  select x).OrderByDescending(x => x.DepartureDate).ToList();
                     }
-                    var result1 = Mapper.MapSchedule(list1);
+                    var result1 = list1;
                     return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result1);
                 }
                 //var list = await (from s in _db.Schedules
@@ -1282,6 +1285,7 @@ namespace Travel.Data.Repositories
                 //                TimePromotion = s.TimePromotion,
                 //                Vat = s.Vat,
                 //                TotalCostTourNotService = s.TotalCostTourNotService,
+                //                Promotions = (from p in _db.Promotions where p.IdPromotion == s.PromotionId select p).FirstOrDefault(),
                 //                CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).First(),
                 //                Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
                 //                Tour = (from t in _db.Tour
@@ -2911,20 +2915,19 @@ namespace Travel.Data.Repositories
                 {
                     keywords.KwPromotion = 0;
                 }
-                ////
-                //var query = (from s in _db.Schedules.AsNoTracking()
-                //             where s.Isdelete == false
-                //              && s.Approve == (int)Enums.ApproveStatus.Approved
-                //             select s);
 
-                //if (kwTo != null)
-                //{
-                //    query = from x in query
-                //            where x.FinalPriceHoliday > kwTo
-                //            select x;
-                //}
-               // filterlit = filterList.Where(x => (x.Tour.Thumbnail).Contains())
-                ////
+                var kwIsHoliday = PrCommon.GetString("kwIsHoliday", frmData);
+                if (!String.IsNullOrEmpty(kwIsHoliday))
+                {
+                    keywords.KwIsHoliday = bool.Parse(kwIsHoliday);
+                }
+
+                var kwIsAllOption = PrCommon.GetString("kwIsAllOption", frmData);
+                if (!String.IsNullOrEmpty(kwIsAllOption))
+                {
+                    keywords.KwIsAllOption = bool.Parse(kwIsAllOption);
+                }
+
 
                 var dateTimeNow = GetDateTimeNow();
                 var filterList = (from s in _db.Schedules.AsNoTracking()
@@ -2962,6 +2965,7 @@ namespace Travel.Data.Repositories
                                       QuantityCustomer = s.QuantityCustomer,
                                       TimePromotion = s.TimePromotion,
                                       Vat = s.Vat,
+                                      Promotions = (from p in _db.Promotions where p.IdPromotion == s.PromotionId select p).FirstOrDefault(),
                                       TotalCostTourNotService = s.TotalCostTourNotService,
                                       CostTour = (from c in _db.CostTours where c.IdSchedule == s.IdSchedule select c).FirstOrDefault(),
                                       Timelines = (from t in _db.Timelines where t.IdSchedule == s.IdSchedule select t).ToList(),
@@ -2985,396 +2989,626 @@ namespace Travel.Data.Repositories
                                               }).FirstOrDefault(),
                                   });
 
-                #region search filter còn: số người/ còn chỗ/ rồi gì đó
-
-                if (keywords.KwDepartureDate > 0 || keywords.KwReturnDate > 0)
+                #region search filter 
+                if (keywords.KwIsAllOption)
                 {
-                    if (keywords.KwDepartureDate > 0 && keywords.KwReturnDate > 0)
+                    ///
+                    if (keywords.KwDepartureDate > 0 || keywords.KwReturnDate > 0)
                     {
-                        if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                        if (keywords.KwDepartureDate > 0 && keywords.KwReturnDate > 0)
                         {
-                            #region price && departureDate => kwReturnDate
-                            if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                            if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
                             {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.DepartureDate >= keywords.KwDepartureDate &&
-                                                    s.ReturnDate <= keywords.KwReturnDate &&
-                                                    s.FinalPrice >= keywords.KwPriceFrom &&
-                                                    s.FinalPrice <= keywords.KwPriceTo &&
-                                                    s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            else if (keywords.KwPriceFrom > 0)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.DepartureDate >= keywords.KwDepartureDate &&
-                                                    s.ReturnDate <= keywords.KwReturnDate &&
-                                                    s.FinalPrice <= keywords.KwPriceFrom &&
-                                                    s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            else if (keywords.KwPriceTo > 0)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.DepartureDate >= keywords.KwDepartureDate &&
-                                                    s.ReturnDate <= keywords.KwReturnDate &&
-                                                    s.FinalPrice >= keywords.KwPriceTo &&
-                                                    s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            #endregion
-                        }
-                        else if (keywords.KwPromotion > 0)
-                        {
-                            #region deparDate => retuDate  && promotion
-                            if (keywords.KwPromotion == 1)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.DepartureDate >= keywords.KwDepartureDate &&
-                                                    s.ReturnDate <= keywords.KwReturnDate &&
-                                                    s.PromotionId == keywords.KwPromotion &&
-                                                    s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                              select s;
+                                #region price && departureDate => kwReturnDate
+                                if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.DepartureDate >= keywords.KwDepartureDate &&
+                                                       s.ReturnDate <= keywords.KwReturnDate &&
+                                                       s.FinalPrice >= keywords.KwPriceFrom &&
+                                                       s.FinalPrice <= keywords.KwPriceTo &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                                else if (keywords.KwPriceFrom > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.DepartureDate >= keywords.KwDepartureDate &&
+                                                       s.ReturnDate <= keywords.KwReturnDate &&
+                                                       s.FinalPrice <= keywords.KwPriceFrom &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                                else if (keywords.KwPriceTo > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.DepartureDate >= keywords.KwDepartureDate &&
+                                                       s.ReturnDate <= keywords.KwReturnDate &&
+                                                       s.FinalPrice >= keywords.KwPriceTo &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                                #endregion
                             }
                             else
                             {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.DepartureDate >= keywords.KwDepartureDate &&
-                                                    s.ReturnDate <= keywords.KwReturnDate &&
-                                                    s.PromotionId >= keywords.KwPromotion &&
-                                                    s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            #endregion
-                        }
-                        else
-                        {
 
-                            filterList = from s in filterList
-                                          where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                s.DepartureDate >= keywords.KwDepartureDate &&
-                                                s.ReturnDate <= keywords.KwReturnDate &&
-                                                s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                         select s;
+                                filterList = from s in filterList
+                                             where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                   s.DepartureDate >= keywords.KwDepartureDate &&
+                                                   s.ReturnDate <= keywords.KwReturnDate &&
+                                                   s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                             select s;
+                            }
                         }
-                    }
-                    else if (keywords.KwReturnDate == 0 && keywords.KwDepartureDate > 0)
-                    {
-                        if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                        else if (keywords.KwReturnDate == 0 && keywords.KwDepartureDate > 0)
                         {
-                            #region price && departureDate 
-                            if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                            if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
                             {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.DepartureDate >= keywords.KwDepartureDate &&
-                                                    s.FinalPrice >= keywords.KwPriceFrom &&
-                                                    s.FinalPrice <= keywords.KwPriceTo &&
-                                                    s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            else if (keywords.KwPriceFrom > 0)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.DepartureDate >= keywords.KwDepartureDate &&
-                                                    s.FinalPrice <= keywords.KwPriceFrom &&
-                                                    s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            else if (keywords.KwPriceTo > 0)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.DepartureDate >= keywords.KwDepartureDate &&
-                                                    s.FinalPrice >= keywords.KwPriceTo &&
-                                                    s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                              select s;
-                            }
-                            #endregion
-                        }
-                        else if (keywords.KwPromotion > 0)
-                        {
-                            #region deparDate  && promotion
-                            if (keywords.KwPromotion == 1)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                s.DepartureDate >= keywords.KwDepartureDate &&
-                                                s.PromotionId == keywords.KwPromotion &&
-                                                s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
+                                #region price && departureDate 
+                                if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.DepartureDate >= keywords.KwDepartureDate &&
+                                                       s.FinalPrice >= keywords.KwPriceFrom &&
+                                                       s.FinalPrice <= keywords.KwPriceTo &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                                else if (keywords.KwPriceFrom > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.DepartureDate >= keywords.KwDepartureDate &&
+                                                       s.FinalPrice <= keywords.KwPriceFrom &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                                else if (keywords.KwPriceTo > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.DepartureDate >= keywords.KwDepartureDate &&
+                                                       s.FinalPrice >= keywords.KwPriceTo &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                                #endregion
                             }
                             else
                             {
                                 filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                s.DepartureDate >= keywords.KwDepartureDate &&
-                                                s.PromotionId >= keywords.KwPromotion &&
-                                                s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                             where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                   s.DepartureDate >= keywords.KwDepartureDate &&
+                                                   s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
                                              select s;
                             }
-                            #endregion
                         }
-                        else
+                        else if (keywords.KwReturnDate > 0 && keywords.KwDepartureDate == 0)
                         {
-                            filterList = from s in filterList
-                                          where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                s.DepartureDate >= keywords.KwDepartureDate &&
-                                                s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                         select s;
-                        }
-                    }
-                    else if (keywords.KwReturnDate > 0 && keywords.KwDepartureDate == 0)
-                    {
-                        if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
-                        {
-                            #region price && kwReturnDate
-                            if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                            if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
                             {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.ReturnDate <= keywords.KwReturnDate &&
-                                                    s.FinalPrice >= keywords.KwPriceFrom &&
-                                                    s.FinalPrice <= keywords.KwPriceTo &&
-                                                     s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            else if (keywords.KwPriceFrom > 0)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.ReturnDate <= keywords.KwReturnDate &&
-                                                    s.FinalPrice <= keywords.KwPriceFrom &&
-                                                     s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            else if (keywords.KwPriceTo > 0)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.ReturnDate <= keywords.KwReturnDate &&
-                                                    s.FinalPrice >= keywords.KwPriceTo &&
-                                                     s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            #endregion
-                        }
-                        else if (keywords.KwPromotion > 0)
-                        {
-                            #region returnDate  && promotion
-                            if (keywords.KwPromotion == 1)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.ReturnDate <= keywords.KwReturnDate &&
-                                                    s.PromotionId == keywords.KwPromotion &&
-                                                     s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
+                                #region price && kwReturnDate
+                                if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.ReturnDate <= keywords.KwReturnDate &&
+                                                       s.FinalPrice >= keywords.KwPriceFrom &&
+                                                       s.FinalPrice <= keywords.KwPriceTo &&
+                                                        s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                                else if (keywords.KwPriceFrom > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.ReturnDate <= keywords.KwReturnDate &&
+                                                       s.FinalPrice <= keywords.KwPriceFrom &&
+                                                        s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                                else if (keywords.KwPriceTo > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.ReturnDate <= keywords.KwReturnDate &&
+                                                       s.FinalPrice >= keywords.KwPriceTo &&
+                                                        s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                                #endregion
                             }
                             else
                             {
                                 filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.ReturnDate <= keywords.KwReturnDate &&
-                                                    s.PromotionId >= keywords.KwPromotion &&
-                                                     s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                             where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                   s.ReturnDate <= keywords.KwReturnDate &&
+                                                   s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
                                              select s;
                             }
-                            #endregion 
-                        }
-                        else
-                        {
-                            filterList = from s in filterList
-                                          where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                s.ReturnDate <= keywords.KwReturnDate &&
-                                                s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                         select s;
+                            ///
                         }
                     }
 
                 }
                 else
                 {
-                    if (kwFrom != "" || kwTo != "")
+                    filterList = from s in filterList
+                                 where s.IsHoliday == keywords.KwIsHoliday
+                                 select s;
+
+                    if (keywords.KwPromotion == 1)
                     {
-                        if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
-                        {
-                            #region from => to && price
-                            if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                    s.FinalPrice >= keywords.KwPriceFrom &&
-                                                    s.FinalPrice <= keywords.KwPriceTo &&
-                                                     s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            else if (keywords.KwPriceTo > 0)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                     s.FinalPrice >= keywords.KwPriceTo &&
-                                                      s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            else if (keywords.KwPriceFrom > 0)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                                     s.FinalPrice <= keywords.KwPriceFrom &&
-                                                      s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            #endregion
-                        }
-                        else if (keywords.KwPromotion > 0)
-                        {
-                            #region from => to && promotion
-                            if (keywords.KwPromotion == 1)
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                              s.PromotionId == keywords.KwPromotion &&
-                                               s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            else
-                            {
-                                filterList = from s in filterList
-                                              where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                              s.PromotionId >= keywords.KwPromotion &&
-                                               s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                             select s;
-                            }
-                            #endregion
-                        }
-                        else
-                        {
-                            filterList = from s in filterList
-                                          where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
-                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
-                                         select s;
-                        }
+                        filterList = from s in filterList
+                                     where
+                                           s.PromotionId == 1
+                                     select s;
                     }
-                    else if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                    else
                     {
-                        if(keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
-                        {
-                            if (keywords.KwPromotion > 0)
-                            {
-                                #region price & promotion
-                                if (keywords.KwPromotion == 1)
-                                {
-                                    filterList = from s in filterList
-                                                  where s.PromotionId == keywords.KwPromotion
-                                                     && s.FinalPrice >= keywords.KwPriceFrom
-                                                     && s.FinalPrice <= keywords.KwPriceTo 
-                                                  select s;
-                                }
-                                else
-                                {
-                                    filterList = from s in filterList
-                                                  where s.PromotionId >= keywords.KwPromotion
-                                                     && s.FinalPrice >= keywords.KwPriceFrom
-                                                     && s.FinalPrice <= keywords.KwPriceTo
-                                                  select s;
-                                }
-                                #endregion
-                            }
-                            else
-                            {
-                                filterList = from s in filterList
-                                              where s.FinalPrice >= keywords.KwPriceFrom
-                                                 && s.FinalPrice <= keywords.KwPriceTo
-                                              select s;
-                            }
-                        }
-                        else if (keywords.KwPriceTo > 0)
-                        {
-                            if (keywords.KwPromotion > 0)
-                            {
-                                #region priceTo & promotion
-                                if (keywords.KwPromotion == 1)
-                                {
-                                    filterList = from s in filterList
-                                                  where s.FinalPrice >= keywords.KwPriceTo &&
-                                                        s.PromotionId == keywords.KwPromotion
-                                                  select s;
-                                }
-                                else
-                                {
-                                    filterList = from s in filterList
-                                                  where s.FinalPrice >= keywords.KwPriceTo &&
-                                                        s.PromotionId >= keywords.KwPromotion
-                                                  select s;
-                                }
-                                #endregion
-                            }
-                            else
-                            {
-                                filterList = from s in filterList
-                                              where s.FinalPrice >= keywords.KwPriceTo
-                                              select s;
-                            }
-                        }
-                        else if (keywords.KwPriceFrom > 0)
-                        {
-                            if (keywords.KwPromotion > 0)
-                            {
-                                #region priceFrom & promotion
-                                if (keywords.KwPromotion == 1)
-                                {
-                                    filterList = from s in filterList
-                                                  where s.FinalPrice <= keywords.KwPriceFrom &&
-                                                        s.PromotionId == keywords.KwPromotion
-                                                  select s;
-                                }
-                                else
-                                {
-                                    filterList = from s in filterList
-                                                  where s.FinalPrice <= keywords.KwPriceFrom &&
-                                                        s.PromotionId >= keywords.KwPromotion
-                                                  select s;
-                                }
-                                #endregion
-                            }
-                            else
-                            {
-                                filterList = from s in filterList
-                                              where s.FinalPrice <= keywords.KwPriceFrom
-                                              select s;
-                            }
-                        }
+                        filterList = from s in filterList
+                                     where
+                                           s.PromotionId != 1
+                                     select s;
+
+                        //foreach (var item in filterList)
+                        //{
+                        //    if (item.IsHoliday)
+                        //    {
+                        //        item.FinalPriceHoliday = item.FinalPriceHoliday - (item.FinalPriceHoliday * item.Promotions.Value / 100);
+                        //    }
+                        //    else
+                        //    {
+                        //        item.FinalPrice = item.FinalPrice - (item.FinalPrice * item.Promotions.Value / 100);
+
+                        //    }
+                        //}
+                        var dasasd = filterList.ToList();
                     }
-                    else if (keywords.KwPromotion > 0)
+                    if (!keywords.KwIsHoliday)
                     {
-                        if(keywords.KwPromotion == 1)
+
+                        if (keywords.KwDepartureDate > 0 || keywords.KwReturnDate > 0)
                         {
-                            filterList = from s in filterList
-                                          where s.PromotionId == keywords.KwPromotion
-                                          select s;
+                            if (keywords.KwDepartureDate > 0 && keywords.KwReturnDate > 0)
+                            {
+                                if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                                {
+                                    #region price && departureDate => kwReturnDate
+                                    if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           s.FinalPrice >= keywords.KwPriceFrom &&
+                                                           s.FinalPrice <= keywords.KwPriceTo &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceFrom > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           s.FinalPrice <= keywords.KwPriceFrom &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           s.FinalPrice >= keywords.KwPriceTo &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    #endregion
+                                }   
+                                else
+                                {
+
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.DepartureDate >= keywords.KwDepartureDate &&
+                                                       s.ReturnDate <= keywords.KwReturnDate &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                            }
+                            else if (keywords.KwReturnDate == 0 && keywords.KwDepartureDate > 0)
+                            {
+                                if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                                {
+                                    #region price && departureDate 
+                                    if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           s.FinalPrice >= keywords.KwPriceFrom &&
+                                                           s.FinalPrice <= keywords.KwPriceTo &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceFrom > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           s.FinalPrice <= keywords.KwPriceFrom &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           s.FinalPrice >= keywords.KwPriceTo &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    #endregion
+                                }       
+                                else
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.DepartureDate >= keywords.KwDepartureDate &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                            }
+                            else if (keywords.KwReturnDate > 0 && keywords.KwDepartureDate == 0)
+                            {
+                                if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                                {
+                                    #region price && kwReturnDate
+                                    if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           s.FinalPrice >= keywords.KwPriceFrom &&
+                                                           s.FinalPrice <= keywords.KwPriceTo &&
+                                                            s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceFrom > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           s.FinalPrice <= keywords.KwPriceFrom &&
+                                                            s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           s.FinalPrice >= keywords.KwPriceTo &&
+                                                            s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    #endregion
+                                }                             
+                                else
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.ReturnDate <= keywords.KwReturnDate &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                            }
 
                         }
                         else
                         {
-                            filterList = from s in filterList
-                                          where s.PromotionId >= keywords.KwPromotion
-                                          select s;
+                            if (kwFrom != "" || kwTo != "")
+                            {
+
+                                
+                                if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                                {
+                                    #region from => to && price
+                                    if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceFrom &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceTo &&
+                                                            s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                            (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceTo &&
+                                                             s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceFrom > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                            (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceFrom &&
+                                                             s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                        var das = filterList.ToList();
+                                    }
+                                    #endregion
+                                }
+                                else
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                  s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                            }
+                            else if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                            {
+                                if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceFrom
+                                                    && (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceTo
+                                                 select s;
+
+                                  
+                                }
+                                else if (keywords.KwPriceTo > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceTo
+                                                 select s;
+                                }
+                                else if (keywords.KwPriceFrom > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceFrom
+                                                 select s;
+                                    var asd = filterList.ToList();
+                                }
+                            }
                         }
-                       
+                    }
+                    else
+                    {
+                        if (keywords.KwDepartureDate > 0 || keywords.KwReturnDate > 0)
+                        {
+                            if (keywords.KwDepartureDate > 0 && keywords.KwReturnDate > 0)
+                            {
+                                if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                                {
+                                    #region price && departureDate => kwReturnDate
+                                    if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           (s.FinalPriceHoliday - (s.FinalPriceHoliday * s.Promotions.Value / 100)) >= keywords.KwPriceFrom &&
+                                                           s.FinalPriceHoliday <= keywords.KwPriceTo &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceFrom > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceFrom &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceTo &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    #endregion
+                                }
+                                else
+                                {
+
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.DepartureDate >= keywords.KwDepartureDate &&
+                                                       s.ReturnDate <= keywords.KwReturnDate &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                            }
+                            else if (keywords.KwReturnDate == 0 && keywords.KwDepartureDate > 0)
+                            {
+                                if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                                {
+                                    #region price && departureDate 
+                                    if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceFrom &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceTo &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceFrom > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceFrom &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.DepartureDate >= keywords.KwDepartureDate &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceTo &&
+                                                           s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    #endregion
+                                }                               
+                                else
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.DepartureDate >= keywords.KwDepartureDate &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                            }
+                            else if (keywords.KwReturnDate > 0 && keywords.KwDepartureDate == 0)
+                            {
+                                if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                                {
+                                    #region price && kwReturnDate
+                                    if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceFrom &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceTo &&
+                                                            s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceFrom > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceFrom &&
+                                                            s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           s.ReturnDate <= keywords.KwReturnDate &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceTo &&
+                                                            s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    #endregion
+                                }
+                                else
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                       s.ReturnDate <= keywords.KwReturnDate &&
+                                                       s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            if (kwFrom != "" || kwTo != "")
+                            {
+                                if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                                {
+                                    #region from => to && price
+                                    if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceFrom &&
+                                                           (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceTo &&
+                                                            s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceTo > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                            (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceTo &&
+                                                             s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+                                    }
+                                    else if (keywords.KwPriceFrom > 0)
+                                    {
+                                        filterList = from s in filterList
+                                                     where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                            (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceFrom &&
+                                                             s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                     select s;
+
+                                        var ds = filterList.ToList();
+                                    }
+                                    #endregion
+                                }
+                                else
+                                {
+                                    filterList = from s in filterList
+                                                 where s.DeparturePlace.ToLower().Contains(keywords.KwFrom) &&
+                                                  s.Tour.ToPlace.ToLower().Contains(keywords.KwTo)
+                                                 select s;
+                                }
+                            }
+                            else if (keywords.KwPriceFrom > 0 || keywords.KwPriceTo > 0)
+                            {
+                                if (keywords.KwPriceFrom > 0 && keywords.KwPriceTo > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceFrom
+                                                    && (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceTo
+                                                 select s;
+                                }
+                                else if (keywords.KwPriceTo > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) >= keywords.KwPriceTo
+                                                 select s;
+                                }
+                                else if (keywords.KwPriceFrom > 0)
+                                {
+                                    filterList = from s in filterList
+                                                 where (s.FinalPrice - (s.FinalPrice * s.Promotions.Value / 100)) <= keywords.KwPriceFrom
+                                                 select s;
+
+                                }
+                            }
+                        }
                     }
                 }
+
+               
+
+              
 
                 #endregion
 
                 if (filterList.Count() > 0)
                 {
+
                     var result = await filterList.ToListAsync();
                     if (result.Count() > 0)
                     {
