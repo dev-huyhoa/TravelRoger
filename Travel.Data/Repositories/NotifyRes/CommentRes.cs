@@ -35,6 +35,7 @@ namespace Travel.Data.Repositories.NotifyRes
                     cmt.NameCustomer = customer.NameCustomer;
                     cmt.CommentText = input.CommentText;
                     cmt.CommentTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+
                     cmt.IdCustomer = input.IdCustomer;
                     cmt.IdTour = input.IdTour;
                     await _notifyContext.AddAsync(cmt);
@@ -81,6 +82,7 @@ namespace Travel.Data.Repositories.NotifyRes
             }
         }
 
+        
         public async Task<Response> Gets(string idTour)
         {
             try
@@ -92,6 +94,21 @@ namespace Travel.Data.Repositories.NotifyRes
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), cmt);                   
             }
             catch (Exception e) 
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public async Task<Response> GetsId(Guid idCustomer)
+        {
+            try
+            {
+                var id = await (from x in _db.TourBookings
+                                where x.CustomerId == idCustomer
+                                select x).ToListAsync();
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), id);
+            }
+            catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }

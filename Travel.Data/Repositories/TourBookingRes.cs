@@ -194,7 +194,7 @@ namespace Travel.Data.Repositories
                 createObj.NameContact = nameContact;
                 createObj.Vat = Convert.ToInt16(vat);
                 createObj.TotalPrice = float.Parse(totalPrice);
-                createObj.TotalPrice = float.Parse(totalPricePromotion);
+                createObj.TotalPricePromotion = float.Parse(totalPricePromotion);
                 createObj.Pincode = $"PIN{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                 createObj.BookingDetails = createDetailObj;
                 createObj.CustomerId = customerId;
@@ -218,9 +218,74 @@ namespace Travel.Data.Repositories
 
             try
             {
-                await transaction.CreateSavepointAsync("BeforeSave");
+                Voucher vourcher = new Voucher() ;
+                // nếu có sài vourcher thì coi còn thời hạn hay ko
+                if (!string.IsNullOrEmpty(input.VoucherCode))
+                {
+                    var unixDateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                     vourcher = await (from x in _db.Vouchers
+                                    where x.Code == input.VoucherCode
+                                    && x.CustomerId == input.CustomerId
+                                    && x.EndDate >= unixDateTimeNow
+                                    select x).FirstOrDefaultAsync();
+
+                    if (vourcher == null)
+                    {
+                        return  Ultility.Responses("Vourcher không tồn tại hoặc hết hạn !", Enums.TypeCRUD.Error.ToString());
+                    }
+                    var valueVourcher = vourcher.Value;
+                    input.TotalPrice = input.TotalPrice - (input.TotalPrice * (valueVourcher / 100)) ;
+                }
                 TourBooking tourbooking = Mapper.MapCreateTourBooking(input);
                 TourBookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
+
+                #region check price
+                var schedule = await (from x in _db.Schedules.AsNoTracking()
+                                where x.IdSchedule == input.ScheduleId
+                                select new  
+                                {
+                                    FinalPrice = x.FinalPrice,
+                                    FinalPriceHoliday = x.FinalPriceHoliday,
+                                    IsHoliday = x.IsHoliday,
+                                    ValuePromotion = (from p in _db.Promotions
+                                                  where p.IdPromotion == x.PromotionId
+                                                  select p.Value).FirstOrDefault(),
+                                    PriceChild = x.PriceChild,
+                                    PriceChildHoliday = x.PriceChildHoliday,
+                                }).FirstOrDefaultAsync();
+                float priceSchedule = 0;
+                var adult = input.BookingDetails.Adult;
+                var child = input.BookingDetails.Child;
+                var baby = input.BookingDetails.Baby;
+                // có km
+                if (schedule.IsHoliday)
+                {
+                     priceSchedule = schedule.FinalPriceHoliday;
+                    priceSchedule = (adult * schedule.FinalPriceHoliday) + (child * schedule.PriceChildHoliday);
+                }
+                else
+                {
+                     priceSchedule = schedule.FinalPrice;
+                    priceSchedule = (adult * schedule.FinalPrice) + (child * schedule.PriceChild);
+                }
+                var pricePromotion = (priceSchedule * (float)schedule.ValuePromotion) / 100;
+                var totalPrice = Math.Round(priceSchedule - pricePromotion);
+                // tính giá cho tất cả hành kháhc
+                if (vourcher != null) // có áp dụng vourcher hợp lệ
+                {
+                    var valueVourcher = vourcher.Value;
+                    totalPrice = totalPrice - (totalPrice * (valueVourcher / 100)); // áp dụng giảm giá của vourcher
+                }
+                var totalPriceInput = Math.Round(input.TotalPrice); // đã qua tính vourcher
+                if (totalPrice != totalPriceInput) // giá ko giống nhau
+                {
+                    return Ultility.Responses("Hệ thống xảy ra lỗi, vui lòng thử lại !", Enums.TypeCRUD.Warning.ToString());
+                }
+
+
+                #endregion
+                await transaction.CreateSavepointAsync("BeforeSave");
+            
                 tourbooking.TourBookingDetails = tourBookingDetail;
                 CreateDatabase<TourBooking>(tourbooking);
                 CreateDatabase<TourBookingDetails>(tourBookingDetail);
