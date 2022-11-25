@@ -56,7 +56,7 @@ namespace TravelApi.Controllers
         {
 
             message = null;
-            var result = _voucher.CheckBeforSave(frmData, ref message, false);
+            var result = _voucher.CheckBeforSave(frmData, ref message, true);
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateVoucherViewModel>(result);
@@ -68,17 +68,17 @@ namespace TravelApi.Controllers
         [HttpPut]
         [Authorize]
         [Route("restore-voucher")]
-        public object RestoreVoucher(int id)
+        public object RestoreVoucher(Guid id)
         {
             res = _voucher.RestoreVoucher(id);            
             return Ok(res);
         }
         [HttpDelete]
         [Authorize]
-        [Route("delete-role")]
-        public object DeleteRole(int id)
+        [Route("delete-voucher")]
+        public object DeleteVoucher(Guid idVoucher)
         {
-            res = _voucher.DeleteVoucher(id);
+            res = _voucher.DeleteVoucher(idVoucher);
             return Ok(res);
         }
     }

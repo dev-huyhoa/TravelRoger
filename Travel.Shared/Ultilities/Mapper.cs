@@ -742,10 +742,10 @@ namespace Travel.Shared.Ultilities
                                       .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => src.IsDelete));
 
                 cfg.CreateMap<UpdateVoucherViewModel, Voucher>()
-                               .ForMember(dto => dto.IdVoucher, opt => opt.MapFrom(src => Guid.NewGuid()))
-                                  .ForMember(dto => dto.Code, opt => opt.MapFrom(src => src.Code))
+                                 .ForMember(dto => dto.IdVoucher, opt => opt.MapFrom(src => src.IdVoucher))
                                   .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
                                   .ForMember(dto => dto.Value, opt => opt.MapFrom(src => src.Value))
+                                  .ForMember(dto => dto.Code, opt => opt.MapFrom(src => src.Code))
                                   .ForMember(dto => dto.StartDate, opt => opt.MapFrom(src => src.StartDate))
                                   .ForMember(dto => dto.EndDate, opt => opt.MapFrom(src => src.EndDate))
                                   .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))

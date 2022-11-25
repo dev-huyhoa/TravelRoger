@@ -16,7 +16,7 @@ namespace Travel.Data.Interfaces
        // Response SearchRole(JObject frmData);
         Response CreateVoucher(CreateVoucherViewModel input);
         Response UpdateVoucher(UpdateVoucherViewModel input);
-        Response DeleteVoucher(int id);
-        Response RestoreVoucher(int id);
+        Response DeleteVoucher(Guid id);
+        Response RestoreVoucher(Guid id);
     }
 }

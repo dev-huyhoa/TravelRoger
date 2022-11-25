@@ -11,7 +11,7 @@ namespace Travel.Shared.ViewModels.Travel.VoucherVM
     }
     public class CreateVoucherViewModel
     {
-      
+        private Guid idVoucher;
         private string code;
         private string description;
         private int value;
@@ -30,5 +30,6 @@ namespace Travel.Shared.ViewModels.Travel.VoucherVM
         public int Point { get => point; set => point = value; }
        
         public Guid CustomerId { get => customerId; set => customerId = value; }
+        public Guid IdVoucher { get => idVoucher; set => idVoucher = value; }
     }
 }

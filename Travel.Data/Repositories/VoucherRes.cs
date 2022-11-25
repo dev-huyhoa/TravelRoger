@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
@@ -35,11 +36,7 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(code))
                 {
                 }
-                var description = PrCommon.GetString("description", frmData);
-                if (String.IsNullOrEmpty(description))
-                {
-
-                }
+             
                 var value = PrCommon.GetString("value", frmData);
                 if (String.IsNullOrEmpty(value))
                 {
@@ -57,6 +54,10 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(point))
                 {
                 }
+                var description = PrCommon.GetString("description", frmData);
+                if (String.IsNullOrEmpty(description))
+                {
+                }
                 var customerId = PrCommon.GetString("customerId", frmData);
                 if (String.IsNullOrEmpty(customerId))
                 {
@@ -65,31 +66,27 @@ namespace Travel.Data.Repositories
                 {
                     // map data
                     UpdateVoucherViewModel objUpdate = new UpdateVoucherViewModel();
-                    objUpdate.Code = code;
+                     objUpdate.Code = code;
                     objUpdate.Value = int.Parse(value);
                     objUpdate.StartDate = long.Parse(startDate);
                     objUpdate.EndDate = long.Parse(endDate);
-                    
-                    objUpdate.Point = int.Parse(point);
-
                     objUpdate.Description = description;
-                    objUpdate.CustomerId = Guid.Parse(customerId);
+                    objUpdate.Point = int.Parse(point);             
+                    objUpdate.CustomerId = Guid.Empty;
                     // generate ID
 
                     return JsonSerializer.Serialize(objUpdate);
                 }
                 // map data
                 CreateVoucherViewModel obj = new CreateVoucherViewModel();
-
-                obj.Code = code;
+                
+                obj.Code = Ultility.RandomString(8, false);
                 obj.Value = int.Parse(value);
                 obj.StartDate = long.Parse(startDate);
                 obj.EndDate = long.Parse(endDate);
-               
-                obj.Point = int.Parse(point);
-
                 obj.Description = description;
-                obj.CustomerId = Guid.Parse(customerId);
+                obj.Point = int.Parse(point);        
+                obj.CustomerId = Guid.Empty;
                 return JsonSerializer.Serialize(obj);
             }
             catch (Exception e)
@@ -127,7 +124,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response DeleteVoucher(int id)
+        public Response DeleteVoucher(Guid id)
         {
             try
             {
@@ -137,17 +134,14 @@ namespace Travel.Data.Repositories
                     voucher.IsDelete = true;
                     _db.SaveChanges();
 
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Xóa thành công !";
-                    res.Notification.Type = "Success";
+                    return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
+
                 }
                 else
                 {
-                    res.Notification.DateTime = DateTime.Now;
-                    res.Notification.Messenge = "Không tìm thấy !";
-                    res.Notification.Type = "Warning";
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+
                 }
-                return res;
             }
             catch (Exception e)
             {
@@ -163,25 +157,19 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.Vouchers where x.IsDelete == isDelete select x).ToList();
+                var list = (from x in _db.Vouchers.AsNoTracking()
+                            where x.IsDelete == isDelete
+                            select x).ToList();
                 var result = Mapper.MapVoucher(list);
-                if (list.Count() > 0)
-                {
-                    res.Content = result;
-                }
-                return res;
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
             }
             catch (Exception e)
             {
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
-        public Response RestoreVoucher(int id)
+        public Response RestoreVoucher(Guid id)
         {
             try
             {
