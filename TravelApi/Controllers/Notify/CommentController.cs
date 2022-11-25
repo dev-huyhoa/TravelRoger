@@ -34,6 +34,15 @@ namespace TravelApi.Controllers.Notify
             return Ok(res);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("get-idCus")]
+        public async Task<object> Getid(Guid idCus)
+        {
+            res = await _comment.GetsId(idCus);
+            return Ok(res);
+        }
+
         [HttpPost]
         [Authorize]
         [Route("create-comment")]

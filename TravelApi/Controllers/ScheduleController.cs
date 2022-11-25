@@ -47,6 +47,10 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreateScheduleViewModel>(result);
                 res = _schedule.Create(createObj);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
 
@@ -61,6 +65,10 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateScheduleViewModel>(result);
                 res = _schedule.Update(updateObj);
+            }
+            else
+            {
+                res.Notification = message;
             }
             return Ok(res);
         }

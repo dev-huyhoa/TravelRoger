@@ -77,6 +77,10 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreatePromotionViewModel>(result);
                 res = _promotion.CreatePromotion(createObj);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
 
@@ -92,6 +96,10 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdatePromotionViewModel>(result);
                 res = _promotion.UpdatePromotion(updateObj);
+            }
+            else
+            {
+                res.Notification = message;
             }
             return Ok(res);
         }

@@ -39,6 +39,10 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreateHotelViewModel>(result);
                 res = _serviceRes.CreateHotel(createObj);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
         [HttpGet()]
@@ -69,6 +73,10 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateHotelViewModel>(result);
                 res = _serviceRes.UpdateHotel(updateObj);
+            }
+            else
+            {
+                res.Notification = message;
             }
             return Ok(res);
         }
@@ -137,6 +145,10 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreateRestaurantViewModel>(result);
                 res = _serviceRes.CreateRestaurant(createObj);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
 
@@ -178,6 +190,10 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateRestaurantViewModel>(result);
                 res = _serviceRes.UpdateRestaurant(updateObj);
+            }
+            else
+            {
+                res.Notification = message;
             }
             return Ok(res);
         }
@@ -222,6 +238,10 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreatePlaceViewModel>(result);
                 res = _serviceRes.CreatePlace(createObj);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
         [HttpPut]
@@ -235,6 +255,10 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdatePlaceViewModel>(result);
                 res = _serviceRes.UpdatePlace(updateObj);
+            }
+            else
+            {
+                res.Notification = message;
             }
             return Ok(res);
         }

@@ -12,6 +12,9 @@ namespace Travel.Data.Interfaces.INotify
     public interface IComment
     {
         Task <Response> Gets(string idTour);
+        Task<Response> GetsId(Guid idCustomer);
+
+
         Task<Response> Create(CreateCommentViewModel input);
         Task<Response> Delete(Guid id, Guid idUser);
     }

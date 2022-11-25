@@ -47,6 +47,10 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreatePaymentViewModel>(result);
                 res = pay.Create(createObj);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
     }

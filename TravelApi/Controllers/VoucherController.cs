@@ -47,6 +47,10 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreateVoucherViewModel>(result);
                 res = _voucher.CreateVoucher(createObj);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
         [HttpPut]
@@ -61,6 +65,10 @@ namespace TravelApi.Controllers
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateVoucherViewModel>(result);
                 res = _voucher.UpdateVoucher(updateObj);
+            }
+            else
+            {
+                res.Notification = message;
             }
             return Ok(res);
         }

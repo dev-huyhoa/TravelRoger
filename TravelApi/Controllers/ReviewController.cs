@@ -46,6 +46,10 @@ namespace TravelApi.Controllers
                 var createObj = JsonSerializer.Deserialize<CreateReviewModel>(result);
                 res = _review.CreateReview(createObj);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
     }
