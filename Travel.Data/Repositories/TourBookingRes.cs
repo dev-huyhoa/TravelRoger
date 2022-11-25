@@ -922,6 +922,11 @@ namespace Travel.Data.Repositories
                 var result = Mapper.MapTourBooking(listTourBooking);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = totalResult;
+                if (result.Count == 0)
+                {
+                    res = Ultility.Responses("Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString(), null);
+                }
+
                 return res;
             }
             catch (Exception e)

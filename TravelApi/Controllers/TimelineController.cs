@@ -38,6 +38,10 @@ namespace TravelApi.Controllers
                 var createObj = timelinee;
                 res = _timelineRes.Create(createObj);
             }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
 
@@ -52,6 +56,10 @@ namespace TravelApi.Controllers
             {
                 var updateObj = timelinee;
                 res = _timelineRes.Update(updateObj);
+            }
+            else
+            {
+                res.Notification = message;
             }
             return Ok(res);
         }

@@ -146,6 +146,8 @@ namespace Travel.Data.Repositories
                     objUpdate.HotelId = Guid.Parse(hotelId);
                     objUpdate.RestaurantId = Guid.Parse(restaurantId);
                     objUpdate.PlaceId = Guid.Parse(placeId);
+                    objUpdate.DepartureDate = DateTime.Parse(departureDate);
+                    objUpdate.ReturnDate = DateTime.Parse(returnDate);
                     return JsonSerializer.Serialize(objUpdate);
                 }
                 // map data
