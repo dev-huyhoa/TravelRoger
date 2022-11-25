@@ -71,8 +71,12 @@ namespace TravelApi.Controllers
                 int adult = createObj.BookingDetails.Adult;
                 int child = createObj.BookingDetails.Child;
                 int baby = createObj.BookingDetails.Baby;
-                await _schedule.UpdateCapacity(createObj.ScheduleId, adult, child, baby);
-                res = await _tourbooking.Create(createObj);
+                res = await _schedule.UpdateCapacity(createObj.ScheduleId, adult, child, baby);
+                if(res.Notification.Type == "Success")
+                {
+                    res = null;
+                    res = await _tourbooking.Create(createObj);
+                }
             }
             else
             {

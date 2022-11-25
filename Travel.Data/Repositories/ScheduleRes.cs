@@ -870,7 +870,7 @@ namespace Travel.Data.Repositories
             }
         }
         // chưa cập nhật
-        public async Task UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0)
+        public async Task<Response> UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0)
         {
             try
             {
@@ -879,15 +879,28 @@ namespace Travel.Data.Repositories
                                       select x).FirstOrDefaultAsync();
                 int availableQuantity = schedule.QuantityCustomer;
                 int quantity = availableQuantity + (adult + child);
-                schedule.QuantityAdult = adult;
-                schedule.QuantityBaby = baby;
-                schedule.QuantityChild = child;
-                schedule.QuantityCustomer = quantity;
-                UpdateDatabase(schedule);
-                await SaveChangeAsync();
+                if(quantity <= schedule.MaxCapacity)
+                {
+                    schedule.QuantityAdult = adult;
+                    schedule.QuantityBaby = baby;
+                    schedule.QuantityChild = child;
+                    schedule.QuantityCustomer = quantity;
+                    UpdateDatabase(schedule);
+                    await SaveChangeAsync();
+
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    var quantitySlot = schedule.MaxCapacity - availableQuantity;
+                   
+                    return Ultility.Responses($"Tour này còn {(quantitySlot != 0 ? quantitySlot : "không còn")} chỗ, Cảm ơn quý khách !", Enums.TypeCRUD.Warning.ToString());
+                }
+                
             }
             catch (Exception e)
             {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
