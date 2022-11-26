@@ -17,7 +17,7 @@ namespace TravelApi.Controllers
     {
         private INews news;
         private Response res;
-        private Notification message;
+
 
         public NewsController(INews _news)
         {
@@ -28,28 +28,11 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("UploadBanner")]
-        public object UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files)
+        public object UploadBanner(string name, IFormCollection frmdata, ICollection<IFormFile> files)
         {
             try
             {
-                res.Notification = news.UploadBanner(frmdata, files);
-
-                return Ok(res);
-            }
-            catch (Exception)
-            {
-                return Ok(res);
-            }
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("UploadBanner")]
-        public object GetBanners()
-        {
-            try
-            {
-
+                res = news.UploadBanner(name, frmdata, files);
                 return Ok(res);
             }
             catch (Exception)
@@ -67,40 +50,13 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-
-        //[HttpPost]
-        //[Authorize]
-        //[Route("create-news")]
-        //public object CreateNews(IFormCollection frmdata, IFormFile file)
-        //{
-        //    message = null; IFormCollection frmdata, IFormFile file, ref Notification _message
-        //    var result = news.CheckBeforeSave(frmdata, file, ref message, false);
-        //    if (message == null)
-        //    {
-        //        var createObj = JsonSerializer.Deserialize<CreateEmployeeViewModel>(result);
-        //        res = employee.CreateEmployee(createObj);
-        //        _messageHub.Clients.All.Init();
-        //    }
-        //    else
-        //    {
-        //        res.Notification = message;
-        //    }
-        //    return Ok(res);
-        //}
-
-        //[HttpPost]
-        //[Authorize]
-        //[Route("delete-banner")]
-        //public object Delete([FromBody] JObject frmData)
-        //{
-
-        //    //var result = news. .CheckBeforeSave(frmData, ref message);
-        //    //if (message == null)
-        //    //{
-        //    //    res = employee.Update(result);
-        //    //}
-        //    //return Ok(res);
-        //    return res;
-        //}
+        [HttpDelete]
+        [Authorize]
+        [Route("delete-banner")]
+        public object DeleteEmployee(Guid idBanner)
+        {
+            res = news.DeleteBanner(idBanner);
+            return Ok(res);
+        }
     }
 }

@@ -13,10 +13,8 @@ namespace Travel.Data.Interfaces
 {
     public interface INews
     {
-        Notification UploadBanner(IFormCollection frmdata, ICollection<IFormFile> files);
-        Response UploadNews(IFormCollection frmdata, IFormFile file);
+        Response UploadBanner(string name,IFormCollection frmdata, ICollection<IFormFile> files);
         Response GetBanner();
-        //Response DeleteBanner(DeleteBannerViewModel input);
-        string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message);
+        Response DeleteBanner(Guid idBanner);
     }
 }
