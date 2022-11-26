@@ -869,8 +869,9 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        // chưa cập nhật
-        public async Task<Response> UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0)
+     
+
+        public async Task UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0)
         {
             try
             {
@@ -879,8 +880,7 @@ namespace Travel.Data.Repositories
                                       select x).FirstOrDefaultAsync();
                 int availableQuantity = schedule.QuantityCustomer;
                 int quantity = availableQuantity + (adult + child);
-                if(quantity <= schedule.MaxCapacity)
-                {
+
                     schedule.QuantityAdult = adult;
                     schedule.QuantityBaby = baby;
                     schedule.QuantityChild = child;
@@ -888,21 +888,41 @@ namespace Travel.Data.Repositories
                     UpdateDatabase(schedule);
                     await SaveChangeAsync();
 
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        public Response CheckEmptyCapacity(string idSchedule, int adult, int child, int baby)
+        {
+            int cusRemain = 0;
+            try
+            {
+                var schedule = (from x in _db.Schedules.AsNoTracking()
+                                     where x.IdSchedule == idSchedule
+                                     select x).FirstOrDefault();
+                int availableQuantity = schedule.QuantityCustomer;
+
+                cusRemain = schedule.MaxCapacity - schedule.QuantityCustomer;
+                int quantityCus = adult + child;
+
+                if(quantityCus <= cusRemain)
+                {
+                    return null;
                 }
                 else
                 {
-                    var quantitySlot = schedule.MaxCapacity - availableQuantity;
-                   
-                    return Ultility.Responses($"Tour này còn {(quantitySlot != 0 ? quantitySlot : "không còn")} chỗ, Cảm ơn quý khách !", Enums.TypeCRUD.Warning.ToString());
+                    return Ultility.Responses($"Tour này còn {(cusRemain != 0 ? cusRemain : "không còn")} chỗ, Cảm ơn quý khách !", Enums.TypeCRUD.Warning.ToString());
+
                 }
-                
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
 
         public async Task<Response> Get(string idSchedule)
         {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
+using PrUtility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,11 +72,16 @@ namespace TravelApi.Controllers
                 int adult = createObj.BookingDetails.Adult;
                 int child = createObj.BookingDetails.Child;
                 int baby = createObj.BookingDetails.Baby;
-                res = await _schedule.UpdateCapacity(createObj.ScheduleId, adult, child, baby);
-                if(res.Notification.Type == "Success")
+
+                var checkEmpty = _schedule.CheckEmptyCapacity(createObj.ScheduleId, adult, child, baby);
+                if(checkEmpty == null)
                 {
-                    res = null;
+                    await _schedule.UpdateCapacity(createObj.ScheduleId, adult, child, baby);
                     res = await _tourbooking.Create(createObj);
+                }
+                else
+                {
+                    return Ok(checkEmpty);
                 }
             }
             else
