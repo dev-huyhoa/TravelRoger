@@ -139,7 +139,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var unixTimeOneDay = 1;
+                var unixTimeOneDay = 86400000;
 
                 var listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
                                             where (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
@@ -198,7 +198,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
         {
             try
             {
-                var unixTimeOneDay = 1;
+                var unixTimeOneDay = 86400000;
                 var carOfSchedule = (from x in _db.Schedules.AsNoTracking()
                                      where x.IdSchedule == idSchedule
                                      select x).FirstOrDefault();
