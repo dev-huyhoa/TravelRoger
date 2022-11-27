@@ -72,6 +72,8 @@ namespace TravelApi.Extensions
                 .AddScoped<IPromotions, PromotionRes>();
             services
           .AddScoped<IHubRepository, HubRepository>();
+            services
+            .AddScoped<INotification, NotificationRes>();
             return services;
         
 

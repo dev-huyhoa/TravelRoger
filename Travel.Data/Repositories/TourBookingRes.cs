@@ -225,7 +225,7 @@ namespace Travel.Data.Repositories
                     var unixDateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                      vourcher = await (from x in _db.Vouchers
                                     where x.Code == input.VoucherCode
-                                    && x.CustomerId == input.CustomerId
+                                    //&& x.CustomerId == input.CustomerId
                                     && x.EndDate >= unixDateTimeNow
                                     select x).FirstOrDefaultAsync();
 
