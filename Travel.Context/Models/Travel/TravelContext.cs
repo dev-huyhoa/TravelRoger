@@ -276,12 +276,12 @@ namespace Travel.Context.Models.Travel
                 entity.HasKey(e => e.IdVoucher);
 
                 entity.Property(e => e.Code).HasMaxLength(20);
-                entity.Property(e => e.ModifyBy).HasMaxLength(50);
+
             });
 
             modelBuilder.Entity<Customer_Voucher>(entity =>
             {
-                entity.HasKey(e => new { e.CustomerId, e.VoucherId });
+                entity.HasKey(e => e.IdCustomer_Voucher);
                 entity.HasOne<Customer>(e => e.customer).WithMany(p => p.Customer_Vouchers);
                 entity.HasOne<Voucher>(e => e.voucher).WithMany(p => p.Vouchers_Customer);
 

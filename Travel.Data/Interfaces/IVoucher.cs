@@ -18,5 +18,6 @@ namespace Travel.Data.Interfaces
         Response UpdateVoucher(UpdateVoucherViewModel input);
         Response DeleteVoucher(Guid id);
         Response RestoreVoucher(Guid id);
+        Response CreateTiket(Guid idVoucher, Guid idCus);
     }
 }

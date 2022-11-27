@@ -15,7 +15,7 @@ namespace Travel.Context.Models
         public int Value { get; set; }
         public long StartDate { get; set; }
         public long EndDate { get; set; }
-        public string ModifyBy { get; set; }   
+        
 
         public virtual ICollection<Customer_Voucher> Vouchers_Customer { get; set; }
     }

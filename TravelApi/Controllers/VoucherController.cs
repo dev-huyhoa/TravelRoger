@@ -73,14 +73,15 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPut]
-        [Authorize]
-        [Route("restore-voucher")]
-        public object RestoreVoucher(Guid id)
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("voucher-tiket")]
+        public object VoucherTiket(Guid idVoucher, Guid idCus)
         {
-            res = _voucher.RestoreVoucher(id);            
+            res = _voucher.CreateTiket( idVoucher,  idCus);
             return Ok(res);
         }
+
         [HttpDelete]
         [Authorize]
         [Route("delete-voucher")]

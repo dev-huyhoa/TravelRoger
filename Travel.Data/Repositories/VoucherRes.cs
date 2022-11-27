@@ -85,6 +85,24 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response CreateTiket(Guid idVoucher, Guid idCus)
+        {
+           
+            try
+            {
+                var voucher = new Customer_Voucher();
+                voucher.VoucherId = idVoucher;
+                voucher.CustomerId = idCus;
+                _db.Customer_Vouchers.Add(voucher);
+                _db.SaveChanges();
+                return Ultility.Responses("Mua thành công !", Enums.TypeCRUD.Success.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
         public Response CreateVoucher(CreateVoucherViewModel input)
         {
             try
@@ -116,7 +134,7 @@ namespace Travel.Data.Repositories
                 var voucher = _db.Vouchers.Find(id);
                 if (voucher != null)
                 {
-                    
+                    _db.Vouchers.Remove(voucher);
                     _db.SaveChanges();
 
                     return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
@@ -190,23 +208,19 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var update = (from x in _db.Vouchers where x.IdVoucher == input.IdVoucher select x).FirstOrDefault();
                 Voucher voucher = new Voucher();
                 voucher = Mapper.MapUpdateVoucher(input);
                 _db.Vouchers.Update(voucher);
                 _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
+
+                return Ultility.Responses($"Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+
             }
             catch (Exception e)
             {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
             }
         }
     }

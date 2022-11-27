@@ -735,7 +735,6 @@ namespace Travel.Shared.Ultilities
                                      .ForMember(dto => dto.EndDate, opt => opt.MapFrom(src => src.EndDate));
 
                 cfg.CreateMap<UpdateVoucherViewModel, Voucher>()
-                                 .ForMember(dto => dto.IdVoucher, opt => opt.MapFrom(src => src.IdVoucher))
                                   .ForMember(dto => dto.Value, opt => opt.MapFrom(src => src.Value))
                                   .ForMember(dto => dto.Code, opt => opt.MapFrom(src => src.Code))
                                   .ForMember(dto => dto.StartDate, opt => opt.MapFrom(src => src.StartDate))
