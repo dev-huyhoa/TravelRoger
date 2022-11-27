@@ -50,18 +50,7 @@ namespace Travel.Data.Repositories
                 {
                 }
                
-                var point = PrCommon.GetString("point", frmData);
-                if (String.IsNullOrEmpty(point))
-                {
-                }
-                var description = PrCommon.GetString("description", frmData);
-                if (String.IsNullOrEmpty(description))
-                {
-                }
-                var customerId = PrCommon.GetString("customerId", frmData);
-                if (String.IsNullOrEmpty(customerId))
-                {
-                }
+              
                 if (isUpdate)
                 {
                     // map data
@@ -70,9 +59,7 @@ namespace Travel.Data.Repositories
                     objUpdate.Value = int.Parse(value);
                     objUpdate.StartDate = long.Parse(startDate);
                     objUpdate.EndDate = long.Parse(endDate);
-                    objUpdate.Description = description;
-                    objUpdate.Point = int.Parse(point);             
-                    objUpdate.CustomerId = Guid.Empty;
+                   
                     // generate ID
 
                     return JsonSerializer.Serialize(objUpdate);
@@ -84,9 +71,7 @@ namespace Travel.Data.Repositories
                 obj.Value = int.Parse(value);
                 obj.StartDate = long.Parse(startDate);
                 obj.EndDate = long.Parse(endDate);
-                obj.Description = description;
-                obj.Point = int.Parse(point);        
-                obj.CustomerId = Guid.Empty;
+             
                 return JsonSerializer.Serialize(obj);
             }
             catch (Exception e)
@@ -131,7 +116,7 @@ namespace Travel.Data.Repositories
                 var voucher = _db.Vouchers.Find(id);
                 if (voucher != null)
                 {
-                    voucher.IsDelete = true;
+                    
                     _db.SaveChanges();
 
                     return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
@@ -158,7 +143,7 @@ namespace Travel.Data.Repositories
             try
             {
                 var list = (from x in _db.Vouchers.AsNoTracking()
-                            where x.IsDelete == isDelete
+                          
                             select x).ToList();
                 var result = Mapper.MapVoucher(list);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -176,7 +161,7 @@ namespace Travel.Data.Repositories
                 var voucher = _db.Vouchers.Find(id);
                 if (voucher != null)
                 {
-                    voucher.IsDelete = false;
+                    
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
