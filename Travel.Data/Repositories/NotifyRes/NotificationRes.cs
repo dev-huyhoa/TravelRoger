@@ -22,18 +22,30 @@ namespace Travel.Data.Repositories.NotifyRes
             _notifyContext = notifyContext;
         }
 
-        public async Task<Response> Get(Guid idEmployee)
+        public async Task<Response> Get(string idRole, Guid idEmp)
         {
             try
             {
-                var list = (from x in _notifyContext.Notifications
-                            where x.EmployeeId == idEmployee
+                var listByRole = (from x in _notifyContext.Notifications
+                            where x.RoleId.Contains(idRole)
                             select x);
-                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list.ToList());
+                var d = listByRole.ToList();
 
-                var usSeen = await (from x in list
-                              where x.IsSeen == false
-                              select x).ToListAsync();
+                var listByEmp = (from x in _notifyContext.Notifications
+                                 where x.EmployeeId == idEmp && x.RoleId.Contains(idRole)
+                                 select x);
+                var ds = listByEmp.ToList();
+                var list = listByRole.Concat(listByEmp).Distinct();
+
+                var result = (from x in list
+                              orderby x.Time descending
+                              select x);
+                var dss = result.ToList();
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result.ToList());
+
+                var usSeen = await (from x in result
+                                      where x.IsSeen == false
+                                      select x).ToListAsync();
                 res.TotalResult = usSeen.Count;
                 return res;
             }
@@ -63,6 +75,31 @@ namespace Travel.Data.Repositories.NotifyRes
             catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra!", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public void CreateNotification(Guid idEmployee, int Type, string ContentRequest, string RoleId, string Title)
+        {
+            try
+            {
+                Notifications notification = new Notifications();
+
+                notification.IdNotification = Guid.NewGuid();
+                notification.Time = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                notification.IsSeen = false;
+                notification.Title = Title;
+                notification.Content = ContentRequest;
+                notification.Type = Type;
+                notification.RoleId = RoleId;
+                notification.EmployeeId = idEmployee;
+
+                _notifyContext.Add(notification);
+                _notifyContext.SaveChanges();
+                
+            }
+            catch (Exception e)
+            {
+                
             }
         }
     }

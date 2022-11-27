@@ -24,9 +24,9 @@ namespace TravelApi.Controllers.Notify
         [HttpGet]
         [Authorize]
         [Route("list-notification")]
-        public async Task<object> Get(Guid idEmployee)
+        public async Task<object> Get(string idRole, Guid idEmp)
         {
-            res = await _notification.Get(idEmployee);
+            res = await _notification.Get(idRole, idEmp);
             return Ok(res);
         }
 

@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
+using Travel.Data.Interfaces.INotify;
+using Travel.Data.Repositories.NotifyRes;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.TourVM;
@@ -23,6 +25,7 @@ namespace Travel.Data.Repositories
         private long dateTimeNow;
         private readonly TravelContext _db;
         private Notification message;
+        private INotification _notification;
         private void UpdateDatabase<T>(T input)
         {
             _db.Entry(input).State = EntityState.Modified;
@@ -43,11 +46,12 @@ namespace Travel.Data.Repositories
         {
             _db.SaveChanges();
         }
-        public TourRes(TravelContext db)
+        public TourRes(TravelContext db, INotification notification)
         {
             _db = db;
             message = new Notification();
             dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(-3));
+            _notification = notification;
         }
         private Employee GetCurrentUser(Guid IdUserModify)
         {
@@ -164,6 +168,9 @@ namespace Travel.Data.Repositories
                 tour.TypeAction = "insert";
                 CreateDatabase(tour);
                 SaveChange();
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour , listRole, "");
+
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
@@ -699,14 +706,11 @@ namespace Travel.Data.Repositories
                         UpdateDatabase(tour);
                         SaveChange();
                     }
+                }
+                var userModify = GetCurrentUser(tour.IdUserModify);
+                _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, userModify.RoleId.ToString(), "Thành công");
+                return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
 
-                    SaveChange();
-                    return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
-                }
-                else
-                {
-                    return Ultility.Responses("Không tim thấy dữ liệu !", Enums.TypeCRUD.Warning.ToString());
-                }
             }
             catch (Exception e)
             {
