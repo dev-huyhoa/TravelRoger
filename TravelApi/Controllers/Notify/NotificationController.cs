@@ -24,9 +24,9 @@ namespace TravelApi.Controllers.Notify
         [HttpGet]
         [Authorize]
         [Route("list-notification")]
-        public async Task<object> Get(string idRole, Guid idEmp)
+        public async Task<object> Get(string idRole, Guid idEmp, bool IsSeen)
         {
-            res = await _notification.Get(idRole, idEmp);
+            res = await _notification.Get(idRole, idEmp, IsSeen);
             return Ok(res);
         }
 
@@ -36,6 +36,15 @@ namespace TravelApi.Controllers.Notify
         public async Task<object> UpdateIsSeen(Guid idNotification)
         {
             res = await _notification.UpdateIsSeen(idNotification);
+            return Ok(res);
+        }
+
+        [HttpDelete]
+        [Authorize]
+        [Route("delete-notification")]
+        public async Task<object> Delete(Guid idNotification)
+        {
+            res = await _notification.Delete(idNotification);
             return Ok(res);
         }
     }

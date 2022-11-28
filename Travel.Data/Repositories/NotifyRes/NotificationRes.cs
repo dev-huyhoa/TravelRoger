@@ -22,30 +22,40 @@ namespace Travel.Data.Repositories.NotifyRes
             _notifyContext = notifyContext;
         }
 
-        public async Task<Response> Get(string idRole, Guid idEmp)
+        public async Task<Response> Get(string idRole, Guid idEmp, bool IsSeen)
         {
             try
             {
                 var listByRole = (from x in _notifyContext.Notifications
                             where x.RoleId.Contains(idRole)
                             select x);
-                var d = listByRole.ToList();
+             
 
                 var listByEmp = (from x in _notifyContext.Notifications
                                  where x.EmployeeId == idEmp && x.RoleId.Contains(idRole)
                                  select x);
-                var ds = listByEmp.ToList();
+            
                 var list = listByRole.Concat(listByEmp).Distinct();
 
                 var result = (from x in list
                               orderby x.Time descending
                               select x);
-                var dss = result.ToList();
-                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result.ToList());
+
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
 
                 var usSeen = await (from x in result
                                       where x.IsSeen == false
                                       select x).ToListAsync();
+
+                if(IsSeen)
+                {
+                    res.Content = usSeen.ToList();
+                }
+                else
+                {
+                    res.Content = result.ToList();
+                }
+                
                 res.TotalResult = usSeen.Count;
                 return res;
             }
@@ -100,6 +110,27 @@ namespace Travel.Data.Repositories.NotifyRes
             catch (Exception e)
             {
                 
+            }
+        }
+
+        public async Task<Response> Delete(Guid idNotification)
+        {
+            try
+            {
+                var notification = await (from x in _notifyContext.Notifications
+                                          where x.IdNotification == idNotification
+                                          select x).FirstOrDefaultAsync();
+
+                if (notification != null)
+                {
+                    _notifyContext.Remove(notification);
+                    _notifyContext.SaveChanges();
+                }
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra!", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
     }
