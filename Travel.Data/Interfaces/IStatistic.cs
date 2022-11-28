@@ -12,6 +12,7 @@ namespace Travel.Data.Interfaces
         Response StatisticTourBookingFromDateToDate(long fromDate, long toDate);
         Task<bool> SaveReportTourBookingEveryDay(DateTime dateInput);
         Response StatisticTourBookingInThisWeek(long fromDate, long toDate);
+        Response GetStatisticTourbookingByYear(int year);
         Response GetListWeekOfYear(int year);
         Task SaveReportWeek();
     }

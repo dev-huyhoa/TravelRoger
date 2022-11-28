@@ -76,5 +76,15 @@ namespace Travel.Shared.Ultilities
             Validation = 5,
             Block = 6
         }
+
+        public enum TypeNotification
+        {
+            Tour = 0,
+            Hotel = 1,
+            Place = 2,
+            Restaurant = 3,
+            Promotion = 4
+        }
+
     }
 }

@@ -21,7 +21,7 @@ namespace Travel.Context.Models.Notification
         public DbSet<Comment> Comment { get; set; }
         public DbSet<ReportTourBooking> ReportTourBooking { get; set; }
         public DbSet<ReportWeek> ReportWeek { get; set; }
-
+        public DbSet<Notifications> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,6 +44,12 @@ namespace Travel.Context.Models.Notification
             modelBuilder.Entity<ReportWeek>(entity =>
             {
                 entity.HasKey(e => e.IdWeek);
+            });
+            modelBuilder.Entity<Notifications>(entity =>
+            {
+                entity.HasKey(e => e.IdNotification);
+                entity.Property(e => e.Title).HasMaxLength(50);
+                entity.Property(e => e.Content).HasMaxLength(500);
             });
         }
 

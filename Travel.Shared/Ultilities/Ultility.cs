@@ -66,6 +66,8 @@ namespace Travel.Shared.Ultilities
             return s;
         }
 
+
+
         #region String Handle
         public static string SEOUrl(string url)
         {
@@ -169,6 +171,28 @@ namespace Travel.Shared.Ultilities
             return builder.ToString();
         }
         #endregion
+
+
+        public static string ConvertListInt(int[] list)
+        {
+            Random random = new Random();
+            string s = "";
+            for (int i = 0; i < list.Length; i++)
+                if (i > 0)
+                {
+                    if (i < list.Length)
+                    {
+                        s += ",";
+                    }
+
+                    s += list[i].ToString();
+                }
+                else
+                {
+                    s = list[i].ToString();
+                }
+            return s;
+        }
 
         #region Date Handle
         public static string CountDay(DateTime fromdate, DateTime todate)

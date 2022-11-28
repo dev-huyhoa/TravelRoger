@@ -45,7 +45,7 @@ namespace Travel.Context.Models.Travel
 
         public DbSet<Car> Cars { get; set; }
         public DbSet<OTP> OTPs { get; set; }
-
+        public DbSet<Customer_Voucher> Customer_Vouchers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Seed();
@@ -275,14 +275,17 @@ namespace Travel.Context.Models.Travel
             {
                 entity.HasKey(e => e.IdVoucher);
 
-                entity.Property(e => e.Point).HasDefaultValue(0);
                 entity.Property(e => e.Code).HasMaxLength(20);
-                entity.Property(e => e.IsDelete).IsRequired().HasDefaultValue(0);
-                entity.Property(e => e.Description).HasMaxLength(100);
-                entity.Property(e => e.ModifyBy).HasMaxLength(50);
-                entity.Property(e => e.CreateBy).HasMaxLength(50);
+
             });
 
+            modelBuilder.Entity<Customer_Voucher>(entity =>
+            {
+                entity.HasKey(e => e.IdCustomer_Voucher);
+                entity.HasOne<Customer>(e => e.customer).WithMany(p => p.Customer_Vouchers);
+                entity.HasOne<Voucher>(e => e.voucher).WithMany(p => p.Vouchers_Customer);
+
+            });
             modelBuilder.Entity<Employee>(entity =>
             {
                 entity.HasKey(e => e.IdEmployee);

@@ -145,7 +145,6 @@ namespace Travel.Data.Repositories
 
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
-            return null;
         }
         private int GetWeekNumber(DateTime now)
         {
@@ -223,19 +222,42 @@ namespace Travel.Data.Repositories
 
         public Response GetListWeekOfYear(int year)
         {
-           
+
             try
             {
-                var lsWeek = (from x in _dbNotyf.ReportWeek
+                var lsWeek = (from x in _dbNotyf.ReportWeek.AsNoTracking()
                               where x.Year == year
                               select x).ToList();
-                return Ultility.Responses("Thanh toán thành công !", Enums.TypeCRUD.Success.ToString(), lsWeek);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), lsWeek);
 
             }
             catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
+            }
+        }
+
+        public Response GetStatisticTourbookingByYear(int year)
+        {
+            try
+            {
+                var lsWeekInYear = (from x in _dbNotyf.ReportWeek.AsNoTracking()
+                                           where x.Year == year
+                              select x).ToList();
+                var firstDateInYear = lsWeekInYear.Min(x => x.FromDate);
+                var lastDateInYear = lsWeekInYear.Max(x => x.ToDate);
+                var firstDateInYearUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(firstDateInYear);
+                var lastDateInYearUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(lastDateInYear);
+
+                  var lsReportTourBooking = StatisticTourBookingFromDateToDate(firstDateInYearUnix, lastDateInYearUnix);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), lsReportTourBooking);
+
+            }
+
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
     }

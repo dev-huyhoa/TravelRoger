@@ -50,18 +50,7 @@ namespace Travel.Data.Repositories
                 {
                 }
                
-                var point = PrCommon.GetString("point", frmData);
-                if (String.IsNullOrEmpty(point))
-                {
-                }
-                var description = PrCommon.GetString("description", frmData);
-                if (String.IsNullOrEmpty(description))
-                {
-                }
-                var customerId = PrCommon.GetString("customerId", frmData);
-                if (String.IsNullOrEmpty(customerId))
-                {
-                }
+              
                 if (isUpdate)
                 {
                     // map data
@@ -70,9 +59,7 @@ namespace Travel.Data.Repositories
                     objUpdate.Value = int.Parse(value);
                     objUpdate.StartDate = long.Parse(startDate);
                     objUpdate.EndDate = long.Parse(endDate);
-                    objUpdate.Description = description;
-                    objUpdate.Point = int.Parse(point);             
-                    objUpdate.CustomerId = Guid.Empty;
+                   
                     // generate ID
 
                     return JsonSerializer.Serialize(objUpdate);
@@ -84,9 +71,7 @@ namespace Travel.Data.Repositories
                 obj.Value = int.Parse(value);
                 obj.StartDate = long.Parse(startDate);
                 obj.EndDate = long.Parse(endDate);
-                obj.Description = description;
-                obj.Point = int.Parse(point);        
-                obj.CustomerId = Guid.Empty;
+             
                 return JsonSerializer.Serialize(obj);
             }
             catch (Exception e)
@@ -97,6 +82,24 @@ namespace Travel.Data.Repositories
                 message.Type = "Error";
                 _message = message;
                 return null;
+            }
+        }
+
+        public Response CreateTiket(Guid idVoucher, Guid idCus)
+        {
+           
+            try
+            {
+                var voucher = new Customer_Voucher();
+                voucher.VoucherId = idVoucher;
+                voucher.CustomerId = idCus;
+                _db.Customer_Vouchers.Add(voucher);
+                _db.SaveChanges();
+                return Ultility.Responses("Mua thành công !", Enums.TypeCRUD.Success.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
@@ -131,7 +134,7 @@ namespace Travel.Data.Repositories
                 var voucher = _db.Vouchers.Find(id);
                 if (voucher != null)
                 {
-                    voucher.IsDelete = true;
+                    _db.Vouchers.Remove(voucher);
                     _db.SaveChanges();
 
                     return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
@@ -158,7 +161,7 @@ namespace Travel.Data.Repositories
             try
             {
                 var list = (from x in _db.Vouchers.AsNoTracking()
-                            where x.IsDelete == isDelete
+                          
                             select x).ToList();
                 var result = Mapper.MapVoucher(list);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -176,7 +179,7 @@ namespace Travel.Data.Repositories
                 var voucher = _db.Vouchers.Find(id);
                 if (voucher != null)
                 {
-                    voucher.IsDelete = false;
+                    
                     _db.SaveChanges();
 
                     res.Notification.DateTime = DateTime.Now;
@@ -205,23 +208,19 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var update = (from x in _db.Vouchers where x.IdVoucher == input.IdVoucher select x).FirstOrDefault();
                 Voucher voucher = new Voucher();
                 voucher = Mapper.MapUpdateVoucher(input);
                 _db.Vouchers.Update(voucher);
                 _db.SaveChanges();
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Messenge = "Sửa thành công !";
-                res.Notification.Type = "Success";
-                return res;
+
+                return Ultility.Responses($"Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+
             }
             catch (Exception e)
             {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
-                res.Notification.DateTime = DateTime.Now;
-                res.Notification.Description = e.Message;
-                res.Notification.Messenge = "Có lỗi xảy ra !";
-                res.Notification.Type = "Error";
-                return res;
             }
         }
     }

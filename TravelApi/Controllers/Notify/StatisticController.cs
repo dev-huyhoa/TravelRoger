@@ -35,6 +35,15 @@ namespace TravelApi.Controllers.Notify
 
         [HttpGet]
         [Authorize]
+        [Route("list-statistic-tourbooking-by-year")]
+        public object GetStatisticTourbookingByYear(int year)
+        {
+            res = _statistic.GetStatisticTourbookingByYear(year);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Authorize]
         [Route("list-statistic-tourbooking-by-week")]
         public object StatisticTourBookingInThisWeek(long fromDate, long toDate)
         {
@@ -49,7 +58,7 @@ namespace TravelApi.Controllers.Notify
             res = _statistic.GetListWeekOfYear(year);
             return Ok(res);
         }
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         [Route("saving-current-week")]
         public async Task SavingCurrentWeek()
@@ -61,7 +70,6 @@ namespace TravelApi.Controllers.Notify
         [Route("saving-tourbooking-finished")]
         public async Task<object> SaveReportTourBookingEveryDay(DateTime date)
         {
-
             var flag = await _statistic.SaveReportTourBookingEveryDay(date);
             if (flag)
             {

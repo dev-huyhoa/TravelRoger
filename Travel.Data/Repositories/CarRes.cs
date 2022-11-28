@@ -139,19 +139,22 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var unixTimeOneDay = 1;
+                var unixTimeOneDay = 86400000;
 
                 var listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
                                             where (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
+                                            && x.Isdelete == false
                                             orderby x.ReturnDate ascending
                                             select x.CarId);
 
                 var scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
                                                       where x.DepartureDate >= fromDate
+                                                        && x.Isdelete == false
                                                       orderby x.DepartureDate ascending
                                                       select x);
                 var listCarShouldRemove2 = (from x in scheduleDepartDateLargerToDate
                                             where !(from s in listCarShouldRemove1 select s).Contains(x.CarId)
+                                              && x.Isdelete == false
                                             && (toDate + unixTimeOneDay) > x.DepartureDate
                                             select x.CarId).Distinct();
 
@@ -159,6 +162,7 @@ namespace Travel.Data.Repositories
 
                 var listCar = (from x in _db.Cars.AsNoTracking()
                                where !listShouldRemove.Any(c => c == x.IdCar)
+                                 && x.IsDelete == false
                                select x).ToList();
                 if (listCar.Count() == 0)
                 {
@@ -198,9 +202,10 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
         {
             try
             {
-                var unixTimeOneDay = 1;
+                var unixTimeOneDay = 86400000;
                 var carOfSchedule = (from x in _db.Schedules.AsNoTracking()
                                      where x.IdSchedule == idSchedule
+                                     && x.Isdelete == false
                                      select x).FirstOrDefault();
                 var fromDateCurrentUpdate = carOfSchedule.DepartureDate;
                 var toDateCurrentUpdate = carOfSchedule.ReturnDate;
@@ -210,11 +215,13 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 {
                     listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
                                             where x.CarId != carOfSchedule.CarId
+                                             && x.Isdelete == false
                                             && (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
                                             orderby x.ReturnDate ascending
                                             select x.CarId);
                     scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
                                                       where x.CarId != carOfSchedule.CarId
+                                                       && x.Isdelete == false
                                                       && x.DepartureDate >= fromDate
                                                       orderby x.DepartureDate ascending
                                                       select x);
@@ -225,12 +232,14 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                     {
                         listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
                                                 where (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
+                                                 && x.Isdelete == false
                                                 && x.IdSchedule != idSchedule
                                                 orderby x.ReturnDate ascending
                                                 select x.CarId);
 
                         scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
                                                           where x.DepartureDate >= fromDate
+                                                           && x.Isdelete == false
                                                                 && x.IdSchedule != idSchedule
                                                           orderby x.DepartureDate ascending
                                                           select x);
@@ -239,15 +248,17 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                     {
                         listCarShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
                                                 where (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
+                                                 && x.Isdelete == false
                                                 orderby x.ReturnDate ascending
                                                 select x.CarId);
 
                         scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
                                                           where x.DepartureDate >= fromDate
+                                                           && x.Isdelete == false
                                                           orderby x.DepartureDate ascending
                                                           select x);
                     }
-                   
+
                 }
 
 
@@ -257,6 +268,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 var listCarShouldRemove2 = (from x in scheduleDepartDateLargerToDate
                                             where !(from s in listCarShouldRemove1 select s).Contains(x.CarId)
                                             && (toDate + unixTimeOneDay) > x.DepartureDate
+                                             && x.Isdelete == false
                                             select x.CarId).Distinct();
 
                 var listShouldRemove = listCarShouldRemove1.Concat(listCarShouldRemove2);
@@ -264,6 +276,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
 
                 var listCarCanChoose = (from x in _db.Cars.AsNoTracking()
                                         where !listShouldRemove.Any(c => c == x.IdCar)
+                                         && x.IsDelete == false
                                         select x).ToList();
                 if (listCarCanChoose.Count() == 0)
                 {
@@ -399,8 +412,8 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
             try
             {
                 var car = (from x in _db.Cars.AsNoTracking()
-                            where x.IdCar == id
-                            select x).FirstOrDefault();
+                           where x.IdCar == id
+                           select x).FirstOrDefault();
                 if (car != null)
                 {
                     car.IsDelete = false;
@@ -471,12 +484,12 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 if (!string.IsNullOrEmpty(isDelete))
                 {
                     listCar = (from x in _db.Cars.AsNoTracking()
-                                where x.IsDelete == keywords.IsDelete &&
-                                                x.NameDriver.ToLower().Contains(keywords.KwName) &&
-                                                x.LiscensePlate.ToLower().Contains(keywords.KwLiscensePlate) &&
-                                                x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                                x.AmountSeat == keywords.KwAmount
-                                select x).ToList();
+                               where x.IsDelete == keywords.IsDelete &&
+                                               x.NameDriver.ToLower().Contains(keywords.KwName) &&
+                                               x.LiscensePlate.ToLower().Contains(keywords.KwLiscensePlate) &&
+                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                               x.AmountSeat == keywords.KwAmount
+                               select x).ToList();
                 }
                 else
                 {
@@ -490,7 +503,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                     else
                     {
                         listCar = (from x in _db.Cars.AsNoTracking()
-                                   where x.IsDelete == keywords.IsDelete 
+                                   where x.IsDelete == keywords.IsDelete
                                    select x).ToList();
                     }
                 }
@@ -504,12 +517,12 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                     return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
 
-       
+
     }
 }

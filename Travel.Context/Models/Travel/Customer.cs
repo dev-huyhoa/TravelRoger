@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Context.Models.Travel;
 
 namespace Travel.Context.Models
 {
@@ -26,5 +27,7 @@ namespace Travel.Context.Models
         public bool IsBlock { get; set; }
         public bool IsBlackList { get; set; }
         public bool IsDelete { get; set; }
+
+        public virtual ICollection<Customer_Voucher> Customer_Vouchers { get; set; }
     }
 }

@@ -722,37 +722,25 @@ namespace Travel.Shared.Ultilities
                 cfg.CreateMap<CreateVoucherViewModel, Voucher>()
                                 .ForMember(dto => dto.IdVoucher, opt => opt.MapFrom(src => Guid.NewGuid()))
                                    .ForMember(dto => dto.Code, opt => opt.MapFrom(src => src.Code))
-                                   .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
                                    .ForMember(dto => dto.Value, opt => opt.MapFrom(src => src.Value))
                                    .ForMember(dto => dto.StartDate, opt => opt.MapFrom(src => src.StartDate))
-                                   .ForMember(dto => dto.EndDate, opt => opt.MapFrom(src => src.EndDate))
-                                   .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
-                                    .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
-                                   .ForMember(dto => dto.Point, opt => opt.MapFrom(src => src.Point))
-                                   .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
-                                   .ForMember(dto => dto.CustomerId, opt => opt.MapFrom(src => src.CustomerId));
+                                   .ForMember(dto => dto.EndDate, opt => opt.MapFrom(src => src.EndDate));
+
+
                 cfg.CreateMap<Voucher, VoucherViewModel>()
                                     .ForMember(dto => dto.IdVoucher, opt => opt.MapFrom(src => src.IdVoucher))
                                     .ForMember(dto => dto.Code, opt => opt.MapFrom(src => src.Code))
-                                    .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
                                     .ForMember(dto => dto.Value, opt => opt.MapFrom(src => src.Value))
                                     .ForMember(dto => dto.StartDate, opt => opt.MapFrom(src => src.StartDate))
-                                     .ForMember(dto => dto.EndDate, opt => opt.MapFrom(src => src.EndDate))
-                                    .ForMember(dto => dto.Point, opt => opt.MapFrom(src => src.Point))
-                                      .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => src.IsDelete));
+                                     .ForMember(dto => dto.EndDate, opt => opt.MapFrom(src => src.EndDate));
 
                 cfg.CreateMap<UpdateVoucherViewModel, Voucher>()
-                                 .ForMember(dto => dto.IdVoucher, opt => opt.MapFrom(src => src.IdVoucher))
-                                  .ForMember(dto => dto.Description, opt => opt.MapFrom(src => src.Description))
                                   .ForMember(dto => dto.Value, opt => opt.MapFrom(src => src.Value))
                                   .ForMember(dto => dto.Code, opt => opt.MapFrom(src => src.Code))
                                   .ForMember(dto => dto.StartDate, opt => opt.MapFrom(src => src.StartDate))
                                   .ForMember(dto => dto.EndDate, opt => opt.MapFrom(src => src.EndDate))
-                                  .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
-                                   .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)))
-                                  .ForMember(dto => dto.Point, opt => opt.MapFrom(src => src.Point))
-                                  .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => false))
-                                  .ForMember(dto => dto.CustomerId, opt => opt.MapFrom(src => src.CustomerId));
+                                  ;
+                                
             });
             _mapper = mapperConfiguration.CreateMapper();
         }
