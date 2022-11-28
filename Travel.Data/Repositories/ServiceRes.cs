@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
+using Travel.Data.Interfaces.INotify;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.ContractVM;
@@ -21,11 +22,13 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private Notification message;
+        private INotification _notification;
 
-        public ServiceRes(TravelContext db)
+        public ServiceRes(TravelContext db, INotification notification)
         {
             _db = db;
             message = new Notification();
+            _notification = notification;
         }
         private void UpdateDatabase<T>(T input)
         {
@@ -288,12 +291,16 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                //var user = GetCurrentUser(input.IdUserModify);
-                //input.ModifyBy = user.NameEmployee;
+                var user = GetCurrentUser(input.IdUserModify);
+                input.ModifyBy = user.NameEmployee;
                 Hotel hotel = Mapper.MapCreateHotel(input);
                 CreateDatabase<Hotel>(hotel);
                 SaveChange();
-                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(user.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Hotel), hotel.NameHotel, listRole, "");
+
+                return Ultility.Responses("Đã gửi yêu cầu thêm !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
@@ -323,6 +330,10 @@ namespace Travel.Data.Repositories
 
                     UpdateDatabase<Hotel>(hotel);
                     SaveChange();
+
+                    var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                    _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Hotel), hotel.NameHotel, listRole, "");
+
                     return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -422,7 +433,9 @@ namespace Travel.Data.Repositories
                 }
                 UpdateDatabase<Hotel>(hotel);
                 SaveChange();
-                
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Hotel), hotel.NameHotel, listRole, "");
+
                 return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
             }
@@ -471,6 +484,10 @@ namespace Travel.Data.Repositories
                 #endregion
                 UpdateDatabase<Hotel>(hotel);
                 SaveChange();
+
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Hotel), hotel.NameHotel, listRole, "");
+
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
             }
@@ -527,10 +544,11 @@ namespace Travel.Data.Repositories
                     }
 
 
-
-
                     UpdateDatabase<Hotel>(hotel);
                     SaveChange();
+
+                    var userModify = GetCurrentUser(hotel.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Hotel), hotel.NameHotel, userModify.RoleId.ToString(), "Thành công");
                     return Ultility.Responses($"Phê duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -605,6 +623,8 @@ namespace Travel.Data.Repositories
                     }
                     UpdateDatabase<Hotel>(hotel);
                     SaveChange();
+                    var userModify = GetCurrentUser(hotel.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Hotel), hotel.NameHotel, userModify.RoleId.ToString(), "Từ chối");
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -699,7 +719,8 @@ namespace Travel.Data.Repositories
 
                     UpdateDatabase<Restaurant>(restaurant);
                     SaveChange();
-
+                    var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                    _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Restaurant), restaurant.NameRestaurant, listRole, "");
                     return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -820,6 +841,8 @@ namespace Travel.Data.Repositories
 
                 UpdateDatabase<Restaurant>(restaurant);
                 SaveChange();
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Restaurant), restaurant.NameRestaurant, listRole, "");
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
             }
@@ -839,7 +862,9 @@ namespace Travel.Data.Repositories
             _db.Restaurants.Add(restaurant);
 
             _db.SaveChanges();
-            return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+            var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+            _notification.CreateNotification(user.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Restaurant), restaurant.NameRestaurant, listRole, "");
+            return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
         }
 
         public Response ApproveRestaurant(Guid id)
@@ -886,6 +911,8 @@ namespace Travel.Data.Repositories
                     }
                     UpdateDatabase<Restaurant>(restaurant);
                     SaveChange();
+                    var userModify = GetCurrentUser(restaurant.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Restaurant), restaurant.NameRestaurant, userModify.RoleId.ToString(), "Thành công");
                     return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -954,6 +981,8 @@ namespace Travel.Data.Repositories
 
                     UpdateDatabase<Restaurant>(restaurant);
                     SaveChange();
+                    var userModify = GetCurrentUser(restaurant.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Restaurant), restaurant.NameRestaurant, userModify.RoleId.ToString(), "Từ chối");
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -974,9 +1003,13 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var userLogin = GetCurrentUser(input.IdUserModify);
+                input.ModifyBy = userLogin.NameEmployee;
                 Place place = Mapper.MapCreatePlace(input);
                 CreateDatabase<Place>(place);
                 SaveChange();
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Place), place.NamePlace, listRole, "");
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
             }
 
@@ -1063,6 +1096,8 @@ namespace Travel.Data.Repositories
                     place.IsDelete = true;
                     UpdateDatabase<Place>(place);
                     SaveChange();
+                    var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                    _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Place), place.NamePlace, listRole, "");
                     return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -1176,6 +1211,8 @@ namespace Travel.Data.Repositories
                 #endregion
                 UpdateDatabase<Place>(place);
                 SaveChange();
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Place), place.NamePlace, listRole, "");
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
             }
@@ -1234,9 +1271,10 @@ namespace Travel.Data.Repositories
 
 
 
-
                     UpdateDatabase<Place>(place);
-                    SaveChange(); 
+                    SaveChange();
+                    var userModify = GetCurrentUser(place.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Place), place.NamePlace, userModify.RoleId.ToString(), "Thành công");
                     return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -1304,7 +1342,9 @@ namespace Travel.Data.Repositories
                         place.Approve = (int)ApproveStatus.Approved;
                     }
                     UpdateDatabase<Place>(place);
-                    SaveChange(); 
+                    SaveChange();
+                    var userModify = GetCurrentUser(place.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Place), place.NamePlace, userModify.RoleId.ToString(), "Từ chối");
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -1358,7 +1398,9 @@ namespace Travel.Data.Repositories
                     place.IsDelete = false;
                 }
                 UpdateDatabase<Place>(place);
-                SaveChange(); 
+                SaveChange();
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Place), place.NamePlace, listRole, "");
                 return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
             }
@@ -1390,6 +1432,8 @@ namespace Travel.Data.Repositories
                 }
                 UpdateDatabase<Restaurant>(restaurant);
                 SaveChange();
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Restaurant), restaurant.NameRestaurant, listRole, "");
                 return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
             }
