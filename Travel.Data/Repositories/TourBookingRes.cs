@@ -218,7 +218,7 @@ namespace Travel.Data.Repositories
 
             try
             {
-                Voucher vourcher = new Voucher() ;
+                Voucher vourcher = new Voucher();
                 // nếu có sài vourcher thì coi còn thời hạn hay ko
                 if (!string.IsNullOrEmpty(input.VoucherCode))
                 {
@@ -235,6 +235,10 @@ namespace Travel.Data.Repositories
                     }
                     var valueVourcher = vourcher.Value;
                     input.TotalPrice = input.TotalPrice - (input.TotalPrice * (valueVourcher / 100)) ;
+                }
+                else
+                {
+                    vourcher = null;
                 }
                 TourBooking tourbooking = Mapper.MapCreateTourBooking(input);
                 TourBookingDetails tourBookingDetail = Mapper.MapCreateTourBookingDetail(input.BookingDetails);
@@ -271,17 +275,18 @@ namespace Travel.Data.Repositories
                 var pricePromotion = (priceSchedule * (float)schedule.ValuePromotion) / 100;
                 var totalPrice = Math.Round(priceSchedule - pricePromotion);
                 // tính giá cho tất cả hành kháhc
+                double totalPriceInput = 0;
                 if (vourcher != null) // có áp dụng vourcher hợp lệ
                 {
                     var valueVourcher = vourcher.Value;
                     totalPrice = totalPrice - (totalPrice * (valueVourcher / 100)); // áp dụng giảm giá của vourcher
-                }
-                var totalPriceInput = Math.Round(input.TotalPrice); // đã qua tính vourcher
-                if (totalPrice != totalPriceInput) // giá ko giống nhau
-                {
-                    return Ultility.Responses("Hệ thống xảy ra lỗi, vui lòng thử lại !", Enums.TypeCRUD.Warning.ToString());
-                }
 
+                    totalPriceInput = Math.Round(input.TotalPrice); // đã qua tính vourcher
+                    if (totalPrice != totalPriceInput) // giá ko giống nhau
+                    {
+                        return Ultility.Responses("Hệ thống xảy ra lỗi, vui lòng thử lại !", Enums.TypeCRUD.Warning.ToString());
+                    }
+                }
 
                 #endregion
                 await transaction.CreateSavepointAsync("BeforeSave");

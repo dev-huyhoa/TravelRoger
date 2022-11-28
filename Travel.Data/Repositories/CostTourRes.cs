@@ -233,6 +233,16 @@ namespace Travel.Data.Repositories
                 schedule.TotalCostTour = totalPriceNotVatAndProfit;
                 schedule.FinalPrice = FinalPrice;
                 schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
+
+                schedule.PriceAdult = schedule.FinalPrice;
+                schedule.PriceChild = schedule.PriceAdult - (schedule.PriceAdult*50/100);
+                schedule.PriceBaby = 0;
+
+
+                schedule.PriceAdultHoliday = schedule.FinalPriceHoliday;
+                schedule.PriceChildHoliday = schedule.PriceAdultHoliday - (schedule.PriceAdultHoliday * 50 / 100);
+                schedule.PriceBabyHoliday = 0;
+
                 UpdateDatabaseSchedule(schedule);
 
                 return Ultility.Responses($"Cập nhật giá cho {schedule.IdSchedule} thành công !", Enums.TypeCRUD.Success.ToString());
@@ -338,6 +348,17 @@ namespace Travel.Data.Repositories
                 schedule.TotalCostTour = totalPriceNotVatAndProfit;
                 schedule.FinalPrice = FinalPrice;
                 schedule.FinalPriceHoliday = FinalPrice + (FinalPrice * (holidayPercent / 100));
+
+
+                schedule.PriceAdult = schedule.FinalPrice;
+                schedule.PriceChild = schedule.PriceAdult - (schedule.PriceAdult * 50 / 100);
+                schedule.PriceBaby = 0;
+
+
+                schedule.PriceAdultHoliday = schedule.FinalPriceHoliday;
+                schedule.PriceChildHoliday = schedule.PriceAdultHoliday - (schedule.PriceAdultHoliday * 50 / 100);
+                schedule.PriceBabyHoliday = 0;
+
                 UpdateDatabaseSchedule(schedule);
 
                 return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());

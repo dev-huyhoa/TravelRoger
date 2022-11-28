@@ -76,7 +76,7 @@ namespace TravelApi.Controllers
                 var checkEmpty = _schedule.CheckEmptyCapacity(createObj.ScheduleId, adult, child, baby);
                 if(checkEmpty == null)
                 {
-                    await _schedule.UpdateCapacity(createObj.ScheduleId, adult, child, baby);
+                    //await _schedule.UpdateCapacity(createObj.ScheduleId, adult, child, baby);
                     res = await _tourbooking.Create(createObj);
                 }
                 else
