@@ -157,9 +157,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("list-tour-by-rating")]
-        public async Task<object> GetsTourByRating()
+        public async Task<object> GetsTourByRating(int pageIndex, int pageSize)
         {
-            res = await _tourRes.GetsTourByRating();
+            res = await _tourRes.GetsTourByRating(pageIndex, pageSize);
             return Ok(res);
         }
 

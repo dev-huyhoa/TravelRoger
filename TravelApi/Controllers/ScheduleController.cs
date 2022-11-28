@@ -190,35 +190,35 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("cus-list-schedule")]
-        public async Task<object> GetsSchedule()
+        public async Task<object> GetsSchedule(int pageIndex, int pageSize)
         {
-            res = await _schedule.GetsSchedule();
+            res = await _schedule.GetsSchedule(pageIndex, pageSize);
             return Ok(res);
         }
 
         [HttpGet]
         [AllowAnonymous]
         [Route("list-schedule-promotion")]
-        public async Task<object> GetsSchedulePromotion()
+        public async Task<object> GetsSchedulePromotion(int pageIndex, int pageSize)
         {
-            res = await _schedule.GetsSchedulePromotion();
+            res = await _schedule.GetsSchedulePromotion(pageIndex, pageSize);
             return Ok(res);
         }
         [HttpGet]
         [AllowAnonymous]
         [Route("list-schedule-flash-sale")]
-        public async Task<object> GetsScheduleFlashSale()
+        public async Task<object> GetsScheduleFlashSale(int pageIndex, int pageSize)
         {
-            res = await _schedule.GetsScheduleFlashSale();
+            res = await _schedule.GetsScheduleFlashSale(pageIndex, pageSize);
             return Ok(res);
         }
 
         [HttpGet]
         [AllowAnonymous]
         [Route("list-schedule-relate")]
-        public async Task<object> GetsScheduleRelate(string idSchedule)
+        public async Task<object> GetsScheduleRelate(string idSchedule, int pageIndex, int pageSize)
         {
-            res = await _schedule.GetsRelatedSchedule(idSchedule);
+            res = await _schedule.GetsRelatedSchedule(idSchedule, pageIndex, pageSize);
             return Ok(res);
         }
 

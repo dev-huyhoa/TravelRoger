@@ -680,6 +680,7 @@ namespace Travel.Data.Repositories
                     else if (tour.TypeAction == "insert")
                     {
                         tour.IdAction = null;
+                        tour.IsActive = true;
                         tour.TypeAction = null;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.Status = (int)TourStatus.Promotion;
@@ -690,6 +691,7 @@ namespace Travel.Data.Repositories
                     {
                         tour.IdAction = null;
                         tour.TypeAction = null;
+                        tour.IsActive = true;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.IsDelete = false;
                         tour.Status = (int)TourStatus.Promotion;
@@ -702,6 +704,7 @@ namespace Travel.Data.Repositories
                         tour.TypeAction = null;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.IsDelete = true;
+                        tour.IsActive = false;
                         tour.Status = (int)TourStatus.Normal;
                         UpdateDatabase(tour);
                         SaveChange();
@@ -831,7 +834,7 @@ namespace Travel.Data.Repositories
         }
 
         #endregion
-        public async Task<Response> GetsTourByRating()
+        public async Task<Response> GetsTourByRating(int pageIndex, int pageSize)
         {
             try
             {
@@ -914,8 +917,10 @@ namespace Travel.Data.Repositories
                                                                    select e).First()
                                                    }).ToList()
                                   }).OrderByDescending(x => x.Rating).ToListAsync();
-
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
+                var result = list.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = result.Count();
+                return res;
             }
             catch (Exception e)
             {

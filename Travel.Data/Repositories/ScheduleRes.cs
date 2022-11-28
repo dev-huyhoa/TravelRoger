@@ -1350,14 +1350,17 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public async Task<Response> GetsSchedule()
+        public async Task<Response> GetsSchedule(int pageIndex, int pageSize)
         {
             try
             {
+                var dateTimeNow = GetDateTimeNow();
                 var list = await (from s in _db.Schedules.AsNoTracking()
                                   where s.Isdelete == false &&
                             s.Approve == (int)Enums.ApproveStatus.Approved
                             && s.PromotionId == 1
+                            && s.EndDate >= dateTimeNow
+                            && s.BeginDate <= dateTimeNow
                                   select new Schedule
                                   {
                                       Alias = s.Alias,
@@ -1415,8 +1418,10 @@ namespace Travel.Data.Repositories
                                   }).OrderBy(x => x.DepartureDate).ToListAsync();
 
 
-                var result = Mapper.MapSchedule(list);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var result = Mapper.MapSchedule(list).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = result.Count();
+                return res;
             }
             catch (Exception e)
             {
@@ -1425,7 +1430,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public async Task<Response> GetsScheduleFlashSale()
+        public async Task<Response> GetsScheduleFlashSale(int pageIndex, int pageSize)
         {
             try
             {
@@ -1436,6 +1441,7 @@ namespace Travel.Data.Repositories
                                   && s.Approve == (int)Enums.ApproveStatus.Approved
                                   && s.EndDate >= dateTimeNow
                                   && s.EndDate <= flashSaleDay
+                                  && s.BeginDate <= dateTimeNow
                                   select new Schedule
                                   {
                                       Alias = s.Alias,
@@ -1493,8 +1499,10 @@ namespace Travel.Data.Repositories
                                   }).OrderBy(x => x.DepartureDate).ToListAsync();
 
 
-                var result = Mapper.MapSchedule(list);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var result = Mapper.MapSchedule(list).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = result.Count();
+                return res;
 
             }
             catch (Exception e)
@@ -1503,14 +1511,17 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public async Task<Response> GetsSchedulePromotion()
+        public async Task<Response> GetsSchedulePromotion(int pageIndex, int pageSize)
         {
             try
             {
+                var dateTimeNow = GetDateTimeNow();
                 var list = await (from s in _db.Schedules.AsNoTracking()
                                   where s.Isdelete == false &&
                                   s.Approve == (int)Enums.ApproveStatus.Approved
                                   && s.PromotionId > 1
+                                  && s.EndDate >= dateTimeNow
+                                  && s.BeginDate <= dateTimeNow
                                   select new Schedule
                                   {
                                       Alias = s.Alias,
@@ -1568,8 +1579,10 @@ namespace Travel.Data.Repositories
                                   }).OrderBy(x => x.DepartureDate).ToListAsync();
 
 
-                var result = Mapper.MapSchedule(list);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var result = Mapper.MapSchedule(list).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = result.Count();
+                return res;
             }
             catch (Exception e)
             {
@@ -1578,7 +1591,7 @@ namespace Travel.Data.Repositories
             }
 
         }
-        public async Task<Response> GetsRelatedSchedule(string idSchedule)
+        public async Task<Response> GetsRelatedSchedule(string idSchedule, int pageIndex, int pageSize)
         {
             try
             {
@@ -1590,7 +1603,8 @@ namespace Travel.Data.Repositories
                 var closetPrice2 = (schedule.FinalPrice + 200000);
                 var list1 = await (from x in _db.Schedules.AsNoTracking()
                                    where x.IdSchedule != idSchedule
-                                   && x.EndDate > dateTimeNow
+                                   && x.EndDate >= dateTimeNow
+                                   && x.BeginDate <= dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
                                    && (x.FinalPrice >= closetPrice1 && x.FinalPrice <= closetPrice2)
                                    && x.Isdelete == false
@@ -1600,7 +1614,8 @@ namespace Travel.Data.Repositories
                 var list2 = await (from x in _db.Schedules.AsNoTracking()
                                    where x.IdSchedule != idSchedule
                                    && !(from s in list1 select s.IdSchedule).Contains(x.IdSchedule)
-                                   && x.EndDate > dateTimeNow
+                                   && x.EndDate >= dateTimeNow
+                                   && x.BeginDate <= dateTimeNow
                                    && x.DeparturePlace == schedule.DeparturePlace
                                    && (x.Status == (int)StatusSchedule.Free && x.QuantityCustomer <= x.MinCapacity)
                                    && x.Isdelete == false
@@ -1669,8 +1684,10 @@ namespace Travel.Data.Repositories
                             }).OrderBy(x => x.DepartureDate).ToList();
 
 
-                var result = Mapper.MapSchedule(list);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var result = Mapper.MapSchedule(list).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = result.Count();
+                return res;
 
             }
             catch (Exception e)

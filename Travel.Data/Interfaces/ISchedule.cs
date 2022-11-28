@@ -30,10 +30,10 @@ namespace Travel.Data.Interfaces
         Task<Response> SearchTour(string from, string to, DateTime? departureDate, DateTime? returnDate);
 
 
-        Task<Response> GetsSchedule();
-        Task<Response> GetsScheduleFlashSale();
-        Task<Response> GetsSchedulePromotion();
-        Task<Response> GetsRelatedSchedule(string idSchedule);
+        Task<Response> GetsSchedule(int pageIndex, int pageSize);
+        Task<Response> GetsScheduleFlashSale(int pageIndex, int pageSize);
+        Task<Response> GetsSchedulePromotion(int pageIndex, int pageSize);
+        Task<Response> GetsRelatedSchedule(string idSchedule, int pageIndex, int pageSize);
         Response SearchSchedule(JObject frmData, string idTour);
 
         Response SearchScheduleWaiting(JObject frmData, string idTour);

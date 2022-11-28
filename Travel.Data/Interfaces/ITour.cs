@@ -26,7 +26,7 @@ namespace Travel.Data.Interfaces
         Response Refused(string idTour);
         Task<Response> GetsTourWithSchedule();
         Task<Response> GetTourById(string idTour);
-        Task<Response> GetsTourByRating();
+        Task<Response> GetsTourByRating(int pageIndex, int pageSize);
         Task<Response> SearchAutoComplete(string key);
         Response UpdateRating(int rating , string idTour);
         Response SearchTour(JObject frmData);
