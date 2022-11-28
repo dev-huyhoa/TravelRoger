@@ -35,6 +35,8 @@ namespace Travel.Context.Models
         public float TotalPricePromotion { get; set;}
         public string ModifyBy{get;set;}
         public int Status {get;set; }
+        public long CheckIn { get; set; }
+        public long CheckOut { get; set; }
 
         public long   ModifyDate{get;set;}
         public  Schedule Schedule { get; set; }
