@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
+using Travel.Data.Interfaces.INotify;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
@@ -23,6 +24,7 @@ namespace Travel.Data.Repositories
         private readonly TravelContext _db;
         private Notification message;
         private long today = 0;
+        private INotification _notification;
         private Employee GetCurrentUser(Guid IdUserModify)
         {
             return (from x in _db.Employees.AsNoTracking()
@@ -30,11 +32,12 @@ namespace Travel.Data.Repositories
                     select x).FirstOrDefault();
         }
    
-        public PromotionRes(TravelContext db)
+        public PromotionRes(TravelContext db, INotification notification)
         {
             _db = db;
             message = new Notification();
             today = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+            _notification = notification;
         }
         private void CreateDatabase<T>(T input)
         {
@@ -200,6 +203,10 @@ namespace Travel.Data.Repositories
             promotion.TypeAction = "insert";
             promotion.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
             CreateDatabase(promotion);
+
+            var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+            _notification.CreateNotification(user.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), listRole, "");
+
             return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
         }
 
@@ -223,6 +230,10 @@ namespace Travel.Data.Repositories
                     promotion.Approve = (int)ApproveStatus.Waiting;
                     promotion.IsDelete = true;
                     UpdateDatabase(promotion);
+
+                    var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                    _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), listRole, "");
+
                     return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -325,6 +336,10 @@ namespace Travel.Data.Repositories
                 #endregion
 
                 UpdateDatabase(promotion);
+
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), listRole, "");
+
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
             }
@@ -377,6 +392,9 @@ namespace Travel.Data.Repositories
                         promotion.IsDelete = true;                                       
                     }
                     UpdateDatabase(promotion);
+
+                    var userModify = GetCurrentUser(promotion.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), userModify.RoleId.ToString(), "Thành công");
                     return Ultility.Responses("Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -442,6 +460,10 @@ namespace Travel.Data.Repositories
                         promotion.Approve = (int)ApproveStatus.Approved;
                     }
                     UpdateDatabase(promotion);
+
+                    var userModify = GetCurrentUser(promotion.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), userModify.RoleId.ToString(), "Từ chối");
+
                     return Ultility.Responses("Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -477,6 +499,10 @@ namespace Travel.Data.Repositories
                     promotion.IsDelete = false;
                 }
                 UpdateDatabase(promotion);
+
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), listRole, "");
+
                 return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
             }

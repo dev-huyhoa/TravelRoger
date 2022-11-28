@@ -171,7 +171,7 @@ namespace Travel.Data.Repositories
                 var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour , listRole, "");
 
-                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+                return Ultility.Responses("Đã gửi yêu cầu thêm !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {
@@ -189,6 +189,8 @@ namespace Travel.Data.Repositories
                             where x.IsDelete == isDelete
                             && x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved)
                             && x.IsTempdata == false
+
+                            orderby x.Rating descending
                             select x).ToList();
                 var result = Mapper.MapTour(list);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -462,6 +464,9 @@ namespace Travel.Data.Repositories
                 UpdateDatabase<Tour>(tour);
                 SaveChange();
 
+                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, listRole, "");
+
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
@@ -532,6 +537,10 @@ namespace Travel.Data.Repositories
                             tour.Status = (int)TourStatus.Normal;
                             UpdateDatabase(tour);
                             SaveChange();
+
+                            var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                            _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, listRole, "");
+
                             return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                         }
                     }
@@ -621,6 +630,7 @@ namespace Travel.Data.Repositories
                 var totalResult = 0;
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
+                                 orderby x.ModifyDate descending
                                  select x).FirstOrDefault();
                 var listWaiting = new List<Tour>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
@@ -737,6 +747,7 @@ namespace Travel.Data.Repositories
                         tour.TypeAction = null;
                         tour.Status = (int)TourStatus.Refused;
                         UpdateDatabase(tour);
+                        SaveChange();
                     }
                     else if (tour.TypeAction == "update")
                     {
@@ -784,7 +795,9 @@ namespace Travel.Data.Repositories
                         SaveChange();
                     }
 
-                    SaveChange();
+                    var userModify = GetCurrentUser(tour.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, userModify.RoleId.ToString(), "Từ chối");
+
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -820,6 +833,9 @@ namespace Travel.Data.Repositories
                     tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     UpdateDatabase(tour);
                     SaveChange();
+                    var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                    _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, listRole, "");
+
                     return Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
