@@ -58,5 +58,14 @@ namespace TravelApi.Controllers
             res = news.DeleteBanner(idBanner);
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("gets-banner-all")]
+        public object GetBannerAll()
+        {
+            res = news.GetBannerAll();
+            return Ok(res);
+        }
     }
 }

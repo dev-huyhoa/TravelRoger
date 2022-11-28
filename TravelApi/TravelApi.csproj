@@ -33,7 +33,6 @@
   <ItemGroup>
     <Folder Include="Cre\" />
     <Folder Include="token.json\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

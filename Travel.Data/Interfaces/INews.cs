@@ -15,6 +15,7 @@ namespace Travel.Data.Interfaces
     {
         Response UploadBanner(string name,IFormCollection frmdata, ICollection<IFormFile> files);
         Response GetBanner();
+        Response GetBannerAll();
         Response DeleteBanner(Guid idBanner);
     }
 }

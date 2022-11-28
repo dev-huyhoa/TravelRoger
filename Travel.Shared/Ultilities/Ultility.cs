@@ -222,7 +222,7 @@ namespace Travel.Shared.Ultilities
 
 
 
-        public static Image WriteFile(IFormFile file, string type, string idService, ref Notification _message)
+        public static Image WriteFile(IFormFile file, string type, string idService, ref Notification _message, int orderby = 0)
         {
             try
             {
@@ -248,7 +248,7 @@ namespace Travel.Shared.Ultilities
                 }
 
 
-                var date = ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now).ToString();
+                var date = Ultility.FormatDateToInt(DateTime.Now, "DDMMYYYY").ToString();
 
                 string pathDate = Path.Combine(pathId, date);
                 if (!Directory.Exists(pathDate))
@@ -256,9 +256,18 @@ namespace Travel.Shared.Ultilities
                     Directory.CreateDirectory(pathDate);
                 }
                 //get file extension
-                string[] str = file.FileName.Split('.');
+                //string[] str = file.FileName.Split('.');
 
-                string fileName = file.FileName;
+                string fileName = "";
+
+                if (orderby > 0)
+                {
+                    fileName = orderby.ToString() + "_" + Ultility.FormatDateToInt(DateTime.Now, "DDMMYYYYHHMMSS").ToString() + Path.GetExtension(file.FileName);
+                }
+                else
+                {
+                    fileName = Ultility.FormatDateToInt(DateTime.Now, "DDMMYYYYHHMMSS").ToString() + Path.GetExtension(file.FileName);
+                }
 
                 string fullpath = Path.Combine(pathDate, fileName);
 
@@ -275,7 +284,7 @@ namespace Travel.Shared.Ultilities
 
                 image.IdImage = Guid.NewGuid();
                 image.NameImage = fileName;
-                image.Extension = str[1];
+                image.Extension = Path.GetExtension(file.FileName).Replace(".","");
                 image.IdService = idService;
                 image.Size = file.Length;
                 image.FilePath = serverPath;
@@ -438,7 +447,7 @@ namespace Travel.Shared.Ultilities
             return double.TryParse(Strnumber, out n);
         }
         #endregion
-        public static long FormatDateToInt(string datetime, string type)
+        public static long FormatDateToInt(DateTime datetime, string type)
         {
             // Type DDMMYYYY - day month year
             // Type YYYYMMDD - year month day
@@ -446,71 +455,43 @@ namespace Travel.Shared.Ultilities
             // Type YYYYMMDDHHMM - year month day hour min
             // Type YYYYMMDDHHMMSS - year month day hour min sec
             // Type DDMMYYYYHHMMSS - day month year hour min sec
-            string year = "";
-            string month = "";
-            string day = "";
-            string hour = "";
-            string mi = "";
-            string sec = "";
-            string stringDate = datetime.ToString();
+            var dateTimeNow = datetime;
+            string year = dateTimeNow.Year.ToString();
+            string month = dateTimeNow.Month.ToString();
+            string day = dateTimeNow.Day.ToString();
+            string hour = dateTimeNow.Hour.ToString();
+            string mi = dateTimeNow.Minute.ToString();
+            string sec = dateTimeNow.Second.ToString();
             try
             {
                 if (type == "DDMMYYYY")
                 {
-                    //29/01/2001
-                    year = stringDate.Substring(6, 4);
-                    month = stringDate.Substring(3, 2);
-                    day = stringDate.Substring(0, 2);
+                    //29/01/2001 
                     return int.Parse(year + month + day);
                 }
                 else if (type == "YYYYMMDD")
                 {
                     //2001/01/29
-                    year = stringDate.Substring(0, 4);
-                    month = stringDate.Substring(5, 2);
-                    day = stringDate.Substring(8, 2);
                     return int.Parse(year + month + day);
                 }
                 else if (type == "YYYYMMDDHHMM")
                 {
                     ////2001/01/29 23:12
-                    year = stringDate.Substring(0, 4);
-                    month = stringDate.Substring(5, 2);
-                    day = stringDate.Substring(8, 2);
-                    hour = stringDate.Substring(11, 2);
-                    mi = stringDate.Substring(14, 2);
                     return int.Parse(year + month + day + hour + mi);
                 }
                 else if (type == "DDMMYYYYHHMM")
                 {
                     ////29/01/2001 23:12
-                    year = stringDate.Substring(6, 4);
-                    month = stringDate.Substring(3, 2);
-                    day = stringDate.Substring(0, 2);
-                    hour = stringDate.Substring(11, 2);
-                    mi = stringDate.Substring(14, 2);
                     return int.Parse(year + month + day + hour + mi);
                 }
                 else if (type == "YYYYMMDDHHMMSS")
                 {
                     ////2001/01/29 23:12:12
-                    year = stringDate.Substring(0, 4);
-                    month = stringDate.Substring(5, 2);
-                    day = stringDate.Substring(8, 2);
-                    hour = stringDate.Substring(11, 2);
-                    mi = stringDate.Substring(14, 2);
-                    sec = stringDate.Substring(17, 2);
                     return Int64.Parse(year + month + day + hour + mi + sec);
                 }
                 else
                 {
                     ////29/01/2001 23:12:12
-                    year = stringDate.Substring(6, 4);
-                    month = stringDate.Substring(3, 2);
-                    day = stringDate.Substring(0, 2);
-                    hour = stringDate.Substring(11, 2);
-                    mi = stringDate.Substring(14, 2);
-                    sec = stringDate.Substring(17, 2);
                     return Int64.Parse(year + month + day + hour + mi + sec);
                 }
             }
