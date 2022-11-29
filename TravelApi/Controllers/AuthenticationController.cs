@@ -1,13 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PrUtility;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -28,15 +32,29 @@ namespace TravelApi.Controllers
         private IHubRepository hubRepo;
         private Response res;
         private readonly int TimeExpiredInMinutes;
-        public AuthenticationController(IConfiguration _configuration, IAuthentication _authentication, IHubRepository _hubRepo)
+        private readonly IWebHostEnvironment _env;
+        public AuthenticationController(IConfiguration _configuration, IAuthentication _authentication, IHubRepository _hubRepo,
+            IWebHostEnvironment env)
         {
+            _env = env;
             configuration = _configuration;
             authentication = _authentication;
             hubRepo = _hubRepo;
             res = new Response();
             TimeExpiredInMinutes = Convert.ToInt16(configuration["Token:TimeExpired"]);
         }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("test")]
+        public object Test()
+        {
+            string path = Path.Combine(_env.WebRootPath, "Logs", "test1.json");
+            res = Ultility.Responses("Đăng nhập bằng google thất bại!", Enums.TypeCRUD.Error.ToString());
+            
+            
 
+            return Ok();
+        }
         [HttpPost]
         [AllowAnonymous]
         [Route("login-employee")]
@@ -50,7 +68,7 @@ namespace TravelApi.Controllers
                 var result = authentication.EmpCheckBlock(email);
                 if (result == null)
                 {
-                     result = authentication.EmpLogin(email);
+                    result = authentication.EmpLogin(email);
                     if (result != null)
                     {
                         string encryption = authentication.Encryption(password);
