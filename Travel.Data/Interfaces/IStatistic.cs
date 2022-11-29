@@ -15,5 +15,7 @@ namespace Travel.Data.Interfaces
         Response GetStatisticTourbookingByYear(int year);
         Response GetListWeekOfYear(int year);
         Task SaveReportWeek();
+
+        Response StatisticPaidNotCheckedin();
     }
 }

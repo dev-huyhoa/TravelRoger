@@ -260,5 +260,22 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+        public Response StatisticPaidNotCheckedin()
+        {
+            try
+            {
+                var list = (from x in _db.TourBookings
+                            where x.Status == (int)Enums.StatusBooking.Paid &&
+                                  x.CheckIn == 0
+                            select x).ToList();
+
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }
