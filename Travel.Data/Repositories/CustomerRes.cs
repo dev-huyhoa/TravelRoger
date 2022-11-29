@@ -421,7 +421,7 @@ namespace Travel.Data.Repositories
                 }
                 else
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Error.ToString());
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
                 }
             }
             catch (Exception e)

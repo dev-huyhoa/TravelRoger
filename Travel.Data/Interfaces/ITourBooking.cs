@@ -32,6 +32,7 @@ namespace Travel.Data.Interfaces
         Task<TourBooking> GetTourBookingByIdForPayPal (string idTourBooking);
 
         Task<bool> UpdateTourBookingFinished();
+        Response CheckInBooking(string bookingNo);
 
     }
 }

@@ -185,5 +185,14 @@ namespace TravelApi.Controllers
                 });
             }
         }
+
+        [HttpPut]
+        [AllowAnonymous]
+        [Route("check-in-booking")]
+        public object CheckinBooking(string bookingNo)
+        {
+            res = _tourbooking.CheckInBooking(bookingNo);
+            return Ok(res);
+        }
     }
 }

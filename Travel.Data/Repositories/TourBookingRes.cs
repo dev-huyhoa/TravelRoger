@@ -1032,5 +1032,30 @@ namespace Travel.Data.Repositories
                 return false;
             }
         }
+    
+        public Response CheckInBooking(string bookingNo)
+        {
+            try
+            {
+                var tourBooking = (from x in _db.TourBookings
+                                 where x.BookingNo == bookingNo
+                                 select x).FirstOrDefault();
+                if(tourBooking != null)
+                {
+                    tourBooking.CheckIn = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    UpdateDatabase(tourBooking);
+                }
+                else
+                {
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+                }
+
+                return Ultility.Responses("Check in thành công !", Enums.TypeCRUD.Success.ToString());
+            }
+            catch(Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }
