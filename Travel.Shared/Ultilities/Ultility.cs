@@ -363,6 +363,56 @@ namespace Travel.Shared.Ultilities
                 return null;
             }
         }
+        public static string getHtmtFile()
+        {
+            try
+            {
+
+                string body = $@"<div style='max-width: 60vw; min-height:50%; background-color: whitesmoke; padding: 50px; border-radius:20px; margin: auto'><h1>EMAIL FROM TRAVELROVER</h1><h4>TravelRover Xin chào quý khách. Cảm ơn đã sử dụng dịch vụ của chúng tôi</h4><h5></h5><span>:</span>  <span style='font-size:32px ;' ><b></b></span></div>";
+
+                return (body);
+
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public static void sendEmailUploadFile(string htmlString, string toEmail, string mailSubject, string emailSend, string keySecurity)
+        {
+            try
+            {
+                using (var message = new MailMessage())
+                {
+                    message.From = new MailAddress(emailSend);
+                    message.To.Add(new MailAddress(toEmail));
+                    message.Subject = mailSubject;
+                    message.IsBodyHtml = true; //to make message body as html  
+                    message.Body = htmlString;
+                    var attachment = new System.Net.Mail.Attachment("d:/Travel.txt");
+                    message.Attachments.Add(attachment);
+                    using (SmtpClient smtp = new SmtpClient())
+                    {
+                        smtp.Port = 587;
+                        smtp.Host = "smtp.gmail.com"; //for gmail host  
+                        smtp.EnableSsl = true;
+                        smtp.UseDefaultCredentials = false;
+                        smtp.Credentials = new NetworkCredential("professional8778781@gmail.com", keySecurity);
+                        smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtp.Send(message);
+                    }
+
+                }
+
+
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
         public static string getHtml(string content, string subjectBody, string textHead)
         {
             try
