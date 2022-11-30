@@ -326,6 +326,8 @@ namespace Travel.Data.Repositories
         {
             try
             {
+
+
                 var account = (from x in _db.Customers.AsNoTracking()
                                where x.Email.ToLower() == email.ToLower()
                                select x).FirstOrDefault();
@@ -345,8 +347,9 @@ namespace Travel.Data.Repositories
                     var subjectOTP = _config["OTPSubject"];
                     var emailSend = _config["emailSend"];
                     var keySecurity = _config["keySecurity"]; 
-                     var stringHtml = Ultility.getHtml(otpCode, subjectOTP, "OTP");
-
+                    var stringHtml = Ultility.getHtml(otpCode, subjectOTP, "OTP");
+                    //test gửi mail có hình 
+                    //var getHtmlBookingSuccess = Ultility.getHtmlBookingSuccess("Huy Hòa", "0335592943" ,"3");
                     Ultility.sendEmail(stringHtml, email, "Yêu cầu quên mật khẩu", emailSend,keySecurity);
                     return Ultility.Responses($"Mã OTP đã gửi vào email {email}!", Enums.TypeCRUD.Success.ToString(), obj);
 
