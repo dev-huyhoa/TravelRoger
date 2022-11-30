@@ -326,7 +326,9 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var account = await (from x in _db.Customers.AsNoTracking()
+
+
+                var account = (from x in _db.Customers.AsNoTracking()
                                where x.Email.ToLower() == email.ToLower()
                                select x).FirstOrDefaultAsync();
                 if (account != null)

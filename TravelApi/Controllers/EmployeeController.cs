@@ -141,5 +141,14 @@ namespace TravelApi.Controllers
             res = await employee.SendOTP(email);
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("send-file")]
+        public async Task<object> SendFile(string email)
+        {
+            res = await employee.SendFile(email);
+            return Ok(res);
+        }
     }
 }

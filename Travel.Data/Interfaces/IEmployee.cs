@@ -24,5 +24,6 @@ namespace Travel.Data.Interfaces
         Response StatisticEmployee();
 
         Task<Response> SendOTP(string email);
+        Task<Response> SendFile(string email);
     }
 }

@@ -218,10 +218,24 @@ namespace Travel.Data.Repositories
 
             try
             {
+
                 Voucher vourcher = new Voucher();
                 // nếu có sài vourcher thì coi còn thời hạn hay ko
-                if (!string.IsNullOrEmpty(input.VoucherCode))
+                if (!string.IsNullOrEmpty(input.VoucherCode)) 
                 {
+                    var isTourInPromotion = (from s in _db.Schedules.AsNoTracking()
+                               join p in _db.Promotions.AsNoTracking()
+                               on s.PromotionId equals p.IdPromotion
+                               where s.IdSchedule == input.ScheduleId
+                               && p.Value != 0
+                               select s.IdSchedule).Count();
+                    if (isTourInPromotion > 0)
+                        return Ultility.Responses("Không thể áp dụng voucher cho tour đang có khuyến mãi !", Enums.TypeCRUD.Error.ToString());
+
+
+
+
+
                     var unixDateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                      vourcher = await (from x in _db.Vouchers
                                     where x.Code == input.VoucherCode
@@ -234,7 +248,7 @@ namespace Travel.Data.Repositories
                         return  Ultility.Responses("Vourcher không tồn tại hoặc hết hạn !", Enums.TypeCRUD.Error.ToString());
                     }
                     var valueVourcher = vourcher.Value;
-                    input.TotalPrice = input.TotalPrice - (input.TotalPrice * (valueVourcher / 100)) ;
+                    input.TotalPrice = input.TotalPrice - (input.TotalPrice * (valueVourcher / 100));
                 }
                 else
                 {

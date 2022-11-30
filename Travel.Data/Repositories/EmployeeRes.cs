@@ -54,6 +54,7 @@ namespace Travel.Data.Repositories
                     var nameEmployee = PrCommon.GetString("nameEmployee", frmData);
                     if (String.IsNullOrEmpty(nameEmployee))
                     {
+
                     }
 
                     var email = PrCommon.GetString("email", frmData);
@@ -717,6 +718,45 @@ namespace Travel.Data.Repositories
 
                     Ultility.sendEmail(stringHtml, email, "Yêu cầu quên mật khẩu", emailSend, keySecurity);
                     return Ultility.Responses($"Mã OTP đã gửi vào email {email}!", Enums.TypeCRUD.Success.ToString(), obj);
+
+                }
+                else
+                {
+                    return Ultility.Responses($"{email} không tồn tại!", Enums.TypeCRUD.Error.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+        public async Task<Response> SendFile(string email)
+        {
+            try
+            {
+                var account = (from x in _db.Employees.AsNoTracking()
+                               where x.Email.ToLower() == email.ToLower()
+                               select x).FirstOrDefault();
+                if (account != null)
+                {
+                    string otpCode = Ultility.RandomString(8, false);
+                    OTP obj = new OTP();
+                    var dateTime = DateTime.Now;
+                    var begin = dateTime;
+                    var end = dateTime.AddMinutes(2);
+                    obj.BeginTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(begin);
+                    obj.EndTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(end);
+                    obj.OTPCode = otpCode;
+                    await _db.OTPs.AddAsync(obj);
+                    await _db.SaveChangesAsync();
+
+                   // var subjectOTP = _config["OTPSubject"];
+                    var emailSend = _config["emailSend"];
+                    var keySecurity = _config["keySecurity"];
+                    var stringHtml = Ultility.getHtmtFile();
+
+                    Ultility.sendEmailUploadFile(stringHtml, email, "TravelRover gửi đến quý khách hàng File báo cáo", emailSend, keySecurity);
+                    return Ultility.Responses($"File Đã được gửi {email}!", Enums.TypeCRUD.Success.ToString(), obj);
 
                 }
                 else
