@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +24,12 @@ namespace Travel.Shared.Ultilities
     {
         private static Notification message = new Notification();
         private static Image image = new Image();
-
+        private const string CLOUD_NAME = "ddv2idi9d";
+        private const string API_KEY = "687389283419199";
+        private const string API_SECRET = "BOCNwD1_s-DwP67WIkwNkuURBtE";
+        private static Cloudinary cloudinary;
+        private static string publicId;
+        private static string link;
         public static List<T> Shuffle<T>(this List<T> list, Random rnd)
         {
             for (var i = list.Count; i > 0; i--)
@@ -245,7 +252,27 @@ namespace Travel.Shared.Ultilities
         #endregion
 
 
+        public static void uploadImage(string imagePath, string folderPath)
+        {
+            try
+            {
+                var uploadParams = new ImageUploadParams()
+                {
+                    Folder = folderPath,
+                    File = new FileDescription(imagePath),
+                    UseFilename = true
+                };
 
+                var uploadResult = cloudinary.Upload(uploadParams);
+                publicId = $"lia/Folder/{uploadResult.PublicId}";
+                link = uploadResult.Uri.ToString();
+            }
+            catch (Exception e)
+            {
+
+                Ultility.Responses("lỗi khi thêm vào cloud !", Enums.TypeCRUD.Success.ToString());
+            }
+        }
         public static Image WriteFile(IFormFile file, string type, string idService, ref Notification _message, int orderby = 0)
         {
             try
@@ -270,8 +297,6 @@ namespace Travel.Shared.Ultilities
                 {
                     Directory.CreateDirectory(pathId);
                 }
-
-
                 var date = Ultility.FormatDateToInt(DateTime.Now, "DDMMYYYY").ToString();
 
                 string pathDate = Path.Combine(pathId, date);
@@ -281,9 +306,7 @@ namespace Travel.Shared.Ultilities
                 }
                 //get file extension
                 //string[] str = file.FileName.Split('.');
-
                 string fileName = "";
-
                 if (orderby > 0)
                 {
                     fileName = orderby.ToString() + "_" + Ultility.FormatDateToInt(DateTime.Now, "DDMMYYYYHHMMSS").ToString() + Path.GetExtension(file.FileName);
@@ -292,9 +315,8 @@ namespace Travel.Shared.Ultilities
                 {
                     fileName = Ultility.FormatDateToInt(DateTime.Now, "DDMMYYYYHHMMSS").ToString() + Path.GetExtension(file.FileName);
                 }
-
                 string fullpath = Path.Combine(pathDate, fileName);
-
+                string folderPath = "/Uploads/" + type + "/" + idService + "/" + date ;
                 string serverPath = "/Uploads/" + type + "/" + idService + "/" + date + "/" + fileName;
                 if (Directory.Exists(fullpath))
                 {
@@ -305,13 +327,18 @@ namespace Travel.Shared.Ultilities
                 {
                     file.CopyTo(stream);
                 }
+                //up lên cloud
+                Account account = new Account(CLOUD_NAME, API_KEY, API_SECRET);
+                cloudinary = new Cloudinary(account);
+                string imagePath = Path.GetFullPath(fullpath);
+                uploadImage(imagePath, folderPath);
 
                 image.IdImage = Guid.NewGuid();
                 image.NameImage = fileName;
                 image.Extension = Path.GetExtension(file.FileName).Replace(".","");
                 image.IdService = idService;
                 image.Size = file.Length;
-                image.FilePath = serverPath;
+                image.FilePath = link;
                 return image;
             }
             catch (Exception e)
