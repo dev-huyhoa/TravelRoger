@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
+using Travel.Data.Interfaces.INotify;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
@@ -23,12 +24,21 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private Notification message;
-
-        public ScheduleRes(TravelContext db)
+        private INotification _notification;
+        public ScheduleRes(TravelContext db, INotification notification)
         {
             _db = db;
             message = new Notification();
+            _notification = notification;
         }
+
+        private Employee GetCurrentUser(Guid IdUserModify)
+        {
+            return (from x in _db.Employees.AsNoTracking()
+                    where x.IdEmployee == IdUserModify
+                    select x).FirstOrDefault();
+        }
+
         private long GetDateTimeNow(int addMinutes = -1)
         {
             return  Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(addMinutes));
@@ -462,6 +472,9 @@ namespace Travel.Data.Repositories
                 schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 CreateDatabase(schedule);
                 SaveChange();
+
+                var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
                 return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString(), schedule.IdSchedule);
             }
             catch (Exception e)
@@ -647,6 +660,8 @@ namespace Travel.Data.Repositories
                                    where s.TourId == idTour
                                    && s.Isdelete == false &&
                                    s.Approve == (int)Enums.ApproveStatus.Waiting
+                                   orderby s.BeginDate descending, s.DepartureDate descending
+
                                    select new Schedule
                                    {
                                        Alias = s.Alias,
@@ -721,6 +736,8 @@ namespace Travel.Data.Repositories
                                    where s.TourId == idTour && s.IdUserModify == idUser
                                    where s.Isdelete == false &&
                                    s.Approve == (int)Enums.ApproveStatus.Waiting
+                                   orderby s.BeginDate descending, s.DepartureDate descending
+
                                    select new Schedule
                                    {
                                        Alias = s.Alias,
@@ -823,6 +840,9 @@ namespace Travel.Data.Repositories
                     schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     UpdateDatabase(schedule);
                     SaveChange();
+
+                    var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
+                    _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
 
                     return Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
                 }
@@ -1721,6 +1741,9 @@ namespace Travel.Data.Repositories
                     UpdateDatabase(schedule);
                     SaveChange();
 
+                    var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
+                    _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
+
                     return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -1859,6 +1882,10 @@ namespace Travel.Data.Repositories
                     }
                     UpdateDatabase(schedule);
                     SaveChange();
+
+                    var userModify = GetCurrentUser(schedule.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, new int[] { userModify.RoleId }, "Thành công");
+
                     return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -1940,6 +1967,11 @@ namespace Travel.Data.Repositories
                     }
                     UpdateDatabase(schedule);
                     SaveChange();
+
+                    var userModify = GetCurrentUser(schedule.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, new int[] { userModify.RoleId }, "Từ chối");
+
+
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -2000,6 +2032,10 @@ namespace Travel.Data.Repositories
 
                 UpdateDatabase(schedule);
                 SaveChange();
+
+                var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
+
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
             }
@@ -2542,7 +2578,10 @@ namespace Travel.Data.Repositories
                     }
                 }
                 var result = Mapper.MapSchedule(listSchedule);
-                if (listSchedule.Count() > 0)
+                result = (from x in result
+                          orderby x.BeginDate descending, x.DepartureDate descending
+                          select x).ToList();
+                if (result.Count() > 0)
                 {
                     var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                     res.TotalResult = totalResult;

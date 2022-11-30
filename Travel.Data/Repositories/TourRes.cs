@@ -168,7 +168,7 @@ namespace Travel.Data.Repositories
                 tour.TypeAction = "insert";
                 CreateDatabase(tour);
                 SaveChange();
-                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour , listRole, "");
 
                 return Ultility.Responses("Đã gửi yêu cầu thêm !", Enums.TypeCRUD.Success.ToString());
@@ -464,7 +464,7 @@ namespace Travel.Data.Repositories
                 UpdateDatabase<Tour>(tour);
                 SaveChange();
 
-                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, listRole, "");
 
                 return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
@@ -538,7 +538,7 @@ namespace Travel.Data.Repositories
                             UpdateDatabase(tour);
                             SaveChange();
 
-                            var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                            var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                             _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, listRole, "");
 
                             return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
@@ -630,14 +630,15 @@ namespace Travel.Data.Repositories
                 var totalResult = 0;
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
-                                 orderby x.ModifyDate descending
                                  select x).FirstOrDefault();
                 var listWaiting = new List<Tour>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
                     var querylistWaiting = (from x in _db.Tour.AsNoTracking()
                                    where x.ApproveStatus == Convert.ToInt16(ApproveStatus.Waiting)
-                                   select x);
+                                            orderby x.ModifyDate descending
+
+                                            select x);
                     totalResult = querylistWaiting.Count();
                     listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
@@ -646,7 +647,9 @@ namespace Travel.Data.Repositories
                     var querylistWaiting = (from x in _db.Tour.AsNoTracking()
                                    where x.IdUserModify == idUser
                                    && x.ApproveStatus == Convert.ToInt16(ApproveStatus.Waiting)
-                                   select x);
+                                            orderby x.ModifyDate descending
+
+                                            select x);
                     totalResult = querylistWaiting.Count();
                     listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
@@ -721,7 +724,7 @@ namespace Travel.Data.Repositories
                     }
                 }
                 var userModify = GetCurrentUser(tour.IdUserModify);
-                _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, userModify.RoleId.ToString(), "Thành công");
+                _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, new int[] { userModify.RoleId }, "Thành công");
                 return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
 
             }
@@ -796,7 +799,7 @@ namespace Travel.Data.Repositories
                     }
 
                     var userModify = GetCurrentUser(tour.IdUserModify);
-                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, userModify.RoleId.ToString(), "Từ chối");
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, new int[] { userModify.RoleId }, "Từ chối");
 
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
@@ -833,7 +836,7 @@ namespace Travel.Data.Repositories
                     tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     UpdateDatabase(tour);
                     SaveChange();
-                    var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                    var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                     _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour, listRole, "");
 
                     return Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
@@ -1152,7 +1155,9 @@ namespace Travel.Data.Repositories
                                         x.IsTempdata == false &&
                                         x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved) &&
                                         keywords.KwRating.Contains(Convert.ToInt16(x.Rating))
-                                    select x);
+                                             orderby x.Rating
+
+                                             select x);
                         totalResult = querylistTour.Count();
                         listTour = querylistTour.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
@@ -1165,7 +1170,9 @@ namespace Travel.Data.Repositories
                                         x.ToPlace.ToLower().Contains(keywords.KwToPlace) &&
                                         x.IsTempdata == false &&
                                         x.ApproveStatus == Convert.ToInt16(Enums.ApproveStatus.Approved)
-                                    select x);
+                                             orderby x.Rating
+
+                                             select x);
                         totalResult = querylistTour.Count();
                         listTour = querylistTour.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
