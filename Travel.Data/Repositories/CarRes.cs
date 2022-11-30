@@ -21,13 +21,16 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private Notification message;
+        private readonly ILog _log;
         private Response res;
-        public CarRes(TravelContext db)
+        public CarRes(TravelContext db, ILog log)
         {
             _db = db;
+            _log = log;
             message = new Notification();
             res = new Response();
         }
+
         private void UpdateDatabase<T>(T input)
         {
             _db.Entry(input).State = EntityState.Modified;
@@ -306,15 +309,24 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response Create(CreateCarViewModel input)
+        public Response Create(CreateCarViewModel input, string emailUser)
         {
             try
             {
                 Car car = new Car();
                 car = Mapper.MapCreateCar(input);
                 CreateDatabase<Car>(car);
+                string jsonContent = JsonSerializer.Serialize(car);
                 SaveChange();
-                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Car");
+                if (result)
+                {
+                    return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -365,6 +377,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 car.Status = input.Status;
                 UpdateDatabase<Car>(car);
                 SaveChange();
+
                 return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)

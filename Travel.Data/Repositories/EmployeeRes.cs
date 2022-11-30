@@ -709,8 +709,6 @@ namespace Travel.Data.Repositories
                     obj.BeginTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(begin);
                     obj.EndTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(end);
                     obj.OTPCode = otpCode;
-                    await _db.OTPs.AddAsync(obj);
-                    await _db.SaveChangesAsync();
 
                     var subjectOTP = _config["OTPSubject"];
                     var emailSend = _config["emailSend"];

@@ -50,8 +50,6 @@ namespace TravelApi.Controllers
         {
             string path = Path.Combine(_env.WebRootPath, "Logs", "test1.json");
             res = Ultility.Responses("Đăng nhập bằng google thất bại!", Enums.TypeCRUD.Error.ToString());
-            
-            
 
             return Ok();
         }
@@ -88,10 +86,10 @@ namespace TravelApi.Controllers
                                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                                         new Claim(JwtRegisteredClaimNames.Aud, configuration["Token:Audience"]),
-                                        new Claim(ClaimTypes.Role, result.RoleId.ToString()),
+                                        new Claim(ClaimTypes.Email, result.Email),
                                         new Claim(ClaimTypes.NameIdentifier, result.IdEmployee.ToString()),
                                         new Claim(ClaimTypes.Name, roleName),
-                                        new Claim("EmployeeId", result.IdEmployee.ToString())
+                                        new Claim("UserId", result.IdEmployee.ToString())
                                      };
                                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));
                                     var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -205,7 +203,8 @@ namespace TravelApi.Controllers
                                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                                     new Claim(JwtRegisteredClaimNames.Aud, configuration["Token:Audience"]),
-                                    new Claim("CustomerId", result.IdCustomer.ToString())
+                                    new Claim("UserId", result.IdCustomer.ToString()),
+                                    new Claim(ClaimTypes.Email, result.Email.ToString())
                                 };
 
                             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));

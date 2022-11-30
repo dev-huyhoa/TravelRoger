@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
@@ -21,18 +22,26 @@ namespace TravelApi.Controllers
         private ICars _car;
         private Notification message;
         private Response res;
-        public CarController(ICars car)
+        public CarController(ICars car, ILog log)
         {
             _car = car;
             res = new Response();
+
         }
 
+
+        [NonAction]
+        private Claim GetEmailUserLogin()
+        {
+            return  (User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.Email).FirstOrDefault();
+        }
+
+
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         [Route("list-car")]
         public object Gets(bool isDelete)
         {
-            res = _car.Gets(isDelete);
             return Ok(res);
         }
         [HttpGet]
@@ -71,7 +80,8 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateCarViewModel>(result);
-                res = _car.Create(createObj);
+                var emailUser = GetEmailUserLogin().Value;
+                res = _car.Create(createObj, emailUser);
             }
             else
             {

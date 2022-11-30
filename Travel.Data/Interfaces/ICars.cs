@@ -14,7 +14,7 @@ namespace Travel.Data.Interfaces
         string CheckBeforeSave(JObject frmData, ref Notification _message, bool isUpdate);
         Response Gets(bool isDelete);
         Response UpdateCar(UpdateCarViewModel input);
-        Response Create(CreateCarViewModel input);
+        Response Create(CreateCarViewModel input, string emailUser);
         Response StatisticCar();
         Response GetsSelectBoxCar(long fromDate, long toDate);
         Response ViewSelectBoxCar(string idSchedule);

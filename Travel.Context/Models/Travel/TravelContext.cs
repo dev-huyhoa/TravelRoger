@@ -44,12 +44,11 @@ namespace Travel.Context.Models.Travel
         public DbSet<Timeline> Timelines { get; set; }
 
         public DbSet<Car> Cars { get; set; }
-        public DbSet<OTP> OTPs { get; set; }
         public DbSet<Customer_Voucher> Customer_Vouchers { get; set; }
+        public DbSet<Logs> Logs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Seed();
-
             modelBuilder.Entity<Payment>(entity =>
             {
                 entity.HasKey(e => e.IdPayment);
@@ -57,7 +56,6 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.NamePayment).HasMaxLength(100);
                 entity.Property(e => e.Type).HasMaxLength(50);
             });
-
             // tourbooking
             modelBuilder.Entity<Contract>(entity =>
             {
@@ -68,7 +66,6 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.CreateBy).HasMaxLength(50);
 
             });
-
             modelBuilder.Entity<TourBooking>(entity =>
             {
                 entity.HasKey(e => e.IdTourBooking);
@@ -397,6 +394,16 @@ namespace Travel.Context.Models.Travel
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Rating).HasMaxLength(12).IsRequired(true);
+            });
+
+            modelBuilder.Entity<Logs>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Content).HasMaxLength(5000).IsRequired(true);
+                entity.Property(e => e.EmailCreator).HasMaxLength(100).IsRequired(true);
+                entity.Property(e => e.Type).HasMaxLength(20).IsRequired(true);
+                entity.Property(e => e.ClassContent).HasMaxLength(30).IsRequired(true);
+
             });
         }
 

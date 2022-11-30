@@ -326,9 +326,9 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var account = (from x in _db.Customers.AsNoTracking()
+                var account = await (from x in _db.Customers.AsNoTracking()
                                where x.Email.ToLower() == email.ToLower()
-                               select x).FirstOrDefault();
+                               select x).FirstOrDefaultAsync();
                 if (account != null)
                 {
                     string otpCode = Ultility.RandomString(8, false);
@@ -339,15 +339,22 @@ namespace Travel.Data.Repositories
                     obj.BeginTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(begin);
                     obj.EndTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(end);
                     obj.OTPCode = otpCode;
-                    await _db.OTPs.AddAsync(obj);
-                    await _db.SaveChangesAsync();
 
                     var subjectOTP = _config["OTPSubject"];
                     var emailSend = _config["emailSend"];
                     var keySecurity = _config["keySecurity"]; 
                      var stringHtml = Ultility.getHtml(otpCode, subjectOTP, "OTP");
 
+
+
                     Ultility.sendEmail(stringHtml, email, "Yêu cầu quên mật khẩu", emailSend,keySecurity);
+
+
+
+
+
+
+
                     return Ultility.Responses($"Mã OTP đã gửi vào email {email}!", Enums.TypeCRUD.Success.ToString(), obj);
 
                 }

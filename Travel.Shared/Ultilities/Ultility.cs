@@ -378,6 +378,7 @@ namespace Travel.Shared.Ultilities
                     message.Subject = mailSubject;
                     message.IsBodyHtml = true; //to make message body as html  
                     message.Body = htmlString;
+
                     using (SmtpClient smtp = new SmtpClient())
                     {
                         smtp.Port = 587;
