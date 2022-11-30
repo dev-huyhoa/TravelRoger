@@ -7,6 +7,7 @@ using PrUtility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
@@ -25,7 +26,7 @@ namespace TravelApi.Controllers
         private ILocation location;
         private Notification message;
         private Response res;
-
+        private readonly ILog _log;
 
         public LocationController(ILocation _location)
         {
@@ -33,7 +34,11 @@ namespace TravelApi.Controllers
             res = new Response();
 
         }
-
+        [NonAction]
+        private Claim GetEmailUserLogin()
+        {
+            return (User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.Email).FirstOrDefault();
+        }
         [HttpGet]
         [AllowAnonymous]
         [Route("list-province")]
@@ -100,6 +105,7 @@ namespace TravelApi.Controllers
             {
                 var createObj = JsonSerializer.Deserialize<CreateProvinceViewModel>(result);
                 res = location.CreateProvince(createObj);
+
                  
             }
             else

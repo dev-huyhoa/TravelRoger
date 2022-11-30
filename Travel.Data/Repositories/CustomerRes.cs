@@ -24,12 +24,14 @@ namespace Travel.Data.Repositories
         private Notification message;
         private readonly IConfiguration _config;
         private Response res;
-        public CustomerRes(TravelContext db, IConfiguration config)
+        private readonly ILog _log;
+        public CustomerRes(TravelContext db, IConfiguration config , ILog log)
         {
             _db = db;
             message = new Notification();
             _config = config;
             res = new Response();
+            _log = log;
         }
         private void UpdateDatabase<T>(T input)
         {
@@ -184,7 +186,7 @@ namespace Travel.Data.Repositories
             }     
         }
 
-        public Response Create(CreateCustomerViewModel input)
+        public Response Create(CreateCustomerViewModel input, string emailUser)
         {
             try
             {
@@ -192,9 +194,17 @@ namespace Travel.Data.Repositories
                 customer.IdCustomer = Guid.NewGuid();
                 customer.Point = 0;
                 customer.IsDelete = false;
+                string jsonContent = JsonSerializer.Serialize(customer);
                 CreateDatabase(customer);
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Customer");
+                if (result)
+                {                return Ultility.Responses("Đăng ký thành công !", Enums.TypeCRUD.Success.ToString());
 
-                return Ultility.Responses("Đăng ký thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -397,21 +407,32 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public async Task<Response> UpdateCustomer(UpdateCustomerViewModel input)
+        public async Task<Response> UpdateCustomer(UpdateCustomerViewModel input, string emailUser)
         {
             try
             {
                 var customer = await (from x in _db.Customers.AsNoTracking()
                                       where x.IdCustomer == input.IdCustomer
                                       select x).FirstOrDefaultAsync();
+
                 customer.NameCustomer = input.NameCustomer;
                 customer.Phone = input.Phone;
                 customer.Email = input.Email;
                 customer.Address = input.Address;
                 customer.Gender = input.Gender;
                 customer.Birthday = input.Birthday;
+                string jsonContent = JsonSerializer.Serialize(customer);
                 UpdateDatabase(customer);
-                return Ultility.Responses("Cập nhật thành công !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Customer");
+                if (result)
+                {
+                    return Ultility.Responses("Cập nhật thành công !", Enums.TypeCRUD.Success.ToString());
+
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -440,7 +461,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateScoreToCustomer(Guid idCustomer, int point)
+        public async Task<bool> UpdateScoreToCustomer(Guid idCustomer, int point )
         {
             try
             {
