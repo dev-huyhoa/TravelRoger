@@ -17,14 +17,14 @@ namespace Travel.Data.Interfaces
         Response GetsPromotionExists();
         Response GetsWaitingPromotion(Guid idUser);
 
-        Response CreatePromotion(CreatePromotionViewModel input);
-        Response DeletePromotion(int id, Guid idUser);
+        Response CreatePromotion(CreatePromotionViewModel input, string emailUser);
+        Response DeletePromotion(int id, Guid idUser, string emailUser);
 
-        Response UpdatePromotion(UpdatePromotionViewModel input);
+        Response UpdatePromotion(UpdatePromotionViewModel input, string emailUser);
         Response ApprovePromotion(int id);
         Response RefusedPromotion(int id);
 
-        Response RestorePromotion(int id, Guid idUser);
+        Response RestorePromotion(int id, Guid idUser, string emailUser);
 
         Response StatisticPromotion();
 

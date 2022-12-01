@@ -104,9 +104,8 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateProvinceViewModel>(result);
-                res = location.CreateProvince(createObj);
-
-                 
+                var emailUser = GetEmailUserLogin().Value;
+                res = location.CreateProvince(createObj, emailUser);
             }
             else
             {
@@ -125,8 +124,8 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateDistrictViewModel>(result);
-                res = location.CreateDistrict(createObj);
-                 
+                var emailUser = GetEmailUserLogin().Value;
+                res = location.CreateDistrict(createObj, emailUser);
             }
             else
             {
@@ -145,8 +144,8 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateWardViewModel>(result);
-                res = location.CreateWard(createObj);
-                 
+                var emailUser = GetEmailUserLogin().Value;
+                res = location.CreateWard(createObj, emailUser);
             }
             else
             {
@@ -165,8 +164,9 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateProvinceViewModel>(result);
-                res = location.UpdateProvince(updateObj);
-                 
+ 
+                var emailUser = GetEmailUserLogin().Value;
+                res = location.UpdateProvince(updateObj, emailUser);
             }
             else
             {
@@ -185,8 +185,9 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateDistrictViewModel>(result);
-                res = location.UpdateDistrict(updateObj);
-                 
+                var emailUser = GetEmailUserLogin().Value;
+                res = location.UpdateDistrict(updateObj, emailUser);
+
             }
             else
             {
@@ -205,8 +206,9 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateWardViewModel>(result);
-                res = location.UpdateWard(updateObj);
-                 
+                var emailUser = GetEmailUserLogin().Value;
+                res = location.UpdateWard(updateObj, emailUser);
+
             }
             else
             {
@@ -220,7 +222,8 @@ namespace TravelApi.Controllers
         [Route("delete-province")]
         public object DeleteProvince(Guid idProvince)
         {
-            res = location.DeleteProvince(idProvince);
+            var emailUser = GetEmailUserLogin().Value;
+            res = location.DeleteProvince(idProvince, emailUser);          
              
             return Ok(res);
         }
@@ -230,7 +233,9 @@ namespace TravelApi.Controllers
         [Route("delete-district")]
         public object DeleteDistrict(Guid idDistrict)
         {
-            res = location.DeleteDistrict(idDistrict);
+            var emailUser = GetEmailUserLogin().Value;
+            res = location.DeleteDistrict(idDistrict, emailUser);
+           
             return Ok(res);
         }
 
@@ -239,7 +244,9 @@ namespace TravelApi.Controllers
         [Route("delete-ward")]
         public object DeleteWard(Guid idWard)
         {
-            res = location.DeleteWard(idWard);
+            var emailUser = GetEmailUserLogin().Value;
+            res = location.DeleteWard(idWard, emailUser);
+        
             return Ok(res);
         }
     }

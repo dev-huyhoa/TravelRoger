@@ -23,10 +23,11 @@ namespace Travel.Data.Repositories
         private readonly TravelContext _db;
         private Notification message;
         private INotification _notification;
-
-        public ServiceRes(TravelContext db, INotification notification)
+        private readonly ILog _log;
+        public ServiceRes(TravelContext db, INotification notification , ILog log)
         {
             _db = db;
+            _log = log;
             message = new Notification();
             _notification = notification;
         }
@@ -287,27 +288,38 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response CreateHotel(CreateHotelViewModel input)
+        public Response CreateHotel(CreateHotelViewModel input, string emailUser)
         {
             try
             {
                 var user = GetCurrentUser(input.IdUserModify);
                 input.ModifyBy = user.NameEmployee;
                 Hotel hotel = Mapper.MapCreateHotel(input);
+
+                string jsonContent = JsonSerializer.Serialize(hotel);
                 CreateDatabase<Hotel>(hotel);
                 SaveChange();
 
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(user.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Hotel), hotel.NameHotel, listRole, "");
 
-                return Ultility.Responses("Đã gửi yêu cầu thêm !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Hotel");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu thêm !", Enums.TypeCRUD.Success.ToString());
+
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response DeleteHotel(Guid id, Guid idUser)
+        public Response DeleteHotel(Guid id, Guid idUser, string emailUser)
         {
             try
             {
@@ -325,6 +337,8 @@ namespace Travel.Data.Repositories
                     hotel.IdUserModify = userLogin.IdEmployee;
                     hotel.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     hotel.Approve = (int)ApproveStatus.Waiting;
+
+                    string jsonContent = JsonSerializer.Serialize(hotel);
                     // bổ sung isdelete
                     hotel.IsDelete = true;
 
@@ -333,8 +347,16 @@ namespace Travel.Data.Repositories
 
                     var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                     _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Hotel), hotel.NameHotel, listRole, "");
+                    bool result = _log.AddLog(content: jsonContent, type: "delete", emailCreator: emailUser, classContent: "Hotel");
+                    if (result)
+                    {
+                        return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
 
-                    return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
                 }
                 else
                 {
@@ -410,7 +432,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response RestoreHotel(Guid id, Guid idUser)
+        public Response RestoreHotel(Guid id, Guid idUser, string emailUser)
         {
             try
             {
@@ -431,13 +453,23 @@ namespace Travel.Data.Repositories
                     // bổ sung isdelete
                     hotel.IsDelete = false;
                 }
+
+                string jsonContent = JsonSerializer.Serialize(hotel);
                 UpdateDatabase<Hotel>(hotel);
                 SaveChange();
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Hotel), hotel.NameHotel, listRole, "");
 
-                return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "Hotel");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -445,7 +477,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateHotel(UpdateHotelViewModel input)
+        public Response UpdateHotel(UpdateHotelViewModel input, string emailUser)
         {
             try
             {
@@ -462,6 +494,7 @@ namespace Travel.Data.Repositories
                 hotelOld.IdHotel = Guid.NewGuid();
                 hotelOld.IsTempdata = true;
 
+                string jsonContent = JsonSerializer.Serialize(hotel);
                 CreateDatabase<Hotel>(hotelOld);
 
                 #region setdata
@@ -488,8 +521,15 @@ namespace Travel.Data.Repositories
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Hotel), hotel.NameHotel, listRole, "");
 
-                return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
-
+                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Hotel");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -699,7 +739,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response DeleteRestaurant(Guid id, Guid idUser)
+        public Response DeleteRestaurant(Guid id, Guid idUser, string emailUser)
         {
             try
             {
@@ -716,12 +756,22 @@ namespace Travel.Data.Repositories
                     restaurant.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     restaurant.Approve = (int)ApproveStatus.Waiting;
                     restaurant.TypeAction = "delete";
+                    string jsonContent = JsonSerializer.Serialize(restaurant);
 
                     UpdateDatabase<Restaurant>(restaurant);
                     SaveChange();
                     var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                     _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Restaurant), restaurant.NameRestaurant, listRole, "");
                     return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                    bool result = _log.AddLog(content: jsonContent, type: "delete", emailCreator: emailUser, classContent: "Restaurant");
+                    if (result)
+                    {
+                        return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
                 }
                 else
                 {
@@ -806,7 +856,7 @@ namespace Travel.Data.Repositories
         }
 
 
-        public Response UpdateRestaurant(UpdateRestaurantViewModel input)
+        public Response UpdateRestaurant(UpdateRestaurantViewModel input, string emailUser)
         {
             try
             {
@@ -838,26 +888,35 @@ namespace Travel.Data.Repositories
                 restaurant.ComboPrice = input.ComboPrice;
                 #endregion
 
+                string jsonContent = JsonSerializer.Serialize(restaurant);
 
                 UpdateDatabase<Restaurant>(restaurant);
                 SaveChange();
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Restaurant), restaurant.NameRestaurant, listRole, "");
-                return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Restaurant");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response CreateRestaurant(CreateRestaurantViewModel input)
+        public Response CreateRestaurant(CreateRestaurantViewModel input, string emailUser)
         {
             var user = GetCurrentUser(input.IdUserModify);
             input.ModifyBy = user.NameEmployee;
             Restaurant restaurant
                          = Mapper.MapCreateRestaurant(input);
-
+            string jsonContent = JsonSerializer.Serialize(restaurant);
             restaurant.ContractId = Guid.Empty;
             _db.Restaurants.Add(restaurant);
 
@@ -865,6 +924,16 @@ namespace Travel.Data.Repositories
             var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
             _notification.CreateNotification(user.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Restaurant), restaurant.NameRestaurant, listRole, "");
             return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+               bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Restaurant");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu thêm !", Enums.TypeCRUD.Success.ToString());
+
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
         }
 
         public Response ApproveRestaurant(Guid id)
@@ -999,18 +1068,30 @@ namespace Travel.Data.Repositories
 
         #endregion
         #region Place
-        public Response CreatePlace(CreatePlaceViewModel input)
+        public Response CreatePlace(CreatePlaceViewModel input, string emailUser)
+
         {
             try
             {
                 var userLogin = GetCurrentUser(input.IdUserModify);
                 input.ModifyBy = userLogin.NameEmployee;
                 Place place = Mapper.MapCreatePlace(input);
+                string jsonContent = JsonSerializer.Serialize(place);
                 CreateDatabase<Place>(place);
                 SaveChange();
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Place), place.NamePlace, listRole, "");
-                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Place");
+                if (result)
+                {
+                    return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+
+
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
 
 
@@ -1075,7 +1156,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response DeletePlace(Guid id, Guid idUser)
+        public Response DeletePlace(Guid id, Guid idUser, string emailUser)
         {
             try
             {
@@ -1094,11 +1175,23 @@ namespace Travel.Data.Repositories
                     place.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     place.Approve = (int)ApproveStatus.Waiting;
                     place.IsDelete = true;
+                    string jsonContent = JsonSerializer.Serialize(place);
                     UpdateDatabase<Place>(place);
                     SaveChange();
                     var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                     _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Place), place.NamePlace, listRole, "");
-                    return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                    bool result = _log.AddLog(content: jsonContent, type: "delete", emailCreator: emailUser, classContent: "Place");
+                    if (result)
+                    {
+                        return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+
+
+
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
                 }
                 else
                 {
@@ -1177,7 +1270,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response UpdatePlace(UpdatePlaceViewModel input)
+        public Response UpdatePlace(UpdatePlaceViewModel input, string emailUser)
         {
             try
             {
@@ -1194,7 +1287,7 @@ namespace Travel.Data.Repositories
                 placeOld.IdPlace = Guid.NewGuid();
                 placeOld.IsTempdata = true;
                 CreateDatabase<Place>(placeOld);
-
+                string jsonContent = JsonSerializer.Serialize(place);
                 #region setdata
                 place.IdAction = placeOld.IdPlace.ToString();
                 place.IdUserModify = input.IdUserModify;
@@ -1213,8 +1306,16 @@ namespace Travel.Data.Repositories
                 SaveChange();
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Place), place.NamePlace, listRole, "");
-                return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Place");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -1359,31 +1460,39 @@ namespace Travel.Data.Repositories
             }
         }
         #endregion
-        public Response CreateContract(CreateContractViewModel input)
+        public Response CreateContract(CreateContractViewModel input, string emailUser)
         {
             try
             {
                 Contract contract = Mapper.MapCreateContract(input);
-                
+                string jsonContent = JsonSerializer.Serialize(contract);
                 CreateDatabase<Contract>(contract);
 
                 UpdateDatabase<Contract>(contract);
-                SaveChange(); 
-                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+                SaveChange();
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Contract");
+                if (result)
+                {
+                    return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response RestorePlace(Guid id, Guid idUser)
+        public Response RestorePlace(Guid id, Guid idUser, string emailUser)
         {
             try
             {
                 var place = (from x in _db.Places.AsNoTracking()
                              where x.IdPlace == id
                              select x).FirstOrDefault();
-
+                string jsonContent = JsonSerializer.Serialize(place);
                 var userLogin = (from x in _db.Employees
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
@@ -1401,8 +1510,16 @@ namespace Travel.Data.Repositories
                 SaveChange();
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Place), place.NamePlace, listRole, "");
-                return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "Place");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -1410,14 +1527,14 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response RestoreRestaurant(Guid id, Guid idUser)
+        public Response RestoreRestaurant(Guid id, Guid idUser, string emailUser)
         {
             try
             {
                 var restaurant = (from x in _db.Restaurants.AsNoTracking()
                              where x.IdRestaurant == id
                              select x).FirstOrDefault();
-
+                string jsonContent = JsonSerializer.Serialize(restaurant);
                 var userLogin = (from x in _db.Employees
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
@@ -1434,8 +1551,16 @@ namespace Travel.Data.Repositories
                 SaveChange();
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Restaurant), restaurant.NameRestaurant, listRole, "");
-                return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "Restaurant");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
