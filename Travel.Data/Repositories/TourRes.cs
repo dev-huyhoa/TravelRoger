@@ -62,6 +62,20 @@ namespace Travel.Data.Repositories
                     where x.IdEmployee == IdUserModify
                     select x).FirstOrDefault();
         }
+
+        public void CreateImageTourDetail(ICollection<Image> images)
+        {
+            try
+            {
+                if (images.Count > 0)
+                {
+                    _db.Images.AddRange(images.AsEnumerable());
+                    _db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {}
+        }
         public string CheckBeforSave(IFormCollection frmdata, IFormFile file, ICollection<IFormFile> files, ref Notification _message, bool isUpdate)
         {
             try
@@ -203,20 +217,6 @@ namespace Travel.Data.Repositories
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
-        }
-
-        public void CreateImageTourDetail(ICollection<Image> images)
-        {
-            try
-            {
-                if (images.Count > 0)
-                {
-                    _db.Images.AddRange(images.AsEnumerable());
-                    _db.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            { }
         }
 
         public Response Get(bool isDelete)
