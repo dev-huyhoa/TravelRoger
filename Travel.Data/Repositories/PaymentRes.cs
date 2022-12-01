@@ -27,7 +27,7 @@ namespace Travel.Data.Repositories
             message = new Notification();
             res = new Response();
         }
-      
+
 
         public string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false)
         {
@@ -36,17 +36,17 @@ namespace Travel.Data.Repositories
                 var idPay = PrCommon.GetString("idPayment", frmData);
                 if (!String.IsNullOrEmpty(idPay))
                 {
-                 //   payment.IdPayment = idPay;
+                    //   payment.IdPayment = idPay;
                 }
                 var namePay = PrCommon.GetString("namePayment", frmData);
                 if (!String.IsNullOrEmpty(namePay))
                 {
-                   // payment.IdPayment = namePay;
+                    // payment.IdPayment = namePay;
                 }
                 var type = PrCommon.GetString("type", frmData);
                 if (!String.IsNullOrEmpty(type))
                 {
-                   // payment.IdPayment = type;
+                    // payment.IdPayment = type;
                 }
                 if (isUpdate)
                 {
@@ -96,18 +96,20 @@ namespace Travel.Data.Repositories
 
 
 
-        public Response Gets()
+        public Response Gets(int pageIndex, int pageSize)
         {
             try
             {
-                var listPayment = (from x in _db.Payment.AsNoTracking()
-                                   select x).ToList();
-                var result = Mapper.MapPayment(listPayment);
-                if (result.Count() > 0)
-                {
-                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
+                var queryListPayment = (from x in _db.Payment.AsNoTracking()
+                                        select x);
+                int totalResult = queryListPayment.Count();
+                var list = queryListPayment.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var result = Mapper.MapPayment(list);
+
+                res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
                 return res;
+
             }
             catch (Exception e)
             {

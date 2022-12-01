@@ -191,7 +191,7 @@ namespace Travel.Data.Repositories
                 return string.Empty;
             }
         }
-        public Response GetsEmployee(bool isDelete)
+        public Response GetsEmployee(bool isDelete, int pageIndex, int pageSize)
         {
             try
             {
@@ -212,7 +212,7 @@ namespace Travel.Data.Repositories
                 //var b5 = stopWatch5.Elapsed;
                 #endregion
 
-                var listEmp = (from x in _db.Employees.AsNoTracking()
+                var queryListEmp = (from x in _db.Employees.AsNoTracking()
                                where x.IsDelete == isDelete && x.IsActive
                                orderby x.RoleId
                                select new Employee
@@ -234,11 +234,13 @@ namespace Travel.Data.Repositories
                                    Phone = x.Phone,
                                    Role = (from r in _db.Roles.AsNoTracking() where r.IdRole == x.RoleId select r).First(),
                                    RoleId = x.RoleId,
-                               }).ToList();
-
+                               });
+                int totalResult = queryListEmp.Count();
+                var listEmp = queryListEmp.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 var result = Mapper.MapEmployee(listEmp);
-
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
             }
             catch (Exception e)
             {
@@ -747,8 +749,6 @@ namespace Travel.Data.Repositories
                     obj.BeginTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(begin);
                     obj.EndTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(end);
                     obj.OTPCode = otpCode;
-                    await _db.OTPs.AddAsync(obj);
-                    await _db.SaveChangesAsync();
 
                    // var subjectOTP = _config["OTPSubject"];
                     var emailSend = _config["emailSend"];

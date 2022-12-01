@@ -138,14 +138,19 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsProvince()
+        public Response GetsProvince(int pageIndex, int pageSize)
         {
             try
             {
-                var listProvince = (from x in _db.Provinces.AsNoTracking() orderby x.NameProvince select x).ToList();
-
+                var queryListProvince = (from x in _db.Provinces.AsNoTracking()
+                                    orderby x.NameProvince 
+                                    select x);
+                int totalResult = queryListProvince.Count();
+                var listProvince = queryListProvince.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 var result = Mapper.MapProvince(listProvince);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
             }
             catch (Exception e)
             {
@@ -154,13 +159,25 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsDistrict()
+        public Response GetsDistrict(int pageIndex, int pageSize)
         {
             try
             {
-                var listDistrict = (from x in _db.Districts.AsNoTracking() orderby x.Province.NameProvince, x.NameDistrict select x).ToList();
-                var result = Mapper.MapDistrict(listDistrict);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var queryListDistrict = (from x in _db.Districts.AsNoTracking() 
+                                         orderby x.Province.NameProvince, x.NameDistrict 
+                                         select x);
+
+
+
+                int totalResult = queryListDistrict.Count();
+                var list = queryListDistrict.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var result = Mapper.MapDistrict(list);
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
+
+
+            
 
             }
             catch (Exception e)
@@ -170,13 +187,19 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsWard()
+        public Response GetsWard(int pageIndex, int pageSize)
         {
             try
             {
-                var listWard = (from x in _db.Wards.AsNoTracking() orderby x.District.NameDistrict, x.NameWard select x).ToList();
-                var result = Mapper.MapWard(listWard);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var queryListWard = (from x in _db.Wards.AsNoTracking() orderby x.District.NameDistrict, x.NameWard select x);
+
+
+                int totalResult = queryListWard.Count();
+                var list = queryListWard.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var result = Mapper.MapWard(list);
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
 
             }
             catch (Exception e)

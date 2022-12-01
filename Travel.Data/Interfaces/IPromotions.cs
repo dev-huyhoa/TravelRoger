@@ -13,7 +13,7 @@ namespace Travel.Data.Interfaces
     public interface IPromotions
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, Shared.Ultilities.Enums.TypeService type, bool isUpdate = false);
-        Response GetsPromotion(bool isDelete);
+        Response GetsPromotion(bool isDelete, int pageIndex, int pageSize);
         Response GetsPromotionExists();
         Response GetsWaitingPromotion(Guid idUser);
 

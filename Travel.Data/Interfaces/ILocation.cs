@@ -17,9 +17,9 @@ namespace Travel.Data.Interfaces
         string CheckBeforeSaveProvince(JObject frmData, ref Notification _message, bool isUpdate);
         string CheckBeforeSaveDistrict(JObject frmData, ref Notification _message, bool isUpdate);
         string CheckBeforeSaveWard(JObject frmData, ref Notification _message, bool isUpdate);
-        Response GetsProvince();
-        Response GetsDistrict();
-        Response GetsWard();
+        Response GetsProvince(int pageIndex, int pageSize);
+        Response GetsDistrict(int pageIndex, int pageSize);
+        Response GetsWard(int pageIndex, int pageSize);
         Response SearchProvince(JObject frmData);
         Response SearchDistrict(JObject frmData);
         Response SearchWard(JObject frmData);

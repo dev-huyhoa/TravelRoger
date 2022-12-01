@@ -122,19 +122,23 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsPromotion(bool isDelete)
+        public Response GetsPromotion(bool isDelete , int pageIndex, int pageSize)
         {
             try
             {
-                var list = (from x in _db.Promotions.AsNoTracking()
+                var queryListPromotion = (from x in _db.Promotions.AsNoTracking()
                             where
                             x.IsDelete == isDelete &&
                             x.IsTempdata == false &&
                             x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
-
-                            select x).ToList();
+                            select x);
+                int totalResult = queryListPromotion.Count();
+                var list = queryListPromotion.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 var result = Mapper.MapPromotion(list);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
             }
             catch (Exception e)
             {

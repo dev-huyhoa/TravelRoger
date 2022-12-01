@@ -32,9 +32,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("list-promotion")]
-        public object GetsPromotion(bool isDelete)
+        public object GetsPromotion(bool isDelete, int pageIndex, int pageSize)
         {
-            res = _promotion.GetsPromotion(isDelete);
+            res = _promotion.GetsPromotion(isDelete , pageIndex,  pageSize);
             return Ok(res);
         }
 

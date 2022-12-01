@@ -203,21 +203,24 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Gets()
+        public Response Gets(int pageIndex, int pageSize)
         {
             try
             {                       
-                var listCus = (from x in _db.Customers.AsNoTracking()
-                               where x.IsDelete == false select x).ToList();
+                var queryListCus = (from x in _db.Customers.AsNoTracking()
+                               where x.IsDelete == false 
+                               select x);
+
+
+                int totalResult = queryListCus.Count();
+                var listCus = queryListCus.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 var result = Mapper.MapCustomer(listCus);
-                if (result.Count() > 0)
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Warning.ToString(), null);
-                }
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
+
+
+            
             }
             catch (Exception e)
             {
