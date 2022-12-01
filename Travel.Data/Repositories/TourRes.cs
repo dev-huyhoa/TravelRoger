@@ -127,6 +127,7 @@ namespace Travel.Data.Repositories
                         // map data
                         UpdateTourViewModel objUpdate = new UpdateTourViewModel();
                         objUpdate.NameTour = tourName;
+                        objUpdate.NameTour_EN = Ultility.removeVietnameseSign(tourName);
                         objUpdate.Thumbnail = thumbnail;
                         objUpdate.ToPlace = toPlace;
                         objUpdate.TypeAction = typeAction;
@@ -138,6 +139,7 @@ namespace Travel.Data.Repositories
                     // map data
                     CreateTourViewModel obj = new CreateTourViewModel();
                     obj.NameTour = tourName;
+                    obj.NameTour_EN = Ultility.removeVietnameseSign(tourName);
                     obj.Thumbnail = thumbnail;
                     obj.ToPlace = toPlace;
                     obj.TypeAction = typeAction;

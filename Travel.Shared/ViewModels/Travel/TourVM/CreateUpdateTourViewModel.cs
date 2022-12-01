@@ -15,6 +15,7 @@ namespace Travel.Shared.ViewModels.Travel.TourVM
     {
         private string idTour;
         private string nameTour;
+        private string nameTour_EN;
         private string thumbnail;
         private string toPlace;
         private string description;
@@ -25,5 +26,6 @@ namespace Travel.Shared.ViewModels.Travel.TourVM
         public string ToPlace { get => toPlace; set => toPlace = value; }
         public string Description { get => description; set => description = value; }
         public double Rating { get => rating; set => rating = value; }
+        public string NameTour_EN { get => nameTour_EN; set => nameTour_EN = value; }
     }
 }
