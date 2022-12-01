@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Context.Models;
 using Travel.Context.Models.Notification;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
@@ -265,12 +266,14 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var list = (from x in _db.TourBookings
+                var list = (from x in _db.TourBookings.AsNoTracking()
                             where x.Status == (int)Enums.StatusBooking.Paid &&
                                   x.CheckIn == 0
                             select x).ToList();
 
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
+                res.TotalResult = list.Count;
+                return res;
             }
             catch (Exception e)
             {

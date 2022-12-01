@@ -24,7 +24,9 @@ namespace Travel.Data.Repositories
         private readonly TravelContext _db;
         private Notification message;
         private long today = 0;
-        private INotification _notification;
+        private INotification _notification; 
+        private readonly ILog _log;
+    
         private Employee GetCurrentUser(Guid IdUserModify)
         {
             return (from x in _db.Employees.AsNoTracking()
@@ -32,9 +34,9 @@ namespace Travel.Data.Repositories
                     select x).FirstOrDefault();
         }
    
-        public PromotionRes(TravelContext db, INotification notification)
+        public PromotionRes(TravelContext db, INotification notification, ILog log)
         {
-            _db = db;
+            _db = db; _log = log;
             message = new Notification();
             today = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
             _notification = notification;
@@ -198,23 +200,32 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         } 
-         public Response CreatePromotion(CreatePromotionViewModel input)
+         public Response CreatePromotion(CreatePromotionViewModel input, string emailUser)
         {
             Promotion promotion
                         = Mapper.MapCreatePromotion(input);
             var user = GetCurrentUser(input.IdUserModify);
             input.ModifyBy = user.NameEmployee;
             promotion.TypeAction = "insert";
+            string jsonContent = JsonSerializer.Serialize(promotion);
             promotion.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
             CreateDatabase(promotion);
 
-            var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+            var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
             _notification.CreateNotification(user.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), listRole, "");
-
-            return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+       
+            bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Promotion");
+            if (result)
+            {
+                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+            }
+            else
+            {
+                return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+            }
         }
 
-        public Response DeletePromotion(int id, Guid idUser)
+        public Response DeletePromotion(int id, Guid idUser,string emailUser)
         {
             try
             {
@@ -225,6 +236,8 @@ namespace Travel.Data.Repositories
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
+                string jsonContent = JsonSerializer.Serialize(promotion);
+
                 if (promotion.Approve == (int)ApproveStatus.Approved)
                 {
                     promotion.ModifyBy = userLogin.NameEmployee;
@@ -235,10 +248,19 @@ namespace Travel.Data.Repositories
                     promotion.IsDelete = true;
                     UpdateDatabase(promotion);
 
-                    var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                    var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                     _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), listRole, "");
+                  
+                    bool result = _log.AddLog(content: jsonContent, type: "detele", emailCreator: emailUser, classContent: "Promotion");
+                    if (result)
+                    {
+                        return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
 
-                    return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
                 }
                 else
                 {
@@ -270,6 +292,7 @@ namespace Travel.Data.Repositories
                             #endregion
 
                             DeleteDatabase(promotionTemp);
+
                             return Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
                         }
                         else if (promotion.TypeAction == "restore")
@@ -306,7 +329,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdatePromotion(UpdatePromotionViewModel input)
+        public Response UpdatePromotion(UpdatePromotionViewModel input,string emailUser)
         {
             try
             {
@@ -338,14 +361,22 @@ namespace Travel.Data.Repositories
                 promotion.ToDate = input.ToDate;
                 promotion.FromDate = input.FromDate;
                 #endregion
-
+                string jsonContent = JsonSerializer.Serialize(promotion);
                 UpdateDatabase(promotion);
 
-                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), listRole, "");
 
-                return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Promotion");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
 
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -398,7 +429,7 @@ namespace Travel.Data.Repositories
                     UpdateDatabase(promotion);
 
                     var userModify = GetCurrentUser(promotion.IdUserModify);
-                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), userModify.RoleId.ToString(), "Thành công");
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), new int[] { userModify.RoleId }, "Thành công");
                     return Ultility.Responses("Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -466,7 +497,7 @@ namespace Travel.Data.Repositories
                     UpdateDatabase(promotion);
 
                     var userModify = GetCurrentUser(promotion.IdUserModify);
-                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), userModify.RoleId.ToString(), "Từ chối");
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), new int[] { userModify.RoleId }, "Từ chối");
 
                     return Ultility.Responses("Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
@@ -481,7 +512,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response RestorePromotion(int id, Guid idUser)
+        public Response RestorePromotion(int id, Guid idUser ,string emailUser)
         {
             try
             {
@@ -492,6 +523,7 @@ namespace Travel.Data.Repositories
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
+                string jsonContent = JsonSerializer.Serialize(promotion);
                 if (promotion.Approve == (int)ApproveStatus.Approved)
                 {
                     promotion.ModifyBy = userLogin.NameEmployee;
@@ -504,10 +536,19 @@ namespace Travel.Data.Repositories
                 }
                 UpdateDatabase(promotion);
 
-                var listRole = Ultility.ConvertListInt(new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) });
+                var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Promotion), promotion.Value.ToString(), listRole, "");
+                bool result = _log.AddLog(content: jsonContent, type: "resore", emailCreator: emailUser, classContent: "Promotion");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
 
-                return Ultility.Responses("Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
 
             }
             catch (Exception e)

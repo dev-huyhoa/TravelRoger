@@ -25,12 +25,13 @@ namespace Travel.Data.Repositories
         private Notification message;
         private Response res;
         private IConfiguration _config;
-        public CostTourRes(TravelContext db, IConfiguration config)
-        {
+        private readonly ILog _log;
+        public CostTourRes(TravelContext db, IConfiguration config , ILog log)
+        { 
             _db = db;
             message = new Notification();
             res = new Response();
-
+            _log = log;
             _config = config;
         }
         private void UpdateDatabase(CostTour input)
@@ -182,7 +183,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Create(CreateCostViewModel input)
+        public Response Create(CreateCostViewModel input, string emailUser)
         {
             try
             {
@@ -198,7 +199,7 @@ namespace Travel.Data.Repositories
                 cost.PriceHotelSR = hotel.SingleRoomPrice;
                 cost.PriceRestaurant = restaurant.ComboPrice; // 2000000
                 cost.PriceTicketPlace = place.PriceTicket; // 10000
-                //
+                string jsonContent = JsonSerializer.Serialize(cost);
                 CreateDatabase(cost);
                 // thêm schedule update giá
                 // update price
@@ -244,8 +245,15 @@ namespace Travel.Data.Repositories
                 schedule.PriceBabyHoliday = 0;
 
                 UpdateDatabaseSchedule(schedule);
-
-                return Ultility.Responses($"Cập nhật giá cho {schedule.IdSchedule} thành công !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "CostTour");
+                if (result)
+                {
+                    return Ultility.Responses($"Cập nhật giá cho {schedule.IdSchedule} thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -301,7 +309,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Update(UpdateCostViewModel input)
+        public Response Update(UpdateCostViewModel input, string emailUser)
         {
             try
             {
@@ -314,6 +322,7 @@ namespace Travel.Data.Repositories
                 cost.PriceHotelSR = hotel.SingleRoomPrice;
                 cost.PriceRestaurant = restaurant.ComboPrice;
                 cost.PriceTicketPlace = place.PriceTicket;
+                string jsonContent = JsonSerializer.Serialize(cost);
                 UpdateDatabase(cost);
                 // update price
                 float holidayPercent = Convert.ToInt16(_config["PercentHoliday"]);
@@ -360,8 +369,16 @@ namespace Travel.Data.Repositories
                 schedule.PriceBabyHoliday = 0;
 
                 UpdateDatabaseSchedule(schedule);
+                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "CostTour");
+                if (result)
+                {
+                    return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
 
-                return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {

@@ -364,7 +364,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
             }
         }
 
-        public Response UpdateCar(UpdateCarViewModel input)
+        public Response UpdateCar(UpdateCarViewModel input,  string emailUser)
         {
             try
             {
@@ -379,10 +379,19 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 car.Phone = input.Phone;
                 car.AmountSeat = input.AmountSeat;
                 car.Status = input.Status;
+                string jsonContent = JsonSerializer.Serialize(car);
                 UpdateDatabase<Car>(car);
                 SaveChange();
 
-                return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Car");
+                if (result)
+                {
+                    return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -390,7 +399,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
             }
         }
 
-        public Response DeleteCar(Guid id, Guid idUser)
+        public Response DeleteCar(Guid id, Guid idUser, string emailUser)
         {
             try
             {
@@ -406,9 +415,19 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                     car.IdUserModify = userLogin.IdEmployee;
                     car.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     car.IsDelete = true;
+                    string jsonContent = JsonSerializer.Serialize(car);
                     UpdateDatabase<Car>(car);
                     SaveChange();
-                    return Ultility.Responses("Đã xóa !", Enums.TypeCRUD.Success.ToString());
+                    
+                    bool result = _log.AddLog(content: jsonContent, type: "delete", emailCreator: emailUser, classContent: "Car");
+                    if (result)
+                    {
+                        return Ultility.Responses("Đã xóa !", Enums.TypeCRUD.Success.ToString());
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
                 }
                 else
                 {
@@ -424,7 +443,7 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
             }
         }
 
-        public Response RestoreCar(Guid id)
+        public Response RestoreCar(Guid id, string emailUser)
         {
             try
             {
@@ -433,11 +452,20 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                            select x).FirstOrDefault();
                 if (car != null)
                 {
+                    string jsonContent = JsonSerializer.Serialize(car);
                     car.IsDelete = false;
                     UpdateDatabase<Car>(car);
                     SaveChange();
+                    bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "Car");
+                    if (result)
+                    {
+                         return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
 
-                    return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
 
                 }
                 else

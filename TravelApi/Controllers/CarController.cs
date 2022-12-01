@@ -95,14 +95,15 @@ namespace TravelApi.Controllers
         [HttpPut]
         [Authorize]
         [Route("update-car")]
-        public object UpdateRestaurant([FromBody] JObject frmData, Guid idCar)
+        public object UpdateCar([FromBody] JObject frmData, Guid idCar)
         {
             message = null;
             var result = _car.CheckBeforeSave(frmData, ref message, true);
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateCarViewModel>(result);
-                res = _car.UpdateCar(updateObj);
+                var emailUser = GetEmailUserLogin().Value;
+                res = _car.UpdateCar(updateObj, emailUser);
             }
             else
             {
@@ -116,7 +117,8 @@ namespace TravelApi.Controllers
         [Route("delete-car")]
         public object DeleteCar(Guid idCar, Guid idUser)
         {
-            res = _car.DeleteCar(idCar, idUser);
+            var emailUser = GetEmailUserLogin().Value;
+            res = _car.DeleteCar(idCar, idUser , emailUser);
             return Ok(res);
         }
 
@@ -125,7 +127,8 @@ namespace TravelApi.Controllers
         [Route("restore-car")]
         public object RestoreCar(Guid idCar)
         {
-            res = _car.RestoreCar(idCar);
+            var emailUser = GetEmailUserLogin().Value;
+            res = _car.RestoreCar(idCar , emailUser);
             return Ok(res);
         }
 

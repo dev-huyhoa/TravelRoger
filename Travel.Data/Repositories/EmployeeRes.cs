@@ -25,12 +25,14 @@ namespace Travel.Data.Repositories
         private Notification message;
         private Response res;
         private readonly IConfiguration _config;
-        public EmployeeRes(TravelContext db, IConfiguration config)
+        private readonly ILog _log;
+        public EmployeeRes(TravelContext db, IConfiguration config , ILog log)
         {
             _db = db;
             message = new Notification();
             res = new Response();
             _config = config;
+            _log = log;
         }
         private void UpdateDatabase(Employee input)
         {
@@ -250,18 +252,25 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CreateEmployee(CreateEmployeeViewModel input)
+        public Response CreateEmployee(CreateEmployeeViewModel input, string emailUser)
         {
             try
             {
                 Employee employee = Mapper.MapCreateEmployee(input);
                 employee.IsActive = true;
                 employee.Password = "3244185981728979115075721453575112";
-
+                string jsonContent = JsonSerializer.Serialize(employee);
                 _db.Employees.Add(employee);
                 _db.SaveChanges();
-
-                return Ultility.Responses("Tạo mới thành công !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Employee");
+                if (result)
+                {    return Ultility.Responses("Tạo mới thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
+            
             }
             catch (Exception e)
             {
@@ -269,14 +278,24 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateEmployee(UpdateEmployeeViewModel input)
+        public Response UpdateEmployee(UpdateEmployeeViewModel input, string emailUser)
         {
             try
             {
                 Employee employee = Mapper.MapCreateEmployee(input);
+                string jsonContent = JsonSerializer.Serialize(employee);
                 _db.Employees.Update(employee);
                 _db.SaveChanges();
-                return Ultility.Responses("Chỉnh sửa thành công !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Employee");
+                if (result)
+                {
+                    return Ultility.Responses("Chỉnh sửa thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
+               
             }
             catch (Exception e)
             {
@@ -516,7 +535,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response RestoreEmployee(Guid idEmployee)
+        public Response RestoreEmployee(Guid idEmployee, string emailUser)
         {
             try
             {
@@ -525,12 +544,23 @@ namespace Travel.Data.Repositories
                                 select x).FirstOrDefault();
                 if (employee != null)
                 {
+                    string jsonContent = JsonSerializer.Serialize(employee);
+
                     employee.IsDelete = false;
                     UpdateDatabase(employee);
                     _db.SaveChanges();
+                    bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "Employee");
+                    if (result)
+                    {
+                        return Ultility.Responses($"Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
 
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
 
-                    return Ultility.Responses($"Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
+               
 
                 }
                 else
@@ -547,7 +577,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response DeleteEmployee(Guid idEmployee)
+        public Response DeleteEmployee(Guid idEmployee, string emailUser)
         {
             try
             {
@@ -558,12 +588,22 @@ namespace Travel.Data.Repositories
                 {
                     if (employee != null)
                     {
+                        string jsonContent = JsonSerializer.Serialize(employee);
+
                         employee.IsDelete = true;
                         UpdateDatabase(employee);
                         _db.SaveChanges();
 
-                        return Ultility.Responses($"Xóa thành công !", Enums.TypeCRUD.Success.ToString());
+                        bool result = _log.AddLog(content: jsonContent, type: "delete", emailCreator: emailUser, classContent: "Employee");
+                        if (result)
+                        {
+                            return Ultility.Responses($"Xóa thành công !", Enums.TypeCRUD.Success.ToString());
 
+                        }
+                        else
+                        {
+                            return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                        }
                     }
                     else
                     {
@@ -750,7 +790,7 @@ namespace Travel.Data.Repositories
                     obj.EndTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(end);
                     obj.OTPCode = otpCode;
 
-                   // var subjectOTP = _config["OTPSubject"];
+                    // var subjectOTP = _config["OTPSubject"];
                     var emailSend = _config["emailSend"];
                     var keySecurity = _config["keySecurity"];
                     var stringHtml = Ultility.getHtmtFile();

@@ -13,7 +13,7 @@ namespace Travel.Data.Interfaces
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Gets(int pageIndex, int pageSize);
-        Response Create(CreatePaymentViewModel input);
+        Response Create(CreatePaymentViewModel input, string emailUser);
         //Response Update(CreateUpdatePaymentViewModel input);
     }
 }

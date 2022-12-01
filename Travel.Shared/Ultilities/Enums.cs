@@ -83,7 +83,8 @@ namespace Travel.Shared.Ultilities
             Hotel = 1,
             Place = 2,
             Restaurant = 3,
-            Promotion = 4
+            Promotion = 4,
+            Schedule = 5
         }
 
     }

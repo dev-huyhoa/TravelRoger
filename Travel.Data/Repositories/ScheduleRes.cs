@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
+using Travel.Data.Interfaces.INotify;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
@@ -23,12 +24,23 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private Notification message;
-
-        public ScheduleRes(TravelContext db)
+        private readonly ILog _log;
+        private INotification _notification;
+        public ScheduleRes(TravelContext db, INotification notification, ILog log)
         {
             _db = db;
+            _log = log;
             message = new Notification();
+            _notification = notification;
         }
+
+        private Employee GetCurrentUser(Guid IdUserModify)
+        {
+            return (from x in _db.Employees.AsNoTracking()
+                    where x.IdEmployee == IdUserModify
+                    select x).FirstOrDefault();
+        }
+
         private long GetDateTimeNow(int addMinutes = -1)
         {
             return  Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(addMinutes));
@@ -444,12 +456,13 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Create(CreateScheduleViewModel input)
+        public Response Create(CreateScheduleViewModel input, string emailUser)
         {
             try
             {
                 Schedule schedule =
                 schedule = Mapper.MapCreateSchedule(input);
+                string jsonContent = JsonSerializer.Serialize(schedule);
                 string nameTour = (from x in _db.Tour.AsNoTracking()
                                    where x.IdTour == input.TourId
                                    select x).FirstOrDefault().NameTour;
@@ -460,9 +473,21 @@ namespace Travel.Data.Repositories
                                  select x).FirstOrDefault();
                 schedule.ModifyBy = userLogin.NameEmployee;
                 schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+
                 CreateDatabase(schedule);
                 SaveChange();
-                return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString(), schedule.IdSchedule);
+
+                var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Schedule");
+                if (result)
+                {
+                    return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString(), schedule.IdSchedule);
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -647,6 +672,8 @@ namespace Travel.Data.Repositories
                                    where s.TourId == idTour
                                    && s.Isdelete == false &&
                                    s.Approve == (int)Enums.ApproveStatus.Waiting
+                                   orderby s.BeginDate descending, s.DepartureDate descending
+
                                    select new Schedule
                                    {
                                        Alias = s.Alias,
@@ -721,6 +748,8 @@ namespace Travel.Data.Repositories
                                    where s.TourId == idTour && s.IdUserModify == idUser
                                    where s.Isdelete == false &&
                                    s.Approve == (int)Enums.ApproveStatus.Waiting
+                                   orderby s.BeginDate descending, s.DepartureDate descending
+
                                    select new Schedule
                                    {
                                        Alias = s.Alias,
@@ -803,7 +832,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response RestoreShedule(string idSchedule, Guid idUser)
+        public Response RestoreShedule(string idSchedule, Guid idUser, string emailUser)
         {
             try
             {
@@ -811,6 +840,7 @@ namespace Travel.Data.Repositories
                                 where x.IdSchedule == idSchedule
                             && x.Isdelete == true
                                 select x).FirstOrDefault();
+
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
@@ -820,11 +850,25 @@ namespace Travel.Data.Repositories
                     schedule.IdUserModify = userLogin.IdEmployee;
                     schedule.Approve = (int)ApproveStatus.Waiting;
                     schedule.TypeAction = "restore";
+                    string jsonContent = JsonSerializer.Serialize(schedule);
+
                     schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     UpdateDatabase(schedule);
                     SaveChange();
 
-                    return Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+                    var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
+                    _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
+
+                    bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "promotion");
+                    if (result)
+                    {
+                        return Ultility.Responses($"Đã gửi yêu cầu khôi phục !", Enums.TypeCRUD.Success.ToString());
+
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
                 }
                 else
                 {
@@ -838,7 +882,7 @@ namespace Travel.Data.Repositories
         }
 
 
-        public Response UpdatePromotion(string idSchedule, int idPromotion)
+        public Response UpdatePromotion(string idSchedule, int idPromotion, string emailUser)   
         {
             try
             {
@@ -847,17 +891,32 @@ namespace Travel.Data.Repositories
                                 select x).FirstOrDefault();
                 if (schedule != null)
                 {
+
                     var promotion = (from x in _db.Promotions.AsNoTracking()
                                      where x.IdPromotion == idPromotion
                                      select x).FirstOrDefault();
                     if (promotion != null)
-                    {
+                    {          
+                       
+
                         schedule.PromotionId = promotion.IdPromotion;
                         schedule.TimePromotion = promotion.ToDate;
+
                         UpdateDatabase(schedule);
                         SaveChange();
+                      
                     }
-                    return Ultility.Responses("Cập nhật thành công !", Enums.TypeCRUD.Success.ToString());
+                    string jsonContent = JsonSerializer.Serialize(promotion);
+                    bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "promotion");
+                    if (result)
+                    {
+                        return Ultility.Responses("Cập nhật thành công !", Enums.TypeCRUD.Success.ToString());
+
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
                 }
                 else
                 {
@@ -1698,7 +1757,7 @@ namespace Travel.Data.Repositories
 
 
         #region dang chỉnh
-        public Response Delete(string idSchedule, Guid idUser)
+        public Response Delete(string idSchedule, Guid idUser, string emailUser)
         {
             try
             {
@@ -1711,17 +1770,30 @@ namespace Travel.Data.Repositories
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
+
                 if (schedule.Approve == (int)ApproveStatus.Approved)
                 {
                     schedule.IdUserModify = userLogin.IdEmployee;
                     schedule.Approve = (int)ApproveStatus.Waiting;
                     schedule.ModifyBy = userLogin.NameEmployee;
                     schedule.TypeAction = "delete";
+                    string jsonContent = JsonSerializer.Serialize(schedule);
                     schedule.ModifyDate = GetDateTimeNow(0);
                     UpdateDatabase(schedule);
                     SaveChange();
 
-                    return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                    var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
+                    _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
+                    bool result = _log.AddLog(content: jsonContent, type: "delete", emailCreator: emailUser, classContent: "Schedule");
+                    if (result)
+                    {
+                        return Ultility.Responses("Đã gửi yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
+                 
                 }
                 else
                 {
@@ -1859,6 +1931,10 @@ namespace Travel.Data.Repositories
                     }
                     UpdateDatabase(schedule);
                     SaveChange();
+
+                    var userModify = GetCurrentUser(schedule.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, new int[] { userModify.RoleId }, "Thành công");
+
                     return Ultility.Responses($"Duyệt thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -1940,6 +2016,11 @@ namespace Travel.Data.Repositories
                     }
                     UpdateDatabase(schedule);
                     SaveChange();
+
+                    var userModify = GetCurrentUser(schedule.IdUserModify);
+                    _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, new int[] { userModify.RoleId }, "Từ chối");
+
+
                     return Ultility.Responses($"Từ chối thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
@@ -1953,7 +2034,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response Update(UpdateScheduleViewModel input)
+        public Response Update(UpdateScheduleViewModel input, string emailUser)
         {
             try
             {
@@ -1971,6 +2052,7 @@ namespace Travel.Data.Repositories
                 scheduleOld.IdAction = scheduleOld.IdSchedule.ToString();
                 scheduleOld.IdSchedule = $"{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}Temp";
                 scheduleOld.IsTempData = true;
+                string jsonContent = JsonSerializer.Serialize(schedule);
 
                 CreateDatabase(scheduleOld);
 
@@ -2000,7 +2082,18 @@ namespace Travel.Data.Repositories
 
                 UpdateDatabase(schedule);
                 SaveChange();
-                return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+
+                var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
+                _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
+                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Schedule");
+                if (result)
+                {
+                    return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
 
             }
             catch (Exception e)
@@ -2542,7 +2635,10 @@ namespace Travel.Data.Repositories
                     }
                 }
                 var result = Mapper.MapSchedule(listSchedule);
-                if (listSchedule.Count() > 0)
+                result = (from x in result
+                          orderby x.BeginDate descending, x.DepartureDate descending
+                          select x).ToList();
+                if (result.Count() > 0)
                 {
                     var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                     res.TotalResult = totalResult;

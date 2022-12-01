@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
@@ -18,10 +20,17 @@ namespace TravelApi.Controllers
         private ICustomer customer;
         private Notification message;
         private Response res;
+        private readonly ILog _log;
         public CustomerController(ICustomer _customer)
         {
             customer = _customer;
             res = new Response();
+        }
+
+        [NonAction]
+        private Claim GetEmailUserLogin()
+        {
+            return (User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.Email).FirstOrDefault();
         }
 
         [HttpPost]
@@ -34,7 +43,9 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateCustomerViewModel>(result);
-                res = customer.Create(createObj);
+                var emailUser = GetEmailUserLogin().Value;
+                res = customer.Create(createObj, emailUser);
+
             }
             else
             {
@@ -88,7 +99,9 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateCustomerViewModel>(result);
-                res = await customer.UpdateCustomer(updateObj);
+                var emailUser = GetEmailUserLogin().Value;
+                
+                res = await customer.UpdateCustomer(updateObj, emailUser);
                 //_messageHub.Clients.All.Init();
             }
             else

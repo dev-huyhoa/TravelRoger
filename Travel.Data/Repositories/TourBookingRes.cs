@@ -26,13 +26,15 @@ namespace Travel.Data.Repositories
         private readonly string keySecurity;
         private readonly IConfiguration _config;
         private readonly ICustomer _customer;
-       
-        public TourBookingRes(TravelContext db,
+        private readonly ILog _log;
+        public TourBookingRes(TravelContext db, ILog log,
             ISchedule schedule,
+       
             ICustomer customer,
             IConfiguration config)
         {
             _db = db;
+            _log = log;
             _schedule = schedule;
             _customer = customer;
             _config = config;
@@ -212,7 +214,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public async Task<Response> Create(CreateTourBookingViewModel input)
+        public async Task<Response> Create(CreateTourBookingViewModel input, string emailUser)
         {
             using var transaction = _db.Database.BeginTransaction();
 
@@ -306,6 +308,8 @@ namespace Travel.Data.Repositories
                 await transaction.CreateSavepointAsync("BeforeSave");
             
                 tourbooking.TourBookingDetails = tourBookingDetail;
+                string jsonContent = JsonSerializer.Serialize(tourbooking);
+
                 CreateDatabase<TourBooking>(tourbooking);
                 CreateDatabase<TourBookingDetails>(tourBookingDetail);
                 await SaveChangeAsync();
@@ -327,7 +331,16 @@ namespace Travel.Data.Repositories
                 #region send mail
                 Ultility.sendEmail("",input.Email,"Thông báo booking","Bạn vừa đặt tour !", keySecurity);
                 #endregion
-                return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "TourBooking");
+                if (result)
+                {
+                    return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
+
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -548,7 +561,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public async Task<Response> RestoreBooking(string idTourBooking)
+        public async Task<Response> RestoreBooking(string idTourBooking, string emailUser)
         {
             try
             {
@@ -559,6 +572,7 @@ namespace Travel.Data.Repositories
                 if (tourbooking != null)
                 {
                     tourbooking.Status = (int)Enums.StatusBooking.Paying;
+                    string jsonContent = JsonSerializer.Serialize(tourbooking);
                     UpdateDatabase<TourBooking>(tourbooking);
                     SaveChange();
                     //#region sendMail
@@ -569,7 +583,16 @@ namespace Travel.Data.Repositories
 
                     //Ultility.sendEmail(stringHtml, tourbooking.Email, "Thanh toán dịch vụ", emailSend, keySecurity);
                     //#endregion
-                    return Ultility.Responses("Đã hủy booking !", Enums.TypeCRUD.Success.ToString());
+                    bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "TourBooking");
+                    if (result)
+                    {
+                        return Ultility.Responses("Đã hủy booking !", Enums.TypeCRUD.Success.ToString());
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
+                   
                 }
                 else
                 {
@@ -954,7 +977,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateStatus(string pincode)
+        public Response UpdateStatus(string pincode, string emailUser)
         {
             try
             {
@@ -966,6 +989,7 @@ namespace Travel.Data.Repositories
                 {
                     if(tourBooking.Status == 1)
                     {
+
                         tourBooking.Status = (int)Enums.StatusBooking.Paid;
                         UpdateDatabase(tourBooking);
                     }
@@ -973,7 +997,18 @@ namespace Travel.Data.Repositories
                     {
                         return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
                     }
-                    return Ultility.Responses($"Đổi thành công !", Enums.TypeCRUD.Success.ToString());
+                    string jsonContent = JsonSerializer.Serialize(tourBooking);
+
+                    bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "TourBooking");
+                    if (result)
+                    {
+                        return Ultility.Responses($"Đổi thành công !", Enums.TypeCRUD.Success.ToString());
+
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
                 }
                 else
                 {

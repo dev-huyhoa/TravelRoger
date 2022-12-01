@@ -20,10 +20,12 @@ namespace Travel.Data.Repositories
     {
         private readonly TravelContext _db;
         private Notification message;
-        private Response res;
-        public PaymentRes(TravelContext db)
+        private Response res; 
+        private readonly ILog _log;
+        public PaymentRes(TravelContext db , ILog log)
         {
             _db = db;
+            _log = log;
             message = new Notification();
             res = new Response();
         }
@@ -73,16 +75,25 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Create(CreatePaymentViewModel input)
+        public Response Create(CreatePaymentViewModel input, string emailUser)
         {
             try
             {
                 Payment pay = new Payment();
                 pay = Mapper.MapCreatePayment(input);
-
+                string jsonContent = JsonSerializer.Serialize(pay);
                 _db.Payment.Add(pay);
                 _db.SaveChanges();
-                return Ultility.Responses($"Thêm mới thành công !", Enums.TypeCRUD.Success.ToString());
+
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Payment");
+                if (result)
+                {
+                    return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
 
             }
             catch (Exception e)
