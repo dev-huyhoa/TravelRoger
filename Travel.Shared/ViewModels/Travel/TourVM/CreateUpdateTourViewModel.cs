@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Context.Models;
 using Travel.Shared.ViewModels.Travel.ContractVM;
 
 namespace Travel.Shared.ViewModels.Travel.TourVM
@@ -20,6 +21,9 @@ namespace Travel.Shared.ViewModels.Travel.TourVM
         private string toPlace;
         private string description;
         private double rating;
+        private List<Image> image;
+
+        
         public string IdTour { get => idTour; set => idTour = value; }
         public string NameTour { get => nameTour; set => nameTour = value; }
         public string Thumbnail { get => thumbnail; set => thumbnail = value; }
@@ -27,5 +31,7 @@ namespace Travel.Shared.ViewModels.Travel.TourVM
         public string Description { get => description; set => description = value; }
         public double Rating { get => rating; set => rating = value; }
         public string NameTour_EN { get => nameTour_EN; set => nameTour_EN = value; }
+        public List<Image> Image { get => image; set => image = value; }
+
     }
 }

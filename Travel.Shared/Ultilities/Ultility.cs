@@ -24,6 +24,7 @@ namespace Travel.Shared.Ultilities
     {
         private static Notification message = new Notification();
         private static Image image = new Image();
+        private static List<Image> imageList = new List<Image>();
         private const string CLOUD_NAME = "ddv2idi9d";
         private const string API_KEY = "687389283419199";
         private const string API_SECRET = "BOCNwD1_s-DwP67WIkwNkuURBtE";
@@ -351,6 +352,92 @@ namespace Travel.Shared.Ultilities
                 return image;
             }
         }
+
+        public static List<Image> WriteFiles(ICollection<IFormFile> files, string type, string idService, ref Notification _message, int orderby = 0)
+        {
+            try
+            {
+                
+                if (files.Count > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        Image imageDetail = new Image();
+
+                        var folder = Directory.GetCurrentDirectory() + @"\wwwroot";
+                        string path = Path.Combine(folder, "Uploads");
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+
+                        string pathType = Path.Combine(path, type);
+
+                        if (!Directory.Exists(pathType))
+                        {
+                            Directory.CreateDirectory(pathType);
+                        }
+
+                        string pathId = Path.Combine(pathType, idService.ToString());
+
+                        if (!Directory.Exists(pathId))
+                        {
+                            Directory.CreateDirectory(pathId);
+                        }
+                        var date = Ultility.FormatDateToInt(DateTime.Now, "DDMMYYYY").ToString();
+
+                        string pathDate = Path.Combine(pathId, date);
+                        if (!Directory.Exists(pathDate))
+                        {
+                            Directory.CreateDirectory(pathDate);
+                        }
+                        //get file extension
+                        //string[] str = file.FileName.Split('.');
+                        string fileName = "";
+                        if (orderby > 0)
+                        {
+                            fileName = orderby.ToString() + "_" + Ultility.FormatDateToInt(DateTime.Now, "DDMMYYYYHHMMSS").ToString() + Path.GetExtension(file.FileName);
+                        }
+                        else
+                        {
+                            fileName = Ultility.FormatDateToInt(DateTime.Now, "DDMMYYYYHHMMSS").ToString() + Path.GetExtension(file.FileName);
+                        }
+                        string fullpath = Path.Combine(pathDate, fileName);
+                        string folderPath = "/Uploads/" + type + "/" + idService + "/" + date;
+                        string serverPath = "/Uploads/" + type + "/" + idService + "/" + date + "/" + fileName;
+                        if (Directory.Exists(fullpath))
+                        {
+                            System.IO.File.Delete(fullpath);
+
+                        }
+                        using (var stream = new FileStream(fullpath, FileMode.Create))
+                        {
+                            file.CopyTo(stream);
+                        }
+
+
+                        imageDetail.IdImage = Guid.NewGuid();
+                        imageDetail.NameImage = fileName;
+                        imageDetail.Extension = Path.GetExtension(file.FileName).Replace(".", "");
+                        imageDetail.IdService = idService;
+                        imageDetail.Size = file.Length;
+                        imageDetail.FilePath = link;
+                        imageList.Add(imageDetail);
+                    }
+                }
+                return imageList;
+            }
+            catch (Exception e)
+            {
+                message.Messenge = "Có lỗi xảy ra khi lưu file !";
+                message.Type = "Error";
+                message.Description = e.Message;
+                _message = message;
+
+                return imageList;
+            }
+        }
+
         public static string getHtmlBookingSuccess(string fullname,string phone,string totalamount)
         {
             try

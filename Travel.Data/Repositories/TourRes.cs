@@ -62,7 +62,7 @@ namespace Travel.Data.Repositories
                     where x.IdEmployee == IdUserModify
                     select x).FirstOrDefault();
         }
-        public string CheckBeforSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate)
+        public string CheckBeforSave(IFormCollection frmdata, IFormFile file, ICollection<IFormFile> files, ref Notification _message, bool isUpdate)
         {
             try
             {
@@ -120,6 +120,11 @@ namespace Travel.Data.Repositories
                             message = _message;
                         }
                     }
+                    List<Image> imageDetail = new List<Image>();
+                    if (files != null)
+                    {
+                        imageDetail = Ultility.WriteFiles(files, "Tour", idTour, ref _message);
+                    }
                     var typeAction = PrCommon.GetString("typeAction", frmData);
                     var idUserModify = PrCommon.GetString("idUserModify", frmData);
                     if (String.IsNullOrEmpty(idUserModify))
@@ -150,7 +155,7 @@ namespace Travel.Data.Repositories
                     obj.IdUserModify = Guid.Parse(idUserModify);
                     // generate ID
                     obj.IdTour = idTour;
-
+                    obj.Image = imageDetail;
                     return JsonSerializer.Serialize(obj);
                 }
                 return string.Empty;
@@ -174,6 +179,12 @@ namespace Travel.Data.Repositories
                 string jsonContent = JsonSerializer.Serialize(tour);
                 CreateDatabase(tour);
                 SaveChange();
+
+                if (input.Image.Count > 0)
+                {
+                    CreateImageTourDetail(input.Image);
+                }
+
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Tour), tour.NameTour , listRole, "");
 
@@ -194,7 +205,19 @@ namespace Travel.Data.Repositories
             }
         }
 
-
+        public void CreateImageTourDetail(ICollection<Image> images)
+        {
+            try
+            {
+                if (images.Count > 0)
+                {
+                    _db.Images.AddRange(images.AsEnumerable());
+                    _db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            { }
+        }
 
         public Response Get(bool isDelete)
         {
