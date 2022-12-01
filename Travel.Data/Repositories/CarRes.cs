@@ -294,15 +294,19 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
             }
         }
 
-        public Response Gets(bool isDelete)
+        public Response Gets(bool isDelete, int pageIndex, int pageSize)
         {
             try
             {
-                var listCar = (from x in _db.Cars.AsNoTracking()
+                var queryListCar = (from x in _db.Cars.AsNoTracking()
                                where x.IsDelete == isDelete
-                               select x).ToList();
+                               select x);
+                int totalResult = queryListCar.Count();
+                var listCar = queryListCar.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 var result = Mapper.MapCar(listCar);
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
             }
             catch (Exception e)
             {
