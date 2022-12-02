@@ -40,8 +40,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("list-car")]
-        public object Gets(bool isDelete)
+        public object Gets(bool isDelete,int pageIndex, int pageSize)
         {
+            res = _car.Gets(isDelete, pageIndex, pageSize);
             return Ok(res);
         }
         [HttpGet]
@@ -91,6 +92,7 @@ namespace TravelApi.Controllers
 
             return Ok(res);
         }
+
 
         [HttpPut]
         [Authorize]
