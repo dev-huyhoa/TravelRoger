@@ -25,5 +25,9 @@ namespace Travel.Data.Interfaces
 
         Task<Response> SendOTP(string email);
         Task<Response> SendFile(string email);
+
+
+        Response GetsSelectBoxEmployee(long fromDate, long toDate);
+        Response GetsSelectBoxEmployeeUpdate(long fromDate, long toDate, string idSchedule);
     }
 }

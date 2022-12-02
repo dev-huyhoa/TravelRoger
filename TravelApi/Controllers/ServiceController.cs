@@ -335,14 +335,14 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpPost]
-        [Authorize]
-        [Route("search-hotel-waiting")]
-        public object SearchHotelWaiting([FromBody] JObject frmData)
-        {
-            res = _serviceRes.SearchHotelWaiting(frmData);
-            return Ok(res);
-        }
+        //[HttpPost]
+        //[Authorize]
+        //[Route("search-hotel-waiting")]
+        //public object SearchHotelWaiting([FromBody] JObject frmData)
+        //{
+        //    res = _serviceRes.SearchHotelWaiting(frmData);
+        //    return Ok(res);
+        //}
 
         [HttpPost]
         [Authorize]
@@ -360,22 +360,22 @@ namespace TravelApi.Controllers
             res = _serviceRes.SearchRestaurant(frmData);
             return Ok(res); 
         }
-        [HttpPost]
-        [Authorize]
-        [Route("search-place-waiting")]
-        public object SearchPlaceWaiting([FromBody] JObject frmData)
-        {
-            res = _serviceRes.SearchPlaceWaiting(frmData);
-            return Ok(res);
-        }
+        //[HttpPost]
+        //[Authorize]
+        //[Route("search-place-waiting")]
+        //public object SearchPlaceWaiting([FromBody] JObject frmData)
+        //{
+        //    res = _serviceRes.SearchPlaceWaiting(frmData);
+        //    return Ok(res);
+        //}
 
-        [HttpPost]
-        [Authorize]
-        [Route("search-restaurant-waiting")]
-        public object SearchRestaurantWaiting([FromBody] JObject frmData)
-        {
-            res = _serviceRes.SearchRestaurantWaiting(frmData);
-            return Ok(res);
-        }
+        //[HttpPost]
+        //[Authorize]
+        //[Route("search-restaurant-waiting")]
+        //public object SearchRestaurantWaiting([FromBody] JObject frmData)
+        //{
+        //    res = _serviceRes.SearchRestaurantWaiting(frmData);
+        //    return Ok(res);
+        //}
     }
 }

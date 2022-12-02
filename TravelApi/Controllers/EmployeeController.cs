@@ -161,5 +161,24 @@ namespace TravelApi.Controllers
             res = await employee.SendFile(email);
             return Ok(res);
         }
+
+
+        [HttpGet]
+        [Authorize]
+        [Route("list-selectbox-employee")]
+        public object GetsSelectBoxEmployee(long fromDate, long toDate)
+        {
+            res = employee.GetsSelectBoxEmployee(fromDate, toDate);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("list-selectbox-employee-update")]
+        public object GetsSelectBoxEmployeeUpdate(long fromDate, long toDate, string idSchedule)
+        {
+            res = employee.GetsSelectBoxEmployeeUpdate(fromDate, toDate, idSchedule);
+            return Ok(res);
+        }
     }
 }

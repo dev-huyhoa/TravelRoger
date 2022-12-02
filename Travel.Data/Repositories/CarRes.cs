@@ -136,7 +136,28 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response ViewSelectBoxCar(string idSchedule)
+        {
+            try
+            {
+                var carOfSchedule = (from x in _db.Schedules.AsNoTracking()
+                                     join
+c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
+                                     where x.IdSchedule == idSchedule
+                                     select new
+                                     {
+                                         LiscensePlate = c.LiscensePlate,
+                                         CarId = x.CarId
+                                     }).FirstOrDefault();
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), carOfSchedule);
 
+            }
+            catch (Exception e)
+            {
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
 
         public Response GetsSelectBoxCar(long fromDate, long toDate)
         {
@@ -179,28 +200,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response ViewSelectBoxCar(string idSchedule)
-        {
-            try
-            {
-                var carOfSchedule = (from x in _db.Schedules.AsNoTracking()
-                                     join
-c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
-                                     where x.IdSchedule == idSchedule
-                                     select new
-                                     {
-                                         LiscensePlate = c.LiscensePlate,
-                                         CarId = x.CarId
-                                     }).FirstOrDefault();
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), carOfSchedule);
-
-            }
-            catch (Exception e)
-            {
-
-                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-            }
-        }
+       
         public Response GetsSelectBoxCarUpdate(long fromDate, long toDate, string idSchedule)
         {
             try

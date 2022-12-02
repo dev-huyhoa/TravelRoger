@@ -809,5 +809,140 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+        public Response GetsSelectBoxEmployee(long fromDate, long toDate)
+        {
+            try
+            {
+                var unixTimeOneDay = 86400000;
+
+                var listEmployeeShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
+                                            where (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
+                                            && x.Isdelete == false
+                                            orderby x.ReturnDate ascending
+                                            select x.EmployeeId);
+
+                var scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
+                                                      where x.DepartureDate >= fromDate
+                                                        && x.Isdelete == false
+                                                      orderby x.DepartureDate ascending
+                                                      select x);
+                var listEmployeeShouldRemove2 = (from x in scheduleDepartDateLargerToDate
+                                            where !(from s in listEmployeeShouldRemove1 select s).Contains(x.EmployeeId)
+                                              && x.Isdelete == false
+                                            && (toDate + unixTimeOneDay) > x.DepartureDate
+                                            select x.EmployeeId).Distinct();
+
+                var listShouldRemove = listEmployeeShouldRemove1.Concat(listEmployeeShouldRemove2);
+
+                var listEmployee = (from x in _db.Employees.AsNoTracking()
+                               where !listShouldRemove.Any(e => e == x.IdEmployee)
+                                 && x.IsDelete == false && x.IsActive == true && x.RoleId == Convert.ToInt32(TitleRole.TourGuide)
+                               select x).ToList();
+                if (listEmployee.Count() == 0)
+                {
+                    return Ultility.Responses("Ngày bạn chọn hiện tại không có hướng dẫn viên !", Enums.TypeCRUD.Warning.ToString());
+                }
+                var result = Mapper.MapEmployee(listEmployee);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response GetsSelectBoxEmployeeUpdate(long fromDate, long toDate, string idSchedule)
+        {
+            try
+            {
+                var unixTimeOneDay = 86400000;
+                var employeeOfSchedule = (from x in _db.Schedules.AsNoTracking()
+                                     where x.IdSchedule == idSchedule
+                                     && x.Isdelete == false
+                                     select x).FirstOrDefault();
+                var fromDateCurrentUpdate = employeeOfSchedule.DepartureDate;
+                var toDateCurrentUpdate = employeeOfSchedule.ReturnDate;
+                IQueryable<Guid> listEmployeeShouldRemove1;
+                IQueryable<Schedule> scheduleDepartDateLargerToDate;
+                if (fromDate == fromDateCurrentUpdate && toDate == toDateCurrentUpdate)
+                {
+                    listEmployeeShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
+                                            where x.EmployeeId != employeeOfSchedule.EmployeeId
+                                             && x.Isdelete == false
+                                            && (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
+                                            orderby x.ReturnDate ascending
+                                            select x.CarId);
+                    scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
+                                                      where x.EmployeeId != employeeOfSchedule.EmployeeId
+                                                       && x.Isdelete == false
+                                                      && x.DepartureDate >= fromDate
+                                                      orderby x.DepartureDate ascending
+                                                      select x);
+                }
+                else
+                {
+                    if ((fromDate >= fromDateCurrentUpdate && fromDate <= toDateCurrentUpdate) || toDate >= fromDateCurrentUpdate && toDate <= toDateCurrentUpdate)
+                    {
+                        listEmployeeShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
+                                                where (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
+                                                 && x.Isdelete == false
+                                                && x.IdSchedule != idSchedule
+                                                orderby x.ReturnDate ascending
+                                                select x.EmployeeId);
+
+                        scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
+                                                          where x.DepartureDate >= fromDate
+                                                           && x.Isdelete == false
+                                                                && x.IdSchedule != idSchedule
+                                                          orderby x.DepartureDate ascending
+                                                          select x);
+                    }
+                    else
+                    {
+                        listEmployeeShouldRemove1 = (from x in _db.Schedules.AsNoTracking()
+                                                where (fromDate >= x.DepartureDate && fromDate < (x.ReturnDate + unixTimeOneDay))
+                                                 && x.Isdelete == false
+                                                orderby x.ReturnDate ascending
+                                                select x.EmployeeId);
+
+                        scheduleDepartDateLargerToDate = (from x in _db.Schedules.AsNoTracking()
+                                                          where x.DepartureDate >= fromDate
+                                                           && x.Isdelete == false
+                                                          orderby x.DepartureDate ascending
+                                                          select x);
+                    }
+
+                }
+
+
+
+
+
+                var listEmployeeShouldRemove2 = (from x in scheduleDepartDateLargerToDate
+                                            where !(from s in listEmployeeShouldRemove1 select s).Contains(x.EmployeeId)
+                                            && (toDate + unixTimeOneDay) > x.DepartureDate
+                                             && x.Isdelete == false
+                                            select x.EmployeeId).Distinct();
+
+                var listShouldRemove = listEmployeeShouldRemove1.Concat(listEmployeeShouldRemove2);
+
+
+                var listEmployeeCanChoose = (from x in _db.Employees.AsNoTracking()
+                                        where !listShouldRemove.Any(c => c == x.IdEmployee)
+                                         && x.IsDelete == false && x.IsActive == true && x.RoleId == Convert.ToInt32(TitleRole.TourGuide)
+                                             select x).ToList();
+                if (listEmployeeCanChoose.Count() == 0)
+                {
+                    return Ultility.Responses("Ngày bạn chọn hiện tại không có hướng dẫn viên !", Enums.TypeCRUD.Warning.ToString());
+                }
+                var result = Mapper.MapEmployee(listEmployeeCanChoose);
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }
