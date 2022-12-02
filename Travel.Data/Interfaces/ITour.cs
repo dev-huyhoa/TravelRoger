@@ -14,7 +14,7 @@ namespace Travel.Data.Interfaces
 {
    public  interface ITour
     {
-        string CheckBeforSave(IFormCollection frmdata, IFormFile file, ICollection<IFormFile> files, ref Notification _message, bool isUpdate = false);
+        string CheckBeforSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate = false);
         Response Create(CreateTourViewModel input, string emailUser);
         Response Update(UpdateTourViewModel input, string emailUser);
         Response Get(bool isDelete);

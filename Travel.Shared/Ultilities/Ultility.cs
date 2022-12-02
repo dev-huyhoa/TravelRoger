@@ -357,7 +357,7 @@ namespace Travel.Shared.Ultilities
         {
             try
             {
-                
+                imageList = new List<Image>();
                 if (files.Count > 0)
                 {
                     foreach (var file in files)
@@ -415,6 +415,10 @@ namespace Travel.Shared.Ultilities
                             file.CopyTo(stream);
                         }
 
+                        Account account = new Account(CLOUD_NAME, API_KEY, API_SECRET);
+                        cloudinary = new Cloudinary(account);
+                        string imagePath = Path.GetFullPath(fullpath);
+                        uploadImage(imagePath, folderPath);
 
                         imageDetail.IdImage = Guid.NewGuid();
                         imageDetail.NameImage = fileName;

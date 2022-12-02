@@ -42,10 +42,10 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("create-tour")]
-        public object Create(IFormCollection frmdata, IFormFile file, ICollection<IFormFile> files)
+        public object Create(IFormCollection frmdata, IFormFile file)
         {
             message = null;
-            var result = _tourRes.CheckBeforSave(frmdata, file, files, ref message,false);
+            var result = _tourRes.CheckBeforSave(frmdata, file, ref message,false);
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateTourViewModel>(result);
@@ -62,10 +62,10 @@ namespace TravelApi.Controllers
         [HttpPut]
         [Authorize]
         [Route("update-tour")]
-        public object Update(IFormCollection frmdata, IFormFile file, ICollection<IFormFile> files, string idTour)
+        public object Update(IFormCollection frmdata, IFormFile file, string idTour)
         {
             message = null;
-            var result = _tourRes.CheckBeforSave(frmdata, file, files, ref message, true);
+            var result = _tourRes.CheckBeforSave(frmdata, file, ref message, true);
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateTourViewModel>(result);

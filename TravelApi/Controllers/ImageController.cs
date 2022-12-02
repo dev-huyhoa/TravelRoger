@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using Travel.Context.Models;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 
@@ -20,12 +24,60 @@ namespace TravelApi.Controllers
             res = new Response();
         }
 
+        [NonAction]
+        private Claim GetEmailUserLogin()
+        {
+            return (User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.Email).FirstOrDefault();
+        }
+
         [HttpGet]
         [Authorize]
         [Route("list-image-idTour")]
         public object GetImageByIdTour(string idTour)
         {
             res = _imageRes.GetImageByIdTour(idTour);
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("create-image-idTour")]
+        public object Create(ICollection<IFormFile> files, string idTour)
+        {
+            message = null;
+            if (message == null)
+            {
+                var createObj = files;
+                if(files.Count > 0)
+                {
+                    var emailUser = GetEmailUserLogin().Value;
+                    res = _imageRes.CreateImageTourDetail(createObj, idTour, emailUser);
+                }
+            }
+            else
+            {
+                res.Notification = message;
+            }
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("delete-image-idTour")]
+        public object Delete(ICollection<Image> images)
+        {
+            message = null;
+            if (message == null)
+            {
+                var updateObj = images;
+                var emailUser = GetEmailUserLogin().Value;
+                res = _imageRes.DeleteImageTourDetail(updateObj, emailUser);
+
+            }
+            else
+            {
+                res.Notification = message;
+            }
             return Ok(res);
         }
     }
