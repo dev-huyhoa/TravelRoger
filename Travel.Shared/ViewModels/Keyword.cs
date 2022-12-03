@@ -23,6 +23,7 @@ namespace Travel.Shared.ViewModels
         public string KwDescription { get; set; }
 
         public List<int> KwStar{ get; set; }
+        public List<int> KwStatusList { get; set; }
         public List<string> KwTypeActions { get; set; }
         public string KwAddress { get; set; }
         public string KwPriceTicket { get; set; }

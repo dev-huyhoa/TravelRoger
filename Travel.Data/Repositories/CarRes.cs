@@ -142,7 +142,7 @@ namespace Travel.Data.Repositories
             {
                 var carOfSchedule = (from x in _db.Schedules.AsNoTracking()
                                      join
-c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
+                                        c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                                      where x.IdSchedule == idSchedule
                                      select new
                                      {
@@ -487,7 +487,10 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
         {
             try
             {
+                var totalResult = 0;
                 Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
 
                 var isDelete = PrCommon.GetString("isDelete", frmData);
                 if (!String.IsNullOrEmpty(isDelete))
@@ -500,17 +503,29 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 {
                     keywords.KwName = kwName.Trim().ToLower();
                 }
+                else
+                {
+                    keywords.KwName = "";
+                }
 
                 var kwAmountSeat = PrCommon.GetString("amountSeat", frmData);
                 if (!String.IsNullOrEmpty(kwAmountSeat))
                 {
                     keywords.KwAmount = int.Parse(kwAmountSeat);
                 }
+                else
+                {
+                    keywords.KwAmount = 0;
+                }
 
                 var kwLiscensePlate = PrCommon.GetString("liscenseplate", frmData);
                 if (!String.IsNullOrEmpty(kwLiscensePlate))
                 {
                     keywords.KwLiscensePlate = kwLiscensePlate.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwLiscensePlate = "";
                 }
 
 
@@ -519,43 +534,84 @@ c in _db.Cars.AsNoTracking() on x.CarId equals c.IdCar
                 {
                     keywords.KwPhone = kwPhone.Trim().ToLower();
                 }
-
-                var status = PrCommon.GetString("status", frmData);
-                if (!String.IsNullOrEmpty(status))
+                else
                 {
+                    keywords.KwPhone = "";
                 }
 
+                
+                var status = PrCommon.GetString("status", frmData);
+                keywords.KwStatusList = PrCommon.getListInt(status, ',', false);
+
                 var listCar = new List<Car>();
-                if (!string.IsNullOrEmpty(isDelete))
+
+                if (keywords.KwStatusList.Count > 0)
                 {
-                    listCar = (from x in _db.Cars.AsNoTracking()
-                               where x.IsDelete == keywords.IsDelete &&
-                                               x.NameDriver.ToLower().Contains(keywords.KwName) &&
-                                               x.LiscensePlate.ToLower().Contains(keywords.KwLiscensePlate) &&
-                                               x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                               x.AmountSeat == keywords.KwAmount
-                               select x).ToList();
+                    if (!string.IsNullOrEmpty(kwAmountSeat))
+                    {
+                        var querylistCar = (from x in _db.Cars.AsNoTracking()
+                                            where x.IsDelete == keywords.IsDelete &&
+                                                            x.AmountSeat.Equals(keywords.KwAmount) &&
+                                                             x.NameDriver.ToLower().Contains(keywords.KwName) &&
+                                                  x.LiscensePlate.ToLower().Contains(keywords.KwLiscensePlate) &&
+                                                  x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                  keywords.KwStatusList.Contains(x.Status)
+                                            orderby x.ModifyDate descending
+                                            select x);
+                        totalResult = querylistCar.Count();
+                        listCar = querylistCar.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                    }
+                    else
+                    {
+                        var querylistCar = (from x in _db.Cars
+                                            where x.IsDelete == keywords.IsDelete &&
+                                                               x.NameDriver.ToLower().Contains(keywords.KwName) &&
+                                                    x.LiscensePlate.ToLower().Contains(keywords.KwLiscensePlate) &&
+                                                    x.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                    keywords.KwStatusList.Contains(x.Status)
+                                            orderby x.ModifyDate descending
+                                            select x);
+                        totalResult = querylistCar.Count();
+                        listCar = querylistCar.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                    }
+                   
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(kwAmountSeat))
                     {
-                        listCar = (from x in _db.Cars.AsNoTracking()
-                                   where x.IsDelete == keywords.IsDelete &&
-                                                   x.AmountSeat.Equals(keywords.KwAmount)
-                                   select x).ToList();
+                        var querylistCar = (from x in _db.Cars.AsNoTracking()
+                                            where x.IsDelete == keywords.IsDelete &&
+                                                            x.AmountSeat.Equals(keywords.KwAmount) &&
+                                                             x.NameDriver.ToLower().Contains(keywords.KwName) &&
+                                                  x.LiscensePlate.ToLower().Contains(keywords.KwLiscensePlate) &&
+                                                  x.Phone.ToLower().Contains(keywords.KwPhone) 
+                                            orderby x.ModifyDate descending
+                                            select x);
+                        totalResult = querylistCar.Count();
+                        listCar = querylistCar.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                     else
                     {
-                        listCar = (from x in _db.Cars.AsNoTracking()
-                                   where x.IsDelete == keywords.IsDelete
-                                   select x).ToList();
+                        var querylistCar = (from x in _db.Cars.AsNoTracking()
+                                            where x.IsDelete == keywords.IsDelete &&
+                                                  x.NameDriver.ToLower().Contains(keywords.KwName) &&
+                                                  x.LiscensePlate.ToLower().Contains(keywords.KwLiscensePlate) &&
+                                                  x.Phone.ToLower().Contains(keywords.KwPhone)
+                                            orderby x.ModifyDate descending
+                                            select x);
+                        totalResult = querylistCar.Count();
+                        listCar = querylistCar.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                 }
+             
+                
                 var result = Mapper.MapCar(listCar);
-                if (listCar.Count() > 0)
+                if (result.Count() > 0)
                 {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    var res =  Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
                 }
                 else
                 {

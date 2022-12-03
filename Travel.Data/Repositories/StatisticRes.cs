@@ -281,11 +281,11 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetStatisticTourbookingByMonth(int byMonth,int year)
+        public Response GetStatisticTourbookingByMonth(int Month,int year)
         {
             try
             {
-                var start = DateTime.Parse($"{year}/{byMonth}/1");
+                var start = DateTime.Parse($"{year}/{Month}/1");
                 var end = start.AddMonths(1).AddDays(-1);
 
                 var startUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(start);
