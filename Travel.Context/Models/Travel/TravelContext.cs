@@ -354,6 +354,7 @@ namespace Travel.Context.Models.Travel
             {
                 entity.HasKey(e => e.IdTour);
                 entity.Property(e => e.NameTour).HasMaxLength(150).IsRequired(true);
+                entity.Property(e => e.NameTour_EN).HasMaxLength(150);
                 entity.Property(e => e.Alias).HasMaxLength(150);
                 entity.Property(e => e.ModifyBy).HasMaxLength(100);
                 entity.Property(e => e.Thumbnail).HasMaxLength(150);

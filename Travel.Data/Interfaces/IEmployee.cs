@@ -14,7 +14,7 @@ namespace Travel.Data.Interfaces
     public interface IEmployee
     {
         string CheckBeforeSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate);
-        Response GetsEmployee(bool isDelete);
+        Response GetsEmployee(bool isDelete, int pageIndex, int pageSize);
         Response GetEmployee(Guid idEmployee);
         Response UpdateEmployee(UpdateEmployeeViewModel input, string emailUser);
         Response CreateEmployee(CreateEmployeeViewModel input, string emailUser);
@@ -25,5 +25,9 @@ namespace Travel.Data.Interfaces
 
         Task<Response> SendOTP(string email);
         Task<Response> SendFile(string email);
+
+
+        Response GetsSelectBoxEmployee(long fromDate, long toDate);
+        Response GetsSelectBoxEmployeeUpdate(long fromDate, long toDate, string idSchedule);
     }
 }

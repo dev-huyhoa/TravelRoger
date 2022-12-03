@@ -27,15 +27,17 @@ namespace Travel.Data.Repositories
         private readonly ISchedule _schedule;
         private readonly string keySecurity;
         private readonly IConfiguration _config;
-        private readonly ICustomer _customer;
-        private Notification message;
+        private readonly ICustomer _customer; private Notification message;
 
-        public TourBookingRes(TravelContext db,
+        private readonly ILog _log;
+        public TourBookingRes(TravelContext db, ILog log,
             ISchedule schedule,
+       
             ICustomer customer,
             IConfiguration config)
         {
             _db = db;
+            _log = log;
             _schedule = schedule;
             _customer = customer;
             _config = config;
@@ -217,7 +219,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public async Task<Response> Create(CreateTourBookingViewModel input)
+        public async Task<Response> Create(CreateTourBookingViewModel input, string emailUser)
         {
             using var transaction = _db.Database.BeginTransaction();
             try
@@ -234,6 +236,10 @@ namespace Travel.Data.Repositories
                                select s.IdSchedule).Count();
                     if (isTourInPromotion > 0)
                         return Ultility.Responses("Không thể áp dụng voucher cho tour đang có khuyến mãi !", Enums.TypeCRUD.Error.ToString());
+
+
+
+
 
                     var unixDateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                      vourcher = await (from x in _db.Vouchers
@@ -303,7 +309,8 @@ namespace Travel.Data.Repositories
 
                 #endregion
                 await transaction.CreateSavepointAsync("BeforeSave");
-            
+                string jsonContent = JsonSerializer.Serialize(tourbooking);
+
                 tourbooking.TourBookingDetails = tourBookingDetail;
                 #region create qr
                 string qrCodeText = "123"; // cần truyền gì bỏ vào
@@ -341,8 +348,18 @@ namespace Travel.Data.Repositories
 
                 Ultility.sendEmail(stringHtml, tourbooking.Email, "THÔNG BÁO ĐẶT TOUR", emailSend, keySecurity);
                 #endregion
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "TourBooking");
+                if (result)
+                {
+                    return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
 
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
                 return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
+
             }
             catch (Exception e)
             {
@@ -601,7 +618,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public async Task<Response> RestoreBooking(string idTourBooking)
+        public async Task<Response> RestoreBooking(string idTourBooking, string emailUser)
         {
             try
             {
@@ -612,6 +629,7 @@ namespace Travel.Data.Repositories
                 if (tourbooking != null)
                 {
                     tourbooking.Status = (int)Enums.StatusBooking.Paying;
+                    string jsonContent = JsonSerializer.Serialize(tourbooking);
                     UpdateDatabase<TourBooking>(tourbooking);
                     SaveChange();
                     //#region sendMail
@@ -622,7 +640,16 @@ namespace Travel.Data.Repositories
 
                     //Ultility.sendEmail(stringHtml, tourbooking.Email, "Thanh toán dịch vụ", emailSend, keySecurity);
                     //#endregion
-                    return Ultility.Responses("Đã hủy booking !", Enums.TypeCRUD.Success.ToString());
+                    bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "TourBooking");
+                    if (result)
+                    {
+                        return Ultility.Responses("Đã hủy booking !", Enums.TypeCRUD.Success.ToString());
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
+                   
                 }
                 else
                 {
@@ -1007,7 +1034,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateStatus(string pincode)
+        public Response UpdateStatus(string pincode, string emailUser)
         {
             try
             {
@@ -1019,6 +1046,7 @@ namespace Travel.Data.Repositories
                 {
                     if(tourBooking.Status == 1)
                     {
+
                         tourBooking.Status = (int)Enums.StatusBooking.Paid;
                         UpdateDatabase(tourBooking);
                     }
@@ -1026,7 +1054,18 @@ namespace Travel.Data.Repositories
                     {
                         return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
                     }
-                    return Ultility.Responses($"Đổi thành công !", Enums.TypeCRUD.Success.ToString());
+                    string jsonContent = JsonSerializer.Serialize(tourBooking);
+
+                    bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "TourBooking");
+                    if (result)
+                    {
+                        return Ultility.Responses($"Đổi thành công !", Enums.TypeCRUD.Success.ToString());
+
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
                 }
                 else
                 {

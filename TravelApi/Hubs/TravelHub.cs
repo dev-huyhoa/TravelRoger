@@ -26,7 +26,7 @@ namespace TravelApi.Hubs
                 {
                     var token = handler.ReadJwtToken(jwtToken);
                     var tokenS = token as JwtSecurityToken;
-                    var jti = tokenS.Claims.Where(x => x.Type == "EmployeeId").FirstOrDefault().Value;
+                    var jti = tokenS.Claims.Where(x => x.Type == "UserId").FirstOrDefault().Value;
 
                     // replace email with your claim name
                     

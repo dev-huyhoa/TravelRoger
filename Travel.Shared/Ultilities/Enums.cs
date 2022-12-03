@@ -48,7 +48,9 @@ namespace Travel.Shared.Ultilities
             ServiceManager = 2,
             TourManager = 3,
             TourBookingManager = 4,
+            TourGuide = 5,
         }
+
         public enum StatusContract
         {
             Expired = 0,

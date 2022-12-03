@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using Travel.Context.Models;
 using Travel.Data.Interfaces;
@@ -20,12 +22,16 @@ namespace TravelApi.Controllers
         private Notification message;
         private Response res;
         
-        public TimelineController(ITimeLine timelineRes)
+        public TimelineController(ITimeLine timelineRes , ILog log)
         {
             _timelineRes = timelineRes;
             res = new Response();
         }
-
+        [NonAction]
+        private Claim GetEmailUserLogin()
+        {
+            return (User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.Email).FirstOrDefault();
+        }
         [HttpPost]
         [Authorize]
         [Route("create-timeline")]
@@ -36,7 +42,9 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = timelinee;
-                res = _timelineRes.Create(createObj);
+                var emailUser = GetEmailUserLogin().Value;
+                res = _timelineRes.Create(createObj, emailUser);
+             
             }
             else
             {
@@ -55,7 +63,9 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var updateObj = timelinee;
-                res = _timelineRes.Update(updateObj);
+                
+                var emailUser = GetEmailUserLogin().Value;
+                res = _timelineRes.Update(updateObj, emailUser);
             }
             else
             {
@@ -69,7 +79,9 @@ namespace TravelApi.Controllers
         [Route("delete-timeline")]
         public object Delete(ICollection<Timeline> timeline)
         {
-            res = _timelineRes.Delete(timeline);
+          
+            var emailUser = GetEmailUserLogin().Value;
+            res = _timelineRes.Delete(timeline, emailUser);
             return Ok(res);
         }
 

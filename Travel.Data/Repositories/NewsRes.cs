@@ -110,17 +110,21 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetBanner()
+        public Response GetBanner(int pageIndex, int pageSize)
         {
             try
             {
-                var result = (from x in _db.Banners.AsNoTracking() where x.IsDelete == false select x).ToList();
-                if (result.Count > 0)
-                {
-                    res.Content = result;
-                }
+                var queryresult = (from x in _db.Banners.AsNoTracking() 
+                              where x.IsDelete == false 
+                              select x);
 
+
+                int totalResult = queryresult.Count();
+                var list = queryresult.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
+                res.TotalResult = totalResult;
                 return res;
+
             }
             catch (Exception e)
             {
@@ -189,6 +193,11 @@ namespace Travel.Data.Repositories
             {
                 return Ultility.Responses("Lỗi !", Enums.TypeCRUD.Success.ToString());
             }
+        }
+
+        public Response GetBanner()
+        {
+            throw new NotImplementedException();
         }
     }
 }

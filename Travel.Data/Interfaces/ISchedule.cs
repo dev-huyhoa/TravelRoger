@@ -14,13 +14,13 @@ namespace Travel.Data.Interfaces
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Gets();
-        Response Create(CreateScheduleViewModel input);
-        Response Update(UpdateScheduleViewModel input);
-        Response Delete(string idSchedule, Guid idUser);
+        Response Create(CreateScheduleViewModel input, string emailUser);
+        Response Update(UpdateScheduleViewModel input, string emailUser);
+        Response Delete(string idSchedule, Guid idUser, string emailUser);
         Response Refused(string idSchedule);
         Response Approve(string idSchedule);
-        Response RestoreShedule(string idSchedule, Guid idUser);
-        Response UpdatePromotion(string idSchedule, int idPromotion);
+        Response RestoreShedule(string idSchedule, Guid idUser, string emailUser);
+        Response UpdatePromotion(string idSchedule, int idPromotion, string emailUser);
         Task UpdateCapacity(string idSchedule, int adult = 1, int child = 0, int baby = 0);
         Response GetsSchedulebyIdTour(string idTour, bool isDelete);
 

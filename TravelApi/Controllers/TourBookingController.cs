@@ -6,6 +6,7 @@ using PrUtility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
@@ -27,13 +28,21 @@ namespace TravelApi.Controllers
 
         private Notification message;
         private Response res;
-        public TourBookingController(ITourBooking tourbooking,
+        public TourBookingController(ITourBooking tourbooking, ILog log,
             ISchedule schedule)
         {
             _tourbooking = tourbooking;
             _schedule = schedule;
             res = new Response();
         }
+
+
+        [NonAction]
+        private Claim GetEmailUserLogin()
+        {
+            return (User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.Email).FirstOrDefault();
+        }
+
         [HttpGet]
         [Authorize]
         [Route("do-payment")]
@@ -77,7 +86,9 @@ namespace TravelApi.Controllers
                 if(checkEmpty == null)
                 {
                     //await _schedule.UpdateCapacity(createObj.ScheduleId, adult, child, baby);
-                    res = await _tourbooking.Create(createObj);
+                
+                    var emailUser = GetEmailUserLogin().Value;
+                    res = await _tourbooking.Create(createObj, emailUser);
                 }
                 else
                 {
@@ -123,7 +134,9 @@ namespace TravelApi.Controllers
         [Route("restore-booking")]
         public async Task<object> RestoreBooking(string idTourBooking)
         {
-            res = await _tourbooking.RestoreBooking(idTourBooking);
+            var emailUser = GetEmailUserLogin().Value;
+            res = await _tourbooking.RestoreBooking(idTourBooking, emailUser);
+            
             return Ok(res);
         }
         [HttpGet]
@@ -156,7 +169,9 @@ namespace TravelApi.Controllers
         [Route("update-tourBooking-status")]
         public object UpdateStatus(string pincode)
         {
-            res = _tourbooking.UpdateStatus(pincode);
+           
+            var emailUser = GetEmailUserLogin().Value;
+            res = _tourbooking.UpdateStatus(pincode, emailUser);
             return Ok(res);
         }
 

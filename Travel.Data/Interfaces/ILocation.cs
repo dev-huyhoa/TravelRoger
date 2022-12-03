@@ -17,20 +17,20 @@ namespace Travel.Data.Interfaces
         string CheckBeforeSaveProvince(JObject frmData, ref Notification _message, bool isUpdate);
         string CheckBeforeSaveDistrict(JObject frmData, ref Notification _message, bool isUpdate);
         string CheckBeforeSaveWard(JObject frmData, ref Notification _message, bool isUpdate);
-        Response GetsProvince();
-        Response GetsDistrict();
-        Response GetsWard();
+        Response GetsProvince(int pageIndex, int pageSize);
+        Response GetsDistrict(int pageIndex, int pageSize);
+        Response GetsWard(int pageIndex, int pageSize);
         Response SearchProvince(JObject frmData);
         Response SearchDistrict(JObject frmData);
         Response SearchWard(JObject frmData);
-        Response CreateProvince(CreateProvinceViewModel province);
-        Response CreateDistrict(CreateDistrictViewModel district);
-        Response CreateWard(CreateWardViewModel ward);
-        Response UpdateProvince(UpdateProvinceViewModel province);
-        Response UpdateDistrict(UpdateDistrictViewModel district);
-        Response UpdateWard(UpdateWardViewModel ward);
-        Response DeleteProvince(Guid idProvince);
-        Response DeleteDistrict(Guid idDistrict);
-        Response DeleteWard(Guid idWard);
+        Response CreateProvince(CreateProvinceViewModel province, string emailUser);
+        Response CreateDistrict(CreateDistrictViewModel district, string emailUser);
+        Response CreateWard(CreateWardViewModel ward, string emailUser);
+        Response UpdateProvince(UpdateProvinceViewModel province, string emailUser);
+        Response UpdateDistrict(UpdateDistrictViewModel district, string emailUser);
+        Response UpdateWard(UpdateWardViewModel ward, string emailUser);
+        Response DeleteProvince(Guid idProvince, string emailUser);
+        Response DeleteDistrict(Guid idDistrict, string emailUser);
+        Response DeleteWard(Guid idWard, string emailUser);
     }
 }

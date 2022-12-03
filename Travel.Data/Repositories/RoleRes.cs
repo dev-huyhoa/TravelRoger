@@ -21,9 +21,11 @@ namespace Travel.Data.Repositories
         private readonly TravelContext _db;
         private Notification message;
         private Response res;
-        public RoleRes(TravelContext db)
+        private readonly ILog _log;
+        public RoleRes(TravelContext db , ILog log)
         {
             _db = db;
+            _log = log;
             message = new Notification();
             res = new Response();
         }
@@ -90,17 +92,25 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CreateRole(CreateRoleViewModel input)
+        public Response CreateRole(CreateRoleViewModel input , string emailUser)
         {
             try
             {
                 Role role = new Role();
                 role = Mapper.MapCreateRole(input);
+                string jsonContent = JsonSerializer.Serialize(role);
                 _db.Roles.Add(role);
                 _db.SaveChanges();
 
-                return Ultility.Responses($"Thêm thành công !", Enums.TypeCRUD.Success.ToString());
-
+                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Role");
+                if (result)
+                {
+                    return Ultility.Responses("Thêm thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -109,16 +119,26 @@ namespace Travel.Data.Repositories
 
             }
         }
-        public Response UpdateRole(UpdateRoleViewModel input)
+        public Response UpdateRole(UpdateRoleViewModel input, string emailUser)
         {
             try
             {
                 Role role = new Role();
                 role = Mapper.MapUpdateRole(input);
+                string jsonContent = JsonSerializer.Serialize(role);
+
                 _db.Roles.Update(role);
                 _db.SaveChanges();
 
-                return Ultility.Responses($"Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Role");
+                if (result)
+                {
+                    return Ultility.Responses("Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                }
 
             }
             catch (Exception e)
@@ -129,17 +149,28 @@ namespace Travel.Data.Repositories
 
         }
 
-        public Response RestoreRole(int idRole)
+        public Response RestoreRole(int idRole, string emailUser)
         {
             try
             {
                 var role = _db.Roles.Find(idRole);
                 if (role != null)
                 {
+                    string jsonContent = JsonSerializer.Serialize(role);
+
                     role.IsDelete = false;
                     _db.SaveChanges();
 
-                    return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
+                    bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "Role");
+                    if (result)
+                    {
+                        return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
+
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
 
                 }
                 else
@@ -157,17 +188,28 @@ namespace Travel.Data.Repositories
 
         }
 
-        public Response DeleteRole(int idRole)
+        public Response DeleteRole(int idRole, string emailUser)
         {
             try
             {
                 var role = _db.Roles.Find(idRole);
                 if(role != null)
                 {
+                    string jsonContent = JsonSerializer.Serialize(role);
+
                     role.IsDelete = true;
                     _db.SaveChanges();
 
-                    return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
+                    bool result = _log.AddLog(content: jsonContent, type: "delete", emailCreator: emailUser, classContent: "Role");
+                    if (result)
+                    {
+                        return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
+
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
 
                 }
                 else

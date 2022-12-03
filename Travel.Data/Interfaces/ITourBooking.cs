@@ -14,13 +14,13 @@ namespace Travel.Data.Interfaces
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Task<Response> Gets();
-        Task<Response> Create(CreateTourBookingViewModel input);
+        Task<Response> Create(CreateTourBookingViewModel input, string emailUser);
         Task<Response> TourBookingById(string idTourbooking);
         Response GetTourBookingFromDateToDate(DateTime? fromDate, DateTime? toDate);
         Response DoPayment(string idTourBooking);
         // customer
         Task<Response> CancelBooking(string idTourBooking);
-        Task<Response> RestoreBooking(string idTourBooking);
+        Task<Response> RestoreBooking(string idTourBooking, string emailUser);
         Task<Response> TourBookingByBookingNo(string bookingNo);
         Response StatisticTourBooking();
 
@@ -28,7 +28,7 @@ namespace Travel.Data.Interfaces
 
         Response SearchTourBooking(JObject frmData);
 
-        Response UpdateStatus(string pincode);
+        Response UpdateStatus(string pincode, string emailUser);
         Task<TourBooking> GetTourBookingByIdForPayPal (string idTourBooking);
 
         Task<bool> UpdateTourBookingFinished();

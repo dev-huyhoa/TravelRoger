@@ -12,10 +12,11 @@ namespace Travel.Data.Interfaces
     public interface IPayment
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
-        Response Gets();
-        Response Create(CreatePaymentViewModel input);
+        Response Gets(int pageIndex, int pageSize);
+        Response Create(CreatePaymentViewModel input, string emailUser);
         byte[] CreateByteQR(string qrCodeText);
         Task<Response> SendOTP(string email, string bytes);  
         Response AddImg(string qrCodeText, string idService);
+        //Response Update(CreateUpdatePaymentViewModel input);
     }
 }
