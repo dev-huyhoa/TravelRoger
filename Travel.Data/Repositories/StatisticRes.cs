@@ -280,5 +280,26 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+        public Response GetStatisticTourbookingByMonth(int byMonth,int year)
+        {
+            try
+            {
+                var start = DateTime.Parse($"{year}/{byMonth}/1");
+                var end = start.AddMonths(1).AddDays(-1);
+
+                var startUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(start);
+                var endUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(end);
+
+                return  StatisticTourBookingFromDateToDate(startUnix, endUnix);
+    
+
+            }
+            catch (Exception e)
+            {
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }

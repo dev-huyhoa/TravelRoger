@@ -44,6 +44,14 @@ namespace TravelApi.Controllers.Notify
 
         [HttpGet]
         [Authorize]
+        [Route("list-statistic-tourbooking-by-month")]
+        public object GetStatisticTourbookingByMonth(int month , int year)
+        {
+            res = _statistic.GetStatisticTourbookingByMonth(month, year);
+            return Ok(res);
+        }
+        [HttpGet]
+        [Authorize]
         [Route("list-statistic-tourbooking-by-week")]
         public object StatisticTourBookingInThisWeek(long fromDate, long toDate)
         {
