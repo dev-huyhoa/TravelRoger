@@ -59,7 +59,7 @@ namespace TravelApi.Controllers
         [Route("list-customer")]
         public object GetCustomer()
         {
-            res = customer.Gets(pageIndex,pageSize);
+            res = customer.Gets();
             return Ok(res);
         }
         [HttpGet]

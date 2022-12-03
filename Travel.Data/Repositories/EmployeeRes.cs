@@ -193,7 +193,7 @@ namespace Travel.Data.Repositories
                 return string.Empty;
             }
         }
-        public Response GetsEmployee(bool isDelete, int pageIndex, int pageSize)
+        public Response GetsEmployee(bool isDelete)
         {
             try
             {
@@ -238,7 +238,7 @@ namespace Travel.Data.Repositories
                                    RoleId = x.RoleId,
                                });
                 int totalResult = queryListEmp.Count();
-                var listEmp = queryListEmp.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var listEmp = queryListEmp.ToList();
                 var result = Mapper.MapEmployee(listEmp);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = totalResult;

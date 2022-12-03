@@ -12,10 +12,10 @@ namespace TravelApi.Helpers
     {
         private static IHttpContextAccessor _httpAccessor = GetConfigItems.HttpContextAccessor;
    
-        public static T Get<T>(string key)
-        {
+        //public static T Get<T>(string key)
+        //{
 
-        }
+        //}
 
 
         public static void Remove(string key)

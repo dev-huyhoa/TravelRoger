@@ -290,10 +290,8 @@ namespace Travel.Data.Repositories
 
                 var startUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(start);
                 var endUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(end);
-
                 return  StatisticTourBookingFromDateToDate(startUnix, endUnix);
     
-
             }
             catch (Exception e)
             {

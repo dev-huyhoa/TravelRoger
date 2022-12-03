@@ -213,7 +213,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Gets(int pageIndex, int pageSize)
+        public Response Gets()
         {
             try
             {                       
@@ -223,7 +223,7 @@ namespace Travel.Data.Repositories
 
 
                 int totalResult = queryListCus.Count();
-                var listCus = queryListCus.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var listCus = queryListCus.ToList();
                 var result = Mapper.MapCustomer(listCus);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = totalResult;

@@ -61,7 +61,7 @@ namespace TravelApi.Controllers
         {
             try
             {
-                RequestCache.Get<Employee>("d"); 
+                //RequestCache.Get<Employee>("d"); 
                 var dateTimeNow = DateTime.Now;
                 string email = PrCommon.GetString("email", frmData);
                 string password = PrCommon.GetString("password", frmData);
