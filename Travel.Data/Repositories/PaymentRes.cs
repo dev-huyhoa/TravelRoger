@@ -28,7 +28,8 @@ namespace Travel.Data.Repositories
         private Notification message;
         private Response res; 
         private readonly ILog _log;
-        public PaymentRes(TravelContext db , ILog log)
+        private readonly IConfiguration _config;
+        public PaymentRes(TravelContext db , ILog log, IConfiguration config)
         {
             _db = db;
             _log = log;
@@ -209,6 +210,16 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
             };
+        }
+
+        public Response Gets()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Response Create(CreatePaymentViewModel input)
+        {
+            throw new NotImplementedException();
         }
 
         //public Response Update(CreateUpdatePaymentViewModel input)

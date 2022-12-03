@@ -498,7 +498,7 @@ namespace Travel.Shared.Ultilities
             }
         }
 
-        public static string getHtmlBookingSuccess(string fullname,string phone,string totalamount)
+        public static string getHtmlBookingSuccess(string fullname, string phone, string totalamount, string link)
         {
             try
             {
