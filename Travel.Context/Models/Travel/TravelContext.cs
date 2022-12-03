@@ -64,12 +64,12 @@ namespace Travel.Context.Models.Travel
                 entity.Property(e => e.TypeService).HasMaxLength(20);
                 entity.Property(e => e.ModifyBy).HasMaxLength(50);
                 entity.Property(e => e.CreateBy).HasMaxLength(50);
-
             });
             modelBuilder.Entity<TourBooking>(entity =>
             {
                 entity.HasKey(e => e.IdTourBooking);
                 entity.Property(e => e.ScheduleId).HasMaxLength(50);
+                entity.Property(e => e.UrlQR).HasMaxLength(100);
 
                 //entity.HasOne(e => e.Schedule)
                 //.WithMany(e => e.TourBookings)

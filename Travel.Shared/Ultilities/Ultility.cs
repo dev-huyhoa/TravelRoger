@@ -229,7 +229,7 @@ namespace Travel.Shared.Ultilities
                     //result = string.Format("{0}N{1}Đ", day + 1, day);
                 }
             }
-            return result.Substring(0,1);
+            return result.Substring(0, 1);
         }
         public static DateTime GetDateZeroTime(DateTime date)
         {
@@ -252,14 +252,14 @@ namespace Travel.Shared.Ultilities
         #endregion
 
 
-        public static void uploadImage(string imagePath, string folderPath)
+        public static void uploadQR(Stream stream, string name, string folderPath)
         {
             try
             {
                 var uploadParams = new ImageUploadParams()
                 {
                     Folder = folderPath,
-                    File = new FileDescription(imagePath),
+                    File = new FileDescription(name,stream),
                     UseFilename = true
                 };
 
@@ -273,6 +273,77 @@ namespace Travel.Shared.Ultilities
                 Ultility.Responses("lỗi khi thêm vào cloud !", Enums.TypeCRUD.Success.ToString());
             }
         }
+
+        public static string UploadQR(Stream stream, string idService, ref Notification _message)
+        {
+            try
+            {
+                var d = DateTime.Now;
+                string dateTimeString = $"{d.Year}{d.Month}{d.Day}{d.Hour}{d.Minute}{d.Second}";
+                var nameFile = $"QR{dateTimeString}";
+                var folderPath = "/Upload/QR";
+
+                #region upload cloud
+                //up lên cloud
+                Account account = new Account(CLOUD_NAME, API_KEY, API_SECRET);
+                cloudinary = new Cloudinary(account);
+                uploadQR(stream, nameFile, folderPath);
+                #endregion
+                return link;
+            }
+            catch (Exception e)
+            {
+                message.Messenge = "Có lỗi xảy ra khi lưu file !";
+                message.Type = "Error";
+                message.Description = e.Message;
+                _message = message;
+
+                return null;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public static void uploadImage(string filePath, string folderPath)
+        {
+            try
+            {
+                var uploadParams = new ImageUploadParams()
+                {
+                    Folder = folderPath,
+                    File = new FileDescription(filePath),
+                    UseFilename = true
+                };
+
+                var uploadResult = cloudinary.Upload(uploadParams);
+                publicId = $"lia/Folder/{uploadResult.PublicId}";
+                link = uploadResult.Uri.ToString();
+            }
+            catch (Exception e)
+            {
+
+                Ultility.Responses("lỗi khi thêm vào cloud !", Enums.TypeCRUD.Success.ToString());
+            }
+        }
+
+
+
+
+
         public static Image WriteFile(IFormFile file, string type, string idService, ref Notification _message, int orderby = 0)
         {
             try
@@ -316,7 +387,7 @@ namespace Travel.Shared.Ultilities
                     fileName = Ultility.FormatDateToInt(DateTime.Now, "DDMMYYYYHHMMSS").ToString() + Path.GetExtension(file.FileName);
                 }
                 string fullpath = Path.Combine(pathDate, fileName);
-                string folderPath = "/Uploads/" + type + "/" + idService + "/" + date ;
+                string folderPath = "/Uploads/" + type + "/" + idService + "/" + date;
                 string serverPath = "/Uploads/" + type + "/" + idService + "/" + date + "/" + fileName;
                 if (Directory.Exists(fullpath))
                 {
@@ -335,7 +406,7 @@ namespace Travel.Shared.Ultilities
 
                 image.IdImage = Guid.NewGuid();
                 image.NameImage = fileName;
-                image.Extension = Path.GetExtension(file.FileName).Replace(".","");
+                image.Extension = Path.GetExtension(file.FileName).Replace(".", "");
                 image.IdService = idService;
                 image.Size = file.Length;
                 image.FilePath = link;
@@ -351,11 +422,12 @@ namespace Travel.Shared.Ultilities
                 return image;
             }
         }
-        public static string getHtmlBookingSuccess(string fullname,string phone,string totalamount)
+
+        public static string getHtmlBookingSuccess(string fullname, string phone, string totalamount, string link)
         {
             try
             {
-                string body = $@"<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml'><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /><link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' /><title>Optional Tour</title><style type='text/css'>body {{font-family: 'Roboto', sans-serif;font-size: 14px;min-width: 760px;}}.f-left {{float: left;}}.mg-left5 {{margin-left: 5px;}}.td-left {{background: #f4f5f6;border-bottom: 1px solid #fff;margin: 0;padding: 5px 10px;text-align: right;vertical-align: middle;width: 150px;}}.td-right {{border-bottom: 1px solid #f4f5f6;font-size: 14px;line-height: 20px;margin: 0;padding: 5px 10px;vertical-align: middle;}}.chitietbooking table, .thongtinlienlac table {{border: 1px solid #f4f5f6;border-collapse: collapse;margin: 0;padding: 0;width: 100%;}}</style></head><body><table cellpadding='0' cellspacing='0' width='760' border='0' style='margin:auto;'> <tr><td colspan='2'><div style='text-align: center; font-weight: bold; text-transform: uppercase; color: #000; font-size: 24px; padding-top: 20px; padding-bottom: 20px; border-bottom: 1px dotted #ccc; border-top: 1px dotted #ccc; margin-bottom: 30px;'>BOOKING THANH TOÁN THÀNH CÔNG TRÊN HỆ THỐNG KHÁCH SẠN</div></td></tr><tr><td colspan='2'><div style='font-weight: bold; text-transform: uppercase; color: #c50000; margin-bottom: 10px; font-size: 16px'>A. THÔNG TIN BOOKING:</div><table width='100%' style='margin-bottom: 20px;'><tr><td style='font-weight:bold'>Link booking:</td><td colspan='3'><a href='https://travel.com.vn/Hotels/ConfirmBooking?bookingId?id={{bookingId}}&trackBookingType=tra-cuu-hotel-booking' target='_blank' style='color: #306eb7; font-style: italic;'>click vào đây</a></td></tr><tr><td style='font-weight:bold'>Họ tên:</td><td>{fullname}</td><td style='font-weight:bold'>Số điện thoại:</td><td>{phone}</td></tr><tr><td style='font-weight:bold'>Tình trạng thanh toán:</td><td>Đã thanh toán</td><td style='font-weight:bold'>Tổng tiền thanh toán:</td><td>{totalamount}</td></tr></table></td></tr><tr><td colspan='2'>&nbsp;</td></tr><tr><td colspan='2' style='font-weight:bold;font-style: italic;text-align:center;color: #c50000'><div style='margin-bottom: 15px;'>Đây là email tự động Quý khách vui lòng không phản hồi vào email này</div></td></tr>        <tr><td colspan='2' style=height: 30px; text-align: center; background: #306eb7; padding-top: 15px; padding-bottom: 15px; color: #fff;'><div style='margin-bottom: 5px;'> 190 Pasteur, District 3, Ho Chi Minh City, Viet Nam</div><div><span>Điện thoại:</span> (+84 28) 38 22 8898 - <span>Fax:</span> (+84 28) 3829 9142 - <span>Email:</span> <a href='mailto:info@travelrover.com'>info@travelrover.com</a></div></td></tr></table></body></html> <img src=""http://res.cloudinary.com/ddv2idi9d/image/upload/v1669803847/Uploads/Banners/09375b97-5777-444b-b0ad-61ca59feb5eb/20221130/5_2022113017247_hpapri.jpg"">";
+                string body = $@"<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml'><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /><link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' /><title>Optional Tour</title><style type='text/css'>body {{font-family: 'Roboto', sans-serif;font-size: 14px;min-width: 760px;}}.f-left {{float: left;}}.mg-left5 {{margin-left: 5px;}}.td-left {{background: #f4f5f6;border-bottom: 1px solid #fff;margin: 0;padding: 5px 10px;text-align: right;vertical-align: middle;width: 150px;}}.td-right {{border-bottom: 1px solid #f4f5f6;font-size: 14px;line-height: 20px;margin: 0;padding: 5px 10px;vertical-align: middle;}}.chitietbooking table, .thongtinlienlac table {{border: 1px solid #f4f5f6;border-collapse: collapse;margin: 0;padding: 0;width: 100%;}}</style></head><body><table cellpadding='0' cellspacing='0' width='760' border='0' style='margin:auto;'> <tr><td colspan='2'><div style='text-align: center; font-weight: bold; text-transform: uppercase; color: #000; font-size: 24px; padding-top: 20px; padding-bottom: 20px; border-bottom: 1px dotted #ccc; border-top: 1px dotted #ccc; margin-bottom: 30px;'>BOOKING THANH TOÁN THÀNH CÔNG TRÊN HỆ THỐNG KHÁCH SẠN</div></td></tr><tr><td colspan='2'><div style='font-weight: bold; text-transform: uppercase; color: #c50000; margin-bottom: 10px; font-size: 16px'>A. THÔNG TIN BOOKING:</div><table width='100%' style='margin-bottom: 20px;'><tr><td style='font-weight:bold'>Link booking:</td><td colspan='3'><a href='https://travel.com.vn/Hotels/ConfirmBooking?bookingId?id={{bookingId}}&trackBookingType=tra-cuu-hotel-booking' target='_blank' style='color: #306eb7; font-style: italic;'>click vào đây</a></td></tr><tr><td style='font-weight:bold'>Họ tên:</td><td>{fullname}</td><td style='font-weight:bold'>Số điện thoại:</td><td>{phone}</td></tr><tr><td style='font-weight:bold'>Tình trạng thanh toán:</td><td>Đã thanh toán</td><td style='font-weight:bold'>Tổng tiền thanh toán:</td><td>{totalamount}</td></tr></table></td></tr><tr><td colspan='2'>&nbsp;</td></tr><tr><td colspan='2' style='font-weight:bold;font-style: italic;text-align:center;color: #c50000'><div style='margin-bottom: 15px;'>Đây là email tự động Quý khách vui lòng không phản hồi vào email này</div></td></tr>        <tr><td colspan='2' style=height: 30px; text-align: center; background: #306eb7; padding-top: 15px; padding-bottom: 15px; color: #fff;'><div style='margin-bottom: 5px;'> 190 Pasteur, District 3, Ho Chi Minh City, Viet Nam</div><div><span>Điện thoại:</span> (+84 28) 38 22 8898 - <span>Fax:</span> (+84 28) 3829 9142 - <span>Email:</span> <a href='mailto:info@travelrover.com'>info@travelrover.com</a></div></td></tr></table></body></html> <img src=""http://res.cloudinary.com/ddv2idi9d/image/upload/v1669803847/Uploads/Banners/09375b97-5777-444b-b0ad-61ca59feb5eb/20221130/5_2022113017247_hpapri.jpg""> <img src=""{link}"" style='height:400px; width: 400px'>";
                 return (body);
             }
             catch (Exception ex)

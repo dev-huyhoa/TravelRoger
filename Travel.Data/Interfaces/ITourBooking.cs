@@ -34,5 +34,7 @@ namespace Travel.Data.Interfaces
         Task<bool> UpdateTourBookingFinished();
         Response CheckInBooking(string bookingNo);
 
+        byte[] CreateByteQR(string qrCodeText);
+        string AddImg(string qrCodeText, string idService);
     }
 }

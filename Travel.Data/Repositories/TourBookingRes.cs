@@ -16,6 +16,8 @@ using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.TourBookingVM;
 using Microsoft.Extensions.Configuration;
 using Travel.Shared.SpeedSMSAPI;
+using System.IO;
+using QRCoder;
 
 namespace Travel.Data.Repositories
 {
@@ -26,7 +28,8 @@ namespace Travel.Data.Repositories
         private readonly string keySecurity;
         private readonly IConfiguration _config;
         private readonly ICustomer _customer;
-       
+        private Notification message;
+
         public TourBookingRes(TravelContext db,
             ISchedule schedule,
             ICustomer customer,
@@ -37,6 +40,8 @@ namespace Travel.Data.Repositories
             _customer = customer;
             _config = config;
             keySecurity = _config["keySecurity"];
+            message = new Notification();
+
         }
         private void UpdateDatabase<T>(T input)
         {
@@ -215,10 +220,8 @@ namespace Travel.Data.Repositories
         public async Task<Response> Create(CreateTourBookingViewModel input)
         {
             using var transaction = _db.Database.BeginTransaction();
-
             try
             {
-
                 Voucher vourcher = new Voucher();
                 // nếu có sài vourcher thì coi còn thời hạn hay ko
                 if (!string.IsNullOrEmpty(input.VoucherCode)) 
@@ -231,10 +234,6 @@ namespace Travel.Data.Repositories
                                select s.IdSchedule).Count();
                     if (isTourInPromotion > 0)
                         return Ultility.Responses("Không thể áp dụng voucher cho tour đang có khuyến mãi !", Enums.TypeCRUD.Error.ToString());
-
-
-
-
 
                     var unixDateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                      vourcher = await (from x in _db.Vouchers
@@ -306,6 +305,11 @@ namespace Travel.Data.Repositories
                 await transaction.CreateSavepointAsync("BeforeSave");
             
                 tourbooking.TourBookingDetails = tourBookingDetail;
+                #region create qr
+                string qrCodeText = "123"; // cần truyền gì bỏ vào
+                string urlQR = AddImg(qrCodeText, tourbooking.IdTourBooking);
+                tourbooking.UrlQR = urlQR;
+                #endregion
                 CreateDatabase<TourBooking>(tourbooking);
                 CreateDatabase<TourBookingDetails>(tourBookingDetail);
                 await SaveChangeAsync();
@@ -315,6 +319,9 @@ namespace Travel.Data.Repositories
                 int quantityChild = tourbooking.TourBookingDetails.Child;
                 int quantityBaby = tourbooking.TourBookingDetails.Baby;
                 await _schedule.UpdateCapacity(input.ScheduleId, quantityAdult, quantityChild, quantityBaby);
+
+
+             
                 transaction.Commit();
                 transaction.Dispose();
 
@@ -324,9 +331,17 @@ namespace Travel.Data.Repositories
                 //String str = "Lụm";
                 //String response = api.sendSMS(phones, str, 5, "d675521d17749e04");
 
+
+
                 #region send mail
-                Ultility.sendEmail("",input.Email,"Thông báo booking","Bạn vừa đặt tour !", keySecurity);
+                var subjectOTP = _config["OTPSubject"];
+                var emailSend = _config["emailSend"];
+                var keySecurity = _config["keySecurity"];
+                var stringHtml = Ultility.getHtmlBookingSuccess(tourbooking.NameCustomer, tourbooking.Phone, tourbooking.TotalPrice.ToString(), urlQR);
+
+                Ultility.sendEmail(stringHtml, tourbooking.Email, "THÔNG BÁO ĐẶT TOUR", emailSend, keySecurity);
                 #endregion
+
                 return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
             }
             catch (Exception e)
@@ -334,6 +349,44 @@ namespace Travel.Data.Repositories
                 transaction.RollbackToSavepoint("BeforeSave");
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
                 ;
+            }
+        }
+
+        public byte[] ImageToByteArray(System.Drawing.Image imageIn)
+        {
+            MemoryStream ms = new MemoryStream();
+            imageIn.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+            return ms.ToArray();
+        }
+        public byte[] CreateByteQR(string qrCodeText)
+        {
+
+            QRCodeGenerator _qrCode = new QRCodeGenerator();
+            QRCodeData _qrCodeData = _qrCode.CreateQrCode(qrCodeText, QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(_qrCodeData);
+            System.Drawing.Image qrCodeImage = qrCode.GetGraphic(20);
+            var bytes = ImageToByteArray(qrCodeImage);
+            return bytes;
+        }
+
+        public string AddImg(string qrCodeText, string idService)
+        {
+            try
+            {
+                string urlQR = "";
+                var bytes = CreateByteQR(qrCodeText);
+                Travel.Context.Models.Image img = new Travel.Context.Models.Image();
+                using (Stream stream = new MemoryStream(bytes))
+                {
+                    urlQR = Ultility.UploadQR(stream, idService, ref message);
+                    
+                }
+                return urlQR;
+            }
+            catch (Exception e)
+            {
+                return null;
             }
         }
 

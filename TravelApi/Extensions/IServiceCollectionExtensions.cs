@@ -76,6 +76,9 @@ namespace TravelApi.Extensions
             .AddScoped<INotification, NotificationRes>();
             services
             .AddScoped<ILog, LogRepository>();
+            services
+           .AddScoped<IPayment, PaymentRes>();
+
             return services;
         
 

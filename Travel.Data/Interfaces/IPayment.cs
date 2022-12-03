@@ -14,6 +14,8 @@ namespace Travel.Data.Interfaces
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
         Response Gets();
         Response Create(CreatePaymentViewModel input);
-        //Response Update(CreateUpdatePaymentViewModel input);
+        byte[] CreateByteQR(string qrCodeText);
+        Task<Response> SendOTP(string email, string bytes);  
+        Response AddImg(string qrCodeText, string idService);
     }
 }
