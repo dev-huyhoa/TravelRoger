@@ -28,7 +28,7 @@ namespace TravelApi.Controllers
 
         private Notification message;
         private Response res;
-        public TourBookingController(ITourBooking tourbooking, ILog log,
+        public TourBookingController(ITourBooking tourbooking,
             ISchedule schedule)
         {
             _tourbooking = tourbooking;
@@ -200,6 +200,8 @@ namespace TravelApi.Controllers
                 });
             }
         }
+
+
 
         [HttpPut]
         [AllowAnonymous]
