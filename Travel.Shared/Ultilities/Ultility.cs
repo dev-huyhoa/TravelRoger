@@ -303,21 +303,6 @@ namespace Travel.Shared.Ultilities
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public static void uploadImage(string filePath, string folderPath)
         {
             try
