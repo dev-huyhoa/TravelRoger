@@ -34,9 +34,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("list-payment")]
-        public object GetPayment(int pageIndex, int pageSize)
+        public object GetPayment()
         {
-            res = pay.Gets(pageIndex,  pageSize);
+            res = pay.Gets();
             return Ok(res);
         }
 

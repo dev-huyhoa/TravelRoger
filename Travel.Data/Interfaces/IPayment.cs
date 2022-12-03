@@ -12,7 +12,7 @@ namespace Travel.Data.Interfaces
     public interface IPayment
     {
         string CheckBeforSave(JObject frmData, ref Notification _message, bool isUpdate = false);
-        Response Gets(int pageIndex, int pageSize);
+        Response Gets();
         Response Create(CreatePaymentViewModel input, string emailUser);
 
         //Response Update(CreateUpdatePaymentViewModel input);

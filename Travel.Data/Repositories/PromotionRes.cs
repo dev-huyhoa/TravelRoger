@@ -124,7 +124,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsPromotion(bool isDelete , int pageIndex, int pageSize)
+        public Response GetsPromotion(bool isDelete )
         {
             try
             {
@@ -135,7 +135,7 @@ namespace Travel.Data.Repositories
                             x.Approve == Convert.ToInt16(Enums.ApproveStatus.Approved)
                             select x);
                 int totalResult = queryListPromotion.Count();
-                var list = queryListPromotion.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var list = queryListPromotion.ToList();
                 var result = Mapper.MapPromotion(list);
 
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);

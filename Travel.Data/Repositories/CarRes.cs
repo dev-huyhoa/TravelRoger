@@ -294,7 +294,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response Gets(bool isDelete, int pageIndex, int pageSize)
+        public Response Gets(bool isDelete)
         {
             try
             {
@@ -302,7 +302,7 @@ namespace Travel.Data.Repositories
                                where x.IsDelete == isDelete
                                select x);
                 int totalResult = queryListCar.Count();
-                var listCar = queryListCar.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var listCar = queryListCar.ToList();
                 var result = Mapper.MapCar(listCar);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = totalResult;

@@ -139,7 +139,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsProvince(int pageIndex, int pageSize)
+        public Response GetsProvince()
         {
             try
             {
@@ -147,7 +147,7 @@ namespace Travel.Data.Repositories
                                     orderby x.NameProvince 
                                     select x);
                 int totalResult = queryListProvince.Count();
-                var listProvince = queryListProvince.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var listProvince = queryListProvince.ToList();
                 var result = Mapper.MapProvince(listProvince);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = totalResult;
@@ -160,7 +160,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsDistrict(int pageIndex, int pageSize)
+        public Response GetsDistrict()
         {
             try
             {
@@ -171,7 +171,7 @@ namespace Travel.Data.Repositories
 
 
                 int totalResult = queryListDistrict.Count();
-                var list = queryListDistrict.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var list = queryListDistrict.ToList();
                 var result = Mapper.MapDistrict(list);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = totalResult;
@@ -188,7 +188,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsWard(int pageIndex, int pageSize)
+        public Response GetsWard()
         {
             try
             {
@@ -196,7 +196,7 @@ namespace Travel.Data.Repositories
 
 
                 int totalResult = queryListWard.Count();
-                var list = queryListWard.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var list = queryListWard.ToList();
                 var result = Mapper.MapWard(list);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = totalResult;

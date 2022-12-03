@@ -13,7 +13,7 @@ namespace Travel.Data.Interfaces
     public interface ICustomer
     {
         string CheckBeforeSave(JObject frmdata, ref Notification _message, bool isUpdate);
-        Response Gets(int pageIndex, int pageSize);
+        Response Gets();
 
         Response Create(CreateCustomerViewModel input, string emailUser);
         Response GetsHistory(Guid idCustomer);

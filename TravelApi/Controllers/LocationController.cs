@@ -42,28 +42,28 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("list-province")]
-        public  object GetsProvince(int pageIndex, int pageSize)
+        public  object GetsProvince()
         {
        
-            res = location.GetsProvince(pageIndex,pageSize);
+            res = location.GetsProvince();
             return Ok(res);
         }
 
         [HttpGet]
         [AllowAnonymous]
         [Route("list-district")]
-        public object GetsDistrict(int pageIndex, int pageSize)
+        public object GetsDistrict()
         {
-            res = location.GetsDistrict(pageIndex,pageSize);
+            res = location.GetsDistrict();
             return Ok(res);
         }
 
         [HttpGet]
         [AllowAnonymous]
         [Route("list-ward")]
-        public object GetsWard(int pageIndex,int pageSize)
+        public object GetsWard()
         {
-            res = location.GetsWard(pageIndex,pageSize);
+            res = location.GetsWard();
             return Ok(res);
         }
 

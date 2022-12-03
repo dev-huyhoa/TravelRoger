@@ -1414,7 +1414,7 @@ namespace Travel.Data.Repositories
             try
             {
                 var dateTimeNow = GetDateTimeNow();
-                var list = await (from s in _db.Schedules.AsNoTracking()
+                var list =  (from s in _db.Schedules.AsNoTracking()
                                   where s.Isdelete == false &&
                             s.Approve == (int)Enums.ApproveStatus.Approved
                             && s.PromotionId == 1
@@ -1474,10 +1474,13 @@ namespace Travel.Data.Repositories
                                                   Status = t.Status
                                               }).First(),
 
-                                  }).OrderBy(x => x.DepartureDate).ToListAsync();
+                                  }).OrderBy(x => x.DepartureDate);
 
 
-                var result = Mapper.MapSchedule(list).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var totalREsult = await list.CountAsync();
+                var listResult = await list.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToListAsync();
+
+                var result = Mapper.MapSchedule(listResult);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = result.Count();
                 return res;

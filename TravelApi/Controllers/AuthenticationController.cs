@@ -19,6 +19,7 @@ using Travel.Context.Models;
 using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
 using Travel.Shared.ViewModels;
+using TravelApi.Helpers;
 using TravelApi.Hubs.HubServices;
 
 namespace TravelApi.Controllers
@@ -60,6 +61,7 @@ namespace TravelApi.Controllers
         {
             try
             {
+                RequestCache.Get<Employee>("d"); 
                 var dateTimeNow = DateTime.Now;
                 string email = PrCommon.GetString("email", frmData);
                 string password = PrCommon.GetString("password", frmData);

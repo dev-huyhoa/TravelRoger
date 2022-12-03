@@ -57,7 +57,7 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("list-customer")]
-        public object GetCustomer(int pageIndex, int pageSize)
+        public object GetCustomer()
         {
             res = customer.Gets(pageIndex,pageSize);
             return Ok(res);

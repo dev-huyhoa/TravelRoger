@@ -110,7 +110,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetBanner(int pageIndex, int pageSize)
+        public Response GetBanner()
         {
             try
             {
@@ -120,7 +120,7 @@ namespace Travel.Data.Repositories
 
 
                 int totalResult = queryresult.Count();
-                var list = queryresult.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var list = queryresult.ToList();
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
                 res.TotalResult = totalResult;
                 return res;
@@ -193,11 +193,6 @@ namespace Travel.Data.Repositories
             {
                 return Ultility.Responses("Lỗi !", Enums.TypeCRUD.Success.ToString());
             }
-        }
-
-        public Response GetBanner()
-        {
-            throw new NotImplementedException();
         }
     }
 }

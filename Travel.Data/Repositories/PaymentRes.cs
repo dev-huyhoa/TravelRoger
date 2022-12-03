@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Http;
 namespace Travel.Data.Repositories
 {
     public class PaymentRes : IPayment
+
     {
         private readonly TravelContext _db;
         private Notification message;
@@ -114,14 +115,14 @@ namespace Travel.Data.Repositories
         }
 
     
-        public Response Gets(int pageIndex, int pageSize)
+        public Response Gets()
         {
             try
             {
                 var queryListPayment = (from x in _db.Payment.AsNoTracking()
                                         select x);
                 int totalResult = queryListPayment.Count();
-                var list = queryListPayment.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var list = queryListPayment.ToList();
                 var result = Mapper.MapPayment(list);
 
                 res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -134,16 +135,6 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
             };
-        }
-
-        public Response Gets()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Response Create(CreatePaymentViewModel input)
-        {
-            throw new NotImplementedException();
         }
 
         //public Response Update(CreateUpdatePaymentViewModel input)
