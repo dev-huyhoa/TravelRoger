@@ -31,7 +31,7 @@ namespace Travel.Data.Repositories.NotifyRes
                 if (customer != null)
                 {
                     Comment cmt = new Comment();
-                    cmt.IdComment = new Guid();
+                    cmt.IdComment = Guid.NewGuid();
                     cmt.NameCustomer = customer.NameCustomer;
                     cmt.CommentText = input.CommentText;
                     cmt.CommentTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
