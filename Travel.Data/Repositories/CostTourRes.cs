@@ -16,6 +16,7 @@ using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 using Travel.Shared.ViewModels.Travel.CostTourVM;
 using Travel.Shared.ViewModels.Travel.TourVM;
+using static Travel.Shared.Ultilities.Enums;
 
 namespace Travel.Data.Repositories
 {
@@ -62,6 +63,12 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(idSchedule))
                 {
                 }
+
+                var idScheduleTmp = PrCommon.GetString("idScheduleTmp", frmData);
+                if (String.IsNullOrEmpty(idSchedule))
+                {
+                }
+
                 var hotelId = PrCommon.GetString("hotelId", frmData);
                 if (String.IsNullOrEmpty(hotelId))
                 {
@@ -128,11 +135,14 @@ namespace Travel.Data.Repositories
                 if (!String.IsNullOrEmpty(isHoliday))
                 {
                 }
+
+                var typeAction = PrCommon.GetString("typeAction", frmData);
                 if (isUpdate)
                 {
                     // map data
                     UpdateCostViewModel objUpdate = new UpdateCostViewModel();
                     objUpdate.IdSchedule = idSchedule;
+                    objUpdate.IdScheduleTmp = idScheduleTmp;
                     objUpdate.Breakfast = float.Parse(breakfast);
                     objUpdate.Water = float.Parse(water);
                     objUpdate.FeeGas = float.Parse(feeGas);
@@ -149,6 +159,7 @@ namespace Travel.Data.Repositories
                     objUpdate.PlaceId = Guid.Parse(placeId);
                     objUpdate.DepartureDate = DateTime.Parse(departureDate);
                     objUpdate.ReturnDate = DateTime.Parse(returnDate);
+                    objUpdate.TypeAction = typeAction;
                     return JsonSerializer.Serialize(objUpdate);
                 }
                 // map data
@@ -195,6 +206,7 @@ namespace Travel.Data.Repositories
                              where x.IdPlace == input.PlaceId select x).FirstOrDefault();
                 CostTour cost =
                 cost = Mapper.MapCreateCost(input);
+                cost.TypeAction = "insert";
                 cost.PriceHotelDB = hotel.DoubleRoomPrice; // 1
                 cost.PriceHotelSR = hotel.SingleRoomPrice;
                 cost.PriceRestaurant = restaurant.ComboPrice; // 2000000
@@ -313,8 +325,20 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                CostTour cost = Mapper.MapUpdateCost(input);
+                var costTour = (from x in _db.CostTours.AsNoTracking()
+                                where x.IdSchedule == input.IdSchedule
+                                select x).FirstOrDefault();
+                var costTourOld = new CostTour();
+                costTourOld = Ultility.DeepCopy<CostTour>(costTour);
+                costTourOld.IdSchedule = input.IdScheduleTmp;
+                costTourOld.IsTempData = true;
 
+                CreateDatabase(costTourOld);
+
+
+                CostTour cost = Mapper.MapUpdateCost(input);
+                cost.Approve = (int)ApproveStatus.Waiting;
+                cost.TypeAction = "update";
                 var hotel = (from x in _db.Hotels where x.IdHotel == input.HotelId select x).First();
                 var restaurant = (from x in _db.Restaurants where x.IdRestaurant == input.RestaurantId select x).First();
                 var place = (from x in _db.Places where x.IdPlace == input.PlaceId select x).First();

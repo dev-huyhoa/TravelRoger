@@ -62,7 +62,26 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var ads = input.ToList()[0].IdSchedule;
+                var timelines = (from x in _db.Timelines.AsNoTracking()
+                                where x.IdSchedule == input.ToList()[0].IdSchedule
+                                select x).ToList();
+
+                var timelineOld = new List<Timeline>();
+                foreach (var item in timelines)
+                {
+                    timelineOld.Add(Ultility.DeepCopy<Timeline>(item));
+                }
+
+                foreach (var item in timelineOld)
+                {
+                    item.IdTimeline = Guid.NewGuid();
+                    item.IdSchedule = input.ToList()[0].IdScheduleTmp;
+                }
+
+                _db.Timelines.AddRange(timelineOld.AsEnumerable());
                 ICollection<Timeline> timeline = Mapper.MapUpdateTimeline(input);
+              
                 string jsonContent = JsonSerializer.Serialize(timeline);
                 _db.Timelines.UpdateRange(timeline.AsEnumerable());
                 _db.SaveChanges();

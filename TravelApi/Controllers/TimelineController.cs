@@ -56,13 +56,13 @@ namespace TravelApi.Controllers
         [HttpPost]
         [Authorize]
         [Route("update-timeline")]
-        public object update(ICollection<UpdateTimeLineViewModel> timelinee)
+        public object update(ICollection<UpdateTimeLineViewModel> timeline)
         {
             message = null;
             //var result = _timelineRes.CheckBeforSave(frmData, ref message, false);
             if (message == null)
             {
-                var updateObj = timelinee;
+                var updateObj = timeline;
                 
                 var emailUser = GetEmailUserLogin().Value;
                 res = _timelineRes.Update(updateObj, emailUser);

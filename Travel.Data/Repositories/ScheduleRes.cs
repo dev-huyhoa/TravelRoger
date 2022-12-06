@@ -49,7 +49,17 @@ namespace Travel.Data.Repositories
         {
             _db.Entry(input).State = EntityState.Modified;
         }
+
+        private void UpdateDatabaseCostTour(CostTour input)
+        {
+            _db.Entry(input).State = EntityState.Modified;
+        }
+
         private void DeleteDatabase(Schedule input)
+        {
+            _db.Entry(input).State = EntityState.Deleted;
+        }
+        private void DeleteDatabaseCostTour(CostTour input)
         {
             _db.Entry(input).State = EntityState.Deleted;
         }
@@ -1767,9 +1777,15 @@ namespace Travel.Data.Repositories
                 var schedule = (from x in _db.Schedules.AsNoTracking()
                                 where x.IdSchedule == idSchedule
                                 select x).FirstOrDefault();
+
+                var costTour = (from x in _db.CostTours.AsNoTracking()
+                                where x.IdSchedule == idSchedule
+                                select x).FirstOrDefault();
+
                 var timelines = (from x in _db.Timelines
                                  where x.IdSchedule == idSchedule
                                  select x).ToList();
+
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
@@ -1817,20 +1833,34 @@ namespace Travel.Data.Repositories
                         {
                             var idScheduleTemp = schedule.IdAction;
                             // old hotel
+
                             var scheduleTemp = (from x in _db.Schedules
                                                 where x.IdSchedule == idScheduleTemp
                                                 select x).FirstOrDefault();
+
+                            var CostTourTemp = (from x in _db.CostTours.AsNoTracking()
+                                                where x.IdSchedule == idScheduleTemp
+                                                select x).FirstOrDefault();
+
+                            var TimelineTemp = (from x in _db.Timelines
+                                                where x.IdSchedule == idScheduleTemp
+                                                select x).ToList();
+
                             schedule.Approve = (int)ApproveStatus.Approved;
                             schedule.IdAction = null;
                             schedule.TypeAction = null;
+
+                            costTour.Approve = (int)ApproveStatus.Approved;
+                            costTour.TypeAction = null;
+
                             #region restore data
 
-                            schedule.BeginDate = scheduleTemp.BeginDate;
                             schedule.CarId = scheduleTemp.CarId;
                             schedule.DepartureDate = scheduleTemp.DepartureDate;
                             schedule.DeparturePlace = scheduleTemp.DeparturePlace;
                             schedule.Description = scheduleTemp.Description;
                             schedule.EmployeeId = scheduleTemp.EmployeeId;
+                            schedule.BeginDate = scheduleTemp.EndDate;
                             schedule.EndDate = scheduleTemp.EndDate;
                             schedule.IsHoliday = scheduleTemp.IsHoliday;
                             schedule.MaxCapacity = scheduleTemp.MaxCapacity;
@@ -1840,11 +1870,53 @@ namespace Travel.Data.Repositories
                             schedule.ReturnDate = scheduleTemp.ReturnDate;
                             schedule.Vat = scheduleTemp.Vat;
                             schedule.Profit = scheduleTemp.Profit;
-
                             schedule.TimePromotion = scheduleTemp.TimePromotion;
+                            schedule.FinalPrice = scheduleTemp.FinalPrice;
+                            schedule.FinalPriceHoliday = scheduleTemp.FinalPriceHoliday;
+                            schedule.PriceAdult = scheduleTemp.PriceAdult;
+                            schedule.PriceChild = scheduleTemp.PriceChild;
+                            schedule.PriceBaby = scheduleTemp.PriceBaby;
+                            schedule.PriceAdultHoliday = scheduleTemp.PriceAdultHoliday;
+                            schedule.PriceChildHoliday = scheduleTemp.PriceChildHoliday;
+                            schedule.PriceBabyHoliday = scheduleTemp.PriceBabyHoliday;
+
+                            costTour.Breakfast = CostTourTemp.Breakfast;
+                            costTour.Water = CostTourTemp.Water;
+                            costTour.FeeGas = CostTourTemp.FeeGas;
+                            costTour.Distance = CostTourTemp.Distance;
+                            costTour.SellCost = CostTourTemp.SellCost;
+                            costTour.Depreciation = CostTourTemp.Depreciation;
+                            costTour.OtherPrice = CostTourTemp.OtherPrice;
+                            costTour.Tolls = CostTourTemp.Tolls;
+                            costTour.CusExpected = CostTourTemp.CusExpected;
+                            costTour.InsuranceFee = CostTourTemp.InsuranceFee;
+                            costTour.IsHoliday = CostTourTemp.IsHoliday;
+                            costTour.TotalCostTourNotService = CostTourTemp.TotalCostTourNotService;
+                            costTour.HotelId = CostTourTemp.HotelId;
+                            costTour.PriceHotelDB = CostTourTemp.PriceHotelDB;
+                            costTour.PriceHotelSR = CostTourTemp.PriceHotelSR;
+                            costTour.RestaurantId = CostTourTemp.RestaurantId;
+                            costTour.PriceRestaurant = CostTourTemp.PriceRestaurant;
+                            costTour.PlaceId = CostTourTemp.PlaceId;
+                            costTour.PriceTicketPlace = CostTourTemp.PriceTicketPlace;
+
+
+
+                            foreach (var item in TimelineTemp)
+                            {
+                                item.IdSchedule = idSchedule;
+                            }
+
+                            _db.Timelines.RemoveRange(timelines);
+                            _db.Timelines.UpdateRange(TimelineTemp);
+
                             #endregion
                             DeleteDatabase(scheduleTemp);
                             UpdateDatabase(schedule);
+
+                            DeleteDatabaseCostTour(CostTourTemp);
+                            UpdateDatabaseCostTour(costTour);
+
                             SaveChange();
 
                             return Ultility.Responses("Đã hủy yêu cầu chỉnh sửa !", Enums.TypeCRUD.Success.ToString());
@@ -1855,8 +1927,13 @@ namespace Travel.Data.Repositories
                             schedule.TypeAction = null;
                             schedule.Isdelete = true;
                             schedule.Approve = (int)ApproveStatus.Approved;
-                            UpdateDatabase(schedule);
 
+
+                            costTour.TypeAction = null;
+                            costTour.Approve = (int)ApproveStatus.Refused;
+
+                            UpdateDatabase(schedule);
+                            UpdateDatabaseCostTour(costTour);
                             SaveChange();
 
                             return Ultility.Responses("Đã hủy yêu cầu khôi phục!", Enums.TypeCRUD.Success.ToString());
@@ -1868,7 +1945,12 @@ namespace Travel.Data.Repositories
                             schedule.TypeAction = null;
                             schedule.Isdelete = false;
                             schedule.Approve = (int)ApproveStatus.Approved;
+
+                            costTour.TypeAction = null;
+                            costTour.Approve = (int)ApproveStatus.Refused;
+
                             UpdateDatabase(schedule);
+                            UpdateDatabaseCostTour(costTour);
                             SaveChange();
                             return Ultility.Responses("Đã hủy yêu cầu xóa !", Enums.TypeCRUD.Success.ToString());
                         }
@@ -1893,6 +1975,12 @@ namespace Travel.Data.Repositories
                                 where x.IdSchedule == idSchedule
                                 && x.Approve == (int)ApproveStatus.Waiting
                                 select x).FirstOrDefault();
+
+                var costTour = (from x in _db.CostTours.AsNoTracking()
+                                where x.IdSchedule == idSchedule
+                                && x.Approve == (int)ApproveStatus.Waiting
+                                select x).FirstOrDefault();
+
                 if (schedule != null)
                 {
 
@@ -1904,18 +1992,33 @@ namespace Travel.Data.Repositories
                         schedule.IdAction = null;
                         schedule.TypeAction = null;
 
+                        costTour.Approve = (int)ApproveStatus.Approved;
+                        costTour.TypeAction = null;
 
                         // delete tempdata
                         var scheduleTemp = (from x in _db.Schedules.AsNoTracking()
                                             where x.IdSchedule == idScheduleTemp
                                             select x).FirstOrDefault();
                         DeleteDatabase(scheduleTemp);
+
+                        var CostTourTemp = (from x in _db.CostTours.AsNoTracking()
+                                            where x.IdSchedule == idScheduleTemp
+                                            select x).FirstOrDefault();
+                        DeleteDatabaseCostTour(CostTourTemp);
+
+                        var TimlineTemp = (from x in _db.Timelines.AsNoTracking()
+                                            where x.IdSchedule == idScheduleTemp
+                                            select x).ToList();
+                        _db.Timelines.RemoveRange(TimlineTemp);
                     }
                     else if (schedule.TypeAction == "insert")
                     {
                         schedule.IdAction = null;
                         schedule.TypeAction = null;
                         schedule.Approve = (int)ApproveStatus.Approved;
+
+                        costTour.TypeAction = null;
+                        costTour.Approve = (int)ApproveStatus.Approved;
                     }
                     else if (schedule.TypeAction == "restore")
                     {
@@ -1924,6 +2027,8 @@ namespace Travel.Data.Repositories
                         schedule.Approve = (int)ApproveStatus.Approved;
                         schedule.Isdelete = false;
 
+                        costTour.TypeAction = null;
+                        costTour.Approve = (int)ApproveStatus.Approved;
                     }
                     else
                     {
@@ -1931,8 +2036,12 @@ namespace Travel.Data.Repositories
                         schedule.TypeAction = null;
                         schedule.Approve = (int)ApproveStatus.Approved;
                         schedule.Isdelete = true;
+
+                        costTour.TypeAction = null;
+                        costTour.Approve = (int)ApproveStatus.Approved;
                     }
                     UpdateDatabase(schedule);
+                    UpdateDatabaseCostTour(costTour);
                     SaveChange();
 
                     var userModify = GetCurrentUser(schedule.IdUserModify);
@@ -1959,6 +2068,15 @@ namespace Travel.Data.Repositories
                                 where x.IdSchedule == idSchedule
                                 && x.Approve == (int)ApproveStatus.Waiting
                                 select x).FirstOrDefault();
+                var costTour = (from x in _db.CostTours.AsNoTracking()
+                                where x.IdSchedule == idSchedule
+                                && x.Approve == (int)ApproveStatus.Waiting
+                                select x).FirstOrDefault();
+
+                var timelines = (from x in _db.Timelines
+                                 where x.IdSchedule == idSchedule
+                                 select x).ToList();
+
                 if (schedule != null)
                 {
                     if (schedule.TypeAction == "update")
@@ -1970,38 +2088,91 @@ namespace Travel.Data.Repositories
                                             && x.IsTempData == true
                                             select x).FirstOrDefault();
 
+                        var CostTourTemp = (from x in _db.CostTours.AsNoTracking()
+                                            where x.IdSchedule == idScheduleTemp
+                                            select x).FirstOrDefault();
+
+                        var TimelineTemp = (from x in _db.Timelines
+                                            where x.IdSchedule == idScheduleTemp
+                                            select x).ToList();
+
                         schedule.Approve = (int)ApproveStatus.Approved;
                         schedule.IdAction = null;
                         schedule.TypeAction = null;
 
+                        costTour.Approve = (int)ApproveStatus.Approved;
+                        costTour.TypeAction = null;
+
+
                         #region restore data
 
-                        schedule.BeginDate = scheduleTemp.BeginDate;
                         schedule.CarId = scheduleTemp.CarId;
                         schedule.DepartureDate = scheduleTemp.DepartureDate;
                         schedule.DeparturePlace = scheduleTemp.DeparturePlace;
                         schedule.Description = scheduleTemp.Description;
                         schedule.EmployeeId = scheduleTemp.EmployeeId;
+                        schedule.BeginDate = scheduleTemp.EndDate;
                         schedule.EndDate = scheduleTemp.EndDate;
                         schedule.IsHoliday = scheduleTemp.IsHoliday;
                         schedule.MaxCapacity = scheduleTemp.MaxCapacity;
                         schedule.MinCapacity = scheduleTemp.MinCapacity;
-
                         schedule.PromotionId = scheduleTemp.PromotionId;
                         schedule.ReturnDate = scheduleTemp.ReturnDate;
                         schedule.Vat = scheduleTemp.Vat;
                         schedule.Profit = scheduleTemp.Profit;
-
                         schedule.TimePromotion = scheduleTemp.TimePromotion;
+                        schedule.FinalPrice = scheduleTemp.FinalPrice;
+                        schedule.FinalPriceHoliday = scheduleTemp.FinalPriceHoliday;
+                        schedule.PriceAdult = scheduleTemp.PriceAdult;
+                        schedule.PriceChild = scheduleTemp.PriceChild;
+                        schedule.PriceBaby = scheduleTemp.PriceBaby;
+                        schedule.PriceAdultHoliday = scheduleTemp.PriceAdultHoliday;
+                        schedule.PriceChildHoliday = scheduleTemp.PriceChildHoliday;
+                        schedule.PriceBabyHoliday = scheduleTemp.PriceBabyHoliday;
+
+
+                        costTour.Breakfast = CostTourTemp.Breakfast;
+                        costTour.Water = CostTourTemp.Water;
+                        costTour.FeeGas = CostTourTemp.FeeGas;
+                        costTour.Distance = CostTourTemp.Distance;
+                        costTour.SellCost = CostTourTemp.SellCost;
+                        costTour.Depreciation = CostTourTemp.Depreciation;
+                        costTour.OtherPrice = CostTourTemp.OtherPrice;
+                        costTour.Tolls = CostTourTemp.Tolls;
+                        costTour.CusExpected = CostTourTemp.CusExpected;
+                        costTour.InsuranceFee = CostTourTemp.InsuranceFee;
+                        costTour.IsHoliday = CostTourTemp.IsHoliday;
+                        costTour.TotalCostTourNotService = CostTourTemp.TotalCostTourNotService;
+                        costTour.HotelId = CostTourTemp.HotelId;
+                        costTour.PriceHotelDB = CostTourTemp.PriceHotelDB;
+                        costTour.PriceHotelSR = CostTourTemp.PriceHotelSR;
+                        costTour.RestaurantId = CostTourTemp.RestaurantId;
+                        costTour.PriceRestaurant = CostTourTemp.PriceRestaurant;
+                        costTour.PlaceId = CostTourTemp.PlaceId;
+                        costTour.PriceTicketPlace = CostTourTemp.PriceTicketPlace;
+
+                        foreach (var item in TimelineTemp)
+                        {
+                            item.IdSchedule = idSchedule;
+                        }
+
+                        _db.Timelines.RemoveRange(timelines);
+                        _db.Timelines.UpdateRange(TimelineTemp);
                         #endregion
 
                         DeleteDatabase(scheduleTemp);
+                        DeleteDatabaseCostTour(CostTourTemp);
                     }
                     else if (schedule.TypeAction == "insert")
                     {
+                        _db.RemoveRange(timelines);
+
                         schedule.IdAction = null;
                         schedule.TypeAction = null;
                         schedule.Approve = (int)ApproveStatus.Refused;
+
+                        costTour.TypeAction = null;
+                        costTour.Approve = (int)ApproveStatus.Refused;
                     }
                     else if (schedule.TypeAction == "restore")
                     {
@@ -2009,6 +2180,9 @@ namespace Travel.Data.Repositories
                         schedule.TypeAction = null;
                         schedule.Isdelete = true;
                         schedule.Approve = (int)ApproveStatus.Approved;
+
+                        costTour.TypeAction = null;
+                        costTour.Approve = (int)ApproveStatus.Approved;
                     }
                     else // delete
                     {
@@ -2016,8 +2190,12 @@ namespace Travel.Data.Repositories
                         schedule.TypeAction = null;
                         schedule.Isdelete = false;
                         schedule.Approve = (int)ApproveStatus.Approved;
+
+                        costTour.TypeAction = null;
+                        costTour.Approve = (int)ApproveStatus.Approved;
                     }
                     UpdateDatabase(schedule);
+                    UpdateDatabaseCostTour(costTour);
                     SaveChange();
 
                     var userModify = GetCurrentUser(schedule.IdUserModify);
@@ -2091,7 +2269,7 @@ namespace Travel.Data.Repositories
                 bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Schedule");
                 if (result)
                 {
-                    return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString());
+                    return Ultility.Responses("Đã gửi yêu cầu sửa !", Enums.TypeCRUD.Success.ToString(), scheduleOld.IdSchedule);
                 }
                 else
                 {
