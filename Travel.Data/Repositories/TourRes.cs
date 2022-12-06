@@ -63,7 +63,7 @@ namespace Travel.Data.Repositories
                     select x).FirstOrDefault();
         }
 
-        
+  
         public string CheckBeforSave(IFormCollection frmdata, IFormFile file, ref Notification _message, bool isUpdate)
         {
             try
@@ -587,6 +587,7 @@ namespace Travel.Data.Repositories
                         {
                             if (tour.TypeAction == "insert")
                             {
+                                DelImageCreate(tour.IdTour, "");
                                 DeleteDatabase(tour);
                                 SaveChange();
 
@@ -594,6 +595,10 @@ namespace Travel.Data.Repositories
                             }
                             else if (tour.TypeAction == "update")
                             {
+
+                                DelOrResImageTour(tour.IdTour, "restore");
+                                DelImageCreate(tour.IdTour, "");
+
                                 var idTourTemp = tour.IdAction;
                                 // old hotel
                                 var tourTemp = (from x in _db.Tour.AsNoTracking()
@@ -709,10 +714,13 @@ namespace Travel.Data.Repositories
                             where x.IdTour == idTour
                             && x.ApproveStatus == (int)ApproveStatus.Waiting
                             select x).FirstOrDefault();
+     
                 if (tour != null)
                 {
                     if (tour.TypeAction == "update")
                     {
+                        DelOrResImageTour(tour.IdTour, "delete");
+                        DelImageCreate(tour.IdTour, "approve");
                         var idTourTemp = tour.IdAction;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
                         tour.IdAction = null;
@@ -750,6 +758,7 @@ namespace Travel.Data.Repositories
                     }
                     else
                     {
+
                         tour.IdAction = null;
                         tour.TypeAction = null;
                         tour.ApproveStatus = (int)ApproveStatus.Approved;
@@ -790,7 +799,10 @@ namespace Travel.Data.Repositories
                         SaveChange();
                     }
                     else if (tour.TypeAction == "update")
-                    {
+                    {            
+                        DelOrResImageTour(tour.IdTour, "restore");
+                        DelImageCreate(tour.IdTour, "");
+
                         var idTourTemp = tour.IdAction;
                         // old hotel
                         var tourTemp = (from x in _db.Tour.AsNoTracking()
@@ -1577,6 +1589,66 @@ namespace Travel.Data.Repositories
 
                 throw;
             }
+        }
+
+        private void DelOrResImageTour(string idTour, string type)
+        {
+            try
+            {
+                var imgTour = from s in _db.Images
+                              where s.IsDelete == true &&
+                                    s.IdService == idTour
+                              select s;
+
+                if (type == "delete")
+                {
+                    _db.RemoveRange(imgTour);
+                    _db.SaveChanges();
+                }
+                else
+                {
+                    foreach (var img in imgTour)
+                    {
+                        img.IsDelete = false;
+                        img.TypeAction = "";
+                    }
+                    _db.UpdateRange(imgTour);
+                    _db.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            { }
+        }
+
+
+        private void DelImageCreate(string idTour, string typeApprove)
+        {
+            try
+            {
+                var imgTour = from s in _db.Images
+                              where s.TypeAction == "insert" &&
+                                    s.IdService == idTour
+                              select s;
+                if(imgTour != null)
+                {
+                    if (typeApprove == "approve")
+                    {
+                        foreach (var img in imgTour)
+                        {
+                            img.TypeAction = "";
+                        }
+                        _db.UpdateRange(imgTour);
+                        _db.SaveChanges();
+                    }
+                    else
+                    {
+                        _db.RemoveRange(imgTour);
+                        _db.SaveChanges();
+                    }
+                }
+            }
+            catch(Exception e)
+            {}
         }
     }
 }

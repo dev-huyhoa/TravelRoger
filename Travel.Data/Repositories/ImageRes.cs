@@ -34,7 +34,8 @@ namespace Travel.Data.Repositories
             try
             {
                 var image = (from x in _db.Images
-                                where x.IdService == idTour
+                                where x.IdService == idTour &&
+                                      x.IsDelete == false  
                                 select x).ToList();
                
                 if (image != null)
@@ -59,6 +60,10 @@ namespace Travel.Data.Repositories
                     imageDetail = Ultility.WriteFiles(files, "Tour", idTour, ref _message);
                     if (imageDetail.Count > 0)
                     {
+                        foreach (var image in imageDetail)
+                        {
+                            image.TypeAction = "insert";
+                        }
                         _db.Images.AddRange(imageDetail.AsEnumerable());
                         _db.SaveChanges();
                         res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
@@ -81,13 +86,16 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                if (images != null)
+                if (images.Count > 0)
                 {
-
-                    _db.Images.RemoveRange(images.AsEnumerable());
+                    foreach (var image in images)
+                    {
+                        image.IsDelete = true;
+                        image.TypeAction = "delete";
+                    }
+                    _db.Images.UpdateRange(images.AsEnumerable());
                     _db.SaveChanges();
                     res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
-                              
                 }
                 else
                 {

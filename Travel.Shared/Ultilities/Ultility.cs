@@ -396,6 +396,7 @@ namespace Travel.Shared.Ultilities
                 image.IdService = idService;
                 image.Size = file.Length;
                 image.FilePath = link;
+                image.IsDelete = false;
                 return image;
             }
             catch (Exception e)
@@ -482,6 +483,7 @@ namespace Travel.Shared.Ultilities
                         imageDetail.IdService = idService;
                         imageDetail.Size = file.Length;
                         imageDetail.FilePath = link;
+                        imageDetail.IsDelete = false;
                         imageList.Add(imageDetail);
                     }
                 }
