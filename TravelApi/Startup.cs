@@ -49,6 +49,7 @@ namespace TravelApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TravelApi", Version = "v1" });
             });
+            services.AddMemoryCache();
 
             services.AddDatabase(Configuration)
                 .AddRepositories();
@@ -94,21 +95,6 @@ namespace TravelApi
                     }
                 };
             });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

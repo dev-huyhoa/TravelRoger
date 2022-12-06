@@ -262,24 +262,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response StatisticPaidNotCheckedin()
-        {
-            try
-            {
-                var list = (from x in _db.TourBookings.AsNoTracking()
-                            where x.Status == (int)Enums.StatusBooking.Paid &&
-                                  x.CheckIn == 0
-                            select x).ToList();
-
-                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
-                res.TotalResult = list.Count;
-                return res;
-            }
-            catch (Exception e)
-            {
-                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-            }
-        }
+       
 
         public Response GetStatisticTourbookingByMonth(int Month,int year)
         {

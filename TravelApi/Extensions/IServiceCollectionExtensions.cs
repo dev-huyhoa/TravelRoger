@@ -12,6 +12,7 @@ using Travel.Data.Interfaces.INotify;
 using Travel.Data.Repositories;
 using Travel.Data.Repositories.NotifyRes;
 using Travel.Data.Responsives;
+using TravelApi.Helpers;
 using TravelApi.Hubs.HubServices;
 
 namespace TravelApi.Extensions
@@ -81,6 +82,9 @@ namespace TravelApi.Extensions
 
             services
             .AddScoped<IImage, ImageRes>();
+
+            services
+                .AddScoped<ICache, MemoryCache>();
             return services;
         
 

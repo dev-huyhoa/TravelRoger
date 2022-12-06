@@ -103,13 +103,6 @@ namespace TravelApi.Controllers.Notify
             }
         }
 
-        [HttpGet]
-        [Authorize]
-        [Route("list-statistic-paid-not-checkedin")]
-        public object StatisticPaidNotCheckedin()
-        {
-            res = _statistic.StatisticPaidNotCheckedin();
-            return Ok(res);
-        }
+      
     }
 }

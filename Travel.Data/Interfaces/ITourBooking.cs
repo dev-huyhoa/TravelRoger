@@ -36,5 +36,7 @@ namespace Travel.Data.Interfaces
 
         byte[] CreateByteQR(string qrCodeText);
         string AddImg(string qrCodeText, string idService);
+        Response StatisticPaidNotCheckedin();
+
     }
 }

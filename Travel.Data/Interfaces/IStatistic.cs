@@ -18,6 +18,5 @@ namespace Travel.Data.Interfaces
         Response GetListWeekOfYear(int year);
         Task SaveReportWeek();
 
-        Response StatisticPaidNotCheckedin();
     }
 }

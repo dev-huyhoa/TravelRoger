@@ -386,7 +386,24 @@ namespace Travel.Data.Repositories
             var bytes = ImageToByteArray(qrCodeImage);
             return bytes;
         }
+        public Response StatisticPaidNotCheckedin()
+        {
+            try
+            {
+                var list = (from x in _db.TourBookings.AsNoTracking()
+                            where x.Status == (int)Enums.StatusBooking.Paid &&
+                                  x.CheckIn == 0
+                            select x).ToList();
 
+                var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
+                res.TotalResult = list.Count;
+                return res;
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
         public string AddImg(string qrCodeText, string idService)
         {
             try
@@ -1080,6 +1097,7 @@ namespace Travel.Data.Repositories
                             }
                         }
                         item.Status = (int)Enums.StatusBooking.Finished;
+                        item.CheckOut = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                         UpdateDatabase(item);
                     }
                     SaveChange();
@@ -1097,7 +1115,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourBooking = (from x in _db.TourBookings
+                var tourBooking = (from x in _db.TourBookings.AsNoTracking()
                                  where x.BookingNo == bookingNo
                                  select x).FirstOrDefault();
                 if(tourBooking != null)

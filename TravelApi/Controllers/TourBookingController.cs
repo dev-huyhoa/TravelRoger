@@ -211,5 +211,13 @@ namespace TravelApi.Controllers
             res = _tourbooking.CheckInBooking(bookingNo);
             return Ok(res);
         }
+        [HttpGet]
+        [Authorize]
+        [Route("list-statistic-paid-not-checkedin")]
+        public object StatisticPaidNotCheckedin()
+        {
+            res = _tourbooking.StatisticPaidNotCheckedin();
+            return Ok(res);
+        }
     }
 }
