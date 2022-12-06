@@ -149,5 +149,14 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("search-promotion")]
+        public object SearchPromotion([FromBody] JObject frmData)
+        {
+            res = _promotion.SearchPromotion(frmData);
+            return Ok(res);
+        }
+
     }
 }

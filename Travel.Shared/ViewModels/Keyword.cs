@@ -59,6 +59,7 @@ namespace Travel.Shared.ViewModels
         public bool KwIsHoliday { get; set; }
 
         public bool KwIsAllOption { get; set; }
+        public int KwValue { get; set; }
     }
     public class Pagination
     {

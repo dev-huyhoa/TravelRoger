@@ -597,5 +597,153 @@ namespace Travel.Data.Repositories
 
 
         }
+   
+        public Response SearchPromotion(JObject frmData)
+        {
+            try
+            {
+                var totalResult = 0;
+                Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
+
+                var isDelete = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.IsDelete = Boolean.Parse(isDelete);
+                }
+
+                var kwValue = PrCommon.GetString("value", frmData);
+                if (!String.IsNullOrEmpty(kwValue))
+                {
+                    keywords.KwValue = int.Parse(kwValue);
+                }
+                else
+                {
+                    keywords.KwValue = 0;
+                }
+
+                var kwFromDate = PrCommon.GetString("fromDate", frmData);
+                if (!String.IsNullOrEmpty(kwFromDate))
+                {
+                    keywords.KwFromDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(kwFromDate));
+                }
+                else
+                {
+                    keywords.KwFromDate = 0;
+                }
+
+                var kwToDate = PrCommon.GetString("toDate", frmData);
+                if (!String.IsNullOrEmpty(kwToDate))
+                {
+                    keywords.KwToDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Parse(kwToDate).AddDays(1).AddSeconds(-1));
+                }
+                else
+                {
+                    keywords.KwToDate = 0;
+                }
+
+                var listPromotion = new List<Promotion>();
+
+                if(keywords.KwFromDate > 0 || keywords.KwToDate > 0)
+                {
+                    if(keywords.KwValue > 0)
+                    {
+                        if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
+                        {
+                            var querylistPromo = (from p in _db.Promotions
+                                             where p.FromDate >= keywords.KwFromDate &&
+                                                   p.ToDate <= keywords.KwToDate &&
+                                                   p.Value == keywords.KwValue
+                                             select p).ToList();
+                            totalResult = querylistPromo.Count();
+                            listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                        }
+                        else if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
+                        {
+                            var querylistPromo = (from p in _db.Promotions
+                                             where p.ToDate <= keywords.KwToDate &&
+                                                   p.Value == keywords.KwValue
+                                             select p).ToList();
+                            totalResult = querylistPromo.Count();
+                            listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                        }
+                        else if (keywords.KwFromDate > 0 && keywords.KwToDate == 0)
+                        {
+                            var querylistPromo = (from p in _db.Promotions
+                                             where p.FromDate >= keywords.KwFromDate &&
+                                                   p.Value == keywords.KwValue
+                                             select p).ToList();
+                            totalResult = querylistPromo.Count();
+                            listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                        }
+                    }
+                    else
+                    {
+                        if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
+                        {
+                            var querylistPromo = (from p in _db.Promotions
+                                             where p.FromDate >= keywords.KwFromDate &&
+                                                   p.ToDate <= keywords.KwToDate
+                                             select p).ToList();
+                            totalResult = querylistPromo.Count();
+                            listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                        }
+                        else if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
+                        {
+                            var querylistPromo = (from p in _db.Promotions
+                                             where p.ToDate <= keywords.KwToDate
+                                             select p).ToList();
+                            totalResult = querylistPromo.Count();
+                            listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                        }
+                        else if (keywords.KwFromDate > 0 && keywords.KwToDate == 0)
+                        {
+                            var querylistPromo = (from p in _db.Promotions
+                                             where p.FromDate >= keywords.KwFromDate
+                                             select p).ToList();
+                            totalResult = querylistPromo.Count();
+                            listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                        }
+                    }
+                }
+                else
+                {
+                    if(keywords.KwValue > 0)
+                    {
+                        var querylistPromo = (from p in _db.Promotions
+                                         where p.Value == keywords.KwValue
+                                         select p).ToList();
+                        totalResult = querylistPromo.Count();
+                        listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                    }
+                    else
+                    {
+                        var querylistPromo = (from p in _db.Promotions
+                                         select p).ToList();
+                        totalResult = querylistPromo.Count();
+                        listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                    }
+                    
+                }
+
+
+                var result = Mapper.MapPromotion(listPromotion);
+                if (result.Count() > 0)
+                {
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
+                }
+                else
+                {
+                    return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
+                }
+            }
+            catch(Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }
