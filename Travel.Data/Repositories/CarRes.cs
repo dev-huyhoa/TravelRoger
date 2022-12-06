@@ -114,9 +114,9 @@ namespace Travel.Data.Repositories
                 CreateCarViewModel objCreate = new CreateCarViewModel();
                 //objCreate.IdCar = Guid.Parse(idCar);
                 objCreate.NameDriver = nameDriver;
-                objCreate.AmountSeat = int.Parse(amountSeat);
-                objCreate.Status = int.Parse(status);
-                objCreate.LiscensePlate = liscenseplate;
+                objCreate.AmountSeat = Convert.ToInt16(amountSeat);
+                objCreate.Status = Convert.ToInt16(status);
+                objCreate.LiscensePlate = liscenseplate.ToString();
                 objCreate.Phone = phone;
                 objCreate.IdUserModify = Guid.Parse(idUserModify);
                 objCreate.ModifyBy = GetCurrentUser(objCreate.IdUserModify).NameEmployee;
