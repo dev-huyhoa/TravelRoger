@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Travel.Context.Models;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel.CustomerVM;
@@ -116,6 +117,15 @@ namespace TravelApi.Controllers
         public async Task<object> CustomerVoteRateting(string idTour, int rating)
         {
             res = await customer.CustomerSendRate(idTour, rating);
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-customer")]
+        public object SearchCustomer([FromBody] JObject frmData)
+        {
+            res = customer.Search(frmData);
             return Ok(res);
         }
     }
