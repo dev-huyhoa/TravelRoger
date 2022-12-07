@@ -3140,7 +3140,18 @@ namespace Travel.Data.Repositories
                 throw;
             }
         }
+        public async Task<Schedule> GetScheduleByIdForVnPay(string idSchedule)
+        {
+            try
+            {
+                return await _db.Schedules.FindAsync(idSchedule);
+            }
+            catch (Exception e)
+            {
 
+                throw;
+            }
+        }
         public async Task<Response> AutomaticUpdatePromotionForSchedule()
         {
             try

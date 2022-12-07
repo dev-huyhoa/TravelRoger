@@ -84,6 +84,9 @@ namespace TravelApi.Extensions
             .AddScoped<IImage, ImageRes>();
 
             services
+                 .AddScoped<IVnPay, VnpayRes>();
+
+            services
                 .AddScoped<ICache, MemoryCache>();
             return services;
         

@@ -38,6 +38,7 @@ namespace Travel.Data.Repositories
         public async Task<bool> SaveReportTourBookingEveryDay(DateTime dateInput)
         {
             var dateTimeYesterday = DateTime.Now.AddDays(-1);
+            var dateTimeNow = dateTimeYesterday.AddDays(1);
             var day = dateTimeYesterday.Day;
             var month = dateTimeYesterday.Month;
             var year = dateTimeYesterday.Year;
@@ -48,8 +49,9 @@ namespace Travel.Data.Repositories
             using var transaction = _dbNotyf.Database.BeginTransaction();
             try
             {
+                var dateSaveMax = await _dbNotyf.ReportTourBooking.OrderByDescending(x => x.DateSave).FirstOrDefaultAsync();
                 await transaction.CreateSavepointAsync("BeforeSave");
-                if (input == unixYesterday)
+                if (dateSaveMax == null || dateSaveMax.DateSave < input)
                 {
                     if (!await CheckReportByDateIsExist(unixYesterday))
                     {
@@ -130,7 +132,6 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-
         public Response StatisticTourBookingInThisWeek(long fromDate,long toDate)
         {
             try
@@ -261,8 +262,6 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-
-       
 
         public Response GetStatisticTourbookingByMonth(int Month,int year)
         {

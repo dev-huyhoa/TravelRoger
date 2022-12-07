@@ -9,16 +9,28 @@ namespace Travel.Shared.Logs
 {
     public static class WriteLog
     {
-        public static void SimpleWrite(string path, object res)
-        {
-            string json = System.Text.Json.JsonSerializer.Serialize(res);
-
-            using (StreamWriter w = System.IO.File.AppendText(path))
-            {
-                w.WriteLine(json);
-                w.Close();
-            }
-
-        }
+        //public static void WriteLog(string message, string folder = "Logs")
+        //{
+        //    string path = $"{AppDomain.CurrentDomain.BaseDirectory}//{folder}//";
+        //    if (!Directory.Exists(path))
+        //    {
+        //        Directory.CreateDirectory(path);
+        //    }
+        //    string file = $"{path}Logs.txt";
+        //    if (!File.Exists(file))
+        //    {
+        //        using (StreamWriter sw = File.CreateText(file))
+        //        {
+        //            sw.WriteLine(message);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        using (StreamWriter sw = File.AppendText(file))
+        //        {
+        //            sw.WriteLine(message);
+        //        }
+        //    }
+        //}
     }
 }
