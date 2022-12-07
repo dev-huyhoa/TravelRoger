@@ -3260,6 +3260,7 @@ namespace Travel.Data.Repositories
                 var filterList = (from s in _db.Schedules.AsNoTracking()
                                   where s.Isdelete == false
                                    && s.EndDate > dateTimeNow
+                                   && s.BeginDate <= dateTimeNow
                                    && s.Approve == (int)Enums.ApproveStatus.Approved
                                   select new Schedule
                                   {
