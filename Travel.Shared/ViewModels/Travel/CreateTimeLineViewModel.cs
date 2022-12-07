@@ -15,12 +15,15 @@ namespace Travel.Shared.ViewModels.Travel
     }
     public class CreateTimeLineViewModel:UpdateApproveData
     {
+        private string title;
         private string description;
         private long fromTime;
         private long toTime;
         private string idSchedule;
         private string idScheduleTmp;
 
+
+        public string Title { get => title; set => title = value; }
         public string Description { get => description; set => description = value; }
         public long FromTime { get => fromTime; set => fromTime = value; }
         public long ToTime { get => toTime; set => toTime = value; }
