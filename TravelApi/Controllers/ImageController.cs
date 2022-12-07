@@ -31,7 +31,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         [Route("list-image-idTour")]
         public object GetImageByIdTour(string idTour)
         {

@@ -170,30 +170,36 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetsWaitingPromotion(Guid idUser)
+        public Response GetsWaitingPromotion(Guid idUser, int pageIndex, int pageSize)
         {
             try
             {
+                var totalResult = 0;
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
                 var listWaiting = new List<Promotion>();
                 if (userLogin.RoleId == (int)Enums.TitleRole.Admin)
                 {
-                    listWaiting = (from x in _db.Promotions.AsNoTracking()
+                    var querylistWaiting = (from x in _db.Promotions.AsNoTracking()
                                    where x.Approve == Convert.ToInt16(ApproveStatus.Waiting) select x).ToList();
+                    totalResult = querylistWaiting.Count();
+                    listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
-                    listWaiting = (from x in _db.Promotions.AsNoTracking()
+                    var querylistWaiting = (from x in _db.Promotions.AsNoTracking()
                                    where x.IdUserModify == idUser
                                    && x.Approve == Convert.ToInt16(ApproveStatus.Waiting)
                                    select x).ToList();
+                    totalResult = querylistWaiting.Count();
+                    listWaiting = querylistWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
 
                 var result = Mapper.MapPromotion(listWaiting);
-
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                var res =  Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = totalResult;
+                return res;
             }
             catch (Exception e)
             {
@@ -205,7 +211,8 @@ namespace Travel.Data.Repositories
             Promotion promotion
                         = Mapper.MapCreatePromotion(input);
             var user = GetCurrentUser(input.IdUserModify);
-            input.ModifyBy = user.NameEmployee;
+            promotion.ModifyBy = user.NameEmployee;
+            //promotion.IdUserModify = user.IdEmployee;
             promotion.TypeAction = "insert";
             string jsonContent = JsonSerializer.Serialize(promotion);
             promotion.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
@@ -652,7 +659,8 @@ namespace Travel.Data.Repositories
                         if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
                         {
                             var querylistPromo = (from p in _db.Promotions
-                                             where p.FromDate >= keywords.KwFromDate &&
+                                             where p.IsDelete == keywords.IsDelete &&
+                                                   p.FromDate >= keywords.KwFromDate &&
                                                    p.ToDate <= keywords.KwToDate &&
                                                    p.Value == keywords.KwValue
                                              select p).ToList();
@@ -662,7 +670,8 @@ namespace Travel.Data.Repositories
                         else if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
                         {
                             var querylistPromo = (from p in _db.Promotions
-                                             where p.ToDate <= keywords.KwToDate &&
+                                             where p.IsDelete == keywords.IsDelete &&
+                                                   p.ToDate <= keywords.KwToDate &&
                                                    p.Value == keywords.KwValue
                                              select p).ToList();
                             totalResult = querylistPromo.Count();
@@ -671,7 +680,8 @@ namespace Travel.Data.Repositories
                         else if (keywords.KwFromDate > 0 && keywords.KwToDate == 0)
                         {
                             var querylistPromo = (from p in _db.Promotions
-                                             where p.FromDate >= keywords.KwFromDate &&
+                                             where p.IsDelete == keywords.IsDelete &&
+                                                   p.FromDate >= keywords.KwFromDate &&
                                                    p.Value == keywords.KwValue
                                              select p).ToList();
                             totalResult = querylistPromo.Count();
@@ -683,16 +693,18 @@ namespace Travel.Data.Repositories
                         if (keywords.KwFromDate > 0 && keywords.KwToDate > 0)
                         {
                             var querylistPromo = (from p in _db.Promotions
-                                             where p.FromDate >= keywords.KwFromDate &&
-                                                   p.ToDate <= keywords.KwToDate
-                                             select p).ToList();
+                                             where p.IsDelete == keywords.IsDelete &&
+                                                   p.FromDate >= keywords.KwFromDate &&
+                                                   p.ToDate <= keywords.KwToDate 
+                                                  select p).ToList();
                             totalResult = querylistPromo.Count();
                             listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                         }
                         else if (keywords.KwFromDate == 0 && keywords.KwToDate > 0)
                         {
                             var querylistPromo = (from p in _db.Promotions
-                                             where p.ToDate <= keywords.KwToDate
+                                             where   p.IsDelete == keywords.IsDelete &&
+                                                     p.ToDate <= keywords.KwToDate 
                                              select p).ToList();
                             totalResult = querylistPromo.Count();
                             listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
@@ -700,8 +712,9 @@ namespace Travel.Data.Repositories
                         else if (keywords.KwFromDate > 0 && keywords.KwToDate == 0)
                         {
                             var querylistPromo = (from p in _db.Promotions
-                                             where p.FromDate >= keywords.KwFromDate
-                                             select p).ToList();
+                                             where  p.IsDelete == keywords.IsDelete &&
+                                                    p.FromDate >= keywords.KwFromDate 
+                                                  select p).ToList();
                             totalResult = querylistPromo.Count();
                             listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                         }
@@ -712,14 +725,16 @@ namespace Travel.Data.Repositories
                     if(keywords.KwValue > 0)
                     {
                         var querylistPromo = (from p in _db.Promotions
-                                         where p.Value == keywords.KwValue
-                                         select p).ToList();
+                                         where p.IsDelete == keywords.IsDelete &&
+                                                p.Value == keywords.KwValue 
+                                              select p).ToList();
                         totalResult = querylistPromo.Count();
                         listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                     else
                     {
                         var querylistPromo = (from p in _db.Promotions
+                                              where p.IsDelete == keywords.IsDelete 
                                          select p).ToList();
                         totalResult = querylistPromo.Count();
                         listPromotion = querylistPromo.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();

@@ -60,6 +60,8 @@ namespace Travel.Shared.ViewModels
 
         public bool KwIsAllOption { get; set; }
         public int KwValue { get; set; }
+
+        public int KwPoint { get; set; }
     }
     public class Pagination
     {

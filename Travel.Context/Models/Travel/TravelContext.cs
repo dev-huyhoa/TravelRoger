@@ -346,7 +346,8 @@ namespace Travel.Context.Models.Travel
                .WithMany(d => d.Timelines)
                .HasForeignKey(e => e.IdSchedule);
 
-                entity.Property(e => e.Description).HasMaxLength(150);
+                entity.Property(e => e.Title).HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(2000);
                 entity.Property(e => e.ModifyBy).HasMaxLength(100);
                 entity.Property(e => e.IdSchedule).HasMaxLength(50);
             });
