@@ -38,6 +38,7 @@ namespace Travel.Data.Interfaces
 
         Response SearchScheduleWaiting(JObject frmData, string idTour);
         Task<Schedule> GetScheduleByIdForPayPal(string idSchedule);
+        Task<Schedule> GetScheduleByIdForVnPay(string idSchedule);
         Task<Response> AutomaticUpdatePromotionForSchedule();
         Task<Response> SearchTourFilter(JObject frmData);
         Response CheckEmptyCapacity(string idSchedule, int adult, int child, int baby);

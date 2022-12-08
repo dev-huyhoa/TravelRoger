@@ -95,7 +95,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         [Route("list-timeline-idSchedule")]
         public object GetGetCostByIdTourDetail(string idSchedule)
         {

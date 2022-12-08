@@ -92,12 +92,26 @@ namespace Travel.Data.Repositories
            
             try
             {
+                
+                var cus = _db.Customers.Find(idCus);
+                var vou = _db.Vouchers.Find(idVoucher);
                 var voucher = new Customer_Voucher();
-                voucher.VoucherId = idVoucher;
-                voucher.CustomerId = idCus;
-                _db.Customer_Vouchers.Add(voucher);
-                _db.SaveChanges();
-                return Ultility.Responses("Mua thành công !", Enums.TypeCRUD.Success.ToString());
+
+                if (cus.Point > vou.Value)
+                {
+                    var value = cus.Point - vou.Value;
+                    cus.Point = value;
+                    voucher.VoucherId = idVoucher;
+                    voucher.CustomerId = idCus;              
+                    _db.Customer_Vouchers.Add(voucher);
+                    _db.SaveChanges();
+                    return Ultility.Responses("Mua thành công !", Enums.TypeCRUD.Success.ToString());
+                }
+                else
+                {
+                    return Ultility.Responses("Bạn không đủ điểm  !", Enums.TypeCRUD.Success.ToString());
+                }
+                
             }
             catch (Exception e)
             {

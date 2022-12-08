@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
+using Travel.Data.Repositories;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
 using Travel.Shared.ViewModels.Travel.PromotionVM;
@@ -64,9 +65,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("list-promotion-waiting")]
-        public object GetsWaitingPromotion(Guid idUser)
+        public object GetsWaitingPromotion(Guid idUser, int pageIndex, int pageSize)
         {
-            res = _promotion.GetsWaitingPromotion(idUser);
+            res = _promotion.GetsWaitingPromotion(idUser,pageIndex, pageSize);
             return Ok(res);
         }
 

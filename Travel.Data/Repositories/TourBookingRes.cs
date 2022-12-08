@@ -32,7 +32,6 @@ namespace Travel.Data.Repositories
         private readonly ILog _log;
         public TourBookingRes(TravelContext db, ILog log,
             ISchedule schedule,
-       
             ICustomer customer,
             IConfiguration config)
         {
@@ -368,7 +367,6 @@ namespace Travel.Data.Repositories
                 ;
             }
         }
-
         public byte[] ImageToByteArray(System.Drawing.Image imageIn)
         {
             MemoryStream ms = new MemoryStream();
@@ -612,7 +610,7 @@ namespace Travel.Data.Repositories
         public async Task<Response> CancelBooking(string idTourBooking)
         {
             try
-            {
+            {            
                 var tourbooking = await (from tb in _db.TourBookings.AsNoTracking()
                                          where tb.IdTourBooking == idTourBooking
                                          && tb.Status == (int)Enums.StatusBooking.Paying
@@ -1051,6 +1049,18 @@ namespace Travel.Data.Repositories
         }
 
         public async Task<TourBooking> GetTourBookingByIdForPayPal(string idTourBooking)
+        {
+            try
+            {
+                return await _db.TourBookings.FindAsync(idTourBooking);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
+        public async Task<TourBooking> GetTourBookingByIdForVnPay(string idTourBooking)
         {
             try
             {

@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Travel.Context.Models;
 using Travel.Data.Interfaces;
+using Travel.Shared.Ultilities;
 using Payment = PayPal.v1.Payments.Payment;
 
 namespace TravelApi.Controllers
@@ -30,8 +31,14 @@ namespace TravelApi.Controllers
         private readonly ITour _tour;
         private readonly ITourBooking _tourbooking;
         public double TyGiaUSD = 25000;
-
-        public PayController(IConfiguration config, ITourBooking tourBookingRes, ISchedule schedule, ITourBooking tourbooking, ITour tour)
+        private readonly IVnPay _vnPayRes;
+        private readonly IConfiguration _configuration;
+        public PayController(IConfiguration config,
+            ITourBooking tourBookingRes,
+            ISchedule schedule,
+            ITourBooking tourbooking,
+            ITour tour,
+            IVnPay vnPayRes)
         {
             _clientIdPaypal = config["PaypalSettings:ClientId"];
             _secretKeyPaypal = config["PaypalSettings:SecretKey"];
@@ -39,6 +46,9 @@ namespace TravelApi.Controllers
             _schedule = schedule;
             _tourbooking = tourbooking;
             _tour = tour;
+            _vnPayRes = vnPayRes;
+            _configuration = config;
+
         }
         //private HttpClient GetPaypalHttpClient()
         //{
@@ -109,7 +119,6 @@ namespace TravelApi.Controllers
 
             float total = 0;
 
-
             if (tourBooking.ValuePromotion != 0)
             {
                 total = (float)((tourBooking.TotalPrice) / TyGiaUSD);
@@ -118,7 +127,7 @@ namespace TravelApi.Controllers
             {
                 total = (float)((tourBooking.TotalPrice)/TyGiaUSD);
             }
-
+            total = (float)Math.Round(total, 2);
 
             var item = new Item()
             {
@@ -159,8 +168,9 @@ namespace TravelApi.Controllers
                 },
                 RedirectUrls = new RedirectUrls()
                 {
-                    CancelUrl = "https://localhost:4200/Paypal/CheckoutFailed",
-                    ReturnUrl = $"http://localhost:4200/bill/" + idTourBooking
+
+                    CancelUrl = _configuration["PaypalSettings:CancelUrl"],
+                    ReturnUrl = $"{_configuration["PaypalSettings:ReturnUrl"]}api/pay/update-status-tourbooking?idTourBooking={idTourBooking}"
                 },
                 Payer = new Payer()
                 {
@@ -186,6 +196,8 @@ namespace TravelApi.Controllers
                     }
                 }
 
+                // update
+         
                 return new { status = 1, url = paypalRedirectUrl };
             }
             catch (HttpException httpException)
@@ -196,6 +208,49 @@ namespace TravelApi.Controllers
             }
         }
 
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("update-status-tourbooking")]
+        public async Task<object> UpdateStatusTourbooking(string idTourBooking)
+        {
+            var isSuccess = await _vnPayRes.UpdateStatusTourBooking(idTourBooking);
+            if (isSuccess)
+            {
+                return new
+                {
+                    status = 1,
+                    url = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}",
+                };
+            }
+            else
+            {
+                return new
+                {
+                    status = 0,
+                    url = "",
+                };
+            }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("checkout-vnpay")]
+        public async Task<string> VnPayCheckout(string idTourBooking)
+        {
+            var url = await _vnPayRes.CreatePaymentUrl(idTourBooking, HttpContext);
+            return url;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("callback-vnpay")]
+        public async Task<object> PaymentCallback(string idTourBooking)
+        {
+            var response = await _vnPayRes.PaymentExecute(Request.Query  , idTourBooking);
+            return response;
+        }
 
     }
 }

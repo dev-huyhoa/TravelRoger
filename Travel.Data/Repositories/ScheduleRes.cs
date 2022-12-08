@@ -3140,7 +3140,18 @@ namespace Travel.Data.Repositories
                 throw;
             }
         }
+        public async Task<Schedule> GetScheduleByIdForVnPay(string idSchedule)
+        {
+            try
+            {
+                return await _db.Schedules.FindAsync(idSchedule);
+            }
+            catch (Exception e)
+            {
 
+                throw;
+            }
+        }
         public async Task<Response> AutomaticUpdatePromotionForSchedule()
         {
             try
@@ -3260,6 +3271,7 @@ namespace Travel.Data.Repositories
                 var filterList = (from s in _db.Schedules.AsNoTracking()
                                   where s.Isdelete == false
                                    && s.EndDate > dateTimeNow
+                                   && s.BeginDate <= dateTimeNow
                                    && s.Approve == (int)Enums.ApproveStatus.Approved
                                   select new Schedule
                                   {

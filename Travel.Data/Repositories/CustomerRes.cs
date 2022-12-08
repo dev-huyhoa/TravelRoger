@@ -493,6 +493,118 @@ namespace Travel.Data.Repositories
 
             }
         }
+
+        public Response Search(JObject frmData)
+        {
+            try
+            {
+                var totalResult = 0;
+                Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
+
+                var isDelete = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isDelete))
+                {
+                    keywords.IsDelete = Boolean.Parse(isDelete);
+                }
+
+                var kwNameCustomer = PrCommon.GetString("nameCustomer", frmData);
+                if (!String.IsNullOrEmpty(kwNameCustomer))
+                {
+                    keywords.KwName = kwNameCustomer;
+                }
+                else
+                {
+                    keywords.KwName = "";
+                }
+
+                var kwEmail = PrCommon.GetString("email", frmData);
+                if (!String.IsNullOrEmpty(kwEmail))
+                {
+                    keywords.KwEmail = kwEmail;
+                }
+                else
+                {
+                    keywords.KwEmail = "";
+                }
+
+                var kwPhone = PrCommon.GetString("phone", frmData);
+                if (!String.IsNullOrEmpty(kwPhone))
+                {
+                    keywords.KwPhone = kwPhone;
+                }
+                else
+                {
+                    keywords.KwPhone = "";
+                }
+
+                var kwAddress = PrCommon.GetString("address", frmData);
+                if (!String.IsNullOrEmpty(kwAddress))
+                {
+                    keywords.KwAddress = kwAddress;
+                }
+                else
+                {
+                    keywords.KwAddress = "";
+                }
+
+                var kwPoint = PrCommon.GetString("point", frmData);
+                if (!String.IsNullOrEmpty(kwPoint))
+                {
+                    keywords.KwPoint = int.Parse(kwPoint);
+                }
+                else
+                {
+                    keywords.KwPoint = 0;
+                }
+
+                var listCustomer = new List<Customer>();
+
+                if(keywords.KwPoint > 0)
+                {
+                    var querylistCustomer = (from c in _db.Customers
+                                             where c.IsDelete == keywords.IsDelete &&
+                                                   c.NameCustomer.ToLower().Contains(keywords.KwName) &&
+                                                   c.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                   c.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                   c.Address.ToLower().Contains(keywords.KwAddress) &&
+                                                   c.Point == keywords.KwPoint
+                                             select c).ToList();
+                    totalResult = querylistCustomer.Count();
+                    listCustomer = querylistCustomer.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                }
+                else
+                {
+                    var querylistCustomer = (from c in _db.Customers
+                                             where c.IsDelete == keywords.IsDelete &&
+                                                   c.NameCustomer.ToLower().Contains(keywords.KwName) &&
+                                                   c.Phone.ToLower().Contains(keywords.KwPhone) &&
+                                                   c.Email.ToLower().Contains(keywords.KwEmail) &&
+                                                   c.Address.ToLower().Contains(keywords.KwAddress)
+                                             select c).ToList();
+                    totalResult = querylistCustomer.Count();
+                    listCustomer = querylistCustomer.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                }
+
+
+                var result = Mapper.MapCustomer(listCustomer);
+                if (result.Count() > 0)
+                {
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    res.TotalResult = totalResult;
+                    return res;
+                }
+                else
+                {
+                    return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
+                }
+            }
+            catch(Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 
 
