@@ -23,5 +23,6 @@ namespace Travel.Data.Interfaces
 
         Response RestoreCar(Guid id , string emailUser);
         Response SearchCar(JObject frmData);
+        Response GetListCarHaveSchedule(Guid idCar);
     }
 }

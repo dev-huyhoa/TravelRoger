@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using TravelApi.Helpers;
 using TravelApi.Hubs;
 
 namespace TravelApi.Controllers
@@ -42,6 +43,7 @@ namespace TravelApi.Controllers
         [Route("list-car")]
         public object Gets(bool isDelete)
         {
+           
             res = _car.Gets(isDelete);
             return Ok(res);
         }
@@ -140,6 +142,14 @@ namespace TravelApi.Controllers
         public object SearchCar([FromBody] JObject frmData)
         {
             res = _car.SearchCar(frmData);
+            return Ok(res);
+        }
+        [HttpGet]
+        [Authorize]
+        [Route("list-schedule-of-car")]
+        public object GetListCarHaveSchedule(Guid idCar)
+        {
+            res = _car.GetListCarHaveSchedule(idCar);
             return Ok(res);
         }
     }
