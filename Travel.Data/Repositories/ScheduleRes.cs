@@ -4003,6 +4003,7 @@ namespace Travel.Data.Repositories
 
                 var result = (from x in _db.Schedules.AsNoTracking()
                               where x.EndDate <= Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(datetime)
+                              && x.QuantityCustomer < x.MaxCapacity
                               select x).ToList();
                 foreach (var item in result)
                 {

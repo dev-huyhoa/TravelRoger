@@ -21,6 +21,8 @@ using Travel.Shared.ViewModels.Travel.VoucherVM;
 using Travel.Shared.ViewModels.Travel.PromotionVM;
 using Travel.Shared.ViewModels.Travel.ReviewVM;
 using static Travel.Shared.ViewModels.Travel.CreateTimeLineViewModel;
+using Travel.Context.Models.Notification;
+using Travel.Shared.ViewModels.Notify.CommentVM;
 
 namespace Travel.Shared.Ultilities
 {
@@ -110,6 +112,8 @@ namespace Travel.Shared.Ultilities
                     .ForMember(dto => dto.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice))
                     .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
                     .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+                    .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+                     .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
                     //.ForMember(dto => dto.Note, opt => opt.MapFrom(src => src.TourbookingDetails.Note))
 
 
@@ -1057,5 +1061,6 @@ namespace Travel.Shared.Ultilities
         {
             return _mapper.Map<CreateContractViewModel, Contract>(data);
         }
+
     }
 }

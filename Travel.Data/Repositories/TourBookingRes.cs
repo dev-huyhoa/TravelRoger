@@ -959,6 +959,7 @@ namespace Travel.Data.Repositories
                                                                   select t).FirstOrDefault(),
                                                            DepartureDate = s.DepartureDate,
                                                            DeparturePlace = s.DeparturePlace,
+                                                           ReturnDate = s.ReturnDate,
                                                            IdSchedule = s.IdSchedule,
                                                            TourId = s.TourId,
                                                        }).FirstOrDefault(),
