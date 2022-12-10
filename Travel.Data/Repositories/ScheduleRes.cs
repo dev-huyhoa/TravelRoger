@@ -26,12 +26,15 @@ namespace Travel.Data.Repositories
         private Notification message;
         private readonly ILog _log;
         private INotification _notification;
-        public ScheduleRes(TravelContext db, INotification notification, ILog log)
+        private readonly ICache _cache;
+
+        public ScheduleRes(TravelContext db, INotification notification, ILog log, ICache cache)
         {
             _db = db;
             _log = log;
             message = new Notification();
             _notification = notification;
+            _cache = cache;
         }
 
         private Employee GetCurrentUser(Guid IdUserModify)
@@ -486,7 +489,9 @@ namespace Travel.Data.Repositories
 
                 CreateDatabase(schedule);
                 SaveChange();
-
+                _cache.Remove("schedule");
+                _cache.Remove("scheduleflashsale");
+                _cache.Remove("GetListCarHaveSchedule");
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
                 bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Schedule");
@@ -650,7 +655,7 @@ namespace Travel.Data.Repositories
                                              }).ToList(),
                                 CostTour = (from c in _db.CostTours.AsNoTracking()
                                             where c.IdSchedule == s.IdSchedule
-                                            select c).First(),
+                                            select c).First(), 
                                 Employee = (from e in _db.Employees.AsNoTracking()
                                             where e.IdEmployee == s.EmployeeId
                                             select e).First()
@@ -865,7 +870,8 @@ namespace Travel.Data.Repositories
                     schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     UpdateDatabase(schedule);
                     SaveChange();
-
+                    _cache.Remove("schedule");
+                    _cache.Remove("scheduleflashsale");
                     var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                     _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
 
@@ -914,7 +920,8 @@ namespace Travel.Data.Repositories
 
                         UpdateDatabase(schedule);
                         SaveChange();
-                      
+                        _cache.Remove("schedule");
+                        _cache.Remove("scheduleflashsale");
                     }
                     string jsonContent = JsonSerializer.Serialize(promotion);
                     bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "promotion");
@@ -1423,6 +1430,13 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                #region check cache
+                if (_cache.Get<Response>($"schedule") != null) // có cache
+                {
+                    return _cache.Get<Response>($"schedule");
+                }
+                #endregion
+
                 var dateTimeNow = GetDateTimeNow();
                 var list =  (from s in _db.Schedules.AsNoTracking()
                                   where s.Isdelete == false &&
@@ -1486,12 +1500,13 @@ namespace Travel.Data.Repositories
 
                                   }).OrderBy(x => x.DepartureDate);
 
-
+                var lis = await list.ToListAsync();
                 var totalREsult = await list.CountAsync();
                 var listResult = await list.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToListAsync();
 
                 var result = Mapper.MapSchedule(listResult);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                _cache.Set(res, $"schedule");
                 res.TotalResult = result.Count();
                 return res;
             }
@@ -1506,6 +1521,12 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                #region check cache
+                if (_cache.Get<Response>($"scheduleflashsale") != null) // có cache
+                {
+                    return _cache.Get<Response>($"scheduleflashsale");
+                }
+                #endregion
                 var dateTimeNow = GetDateTimeNow();
                 var flashSaleDay = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(Ultility.GetDateZeroTime(DateTime.Now.AddDays(3))); // sau này gắn config
                 var list = await (from s in _db.Schedules.AsNoTracking()
@@ -1573,6 +1594,7 @@ namespace Travel.Data.Repositories
 
                 var result = Mapper.MapSchedule(list).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                _cache.Set(res, $"scheduleflashsale");
                 res.TotalResult = result.Count();
                 return res;
 
@@ -2043,7 +2065,8 @@ namespace Travel.Data.Repositories
                     UpdateDatabase(schedule);
                     UpdateDatabaseCostTour(costTour);
                     SaveChange();
-
+                    _cache.Remove("schedule");
+                    _cache.Remove("scheduleflashsale");
                     var userModify = GetCurrentUser(schedule.IdUserModify);
                     _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, new int[] { userModify.RoleId }, "Thành công");
 
@@ -2197,7 +2220,8 @@ namespace Travel.Data.Repositories
                     UpdateDatabase(schedule);
                     UpdateDatabaseCostTour(costTour);
                     SaveChange();
-
+                    _cache.Remove("schedule");
+                    _cache.Remove("scheduleflashsale");
                     var userModify = GetCurrentUser(schedule.IdUserModify);
                     _notification.CreateNotification(userModify.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, new int[] { userModify.RoleId }, "Từ chối");
 
@@ -2263,7 +2287,9 @@ namespace Travel.Data.Repositories
 
                 UpdateDatabase(schedule);
                 SaveChange();
-
+                _cache.Remove("schedule");
+                _cache.Remove("scheduleflashsale");
+                _cache.Remove("GetListCarHaveSchedule");
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
                 bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Schedule");
@@ -3966,6 +3992,32 @@ namespace Travel.Data.Repositories
             }
             catch (Exception e)
             {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public Response UpdatePromotionTourLastHour(DateTime datetime)
+        {
+            try
+            {    
+                var promotion = (from x in _db.Promotions.AsNoTracking()
+                                 where x.IdPromotion == -2
+                                 select x.IdPromotion).FirstOrDefault();
+
+                var result = (from x in _db.Schedules.AsNoTracking()
+                              where x.EndDate <= Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(datetime)
+                              select x).ToList();
+                foreach (var item in result)
+                {
+                    item.PromotionId = promotion;
+                }
+                SaveChange();
+                return Ultility.Responses($"Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+
+            }
+            catch (Exception e)
+            {
+
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }

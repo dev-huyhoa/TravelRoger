@@ -28,9 +28,9 @@ namespace Travel.Data.Repositories
         private readonly string keySecurity;
         private readonly IConfiguration _config;
         private readonly ICustomer _customer; private Notification message;
-
+        private readonly ICache _cache;
         private readonly ILog _log;
-        public TourBookingRes(TravelContext db, ILog log,
+        public TourBookingRes(TravelContext db, ILog log, ICache cache,
             ISchedule schedule,
             ICustomer customer,
             IConfiguration config)
@@ -42,7 +42,7 @@ namespace Travel.Data.Repositories
             _config = config;
             keySecurity = _config["keySecurity"];
             message = new Notification();
-
+            _cache = cache;
         }
         private void UpdateDatabase<T>(T input)
         {
@@ -319,7 +319,8 @@ namespace Travel.Data.Repositories
                 CreateDatabase<TourBooking>(tourbooking);
                 CreateDatabase<TourBookingDetails>(tourBookingDetail);
                 await SaveChangeAsync();
-
+                _cache.Remove("schedule");
+                _cache.Remove("scheduleflashsale");
                 // cập nhật số lượng
                 int quantityAdult = tourbooking.TourBookingDetails.Adult;
                 int quantityChild = tourbooking.TourBookingDetails.Child;

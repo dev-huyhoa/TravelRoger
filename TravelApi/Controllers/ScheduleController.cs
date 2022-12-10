@@ -261,6 +261,16 @@ namespace TravelApi.Controllers
         public async Task<object> SearchSchedule([FromBody] JObject frmData)
         {
             res = await _schedule.SearchTourFilter(frmData);
+          
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("cus-list-schedule")]
+        public object UpdatePromotionTourLastHour(DateTime date)
+        {
+            res = _schedule.UpdatePromotionTourLastHour(date);
             return Ok(res);
         }
     }

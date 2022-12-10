@@ -42,5 +42,6 @@ namespace Travel.Data.Interfaces
         Task<Response> AutomaticUpdatePromotionForSchedule();
         Task<Response> SearchTourFilter(JObject frmData);
         Response CheckEmptyCapacity(string idSchedule, int adult, int child, int baby);
+        Response UpdatePromotionTourLastHour(DateTime datetime);
     }
 }
