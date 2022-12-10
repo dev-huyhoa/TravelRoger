@@ -325,7 +325,6 @@ namespace Travel.Data.Repositories
                 CreateDatabase<Car>(car);
                 string jsonContent = JsonSerializer.Serialize(car);
                 SaveChange();
-                _cache.Remove("GetListCarHaveSchedule"); // clear cache
                 bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Car");
                 if (result)
                 {
@@ -386,7 +385,6 @@ namespace Travel.Data.Repositories
                 string jsonContent = JsonSerializer.Serialize(car);
                 UpdateDatabase<Car>(car);
                 SaveChange();
-                _cache.Remove("GetListCarHaveSchedule");
 
                 bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Car");
                 if (result)
@@ -432,7 +430,6 @@ namespace Travel.Data.Repositories
                     string jsonContent = JsonSerializer.Serialize(car);
                     UpdateDatabase<Car>(car);
                     SaveChange();
-                    _cache.Remove("GetListCarHaveSchedule");
 
                     bool result = _log.AddLog(content: jsonContent, type: "delete", emailCreator: emailUser, classContent: "Car");
                     if (result)
@@ -644,13 +641,6 @@ namespace Travel.Data.Repositories
         {
             try
             {
-
-                //var responseInCache = _cache.Get<Response>("GetListCarHaveSchedule");
-                //if (responseInCache != null)
-                //{
-                //    return responseInCache;
-                //}
-
                 var dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 var lsResult = (from x in _db.Schedules.AsNoTracking()
                                 where x.CarId == idCar
@@ -677,7 +667,6 @@ namespace Travel.Data.Repositories
                 var result = lsResult.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = lsResult.Count();
-                _cache.Set(res, "GetListCarHaveSchedule");
                 return res;
             }
             catch (Exception e)
