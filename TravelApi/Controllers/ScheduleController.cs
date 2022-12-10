@@ -267,7 +267,7 @@ namespace TravelApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("cus-list-schedule")]
+        [Route("update-promation")]
         public object UpdatePromotionTourLastHour(DateTime date)
         {
             res = _schedule.UpdatePromotionTourLastHour(date);

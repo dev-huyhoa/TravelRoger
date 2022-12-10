@@ -491,7 +491,6 @@ namespace Travel.Data.Repositories
                 SaveChange();
                 _cache.Remove("schedule");
                 _cache.Remove("scheduleflashsale");
-                _cache.Remove("GetListCarHaveSchedule");
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
                 bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Schedule");
@@ -2289,7 +2288,6 @@ namespace Travel.Data.Repositories
                 SaveChange();
                 _cache.Remove("schedule");
                 _cache.Remove("scheduleflashsale");
-                _cache.Remove("GetListCarHaveSchedule");
                 var listRole = new int[] { Convert.ToInt16(Enums.TitleRole.Admin), Convert.ToInt16(Enums.TitleRole.LocalManager) };
                 _notification.CreateNotification(userLogin.IdEmployee, Convert.ToInt16(Enums.TypeNotification.Schedule), schedule.IdSchedule, listRole, "");
                 bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Schedule");
