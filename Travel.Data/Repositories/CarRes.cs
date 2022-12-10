@@ -23,10 +23,12 @@ namespace Travel.Data.Repositories
         private Notification message;
         private readonly ILog _log;
         private Response res;
-        public CarRes(TravelContext db, ILog log)
+        private ICache _cache;
+        public CarRes(TravelContext db, ILog log, ICache cache)
         {
             _db = db;
             _log = log;
+            _cache = cache;
             message = new Notification();
             res = new Response();
         }
@@ -200,7 +202,7 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-       
+
         public Response GetsSelectBoxCarUpdate(long fromDate, long toDate, string idSchedule)
         {
             try
@@ -298,9 +300,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
+
                 var queryListCar = (from x in _db.Cars.AsNoTracking()
-                               where x.IsDelete == isDelete
-                               select x);
+                                    where x.IsDelete == isDelete
+                                    select x);
                 int totalResult = queryListCar.Count();
                 var listCar = queryListCar.ToList();
                 var result = Mapper.MapCar(listCar);
@@ -322,6 +325,7 @@ namespace Travel.Data.Repositories
                 CreateDatabase<Car>(car);
                 string jsonContent = JsonSerializer.Serialize(car);
                 SaveChange();
+                _cache.Remove("GetListCarHaveSchedule"); // clear cache
                 bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Car");
                 if (result)
                 {
@@ -364,7 +368,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdateCar(UpdateCarViewModel input,  string emailUser)
+        public Response UpdateCar(UpdateCarViewModel input, string emailUser)
         {
             try
             {
@@ -382,6 +386,7 @@ namespace Travel.Data.Repositories
                 string jsonContent = JsonSerializer.Serialize(car);
                 UpdateDatabase<Car>(car);
                 SaveChange();
+                _cache.Remove("GetListCarHaveSchedule");
 
                 bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Car");
                 if (result)
@@ -403,12 +408,21 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 var car = (from x in _db.Cars.AsNoTracking()
                            where x.IdCar == id
                            select x).FirstOrDefault();
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == idUser
                                  select x).FirstOrDefault();
+                var amountCarInSchedule = (from x in _db.Schedules.AsNoTracking()
+                                     where x.CarId == id
+                                     && x.ReturnDate > dateTimeNow
+                                     select x).Count();
+                if (amountCarInSchedule > 0)
+                {
+                    return Ultility.Responses("Xe đang có lịch trình !", Enums.TypeCRUD.Warning.ToString());
+                }
                 if (car != null)
                 {
                     car.ModifyBy = userLogin.NameEmployee;
@@ -418,7 +432,8 @@ namespace Travel.Data.Repositories
                     string jsonContent = JsonSerializer.Serialize(car);
                     UpdateDatabase<Car>(car);
                     SaveChange();
-                    
+                    _cache.Remove("GetListCarHaveSchedule");
+
                     bool result = _log.AddLog(content: jsonContent, type: "delete", emailCreator: emailUser, classContent: "Car");
                     if (result)
                     {
@@ -456,10 +471,11 @@ namespace Travel.Data.Repositories
                     car.IsDelete = false;
                     UpdateDatabase<Car>(car);
                     SaveChange();
+
                     bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "Car");
                     if (result)
                     {
-                         return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
+                        return Ultility.Responses("Khôi phục thành công !", Enums.TypeCRUD.Success.ToString());
 
                     }
                     else
@@ -539,7 +555,7 @@ namespace Travel.Data.Repositories
                     keywords.KwPhone = "";
                 }
 
-                
+
                 var status = PrCommon.GetString("status", frmData);
                 keywords.KwStatusList = PrCommon.getListInt(status, ',', false);
 
@@ -574,7 +590,7 @@ namespace Travel.Data.Repositories
                         totalResult = querylistCar.Count();
                         listCar = querylistCar.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
-                   
+
                 }
                 else
                 {
@@ -585,7 +601,7 @@ namespace Travel.Data.Repositories
                                                             x.AmountSeat.Equals(keywords.KwAmount) &&
                                                              x.NameDriver.ToLower().Contains(keywords.KwName) &&
                                                   x.LiscensePlate.ToLower().Contains(keywords.KwLiscensePlate) &&
-                                                  x.Phone.ToLower().Contains(keywords.KwPhone) 
+                                                  x.Phone.ToLower().Contains(keywords.KwPhone)
                                             orderby x.ModifyDate descending
                                             select x);
                         totalResult = querylistCar.Count();
@@ -604,12 +620,12 @@ namespace Travel.Data.Repositories
                         listCar = querylistCar.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                     }
                 }
-             
-                
+
+
                 var result = Mapper.MapCar(listCar);
                 if (result.Count() > 0)
                 {
-                    var res =  Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                     res.TotalResult = totalResult;
                     return res;
                 }
@@ -624,6 +640,50 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response GetListCarHaveSchedule(Guid idCar, int pageIndex, int pageSize)
+        {
+            try
+            {
 
+                //var responseInCache = _cache.Get<Response>("GetListCarHaveSchedule");
+                //if (responseInCache != null)
+                //{
+                //    return responseInCache;
+                //}
+
+                var dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                var lsResult = (from x in _db.Schedules.AsNoTracking()
+                                where x.CarId == idCar
+                                && x.ReturnDate >= dateTimeNow
+                                orderby x.DepartureDate ascending
+                                select new Schedule
+                                {
+                                    BeginDate = x.ReturnDate,
+                                    Car = (from c in _db.Cars.AsNoTracking()
+                                           where c.IdCar == idCar
+                                           select c).FirstOrDefault(),
+                                    QuantityCustomer = x.QuantityCustomer,
+                                    DepartureDate = x.DepartureDate,
+                                    DeparturePlace = x.DeparturePlace,
+                                    ReturnDate = x.ReturnDate,
+                                    Tour = (from t in _db.Tour.AsNoTracking()
+                                            where t.IdTour == x.TourId
+                                            select t).FirstOrDefault(),
+                                    Employee = (from e in _db.Employees.AsNoTracking()
+                                                where e.IdEmployee == x.EmployeeId
+                                                select e).FirstOrDefault(),
+                                    Status = x.Status
+                                });
+                var result = lsResult.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = lsResult.Count();
+                _cache.Set(res, "GetListCarHaveSchedule");
+                return res;
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }

@@ -254,6 +254,7 @@ namespace Travel.Data.Repositories
                                 DateBooking = x.DateBooking,
                                 BookingNo = x.BookingNo,
                                 ValuePromotion = x.ValuePromotion,
+                                IsSendFeedBack = x.IsSendFeedBack,
                                 TourBookingDetails = (from tbd in _db.tourBookingDetails.AsNoTracking()
                                                       where tbd.IdTourBookingDetails == x.IdTourBooking 
                                                       select tbd).First(),

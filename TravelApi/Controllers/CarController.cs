@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
 using Travel.Shared.ViewModels.Travel;
+using TravelApi.Helpers;
 using TravelApi.Hubs;
 
 namespace TravelApi.Controllers
@@ -42,6 +43,7 @@ namespace TravelApi.Controllers
         [Route("list-car")]
         public object Gets(bool isDelete)
         {
+           
             res = _car.Gets(isDelete);
             return Ok(res);
         }
@@ -56,7 +58,7 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("list-selectbox-car-update")]
-        public object GetsSelectBoxCarpdate(long fromDate, long toDate, string idSchedule)
+        public object GetsSelectBoxCarUpdate(long fromDate, long toDate, string idSchedule)
         {
             res = _car.GetsSelectBoxCarUpdate(fromDate, toDate,idSchedule);
             return Ok(res);
@@ -133,13 +135,20 @@ namespace TravelApi.Controllers
             res = _car.RestoreCar(idCar , emailUser);
             return Ok(res);
         }
-
         [HttpPost]
         [Authorize]
         [Route("search-car")]
         public object SearchCar([FromBody] JObject frmData)
         {
             res = _car.SearchCar(frmData);
+            return Ok(res);
+        }
+        [HttpGet]
+        [Authorize]
+        [Route("list-schedule-of-car")]
+        public object GetListCarHaveSchedule(Guid idCar, int pageIndex, int pageSize)
+        {
+            res = _car.GetListCarHaveSchedule(idCar, pageIndex, pageSize);
             return Ok(res);
         }
     }

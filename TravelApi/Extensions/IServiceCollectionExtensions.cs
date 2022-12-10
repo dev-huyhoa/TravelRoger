@@ -88,6 +88,8 @@ namespace TravelApi.Extensions
 
             services
                 .AddScoped<ICache, MemoryCache>();
+
+
             return services;
         
 
