@@ -45,9 +45,12 @@ namespace Travel.Data.Repositories.NotifyRes
 
                     cmt.IdCustomer = input.IdCustomer;
                     cmt.IdTour = schedule.TourId;
+                    cmt.ReviewId = Guid.NewGuid();
 
                     ChangeFeedback(input.IdTourBooking);
-                    ChangeRating(schedule.TourId, input.Rating);
+                    ChangeRating(schedule.TourId, input.Rating, customer.IdCustomer, cmt.ReviewId);
+
+
                     await _notifyContext.AddAsync(cmt);
                     await _notifyContext.SaveChangesAsync();
                     return Ultility.Responses("Bình luận thành công !", Enums.TypeCRUD.Success.ToString());
@@ -92,16 +95,35 @@ namespace Travel.Data.Repositories.NotifyRes
             }
         }
 
+
         
         public async Task<Response> Gets(string idTour)
         {
             try
             {
-                var cmt = await (from x in _notifyContext.Comment.AsNoTracking()
+                var listCmtView = await (from x in _notifyContext.Comment.AsNoTracking()
                                  where x.IdTour == idTour
                                  orderby x.CommentTime descending
-                                 select x).ToListAsync();
-                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), cmt);                   
+                                 select new CommentViewModel
+                                 {
+                                     CommentText = x.CommentText,
+                                     CommentTime = x.CommentTime,
+                                     IdComment = x.IdComment,
+                                     IdCustomer = x.IdCustomer,
+                                     NameCustomer = x.NameCustomer,
+                                     ReviewId = x.ReviewId,
+                        
+                                 }).ToListAsync();
+                foreach (var item in listCmtView)
+                {
+                    item.Rating = (from r in _db.reviews.AsNoTracking()
+                                   where r.Id == item.ReviewId
+                                   select r.Rating).FirstOrDefault();
+                }
+
+           
+                
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), listCmtView);                   
             }
             catch (Exception e) 
             {
@@ -138,12 +160,14 @@ namespace Travel.Data.Repositories.NotifyRes
             }
         }
 
-        public void ChangeRating(string idTour, double rating)
+        public void ChangeRating(string idTour, double rating, Guid idCustomer, Guid idReview)
         {
 
             Review review = new Review();
+            review.Id = idReview;
             review.Rating = rating;
             review.IdTour = idTour;
+            review.IdCustomer = idCustomer;
             _db.reviews.Add(review);
             _db.SaveChanges();
 
