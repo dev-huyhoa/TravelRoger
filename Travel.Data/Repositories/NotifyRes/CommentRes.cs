@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Travel.Context.Models;
 using Travel.Context.Models.Notification;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces.INotify;
@@ -46,10 +47,10 @@ namespace Travel.Data.Repositories.NotifyRes
                     cmt.IdTour = schedule.TourId;
 
                     ChangeFeedback(input.IdTourBooking);
-
+                    ChangeRating(schedule.TourId, input.Rating);
                     await _notifyContext.AddAsync(cmt);
                     await _notifyContext.SaveChangesAsync();
-                    return Ultility.Responses("Tạo mới thành công !", Enums.TypeCRUD.Success.ToString());
+                    return Ultility.Responses("Bình luận thành công !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
                 {
@@ -137,6 +138,36 @@ namespace Travel.Data.Repositories.NotifyRes
             }
         }
 
-        
+        public void ChangeRating(string idTour, double rating)
+        {
+
+            Review review = new Review();
+            review.Rating = rating;
+            review.IdTour = idTour;
+            _db.reviews.Add(review);
+            _db.SaveChanges();
+
+            var tourRating = (from t in _db.reviews.AsNoTracking()
+                              where t.IdTour == idTour
+                              select t);
+
+            var tour = (from t in _db.Tour.AsNoTracking()
+                        where t.IdTour == idTour
+                        select t).FirstOrDefault();
+
+            var count = tourRating.Count();
+
+            var sumRating = tourRating.Sum(r => r.Rating);
+
+            var averge = Math.Round((sumRating / count),2);
+
+            if (tour != null)
+            {
+                tour.Rating = averge;
+                _db.Tour.Update(tour);
+                _db.SaveChanges();
+            }
+            
+        }
     }
 }
