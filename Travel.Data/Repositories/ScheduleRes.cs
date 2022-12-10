@@ -831,7 +831,7 @@ namespace Travel.Data.Repositories
 
 
 
-                var result = Mapper.MapSchedule(listWaiting);
+                var result = Mapper.MapSchedule(listWaiting).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = totalResult;
                 return res;

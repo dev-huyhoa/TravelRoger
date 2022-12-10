@@ -252,7 +252,7 @@ namespace Travel.Data.Repositories
                 var firstDateInYearUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(firstDateInYear);
                 var lastDateInYearUnix = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(lastDateInYear);
 
-                  var lsReportTourBooking = StatisticTourBookingFromDateToDate(firstDateInYearUnix, lastDateInYearUnix);
+                  var lsReportTourBooking = StatisticTourBookingFromDateToDate(firstDateInYearUnix, lastDateInYearUnix).Content;
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), lsReportTourBooking);
 
             }

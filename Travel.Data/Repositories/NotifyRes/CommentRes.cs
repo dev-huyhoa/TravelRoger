@@ -28,6 +28,12 @@ namespace Travel.Data.Repositories.NotifyRes
                 var customer = await (from x in _db.Customers.AsNoTracking()
                                where x.IdCustomer == input.IdCustomer
                                select x).FirstOrDefaultAsync();
+
+                var schedule = await (from x in _db.Schedules.AsNoTracking()
+                                      where x.IdSchedule == input.IdSchedule
+                                      select x).FirstOrDefaultAsync();
+
+
                 if (customer != null)
                 {
                     Comment cmt = new Comment();
@@ -37,7 +43,10 @@ namespace Travel.Data.Repositories.NotifyRes
                     cmt.CommentTime = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
 
                     cmt.IdCustomer = input.IdCustomer;
-                    cmt.IdTour = input.IdTour;
+                    cmt.IdTour = schedule.TourId;
+
+                    ChangeFeedback(input.IdTourBooking);
+
                     await _notifyContext.AddAsync(cmt);
                     await _notifyContext.SaveChangesAsync();
                     return Ultility.Responses("Tạo mới thành công !", Enums.TypeCRUD.Success.ToString());
@@ -113,5 +122,21 @@ namespace Travel.Data.Repositories.NotifyRes
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+        public void ChangeFeedback(string idTourBooking)
+        {
+            var tourBooking = (from x in _db.TourBookings.AsNoTracking()
+                                    where x.IdTourBooking == idTourBooking
+                                    select x).FirstOrDefault();
+
+            if (tourBooking != null)
+            {
+                tourBooking.IsSendFeedBack = true;
+                _db.TourBookings.Update(tourBooking);
+                _db.SaveChanges();
+            }
+        }
+
+        
     }
 }

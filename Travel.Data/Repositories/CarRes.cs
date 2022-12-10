@@ -640,20 +640,22 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response GetListCarHaveSchedule(Guid idCar)
+        public Response GetListCarHaveSchedule(Guid idCar, int pageIndex, int pageSize)
         {
             try
             {
 
-                var responseInCache = _cache.Get<Response>("GetListCarHaveSchedule");
-                if (responseInCache != null)
-                {
-                    return responseInCache;
-                }
+                //var responseInCache = _cache.Get<Response>("GetListCarHaveSchedule");
+                //if (responseInCache != null)
+                //{
+                //    return responseInCache;
+                //}
+
                 var dateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                 var lsResult = (from x in _db.Schedules.AsNoTracking()
                                 where x.CarId == idCar
                                 && x.ReturnDate >= dateTimeNow
+                                orderby x.DepartureDate ascending
                                 select new Schedule
                                 {
                                     BeginDate = x.ReturnDate,
@@ -672,8 +674,9 @@ namespace Travel.Data.Repositories
                                                 select e).FirstOrDefault(),
                                     Status = x.Status
                                 });
-                res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), lsResult);
-
+                var result = lsResult.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+                res.TotalResult = lsResult.Count();
                 _cache.Set(res, "GetListCarHaveSchedule");
                 return res;
             }

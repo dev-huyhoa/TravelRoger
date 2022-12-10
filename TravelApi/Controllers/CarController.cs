@@ -58,7 +58,7 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("list-selectbox-car-update")]
-        public object GetsSelectBoxCarpdate(long fromDate, long toDate, string idSchedule)
+        public object GetsSelectBoxCarUpdate(long fromDate, long toDate, string idSchedule)
         {
             res = _car.GetsSelectBoxCarUpdate(fromDate, toDate,idSchedule);
             return Ok(res);
@@ -146,9 +146,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("list-schedule-of-car")]
-        public object GetListCarHaveSchedule(Guid idCar)
+        public object GetListCarHaveSchedule(Guid idCar, int pageIndex, int pageSize)
         {
-            res = _car.GetListCarHaveSchedule(idCar);
+            res = _car.GetListCarHaveSchedule(idCar, pageIndex, pageSize);
             return Ok(res);
         }
     }
