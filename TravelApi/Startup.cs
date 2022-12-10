@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,7 +42,10 @@ namespace TravelApi
             services.AddSignalR(e => {
                 e.EnableDetailedErrors = true;
                 e.MaximumReceiveMessageSize = 102400000;
-            }); services.AddCors(options => {
+            });
+            services
+    .AddSingleton<IUserIdProvider, ConfigUserIdProvider>();
+            services.AddCors(options => {
                 options.AddPolicy("CORSPolicy", builder => builder.AllowAnyMethod().AllowAnyHeader().AllowCredentials().SetIsOriginAllowed((hosts) => true));
             });
             services.AddControllers();

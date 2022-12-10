@@ -39,9 +39,10 @@ namespace TravelApi.Hubs
             return base.OnConnectedAsync();
         }
 
-        public async Task GetInfo()
+        public async Task GetInfo(string idUser)
         {
-            await Clients.Group("b76c4137-c497-42f5-821d-554a51862e45").SendAsync("Init");
+            await Clients.User(idUser).SendAsync("Init");
+            //await Clients.Group("b76c4137-c497-42f5-821d-554a51862e45").SendAsync("Init");
         }
         public override async Task OnDisconnectedAsync(Exception ex)
         {
