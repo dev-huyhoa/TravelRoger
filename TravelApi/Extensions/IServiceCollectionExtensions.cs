@@ -84,10 +84,15 @@ namespace TravelApi.Extensions
             .AddScoped<IImage, ImageRes>();
 
             services
+            .AddScoped<IMessenger, MessengerRes>();
+
+            services
                  .AddScoped<IVnPay, VnpayRes>();
 
             services
                 .AddScoped<ICache, MemoryCache>();
+            services
+                .AddScoped<IMessenger, MessengerRes>();
 
 
             return services;

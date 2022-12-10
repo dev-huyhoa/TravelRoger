@@ -73,6 +73,7 @@ namespace Travel.Data.Responsives
             try
             {
                 _db.Employees.Find(idEmp).AccessToken = token;
+                _db.Employees.Find(idEmp).IsOnline = true;
                 _db.SaveChanges();
                 return true;
             }
@@ -245,6 +246,7 @@ namespace Travel.Data.Responsives
                                  x.IdEmployee == idEmp
                            select x).FirstOrDefault();
                 emp.AccessToken = null;
+                emp.IsOnline = false;
                 _db.SaveChanges();
                 res.Notification.DateTime = DateTime.Now;
                 res.Notification.Messenge = "Đăng xuất thành công !";

@@ -49,6 +49,7 @@ namespace Travel.Shared.Ultilities
             TourManager = 3,
             TourBookingManager = 4,
             TourGuide = 5,
+            Supporter = 6
         }
 
         public enum StatusContract
