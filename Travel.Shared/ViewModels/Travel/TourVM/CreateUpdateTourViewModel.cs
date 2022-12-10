@@ -21,6 +21,7 @@ namespace Travel.Shared.ViewModels.Travel.TourVM
         private string toPlace;
         private string description;
         private double rating;
+        private string   alias;
         private List<Image> image;
 
         
@@ -32,6 +33,6 @@ namespace Travel.Shared.ViewModels.Travel.TourVM
         public double Rating { get => rating; set => rating = value; }
         public string NameTour_EN { get => nameTour_EN; set => nameTour_EN = value; }
         public List<Image> Image { get => image; set => image = value; }
-
+        public string Alias { get => alias; set => alias = value; }
     }
 }

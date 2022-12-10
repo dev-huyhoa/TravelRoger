@@ -476,17 +476,16 @@ namespace Travel.Data.Repositories
                 Schedule schedule =
                 schedule = Mapper.MapCreateSchedule(input);
                 string jsonContent = JsonSerializer.Serialize(schedule);
-                string nameTour = (from x in _db.Tour.AsNoTracking()
+                var tour = (from x in _db.Tour.AsNoTracking()
                                    where x.IdTour == input.TourId
-                                   select x).FirstOrDefault().NameTour;
-                schedule.Alias = $"S{Ultility.SEOUrl(nameTour)}";
+                                   select x).FirstOrDefault();
+                schedule.Alias = $"S{tour.Alias}";
                 schedule.TypeAction = "insert";
                 var userLogin = (from x in _db.Employees.AsNoTracking()
                                  where x.IdEmployee == input.IdUserModify
                                  select x).FirstOrDefault();
                 schedule.ModifyBy = userLogin.NameEmployee;
                 schedule.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
-
                 CreateDatabase(schedule);
                 SaveChange();
                 _cache.Remove("schedule");

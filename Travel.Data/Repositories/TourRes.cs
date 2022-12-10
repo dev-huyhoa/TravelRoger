@@ -170,6 +170,7 @@ namespace Travel.Data.Repositories
             {
                 Tour tour =
                 tour = Mapper.MapCreateTour(input);
+                tour.Alias = Ultility.SEOUrl(tour.NameTour.ToLower());
                 var userLogin = GetCurrentUser(input.IdUserModify);
                 tour.ModifyBy = userLogin.NameEmployee;
                 tour.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
