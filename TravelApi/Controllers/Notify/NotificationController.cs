@@ -33,7 +33,7 @@ namespace TravelApi.Controllers.Notify
         [HttpPut]
         [Authorize]
         [Route("update-isSeen-notification")]
-        public async Task<object> UpdateIsSeen(Guid idNotification)
+        public async Task<object> UpdateIsSeen(Guid idNotification) 
         {
             res = await _notification.UpdateIsSeen(idNotification);
             return Ok(res);
