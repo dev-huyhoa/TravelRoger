@@ -39,5 +39,7 @@ namespace Travel.Data.Interfaces
         string AddImg(string qrCodeText, string idService);
         Response StatisticPaidNotCheckedin();
 
+        Response CusSearchBookingNo(string bookingNo);
+
     }
 }

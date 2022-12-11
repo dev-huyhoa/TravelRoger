@@ -219,5 +219,14 @@ namespace TravelApi.Controllers
             res = _tourbooking.StatisticPaidNotCheckedin();
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("cus-search-bookingNo")]
+        public object CusSearchBookingNo(string bookingNo)
+        {
+            res = _tourbooking.CusSearchBookingNo(bookingNo);
+            return Ok(res);
+        }
     }
 }

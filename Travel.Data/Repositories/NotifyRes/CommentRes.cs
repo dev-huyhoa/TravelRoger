@@ -183,7 +183,7 @@ namespace Travel.Data.Repositories.NotifyRes
 
             var sumRating = tourRating.Sum(r => r.Rating);
 
-            var averge = Math.Round((sumRating / count),2);
+            var averge = Math.Round((sumRating / count));
 
             if (tour != null)
             {
