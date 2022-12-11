@@ -236,10 +236,6 @@ namespace Travel.Data.Repositories
                     if (isTourInPromotion > 0)
                         return Ultility.Responses("Không thể áp dụng voucher cho tour đang có khuyến mãi !", Enums.TypeCRUD.Error.ToString());
 
-
-
-
-
                     var unixDateTimeNow = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                      vourcher = await (from x in _db.Vouchers
                                     where x.Code == input.VoucherCode
@@ -332,11 +328,13 @@ namespace Travel.Data.Repositories
                 transaction.Commit();
                 transaction.Dispose();
 
+                #region sms
                 //Gửi sms
                 //SpeedSMSAPI api = new SpeedSMSAPI("eHTE2iExhWKHCRk4OvTVT2gFHuPl4wDd");
                 //String[] phones = new String[] { tourbooking.Phone };
                 //String str = "Lụm";
                 //String response = api.sendSMS(phones, str, 5, "d675521d17749e04");
+                #endregion
 
 
 
@@ -344,7 +342,8 @@ namespace Travel.Data.Repositories
                 var subjectOTP = _config["OTPSubject"];
                 var emailSend = _config["emailSend"];
                 var keySecurity = _config["keySecurity"];
-                var stringHtml = Ultility.getHtmlBookingSuccess(tourbooking.NameCustomer, tourbooking.Phone, tourbooking.TotalPrice.ToString(), urlQR);
+                var linkbill = _config["Bill"];
+                var stringHtml = Ultility.getHtmlBookingSuccess(tourbooking.Pincode, tourbooking.NameCustomer, tourbooking.Phone, tourbooking.TotalPrice.ToString(), urlQR, "Chưa thanh toán");
 
                 Ultility.sendEmail(stringHtml, tourbooking.Email, "THÔNG BÁO ĐẶT TOUR", emailSend, keySecurity);
                 #endregion
@@ -358,7 +357,6 @@ namespace Travel.Data.Repositories
                 {
                     return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
                 }
-                return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
 
             }
             catch (Exception e)
@@ -589,10 +587,14 @@ namespace Travel.Data.Repositories
 
                     var emailSend = _config["emailSend"];
                     var keySecurity = _config["keySecurity"];
-                    var stringHtml = Ultility.getHtml($"{bookingNo} <br> Vui lòng ghi nhớ mã BookingNo này", "Thanh toán thành công", "BookingNo");
+                    var stringHtml = Ultility.getHtmlBookingTicket($"{bookingNo} <br> Vui lòng ghi nhớ mã BookingNo này", "Thanh toán thành công", "BookingNo");
 
                     Ultility.sendEmail(stringHtml, tourbooking.Email, "Thanh toán dịch vụ", emailSend, keySecurity);
                     #endregion
+
+
+
+
                     return Ultility.Responses("Thanh toán thành công !", Enums.TypeCRUD.Success.ToString());
 
                 }
@@ -648,14 +650,7 @@ namespace Travel.Data.Repositories
                     string jsonContent = JsonSerializer.Serialize(tourbooking);
                     UpdateDatabase<TourBooking>(tourbooking);
                     SaveChange();
-                    //#region sendMail
-
-                    //var emailSend = _config["emailSend"];
-                    //var keySecurity = _config["keySecurity"];
-                    //var stringHtml = Ultility.getHtml($"{bookingNo} <br> Vui lòng ghi nhớ mã BookingNo này", "Thanh toán thành công", "BookingNo");
-
-                    //Ultility.sendEmail(stringHtml, tourbooking.Email, "Thanh toán dịch vụ", emailSend, keySecurity);
-                    //#endregion
+                  
                     bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "TourBooking");
                     if (result)
                     {
