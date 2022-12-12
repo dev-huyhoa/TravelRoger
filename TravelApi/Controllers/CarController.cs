@@ -3,9 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
@@ -34,7 +38,7 @@ namespace TravelApi.Controllers
         [NonAction]
         private Claim GetEmailUserLogin()
         {
-            return  (User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.Email).FirstOrDefault();
+            return (User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == ClaimTypes.Email).FirstOrDefault();
         }
 
 
@@ -43,7 +47,7 @@ namespace TravelApi.Controllers
         [Route("list-car")]
         public object Gets(bool isDelete)
         {
-           
+
             res = _car.Gets(isDelete);
             return Ok(res);
         }
@@ -60,7 +64,7 @@ namespace TravelApi.Controllers
         [Route("list-selectbox-car-update")]
         public object GetsSelectBoxCarUpdate(long fromDate, long toDate, string idSchedule)
         {
-            res = _car.GetsSelectBoxCarUpdate(fromDate, toDate,idSchedule);
+            res = _car.GetsSelectBoxCarUpdate(fromDate, toDate, idSchedule);
             return Ok(res);
         }
         [HttpGet]
@@ -122,7 +126,7 @@ namespace TravelApi.Controllers
         public object DeleteCar(Guid idCar, Guid idUser)
         {
             var emailUser = GetEmailUserLogin().Value;
-            res = _car.DeleteCar(idCar, idUser , emailUser);
+            res = _car.DeleteCar(idCar, idUser, emailUser);
             return Ok(res);
         }
 
@@ -132,7 +136,7 @@ namespace TravelApi.Controllers
         public object RestoreCar(Guid idCar)
         {
             var emailUser = GetEmailUserLogin().Value;
-            res = _car.RestoreCar(idCar , emailUser);
+            res = _car.RestoreCar(idCar, emailUser);
             return Ok(res);
         }
         [HttpPost]
@@ -151,5 +155,6 @@ namespace TravelApi.Controllers
             res = _car.GetListCarHaveSchedule(idCar, pageIndex, pageSize);
             return Ok(res);
         }
+        
     }
 }

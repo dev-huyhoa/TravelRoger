@@ -32,7 +32,6 @@ namespace TravelApi.Controllers
         {
             location = _location;
             res = new Response();
-
         }
         [NonAction]
         private Claim GetEmailUserLogin()

@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Travel.Data.Interfaces;
 using Travel.Shared.ViewModels;
@@ -17,11 +19,13 @@ namespace TravelApi.Controllers
     {
         private INews news;
         private Response res;
+        private ICache cache;
 
 
-        public NewsController(INews _news)
+        public NewsController(INews _news, ICache _cache)
         {
             news = _news;
+            cache = _cache;
             res = new Response();
         }
 
@@ -66,6 +70,35 @@ namespace TravelApi.Controllers
         {
             res = news.GetBannerAll();
             return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("weather-forecast")]
+        public async Task<object> WeatherLoading()
+        {
+            res = await news.GetApiWeather();
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("translate-language")]
+        public async Task<object> Translate(string input, string fromLang,string toLang) 
+        {
+            var resultString = await news.Translate(input,fromLang,toLang);
+            return Ok(resultString);
+
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("map-location")]
+        public async Task<object> GetGoogleMapLocation(string locationString)
+        {
+            var map = await news.GetGoogleMapLocation(locationString);
+           
+            return Ok(map);
+
         }
     }
 }

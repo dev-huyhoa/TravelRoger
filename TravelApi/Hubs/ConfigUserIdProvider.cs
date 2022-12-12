@@ -9,9 +9,9 @@ namespace TravelApi.Hubs
 {
     public class ConfigUserIdProvider : IUserIdProvider
     {
-        public  virtual string GetUserId(HubConnectionContext connection)
+        public virtual string GetUserId(HubConnectionContext connection)
         {
-             var ssss = connection.User?.Claims.Where(c => c.Type == "UserId").FirstOrDefault().Value.ToString();
+            var ssss = connection.User?.Claims.Where(c => c.Type == "UserId").FirstOrDefault().Value.ToString();
             return ssss.ToUpper();
             //return connection.User?.FindFirst(ClaimTypes.NameIdentifier).ToString();
         }
