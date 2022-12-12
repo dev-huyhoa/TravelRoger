@@ -57,9 +57,18 @@ namespace TravelApi.Controllers.Notify
         [HttpPut]
         [Authorize]
         [Route("check-seen-messenger")]
-        public async Task<object> CheckSeenMessenger(Guid idMessenger)
+        public async Task<object> CheckSeenMessenger(Guid key)
         {
-            res = await _messenger.CheckSeenMessenger(idMessenger);
+            res = await _messenger.CheckSeenMessenger(key);
+            return Ok(res);
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("check-seen-messenger-cus")]
+        public async Task<object> CheckSeenMessenger(Guid idCus, Guid idSp)
+        {
+            res = await _messenger.CheckSeenMessenger(idCus, idSp);
             return Ok(res);
         }
 

@@ -897,7 +897,8 @@ namespace Travel.Data.Repositories
                                                             x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
                                                             x.Pincode.ToLower().Contains(keywords.KwPincode) &&
                                                             x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                                                x.Email.ToLower().Contains(keywords.KwEmail) select x);
+                                                                x.Email.ToLower().Contains(keywords.KwEmail)
+                                            select x);
 
                 if (keywords.KwFromDate != 0 && keywords.KwToDate != 0)
                 {
@@ -935,6 +936,7 @@ namespace Travel.Data.Repositories
 
                 totalResult = queryListTourBooking.Count();
                 queryListTourBooking = (from x in queryListTourBooking
+                                        orderby x.DateBooking descending
                                         select new TourBooking
                                         {
                                             DateBooking = x.DateBooking,

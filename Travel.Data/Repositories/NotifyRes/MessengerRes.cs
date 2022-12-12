@@ -32,9 +32,21 @@ namespace Travel.Data.Repositories.NotifyRes
             _dbNotify.Entry(input).State = EntityState.Added;
             await _dbNotify.SaveChangesAsync();
         }
+
+        private void UpdateRangeDatabase(List<Messenger> input)
+        {
+             _dbNotify.Messengers.UpdateRange(input);
+        }
+
+
         private void SaveChange()
         {
             _db.SaveChanges();
+        }
+
+        private async Task SaveChangeAsync()
+        {
+           await _dbNotify.SaveChangesAsync();
         }
         public async Task<Response> SupportedReply(Messenger input)
         {
@@ -67,7 +79,7 @@ namespace Travel.Data.Repositories.NotifyRes
                     input.IsSeen = false;
                     input.SendDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     await CreateDatabase(input);
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), input.ReceiverId);
                 }
                 else
                 {
@@ -91,7 +103,7 @@ namespace Travel.Data.Repositories.NotifyRes
                     input.SendDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
                     input.IsSeen = false;
                     await CreateDatabase(input);
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), input.ReceiverId);
                 }
 
 
@@ -159,9 +171,25 @@ namespace Travel.Data.Repositories.NotifyRes
                         messengerItem.NameCustomer = (from x in listMess
                                                       where x.SenderId == messengerItem.IdCustomer
                                                       select x.SenderName).FirstOrDefault();
+                        messengerItem.TotalNew = (from x in listMess
+                                                      where  x.IsSeen == false && x.SenderId != IdSuporter
+                                                  select x).Count();
+                        if (messengerItem.TotalNew > 0)
+                        {
+                            messengerItem.IsSeen = false; 
+                        }
+                        else
+                        {
+                            messengerItem.IsSeen = true;
+                        }
+
+                        messengerItem.Date = listMess.Max(x => x.SendDate);
+
                         messengerItem.Messengers = listMess;
                         messViewModel.Add(messengerItem);
                     }
+
+                    messViewModel = messViewModel.OrderByDescending(x => x.Date).ToList();
                     return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), messViewModel);
                 }
                 else
@@ -178,18 +206,37 @@ namespace Travel.Data.Repositories.NotifyRes
             }
         }
 
-        public async Task<Response> CheckSeenMessenger(Guid IdMessenger)
+        public async Task<Response> CheckSeenMessenger(Guid key)
         {
             try
             {
-                var result = await (from x in _dbNotify.Messengers.AsNoTracking()
-                              where x.IdMessenger == IdMessenger
-                              select x).FirstOrDefaultAsync();
-                if (result != null)
-                {
-                    result.IsSeen = true;
-                    SaveChange();
-                }
+                var result =  (from x in _dbNotify.Messengers
+                              where x.SenderId == key && x.IsSeen == false
+                              select x);
+                 await result.ForEachAsync(x => x.IsSeen = true);
+                UpdateRangeDatabase(result.ToList());
+                await SaveChangeAsync();
+                
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), e.Message);
+            }
+        }
+
+
+        public async Task<Response> CheckSeenMessenger(Guid idCus, Guid idSp)
+        {
+            try
+            {
+                var result = (from x in _dbNotify.Messengers
+                              where x.SenderId == idSp && x.ReceiverId == idCus  && x.IsSeen == false
+                              select x);
+                await result.ForEachAsync(x => x.IsSeen = true);
+                UpdateRangeDatabase(result.ToList());
+                await SaveChangeAsync();
+
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)

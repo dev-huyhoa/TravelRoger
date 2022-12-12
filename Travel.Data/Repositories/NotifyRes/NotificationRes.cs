@@ -97,8 +97,6 @@ namespace Travel.Data.Repositories.NotifyRes
                 var listByRole = (from x in _db.Employees
                                   where x.IsDelete == false && x.IsActive == true
                                   select x);
-
-                var da = listByRole.ToList();
                 var emp = new List<Employee>();
                 foreach (var role in Roles)
                 {

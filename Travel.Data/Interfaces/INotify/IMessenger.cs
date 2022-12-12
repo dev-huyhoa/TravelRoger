@@ -16,5 +16,6 @@ namespace Travel.Data.Interfaces.INotify
         Task<Response> CustomerViewMessenger(Guid IdCustomer);
         Task<Response> SupporterViewMessenger(Guid IdSuporter);
         Task<Response> CheckSeenMessenger(Guid IdMessenger);
+        Task<Response> CheckSeenMessenger(Guid idCus, Guid idSp);
     }
 }
