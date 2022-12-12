@@ -19,5 +19,7 @@ namespace Travel.Data.Interfaces
         Response DeleteVoucher(Guid id, string emailUser);
         Response RestoreVoucher(Guid id, string emailUser);
         Response CreateTiket(Guid idVoucher, Guid idCus);
+
+        Response GetsVoucherHistory(Guid idCustomer);
     }
 }

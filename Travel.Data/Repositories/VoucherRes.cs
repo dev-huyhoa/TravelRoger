@@ -272,5 +272,26 @@ namespace Travel.Data.Repositories
 
             }
         }
+
+        public Response GetsVoucherHistory(Guid idCustomer)
+        {
+            try
+            {
+
+                var list = (from x in _db.Customer_Vouchers
+                            join pet in _db.Vouchers on x.VoucherId equals pet.IdVoucher
+                         
+                            select pet).ToList();
+
+               
+           
+                
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
     }
 }

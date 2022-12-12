@@ -103,5 +103,14 @@ namespace TravelApi.Controllers
             res = _voucher.DeleteVoucher(idVoucher, emailUser);
             return Ok(res);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("vouchers-history")]
+        public object GetsVoucherHistory(Guid idCustomer)
+        {
+            res = _voucher.GetsVoucherHistory(idCustomer);
+            return Ok(res);
+        }
     }
 }
