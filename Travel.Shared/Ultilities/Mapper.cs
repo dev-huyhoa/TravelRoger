@@ -381,7 +381,8 @@ namespace Travel.Shared.Ultilities
                          .ForMember(dto => dto.Gender, otp => otp.MapFrom(src => src.Gender))
                          .ForMember(dto => dto.Birthday, otp => otp.MapFrom(src => src.Birthday))
                         .ForMember(dto => dto.CreateDate, opt => opt.MapFrom(src => src.CreateDate))
-                         .ForMember(dto => dto.Point, otp => otp.MapFrom(src => src.Point));
+                         .ForMember(dto => dto.Point, otp => otp.MapFrom(src => src.Point))
+                          .ForMember(dto => dto.IsBlock, otp => otp.MapFrom(src => src.IsBlock));
 
                 cfg.CreateMap<CreateCustomerViewModel, Customer>()
                         .ForMember(dto => dto.IdCustomer, otp => otp.MapFrom(src => src.IdCustomer))
@@ -470,7 +471,8 @@ namespace Travel.Shared.Ultilities
                    .ForMember(dto => dto.LiscensePlate, opt => opt.MapFrom(src => src.LiscensePlate))
                    .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
                    .ForMember(dto => dto.NameDriver, opt => opt.MapFrom(src => src.NameDriver))
-                   .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone));
+                   .ForMember(dto => dto.Phone, opt => opt.MapFrom(src => src.Phone))
+                   .ForMember(dto => dto.IsDelete, opt => opt.MapFrom(src => src.IsDelete));
 
                 cfg.CreateMap<CreatePromotionViewModel, Promotion>()
                        .ForMember(dto => dto.IdPromotion, opt => opt.MapFrom(src => src.IdPromotion))

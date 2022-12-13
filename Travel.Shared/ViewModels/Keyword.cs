@@ -29,6 +29,7 @@ namespace Travel.Shared.ViewModels
         public string KwPriceTicket { get; set; }
         public string KwComboPrice{ get; set; }
         public string KwPincode { get; set; }
+        public string KwBookingNo { get; set; }
         public bool kwIsCalled { get; set; }
         public long KwDate { get; set; }
         public long KwFromDate { get; set; }

@@ -23,7 +23,7 @@ namespace Travel.Data.Interfaces
         Task<Response> CustomerSendRate(string idTour, int rating);
 
         Task<bool> UpdateScoreToCustomer(Guid idCustomer, int point );
-
+        Task<Response> UpdateBlockCustomer(Guid idCustomer, bool isBlock);
         Response Search(JObject frmData);
     }
 }

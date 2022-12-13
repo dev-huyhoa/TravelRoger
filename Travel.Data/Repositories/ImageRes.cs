@@ -66,7 +66,7 @@ namespace Travel.Data.Repositories
                         }
                         _db.Images.AddRange(imageDetail.AsEnumerable());
                         _db.SaveChanges();
-                        res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                        res = Ultility.Responses("Đã gửi yêu cầu !", Enums.TypeCRUD.Success.ToString());
                     }
                     else
                     {

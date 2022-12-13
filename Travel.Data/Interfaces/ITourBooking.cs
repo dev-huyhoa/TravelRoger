@@ -41,5 +41,6 @@ namespace Travel.Data.Interfaces
 
         Response CusSearchBookingNo(string bookingNo);
 
+        Response UpdateStatus(string idTourBooking, int status, string emailUser);
     }
 }
