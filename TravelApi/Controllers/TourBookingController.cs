@@ -46,9 +46,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("do-payment")]
-        public object DoPayment(string idTourBooking)
+        public async Task<object> DoPayment(string idTourBooking)
         {
-            res = _tourbooking.DoPayment(idTourBooking);
+            res =  await _tourbooking.DoPayment(idTourBooking);
             return Ok(res);
         }
         [HttpGet]

@@ -44,7 +44,7 @@ namespace Travel.Data.Repositories
             //var tour = await _tour.GetTourByIdForPayPal(schedule.TourId);
             #endregion
 
-            float total = tourBooking.TotalPrice;
+            double total = (double)tourBooking.TotalPrice;
             
 
             var timeZoneById = TimeZoneInfo.FindSystemTimeZoneById(_configuration["TimeZoneId"]);
@@ -130,13 +130,12 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var tourbooking = await (from x in _db.TourBookings.AsNoTracking()
-                                         where x.IdTourBooking == idtourbooking
-                                         select x).FirstOrDefaultAsync();
-                tourbooking.Deposit = tourbooking.TotalPrice;
-                tourbooking.Status = (int)Enums.StatusBooking.Paid;
-                UpdateDatabase(tourbooking);
-                return await SaveChangeAsync() > 0;
+                var res =await   _tourbooking.DoPayment(idtourbooking);
+                if (res.Notification.Type == Enums.TypeCRUD.Success.ToString())
+                {
+                    return true;
+                }
+                return false;
             }
             catch (Exception e)
             {

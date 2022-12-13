@@ -606,21 +606,21 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response DoPayment(string idTourBooking) // for admin if customer payment
+        public async Task<Response> DoPayment(string idTourBooking) // for admin if customer payment
         {
             try
             {
-                var tourbooking = (from tb in _db.TourBookings.AsNoTracking()
+                var tourbooking = await (from tb in _db.TourBookings.AsNoTracking()
                                    where tb.IdTourBooking == idTourBooking
                                    && tb.Status == (int)Enums.StatusBooking.Paying
-                                   select tb).FirstOrDefault();
+                                   select tb).FirstOrDefaultAsync();
                 if (tourbooking != null)
                 {
                     var bookingNo = $"{tourbooking.IdTourBooking}NO";
                     tourbooking.Status = (int)Enums.StatusBooking.Paid;
                     tourbooking.BookingNo = bookingNo;
                     UpdateDatabase<TourBooking>(tourbooking);
-                    SaveChange();
+                    await SaveChangeAsync();
                     #region sendMail
 
                     var emailSend = _config["emailSend"];
@@ -629,9 +629,6 @@ namespace Travel.Data.Repositories
 
                     Ultility.sendEmail(stringHtml, tourbooking.Email, "Thanh toán dịch vụ", emailSend, keySecurity);
                     #endregion
-
-
-
 
                     return Ultility.Responses("Thanh toán thành công !", Enums.TypeCRUD.Success.ToString());
 

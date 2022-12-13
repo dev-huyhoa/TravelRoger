@@ -335,9 +335,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-
-
-                var account = (from x in _db.Customers.AsNoTracking()
+                var account = await (from x in _db.Customers.AsNoTracking()
                                where x.Email.ToLower() == email.ToLower()
                                select x).FirstOrDefaultAsync();
                 if (account != null)
@@ -379,9 +377,6 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-
-
-
         public Response GetCustomer(Guid idCustomer)
         {
             try
@@ -390,7 +385,6 @@ namespace Travel.Data.Repositories
                                 where x.IdCustomer == idCustomer
                                 select x).First();
                 var result = Mapper.MapCustomer(customer);
-
                 if (result != null)
                 {
                     return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
