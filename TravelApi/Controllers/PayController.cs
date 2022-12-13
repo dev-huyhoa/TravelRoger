@@ -169,7 +169,8 @@ namespace TravelApi.Controllers
                 RedirectUrls = new RedirectUrls()
                 {
 
-                    CancelUrl = _configuration["PaypalSettings:CancelUrl"],
+                    //CancelUrl = _configuration["PaypalSettings:CancelUrl"],
+                    CancelUrl = $"{_configuration["PaypalSettings:CancelUrl"]}api/tour-booking/{schedule.IdSchedule}/{schedule.Alias}",
                     ReturnUrl = $"{_configuration["PaypalSettings:ReturnUrl"]}api/pay/update-status-tourbooking?idTourBooking={idTourBooking}"
                 },
                 Payer = new Payer()
@@ -181,6 +182,7 @@ namespace TravelApi.Controllers
             request.RequestBody(payment);
             try
             {
+                
                 var response = await client.Execute(request);
                 var statusCode = response.StatusCode;
                 Payment result = response.Result<Payment>();
@@ -218,11 +220,12 @@ namespace TravelApi.Controllers
             var isSuccess = await _vnPayRes.UpdateStatusTourBooking(idTourBooking);
             if (isSuccess)
             {
-                return new
-                {
-                    status = 1,
-                    url = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}",
-                };
+                return Redirect($"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}");
+                //return new
+                //{
+                //    status = 1,
+                //    url = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}",
+                //};
             }
             else
             {
@@ -237,10 +240,14 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("checkout-vnpay")]
-        public async Task<string> VnPayCheckout(string idTourBooking)
+        public async Task<object> VnPayCheckout(string idTourBooking)
         {
             var url = await _vnPayRes.CreatePaymentUrl(idTourBooking, HttpContext);
-            return url;
+            return new
+            {
+                status = 1,
+                url = url,
+            };
         }
 
         [HttpGet]
@@ -249,7 +256,8 @@ namespace TravelApi.Controllers
         public async Task<object> PaymentCallback(string idTourBooking)
         {
             var response = await _vnPayRes.PaymentExecute(Request.Query  , idTourBooking);
-            return response;
+
+            return Redirect(response.UrlReturnBill);
         }
 
     }

@@ -115,11 +115,11 @@ namespace Travel.Data.Repositories
                 var result =await (from x in _db.TourBookings.AsNoTracking()
                               where idTourBooking == x.IdTourBooking
                 select x).FirstOrDefaultAsync();
-                result.Status = (int)Enums.StatusBooking.Finished;
+                result.Status = (int)Enums.StatusBooking.Paid;
                 UpdateDatabase(result);
                 if (await SaveChangeAsync() > 0)
                 {
-                    response.UrlReturnBill = $"{_configuration["VnpaySetting:UrlSuccessPayment"]}?idTourBooking={idTourBooking}";
+                    response.UrlReturnBill = $"{_configuration["VnpaySetting:UrlSuccessPayment"]}api/pay/update-status-tourbooking?idTourBooking={idTourBooking}";
                 };
 
             }
@@ -133,7 +133,8 @@ namespace Travel.Data.Repositories
                 var tourbooking = await (from x in _db.TourBookings.AsNoTracking()
                                          where x.IdTourBooking == idtourbooking
                                          select x).FirstOrDefaultAsync();
-                tourbooking.Status = (int)Enums.StatusBooking.Finished;
+                tourbooking.Deposit = tourbooking.TotalPrice;
+                tourbooking.Status = (int)Enums.StatusBooking.Paid;
                 UpdateDatabase(tourbooking);
                 return await SaveChangeAsync() > 0;
             }

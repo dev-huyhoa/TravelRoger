@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Travel.Shared.SpeedSMSAPI;
 using System.IO;
 using QRCoder;
+using Travel.Data.Interfaces.INotify;
 
 namespace Travel.Data.Repositories
 {
@@ -30,10 +31,12 @@ namespace Travel.Data.Repositories
         private readonly ICustomer _customer; private Notification message;
         private readonly ICache _cache;
         private readonly ILog _log;
+        private INotification _notification;
         public TourBookingRes(TravelContext db, ILog log, ICache cache,
             ISchedule schedule,
             ICustomer customer,
-            IConfiguration config)
+            IConfiguration config,
+            INotification notification)
         {
             _db = db;
             _log = log;
@@ -43,6 +46,7 @@ namespace Travel.Data.Repositories
             keySecurity = _config["keySecurity"];
             message = new Notification();
             _cache = cache;
+            _notification = notification;
         }
         private void UpdateDatabase<T>(T input)
         {
@@ -362,6 +366,23 @@ namespace Travel.Data.Repositories
 
                 Ultility.sendEmail(stringHtml, tourbooking.Email, "THÔNG BÁO ĐẶT TOUR", emailSend, keySecurity);
                 #endregion
+
+                #region send notifi
+                var nameTour = await (from s in _db.Schedules.AsNoTracking()
+                                   join t in _db.Tour.AsNoTracking()
+                                   on s.TourId equals t.IdTour
+                                   where s.Isdelete == false
+                                   && s.IdSchedule == input.ScheduleId
+                                   select t.NameTour).FirstOrDefaultAsync();
+
+                var idCus = await (from c in _db.Customers.AsNoTracking()
+                                      where c.IsDelete == false
+                                      && c.IsBlock == false
+                                      && c.Email == emailUser
+                                      select c.IdCustomer).FirstOrDefaultAsync();
+
+                _notification.CreateNotification(idCus, Convert.ToInt16(Enums.TypeNotification.TourBooking), nameTour, new int[] { Convert.ToInt16(Enums.TitleRole.TourBookingManager)}, "");
+                #endregion
                 bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "TourBooking");
                 if (result)
                 {
@@ -548,6 +569,8 @@ namespace Travel.Data.Repositories
                                              Status = x.Status,
                                              Address = x.Address,
                                              AdditionalPrice = x.AdditionalPrice,
+                                             Deposit = x.Deposit,
+                                             RemainPrice = x.RemainPrice,
                                              BookingNo = x.BookingNo,
                                              DateBooking = x.DateBooking,
                                              TotalPrice = x.TotalPrice,
