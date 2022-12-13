@@ -170,7 +170,7 @@ namespace TravelApi.Controllers
                 {
 
                     //CancelUrl = _configuration["PaypalSettings:CancelUrl"],
-                    CancelUrl = $"{_configuration["PaypalSettings:CancelUrl"]}/tour-booking/{schedule.IdSchedule}/{schedule.Alias}",
+                    CancelUrl = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}",
                     ReturnUrl = $"{_configuration["PaypalSettings:ReturnUrl"]}api/pay/update-status-tourbooking?idTourBooking={idTourBooking}"
                 },
                 Payer = new Payer()
