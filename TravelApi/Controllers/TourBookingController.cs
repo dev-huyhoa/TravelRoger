@@ -175,6 +175,17 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
+        [HttpPut]
+        [Authorize]
+        [Route("adm-update-tourBooking-status")]
+        public object UpdateStatus(string idTourBooking, int status)
+        {
+
+            var emailUser = GetEmailUserLogin().Value;
+            res = _tourbooking.UpdateStatus(idTourBooking, status, emailUser);
+            return Ok(res);
+        }
+
         [HttpPost]
         [Authorize]
         [Route("update-tourBooking-finished")]

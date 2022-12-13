@@ -481,6 +481,37 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public async Task<Response> UpdateBlockCustomer(Guid idCustomer, bool isBlock)
+        {
+            try
+            {
+                var customer = await (from x in _db.Customers.AsNoTracking()
+                                      where x.IdCustomer == idCustomer
+                                      select x).FirstOrDefaultAsync();
+                if (customer != null)
+                {
+                    if (isBlock)
+                    {
+                        customer.IsBlock = false;
+                    }
+                    else
+                    {
+                        customer.IsBlock = true;
+                    }
+
+
+                    UpdateDatabase(customer);
+                    await SaveChangeAsync();
+                }
+                return Ultility.Responses("Thay đổi trạng thái thành công !", Enums.TypeCRUD.Success.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
+
         public Response Search(JObject frmData)
         {
             try

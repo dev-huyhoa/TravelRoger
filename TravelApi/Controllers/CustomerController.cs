@@ -126,5 +126,14 @@ namespace TravelApi.Controllers
             res = customer.Search(frmData);
             return Ok(res);
         }
+
+        [HttpPut]
+        [Authorize]
+        [Route("block-customer")]
+        public async Task<object> BlockCustomer(Guid idCustomer, bool isBlock)
+        {
+            res = await customer.UpdateBlockCustomer(idCustomer, isBlock);
+            return Ok(res);
+        }
     }
 }

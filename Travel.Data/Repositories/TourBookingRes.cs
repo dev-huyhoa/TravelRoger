@@ -848,16 +848,28 @@ namespace Travel.Data.Repositories
                     keywords.KwPincode = "";
 
                 }
-                var kwEmail = PrCommon.GetString("Email", frmData).Trim();
-                if (!String.IsNullOrEmpty(kwEmail))
+
+                var kwBookingNo = PrCommon.GetString("BookingNo", frmData).Trim();
+                if (!String.IsNullOrEmpty(kwBookingNo))
                 {
-                    keywords.KwEmail = kwEmail.Trim().ToLower();
+                    keywords.KwBookingNo = kwBookingNo.Trim().ToLower();
                 }
                 else
                 {
-                    keywords.KwEmail = "";
+                    keywords.KwBookingNo = "";
 
                 }
+
+                //var kwEmail = PrCommon.GetString("Email", frmData).Trim();
+                //if (!String.IsNullOrEmpty(kwEmail))
+                //{
+                //    keywords.KwEmail = kwEmail.Trim().ToLower();
+                //}
+                //else
+                //{
+                //    keywords.KwEmail = "";
+
+                //}
                 var kwPhone = PrCommon.GetString("phone", frmData).Trim();
                 if (!String.IsNullOrEmpty(kwPhone))
                 {
@@ -889,30 +901,34 @@ namespace Travel.Data.Repositories
                     keywords.KwToDate = 0;
                 }
 
-                var kwDate = PrCommon.GetString("DateBooking", frmData).Trim();
-                if (!String.IsNullOrEmpty(kwDate))
-                {
-                    keywords.KwDate = long.Parse(kwDate);
-                }
-                else
-                {
+                //var kwDate = PrCommon.GetString("DateBooking", frmData).Trim();
+                //if (!String.IsNullOrEmpty(kwDate))
+                //{
+                //    keywords.KwDate = long.Parse(kwDate);
+                //}
+                //else
+                //{
 
-                    keywords.KwDate = 0;
-                }
+                //    keywords.KwDate = 0;
+                //}
                 var kwIsCall = PrCommon.GetString("IsCalled", frmData);
 
                 if (!String.IsNullOrEmpty(kwIsCall))
                 {
                     keywords.kwIsCalled = Boolean.Parse(kwIsCall);
                 }
+
+                var status = PrCommon.GetString("status", frmData);
+                keywords.KwStatusList = PrCommon.getListInt(status, ',', false);
                 var listTourBooking = new List<TourBooking>();
                 #region filter
                 var queryListTourBooking = (from x in _db.TourBookings.AsNoTracking()
                                             where
                                                             x.IdTourBooking.ToLower().Contains(keywords.KwId) &&
                                                             x.Pincode.ToLower().Contains(keywords.KwPincode) &&
-                                                            x.Phone.ToLower().Contains(keywords.KwPhone) &&
-                                                                x.Email.ToLower().Contains(keywords.KwEmail)
+                                                            x.BookingNo.ToLower().Contains(keywords.KwBookingNo) &&
+                                                            x.Phone.ToLower().Contains(keywords.KwPhone)
+                                                               
                                             select x);
 
                 if (keywords.KwFromDate != 0 && keywords.KwToDate != 0)
@@ -944,6 +960,13 @@ namespace Travel.Data.Repositories
                 {
                     queryListTourBooking = from x in queryListTourBooking
                                            where x.IsCalled == keywords.kwIsCalled
+                                           select x;
+                }
+
+                if (keywords.KwStatusList.Count > 0)
+                {
+                    queryListTourBooking = from x in queryListTourBooking
+                                           where keywords.KwStatusList.Contains(x.Status)
                                            select x;
                 }
 
@@ -1043,6 +1066,45 @@ namespace Travel.Data.Repositories
                     if (result)
                     {
                         return Ultility.Responses($"Đổi thành công !", Enums.TypeCRUD.Success.ToString());
+
+                    }
+                    else
+                    {
+                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
+                    }
+                }
+                else
+                {
+                    return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
+
+
+        public Response UpdateStatus(string idTourBooking, int status, string emailUser)
+        {
+            try
+            {
+                var tourBooking = (from x in _db.TourBookings.AsNoTracking()
+                                   where x.IdTourBooking == idTourBooking
+                                   select x).FirstOrDefault();
+
+                if (tourBooking != null)
+                {
+                    tourBooking.Status = status;
+                    UpdateDatabase(tourBooking);
+
+                    string jsonContent = JsonSerializer.Serialize(tourBooking);
+
+                    bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "TourBooking");
+                    if (result)
+                    {
+                        return Ultility.Responses($"Cập nhật thành công !", Enums.TypeCRUD.Success.ToString());
 
                     }
                     else
