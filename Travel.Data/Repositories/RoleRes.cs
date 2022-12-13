@@ -16,13 +16,13 @@ using Travel.Shared.ViewModels.Travel;
 
 namespace Travel.Data.Repositories
 {
-    public class RoleRes: IRole
+    public class RoleRes : IRole
     {
         private readonly TravelContext _db;
         private Notification message;
         private Response res;
         private readonly ILog _log;
-        public RoleRes(TravelContext db , ILog log)
+        public RoleRes(TravelContext db, ILog log)
         {
             _db = db;
             _log = log;
@@ -38,15 +38,26 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(idRole))
                 {
                 }
-
                 var nameRole = PrCommon.GetString("nameRole", frmData);
-                if (String.IsNullOrEmpty(nameRole))
+                if (!String.IsNullOrEmpty(nameRole))
                 {
+                    var check = CheckSameRole(nameRole);
+                    if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
+                    {
+                        _message = check.Notification;
+                        return string.Empty;
+                    }
                 }
 
                 var description = PrCommon.GetString("description", frmData);
-                if (String.IsNullOrEmpty(description))
+                if (!String.IsNullOrEmpty(description))
                 {
+                    var check = CheckSameRole(description);
+                    if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
+                    {
+                        _message = check.Notification;
+                        return string.Empty;
+                    }
                 }
                 if (isUpdate)
                 {
@@ -56,14 +67,13 @@ namespace Travel.Data.Repositories
                     objUpdate.Description = description;
                     return JsonSerializer.Serialize(objUpdate);
                 }
-
                 CreateRoleViewModel objCreate = new CreateRoleViewModel();
                 //objCreate.IdRole = int.Parse(idRole);
                 objCreate.NameRole = nameRole;
                 objCreate.Description = description;
                 return JsonSerializer.Serialize(objCreate);
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 message.DateTime = DateTime.Now;
                 message.Description = e.Message;
@@ -79,8 +89,9 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                var listRole= (from x in _db.Roles.AsNoTracking()
-                               where x.IsDelete == isDelete select x).ToList();
+                var listRole = (from x in _db.Roles.AsNoTracking()
+                                where x.IsDelete == isDelete
+                                select x).ToList();
                 var result = Mapper.MapRole(listRole);
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
 
@@ -92,7 +103,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CreateRole(CreateRoleViewModel input , string emailUser)
+        public Response CreateRole(CreateRoleViewModel input, string emailUser)
         {
             try
             {
@@ -181,7 +192,7 @@ namespace Travel.Data.Repositories
                     return Ultility.Responses($"Không tìm thấy !", Enums.TypeCRUD.Warning.ToString());
 
                 }
-                
+
             }
             catch (Exception e)
             {
@@ -195,8 +206,12 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                if (CheckIsAdmin(idRole))
+                {
+                    return Ultility.Responses("Không thể xóa Admin !", Enums.TypeCRUD.Validation.ToString());
+                }
                 var role = _db.Roles.Find(idRole);
-                if(role != null)
+                if (role != null)
                 {
                     string jsonContent = JsonSerializer.Serialize(role);
 
@@ -281,20 +296,20 @@ namespace Travel.Data.Repositories
                 if (keywords.KwIdRole.Count > 0)
                 {
                     var queryListRole = (from x in _db.Roles.AsNoTracking()
-                               where x.IsDelete == keywords.IsDelete &&
-                                               x.NameRole.ToLower().Contains(keywords.KwName) &&
-                                               x.Description.ToLower().Contains(keywords.KwDescription)
-                               select x);
+                                         where x.IsDelete == keywords.IsDelete &&
+                                                         x.NameRole.ToLower().Contains(keywords.KwName) &&
+                                                         x.Description.ToLower().Contains(keywords.KwDescription)
+                                         select x);
                     totalResult = queryListRole.Count();
                     listRole = queryListRole.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
                 else
                 {
                     var queryListRole = (from x in _db.Roles.AsNoTracking()
-                                where x.IsDelete == keywords.IsDelete &&
-                                               x.NameRole.ToLower().Contains(keywords.KwName) &&
-                                               x.Description.ToLower().Contains(keywords.KwDescription)
-                                select x);
+                                         where x.IsDelete == keywords.IsDelete &&
+                                                        x.NameRole.ToLower().Contains(keywords.KwName) &&
+                                                        x.Description.ToLower().Contains(keywords.KwDescription)
+                                         select x);
                     totalResult = queryListRole.Count();
                     listRole = queryListRole.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 }
@@ -317,6 +332,43 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
 
+            }
+        }
+
+
+        private bool CheckIsAdmin(int idRole)
+        {
+            return (from x in _db.Roles.AsNoTracking()
+                    where x.IdRole == idRole
+                    select x).Count() > 0;
+        }
+        private Response CheckSameRole(string input)
+        {
+            try
+            {
+                string oriRoleInput = Ultility.removeVietnameseSign(input.ToLower().Replace(" ", ""));
+                var obj = _db.Roles.Where(delegate (Role role)
+                {
+                    if (Ultility.removeVietnameseSign(role.NameRole.ToLower().Replace(" ", "")).Contains(oriRoleInput))
+                    {
+                        return true;
+                    }
+                    if (Ultility.removeVietnameseSign(role.Description.ToLower().Replace(" ", "")).Contains(oriRoleInput))
+                    {
+                        return true;
+
+                    }
+                    return false;
+                });
+                if (obj.FirstOrDefault() != null)
+                {
+                    return Ultility.Responses("[" + input + "] này đã tồn tại !", Enums.TypeCRUD.Validation.ToString());
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
     }

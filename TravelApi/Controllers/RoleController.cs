@@ -64,8 +64,8 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateRoleViewModel>(result);
-        
-                var emailUser = GetEmailUserLogin().Value;
+
+                var emailUser =GetEmailUserLogin().Value;
                 res = role.CreateRole(createObj, emailUser);
             }
             else
