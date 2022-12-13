@@ -634,7 +634,7 @@ namespace Travel.Data.Repositories
                            where x.IsDelete == false && x.Email == email select x).Count();
                 if (emp > 0)
                 {
-                    return Ultility.Responses("[" + email + "] này đã được đăng ký !", Enums.TypeCRUD.Warning.ToString());
+                    return Ultility.Responses("[" + email + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString());
                 }
                 return res;
             }
@@ -650,7 +650,7 @@ namespace Travel.Data.Repositories
         {
             try
             {
-                if (idEmployee != null) // update
+                if (!string.IsNullOrEmpty(idEmployee)) // update
                 {
                     Guid id = Guid.Parse(idEmployee);
                     string oldPhone = (from x in _db.Employees.AsNoTracking()
@@ -660,7 +660,7 @@ namespace Travel.Data.Repositories
                         var obj = (from x in _db.Employees where x.Phone != oldPhone && x.Phone == phone select x).Count();
                         if (obj > 0)
                         {
-                            return Ultility.Responses("[" + phone + "] này đã được đăng ký !", Enums.TypeCRUD.Warning.ToString());
+                            return Ultility.Responses("[" + phone + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString());
                         }
                     }
                 }
@@ -669,7 +669,7 @@ namespace Travel.Data.Repositories
                     var emp = (from x in _db.Employees where x.Phone == phone select x).Count();
                     if (emp > 0)
                     {
-                        return Ultility.Responses("[" + phone + "] này đã được đăng ký !", Enums.TypeCRUD.Warning.ToString());
+                        return Ultility.Responses("[" + phone + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString());
                     }
                 }
                 return res;

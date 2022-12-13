@@ -100,16 +100,10 @@ namespace Travel.Data.Repositories
                 if (frmData != null)
                 {
                     var idCustomer = PrCommon.GetString("idCustomer", frmData);
-                    if (String.IsNullOrEmpty(idCustomer))
-                    {
-                        //idCustomer = Guid.NewGuid().ToString();
-                    }
-
                     var nameCustomer = PrCommon.GetString("nameCustomer", frmData);
                     if (String.IsNullOrEmpty(nameCustomer))
                     {
                     }
-
                     var email = PrCommon.GetString("email", frmData);
                     if (!String.IsNullOrEmpty(email) && isUpdate == false)
                     {
@@ -123,13 +117,20 @@ namespace Travel.Data.Repositories
 
 
                     var phone = PrCommon.GetString("phone", frmData);
-                    if (String.IsNullOrEmpty(phone))
+                    if (!String.IsNullOrEmpty(phone))
                     {
+                        
+                        var check = CheckPhoneCustomer(phone, idCustomer != null ? idCustomer : null);
+                        if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
+                        {
+                            _message = check.Notification;
+                            return string.Empty;
+                        }
                     }
                     var birthday = PrCommon.GetString("birthday", frmData);
                     if (String.IsNullOrEmpty(birthday))
                     {
-                      
+                        
                     }
 
 
@@ -430,26 +431,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CheckEmailCustomer(string email)
-        {
-            try
-            {
-                var cus = (from x in _db.Customers where x.IsDelete == false && x.Email == email select x).Count();
-                if (cus > 0)
-                {
-                    return Ultility.Responses("[" + email + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString(), description: "Email");
-                }
-                else
-                {
-                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
-                }
-            }
-            catch (Exception e)
-            {
-                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
 
-            }
-        }
 
         public async Task<bool> UpdateScoreToCustomer(Guid idCustomer, int point )
         {
@@ -623,6 +605,75 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+
+
+
+
+
+
+
+        #region check same
+
+        public Response CheckEmailCustomer(string email)
+        {
+            try
+            {
+                var cus = (from x in _db.Customers where x.Email == email select x).Count();
+                if (cus > 0)
+                {
+                    return Ultility.Responses("[" + email + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString(), description: "Email");
+                }
+                else
+                {
+                    return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
+
+        public Response CheckPhoneCustomer(string phone, string idCustomer = null)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(idCustomer)) // update
+                {
+                    Guid id = Guid.Parse(idCustomer);
+                    string oldPhone = (from x in _db.Customers.AsNoTracking()
+                                       where x.IdCustomer == id
+                                       select x).First().Phone;
+                    if (phone != oldPhone) // có thay đổi  sdt
+                    {
+                        var obj = (from x in _db.Customers where x.Phone != oldPhone && x.Phone == phone select x).Count();
+                        if (obj > 0)
+                        {
+                            return Ultility.Responses("[" + phone + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString());
+                        }
+                    }
+                }
+                else // create
+                {
+                    var emp = (from x in _db.Customers where x.Phone == phone select x).Count();
+                    if (emp > 0)
+                    {
+                        return Ultility.Responses("[" + phone + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString());
+                    }
+                }
+                return res;
+
+            }
+            catch (Exception e)
+            {
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
+        #endregion
     }
 
 

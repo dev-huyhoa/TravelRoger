@@ -95,6 +95,7 @@ namespace TravelApi.Controllers
         public async Task<object> UpdateCustomer([FromBody] JObject frmdata, Guid idCustomer)
         {
             message = null;
+            //frmdata.Add(new JProperty("idCustomer", idCustomer));
             var result = customer.CheckBeforeSave(frmdata, ref message, true);
             if (message == null)
             {
