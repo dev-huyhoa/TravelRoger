@@ -81,6 +81,12 @@ namespace Travel.Data.Repositories
                 var liscenseplate = PrCommon.GetString("liscenseplate", frmData);
                 if (!String.IsNullOrEmpty(liscenseplate))
                 {
+                    var check = CheckLiscensePlate(liscenseplate);
+                    if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
+                    {
+                        _message = check.Notification;
+                        return string.Empty;
+                    }
                 }
 
 
@@ -96,6 +102,7 @@ namespace Travel.Data.Repositories
                 var idUserModify = PrCommon.GetString("idUserModify", frmData);
                 if (String.IsNullOrEmpty(idUserModify))
                 {
+                    idUserModify = Guid.Empty.ToString() ;
                 }
 
                 if (isUpdate)
@@ -120,6 +127,13 @@ namespace Travel.Data.Repositories
                 objCreate.Status = Convert.ToInt16(status);
                 objCreate.LiscensePlate = liscenseplate.ToString();
                 objCreate.Phone = phone;
+                if (idUserModify == Guid.Empty.ToString())
+                {
+                    objCreate.IdUserModify = Guid.Parse(idUserModify);
+                    objCreate.ModifyBy = "Vô danh";
+                    objCreate.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
+                    return JsonSerializer.Serialize(objCreate);
+                }
                 objCreate.IdUserModify = Guid.Parse(idUserModify);
                 objCreate.ModifyBy = GetCurrentUser(objCreate.IdUserModify).NameEmployee;
                 objCreate.ModifyDate = Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now);
@@ -674,5 +688,29 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+        private Response CheckLiscensePlate(string LiscensePlate)
+        {
+            try
+            {
+                    var oriPlateNumber = LiscensePlate.Replace("-", "");
+             
+                    var obj = (from x in _db.Cars.AsNoTracking()
+                               where x.LiscensePlate.Replace("-", "") == oriPlateNumber
+                               select x).FirstOrDefault();
+                    if (obj != null)
+                    {
+                        return Ultility.Responses("[" + LiscensePlate + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString());
+                    }
+                return res;
+
+            }
+            catch (Exception e)
+            {
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
+
     }
 }

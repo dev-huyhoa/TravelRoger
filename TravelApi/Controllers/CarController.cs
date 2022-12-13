@@ -77,7 +77,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
         [Route("create-car")]
         public object Create([FromBody] JObject frmData)
         {
