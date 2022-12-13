@@ -90,7 +90,7 @@ namespace Travel.Data.Repositories
                 if (String.IsNullOrEmpty(typeAction))
                 {
                 }
-                var idUserModify = PrCommon.GetString("idUserModify", frmData);
+                var idUserModify = PrCommon.GetString("IdUserModify", frmData);
                 if (String.IsNullOrEmpty(idUserModify))
                 {
                 }

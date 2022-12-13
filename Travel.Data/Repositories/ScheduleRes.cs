@@ -187,7 +187,7 @@ namespace Travel.Data.Repositories
                     updateObj.TypeAction = typeAction;
                     updateObj.Profit = int.Parse(profit);
                     updateObj.IdUserModify = Guid.Parse(idUserModify);
-
+                    updateObj.PromotionId = Convert.ToInt32(promotionId);
                     // price 
                     updateObj.Vat = float.Parse(vat);
                     updateObj.Profit = int.Parse(profit);
@@ -731,6 +731,9 @@ namespace Travel.Data.Repositories
                                        Timelines = (from t in _db.Timelines.AsNoTracking()
                                                     where t.IdSchedule == s.IdSchedule
                                                     select t).ToList(),
+                                       Promotions = (from p in _db.Promotions.AsNoTracking()
+                                                    where p.IdPromotion == s.PromotionId
+                                                    select p).First(),
                                        Tour = (from t in _db.Tour.AsNoTracking()
                                                where s.TourId == t.IdTour
                                                select new Tour
@@ -807,6 +810,9 @@ namespace Travel.Data.Repositories
                                        Timelines = (from t in _db.Timelines.AsNoTracking()
                                                     where t.IdSchedule == s.IdSchedule
                                                     select t).ToList(),
+                                       Promotions = (from p in _db.Promotions.AsNoTracking()
+                                                     where p.IdPromotion == s.PromotionId
+                                                     select p).First(),
                                        Tour = (from t in _db.Tour.AsNoTracking()
                                                where s.TourId == t.IdTour
                                                select new Tour
@@ -834,7 +840,7 @@ namespace Travel.Data.Repositories
 
 
 
-                var result = Mapper.MapSchedule(listWaiting).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                var result = listWaiting.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = totalResult;
                 return res;
@@ -2272,6 +2278,8 @@ namespace Travel.Data.Repositories
                 schedule.DeparturePlace = input.DeparturePlace;
                 schedule.Description = input.Description;
                 schedule.EmployeeId = input.EmployeeId;
+                schedule.PromotionId = input.PromotionId;
+                schedule.TimePromotion = input.TimePromotion;
                 schedule.EndDate = input.EndDate;
                 schedule.IsHoliday = input.IsHoliday;
                 schedule.MaxCapacity = input.MaxCapacity;
@@ -2838,10 +2846,77 @@ namespace Travel.Data.Repositories
 
                     }
                 }
-                var result = Mapper.MapSchedule(listSchedule);
-                result = (from x in result
-                          orderby x.BeginDate descending, x.DepartureDate descending
-                          select x).ToList();
+                var result = listSchedule;
+                result = (from s in result
+                          orderby s.BeginDate descending, s.DepartureDate descending
+                          select new Schedule
+                          {
+                              Alias = s.Alias,
+                              Approve = s.Approve,
+                              BeginDate = s.BeginDate,
+                              QuantityAdult = s.QuantityAdult,
+                              QuantityBaby = s.QuantityBaby,
+                              QuantityChild = s.QuantityChild,
+                              CarId = s.CarId,
+                              DepartureDate = s.DepartureDate,
+                              ReturnDate = s.ReturnDate,
+                              DeparturePlace = s.DeparturePlace,
+                              Description = s.Description,
+                              MetaDesc = s.MetaDesc,
+                              MetaKey = s.MetaKey,
+                              EndDate = s.EndDate,
+                              Isdelete = s.Isdelete,
+                              EmployeeId = s.EmployeeId,
+                              IdSchedule = s.IdSchedule,
+                              MaxCapacity = s.MaxCapacity,
+                              MinCapacity = s.MinCapacity,
+                              PromotionId = s.PromotionId,
+                              Status = s.Status,
+                              TourId = s.TourId,
+                              FinalPrice = s.FinalPrice,
+                              FinalPriceHoliday = s.FinalPriceHoliday,
+                              AdditionalPrice = s.AdditionalPrice,
+                              AdditionalPriceHoliday = s.AdditionalPriceHoliday,
+                              IsHoliday = s.IsHoliday,
+                              Profit = s.Profit,
+                              QuantityCustomer = s.QuantityCustomer,
+                              TimePromotion = s.TimePromotion,
+                              Vat = s.Vat,
+                              TotalCostTourNotService = s.TotalCostTourNotService,
+                              TypeAction = s.TypeAction,
+                              IdUserModify = s.IdUserModify,
+                              ModifyBy = s.ModifyBy,
+                              ModifyDate = s.ModifyDate,
+                              CostTour = (from c in _db.CostTours.AsNoTracking()
+                                          where c.IdSchedule == s.IdSchedule
+                                          select c).First(),
+                              Timelines = (from t in _db.Timelines.AsNoTracking()
+                                           where t.IdSchedule == s.IdSchedule
+                                           select t).ToList(),
+                              Promotions = (from p in _db.Promotions.AsNoTracking()
+                                            where p.IdPromotion == s.PromotionId
+                                            select p).First(),
+                              Tour = (from t in _db.Tour.AsNoTracking()
+                                      where s.TourId == t.IdTour
+                                      select new Tour
+                                      {
+                                          Thumbnail = t.Thumbnail,
+                                          ToPlace = t.ToPlace,
+                                          IdTour = t.IdTour,
+                                          NameTour = t.NameTour,
+                                          Alias = t.Alias,
+                                          ApproveStatus = t.ApproveStatus,
+                                          CreateDate = t.CreateDate,
+                                          IsActive = t.IsActive,
+                                          IsDelete = t.IsDelete,
+                                          ModifyBy = t.ModifyBy,
+                                          ModifyDate = t.ModifyDate,
+                                          Rating = t.Rating,
+                                          Status = t.Status,
+                                          QuantityBooked = t.QuantityBooked,
+                                      }).First(),
+
+                          }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 if (result.Count() > 0)
                 {
                     var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -3094,7 +3169,7 @@ namespace Travel.Data.Repositories
 
                 }
 
-                var result = Mapper.MapSchedule(listSchedule);
+                var result = listSchedule;
                 if (listSchedule.Count() > 0)
                 {
                     return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
