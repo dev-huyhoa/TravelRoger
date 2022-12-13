@@ -75,9 +75,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("weather-forecast")]
-        public async Task<object> WeatherLoading()
+        public async Task<object> WeatherLoading(string location)
         {
-            res = await news.GetApiWeather();
+            res = await news.GetApiWeather(location);
             return Ok(res);
         }
 

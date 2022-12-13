@@ -203,14 +203,24 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public async Task<Response> GetApiWeather()
+        public async Task<Response> GetApiWeather(string location)
         {
             try
             {
                 #region check cache
-                if (_cache.Get<Response>($"GetApiWeather") != null) // có cache
+                if (_cache.Get<Response>($"GetApiWeather{location}") != null) // có cache
                 {
-                    return _cache.Get<Response>($"GetApiWeather");
+                    return _cache.Get<Response>($"GetApiWeather{location}");
+                }
+                #endregion
+                #region get longtitude attitude
+                var lat = "10.8333";
+                var lon = "106.6667";
+                var locationMap = await GetGoogleMapLocation(location);
+                if (locationMap != null)
+                {
+                    lat = locationMap.latitude.ToString();
+                    lon = locationMap.longitude.ToString();
                 }
                 #endregion
                 string appId = _config["AppIdWeather"].ToString();
@@ -218,7 +228,7 @@ namespace Travel.Data.Repositories
                 WeatherResponse weatherRes = new();
                 using (var client = new HttpClient())
                 {
-                    string uri = $"{urlApiWeather}{appId}";
+                    string uri = $"{urlApiWeather}?lat={lat}&lon={lon}&units=metric&appid={appId}";
                     var request = new HttpRequestMessage
                     {
                         Method = HttpMethod.Get,
@@ -239,7 +249,7 @@ namespace Travel.Data.Repositories
                 }
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), weatherRes);
                 #region set cache
-                _cache.Set<Response>(res, $"GetApiWeather");
+                _cache.Set<Response>(res, $"GetApiWeather{location}");
                 #endregion
                 return res;
             }
@@ -257,7 +267,7 @@ namespace Travel.Data.Repositories
             using (HttpClient httpClient = new HttpClient())
             {
                 string result = await httpClient.GetStringAsync(url);
-                var jsonData = JsonSerializer.Deserialize<List<dynamic>>(result);
+                var jsonData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(result);
 
                 var translationItems = jsonData[0];
                 string translation = "";
@@ -275,7 +285,7 @@ namespace Travel.Data.Repositories
 
         }
 
-        public async Task<Response> GetGoogleMapLocation(string address)
+        public async Task<Datum> GetGoogleMapLocation(string address)
         {
             try
             {
@@ -294,15 +304,14 @@ namespace Travel.Data.Repositories
                         response.EnsureSuccessStatusCode();
                         var body = await response.Content.ReadAsStringAsync();
                         var listLocation =  JsonSerializer.Deserialize<GoogleMap>(body);
-                        res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), listLocation);
+                        return listLocation.data.FirstOrDefault();
                     }
                 }
-                return res;
 
             }
             catch (Exception e)
             {
-                return Ultility.Responses("Lỗi !", Enums.TypeCRUD.Error.ToString(), e.Message);
+                return null;
             }
         }
     }
