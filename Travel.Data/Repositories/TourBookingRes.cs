@@ -156,7 +156,10 @@ namespace Travel.Data.Repositories
                 var pincode = PrCommon.GetString("pincode", frmData);
                 if (String.IsNullOrEmpty(pincode))
                 { }
-
+                var voucherCode = PrCommon.GetString("voucherCode", frmData);
+                if (String.IsNullOrEmpty(voucherCode))
+                {
+                }
                 var totalPrice = PrCommon.GetString("totalPrice", frmData);
                 if (String.IsNullOrEmpty(totalPrice))
                 {
@@ -204,6 +207,7 @@ namespace Travel.Data.Repositories
                 createObj.Pincode = $"PIN{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                 createObj.BookingDetails = createDetailObj;
                 createObj.CustomerId = customerId;
+                createObj.VoucherCode = voucherCode;
                 if (!string.IsNullOrEmpty(valuePromotion))
                 {
                     createObj.ValuePromotion = Convert.ToInt16(valuePromotion);
@@ -242,13 +246,19 @@ namespace Travel.Data.Repositories
                                     //&& x.CustomerId == input.CustomerId
                                     && x.EndDate >= unixDateTimeNow
                                     select x).FirstOrDefaultAsync();
+                    var voucherRemove = (from x in _db.Customer_Vouchers
+                                         where x.VoucherId == vourcher.IdVoucher
+                                         select x).First();
 
                     if (vourcher == null)
                     {
                         return  Ultility.Responses("Vourcher không tồn tại hoặc hết hạn !", Enums.TypeCRUD.Error.ToString());
                     }
+
                     var valueVourcher = vourcher.Value;
                     input.TotalPrice = input.TotalPrice - (input.TotalPrice * (valueVourcher / 100));
+                    _db.Customer_Vouchers.Remove(voucherRemove);
+                    _db.SaveChanges();
                 }
                 else
                 {
@@ -293,8 +303,13 @@ namespace Travel.Data.Repositories
                 if (vourcher != null) // có áp dụng vourcher hợp lệ
                 {
                     var valueVourcher = vourcher.Value;
-                    totalPrice = totalPrice - (totalPrice * (valueVourcher / 100)); // áp dụng giảm giá của vourcher
+                    /*totalPrice = totalPrice - (totalPrice * (valueVourcher / 100));*/ // áp dụng giảm giá của vourcher
 
+                    decimal price =  (100m - valueVourcher) / 100m;
+                    totalPrice = totalPrice * (double)price;
+                    float totalPriceVoucher = (float)totalPrice;
+
+                    totalPrice = Math.Round(totalPriceVoucher);
                     totalPriceInput = Math.Round(input.TotalPrice); // đã qua tính vourcher
                     if (totalPrice != totalPriceInput) // giá ko giống nhau
                     {
