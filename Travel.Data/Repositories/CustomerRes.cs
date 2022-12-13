@@ -405,7 +405,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public async Task<Response> UpdateCustomer(UpdateCustomerViewModel input, string emailUser)
+        public async Task<Response> UpdateCustomer(UpdateCustomerViewModel input)
         {
             try
             {
@@ -421,16 +421,8 @@ namespace Travel.Data.Repositories
                 customer.Birthday = input.Birthday;
                 string jsonContent = JsonSerializer.Serialize(customer);
                 UpdateDatabase(customer);
-                bool result = _log.AddLog(content: jsonContent, type: "update", emailCreator: emailUser, classContent: "Customer");
-                if (result)
-                {
-                    return Ultility.Responses("Cập nhật thành công !", Enums.TypeCRUD.Success.ToString());
 
-                }
-                else
-                {
-                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
-                }
+                return Ultility.Responses("Cập nhật thành công !", Enums.TypeCRUD.Success.ToString());
             }
             catch (Exception e)
             {

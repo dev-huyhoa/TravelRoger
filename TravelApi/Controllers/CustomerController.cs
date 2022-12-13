@@ -99,9 +99,8 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var updateObj = JsonSerializer.Deserialize<UpdateCustomerViewModel>(result);
-                var emailUser = GetEmailUserLogin().Value;
                 
-                res = await customer.UpdateCustomer(updateObj, emailUser);
+                res = await customer.UpdateCustomer(updateObj);
                 //_messageHub.Clients.All.Init();
             }
             else
