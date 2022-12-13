@@ -112,15 +112,16 @@ namespace Travel.Data.Repositories
             var response = pay.GetFullResponseData(collections, _configuration["VnpaySetting:HashSecret"]);
             if (response.Success == true)
             {
-                var result =await (from x in _db.TourBookings.AsNoTracking()
-                              where idTourBooking == x.IdTourBooking
-                select x).FirstOrDefaultAsync();
-                result.Status = (int)Enums.StatusBooking.Paid;
-                UpdateDatabase(result);
-                if (await SaveChangeAsync() > 0)
-                {
-                    response.UrlReturnBill = $"{_configuration["VnpaySetting:UrlSuccessPayment"]}api/pay/update-status-tourbooking?idTourBooking={idTourBooking}";
-                };
+                //var result =await (from x in _db.TourBookings.AsNoTracking()
+                //              where idTourBooking == x.IdTourBooking
+                //select x).FirstOrDefaultAsync();
+                //result.Status = (int)Enums.StatusBooking.Paid;
+                //UpdateDatabase(result);
+                //if (await SaveChangeAsync() > 0)
+                //{
+                //};
+                response.UrlReturnBill = $"{_configuration["VnpaySetting:UrlSuccessPayment"]}api/pay/update-status-tourbooking?idTourBooking={idTourBooking}";
+
 
             }
             return response;

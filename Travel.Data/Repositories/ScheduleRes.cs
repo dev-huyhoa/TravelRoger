@@ -1429,10 +1429,10 @@ namespace Travel.Data.Repositories
             try
             {
                 #region check cache
-                if (_cache.Get<Response>($"schedule") != null) // có cache
-                {
-                    return _cache.Get<Response>($"schedule");
-                }
+                //if (_cache.Get<Response>($"schedule") != null) // có cache
+                //{
+                //    return _cache.Get<Response>($"schedule");
+                //}
                 #endregion
 
                 var dateTimeNow = GetDateTimeNow();
