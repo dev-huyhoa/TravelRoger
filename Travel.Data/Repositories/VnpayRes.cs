@@ -56,7 +56,7 @@ namespace Travel.Data.Repositories
             pay.AddRequestData("vnp_Version", _configuration["VnpaySetting:Version"]);
             pay.AddRequestData("vnp_Command", _configuration["VnpaySetting:Command"]);
             pay.AddRequestData("vnp_TmnCode", _configuration["VnpaySetting:TmnCode"]);
-            pay.AddRequestData("vnp_Amount", ((int)total * 100).ToString());
+            pay.AddRequestData("vnp_Amount", ((total*100).ToString()));
             pay.AddRequestData("vnp_CreateDate", timeNow.ToString("yyyyMMddHHmmss"));
             pay.AddRequestData("vnp_CurrCode", _configuration["VnpaySetting:CurrCode"]);
             pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context));
@@ -112,35 +112,34 @@ namespace Travel.Data.Repositories
             var response = pay.GetFullResponseData(collections, _configuration["VnpaySetting:HashSecret"]);
             if (response.Success == true)
             {
-                var result =await (from x in _db.TourBookings.AsNoTracking()
-                              where idTourBooking == x.IdTourBooking
-                select x).FirstOrDefaultAsync();
-                result.Status = (int)Enums.StatusBooking.Paid;
-                UpdateDatabase(result);
-                if (await SaveChangeAsync() > 0)
+                if (response.VnPayResponseCode == "00")
                 {
-                    response.UrlReturnBill = $"{_configuration["VnpaySetting:UrlSuccessPayment"]}api/pay/update-status-tourbooking?idTourBooking={idTourBooking}";
-                };
+                    var res = await _tourbooking.DoPayment(idTourBooking);
+                    response.UrlReturnBill = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}";
+                }
+                //if (await SaveChangeAsync() > 0)
+                //{
+                //    response.UrlReturnBill = $"{_configuration["VnpaySetting:UrlSuccessPayment"]}api/pay/update-status-tourbooking?idTourBooking={idTourBooking}";
+                //};
 
             }
             return response;
         }
 
-        public async Task<bool> UpdateStatusTourBooking(string idtourbooking)
-        {
-            try
-            {
-                var res =await   _tourbooking.DoPayment(idtourbooking);
-                if (res.Notification.Type == Enums.TypeCRUD.Success.ToString())
-                {
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-        }
+        //public async Task<bool> UpdateStatusTourBooking(string idtourbooking)
+        //{
+        //    try
+        //    {
+        //        if (res.Notification.Type == Enums.TypeCRUD.Success.ToString())
+        //        {
+        //            return true;
+        //        }
+        //        return false;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return false;
+        //    }
+        //}
     }
 }

@@ -212,30 +212,30 @@ namespace TravelApi.Controllers
 
 
 
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("update-status-tourbooking")]
-        public async Task<object> UpdateStatusTourbooking(string idTourBooking)
-        {
-            var isSuccess = await _vnPayRes.UpdateStatusTourBooking(idTourBooking);
-            if (isSuccess)
-            {
-                return Redirect($"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}");
-                //return new
-                //{
-                //    status = 1,
-                //    url = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}",
-                //};
-            }
-            else
-            {
-                return new
-                {
-                    status = 0,
-                    url = "",
-                };
-            }
-        }
+        //[HttpGet]
+        //[AllowAnonymous]
+        //[Route("update-status-tourbooking")]
+        //public async Task<object> UpdateStatusTourbooking(string idTourBooking)
+        //{
+        //    var isSuccess = await _vnPayRes.UpdateStatusTourBooking(idTourBooking);
+        //    if (isSuccess)
+        //    {
+        //        return Redirect($"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}");
+        //        //return new
+        //        //{
+        //        //    status = 1,
+        //        //    url = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}",
+        //        //};
+        //    }
+        //    else
+        //    {
+        //        return new
+        //        {
+        //            status = 0,
+        //            url = "",
+        //        };
+        //    }
+        //}
 
         [HttpGet]
         [AllowAnonymous]
@@ -249,14 +249,12 @@ namespace TravelApi.Controllers
                 url = url,
             };
         }
-
         [HttpGet]
         [AllowAnonymous]
         [Route("callback-vnpay")]
         public async Task<object> PaymentCallback(string idTourBooking)
         {
             var response = await _vnPayRes.PaymentExecute(Request.Query  , idTourBooking);
-
             return Redirect(response.UrlReturnBill);
         }
 

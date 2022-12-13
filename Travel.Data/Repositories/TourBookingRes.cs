@@ -323,7 +323,6 @@ namespace Travel.Data.Repositories
 
                 #endregion
                 await transaction.CreateSavepointAsync("BeforeSave");
-                string jsonContent = JsonSerializer.Serialize(tourbooking);
 
                 tourbooking.TourBookingDetails = tourBookingDetail;
                 #region create qr
@@ -383,17 +382,10 @@ namespace Travel.Data.Repositories
 
                 _notification.CreateNotification(idCus, Convert.ToInt16(Enums.TypeNotification.TourBooking), nameTour, new int[] { Convert.ToInt16(Enums.TitleRole.TourBookingManager)}, "");
                 #endregion
-                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "TourBooking");
-                if (result)
-                {
+                
                     return Ultility.Responses("Đặt tour thành công !", Enums.TypeCRUD.Success.ToString(), tourbooking.IdTourBooking);
 
-                }
-                else
-                {
-                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
-                }
-
+             
             }
             catch (Exception e)
             {
@@ -682,19 +674,12 @@ namespace Travel.Data.Repositories
                 if (tourbooking != null)
                 {
                     tourbooking.Status = (int)Enums.StatusBooking.Paying;
-                    string jsonContent = JsonSerializer.Serialize(tourbooking);
                     UpdateDatabase<TourBooking>(tourbooking);
                     SaveChange();
                   
-                    bool result = _log.AddLog(content: jsonContent, type: "restore", emailCreator: emailUser, classContent: "TourBooking");
-                    if (result)
-                    {
+                
                         return Ultility.Responses("Đã hủy booking !", Enums.TypeCRUD.Success.ToString());
-                    }
-                    else
-                    {
-                        return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
-                    }
+                
                    
                 }
                 else

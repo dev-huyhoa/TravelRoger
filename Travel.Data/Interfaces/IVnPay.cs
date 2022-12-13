@@ -11,6 +11,5 @@ namespace Travel.Data.Interfaces
     {
         Task<string> CreatePaymentUrl(string idTourBooking, HttpContext context);
          Task<PaymentResponse> PaymentExecute(IQueryCollection collections,string idTourBooking);
-        Task<bool> UpdateStatusTourBooking(string idTourbooking); 
     }
 }
