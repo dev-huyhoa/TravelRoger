@@ -134,6 +134,10 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                if (input.NameRole.ToLower() == "admin")
+                {
+                    return Ultility.Responses("Không thể phân quyền Admin !", Enums.TypeCRUD.Validation.ToString());
+                }
                 Role role = new Role();
                 role = Mapper.MapUpdateRole(input);
                 string jsonContent = JsonSerializer.Serialize(role);
