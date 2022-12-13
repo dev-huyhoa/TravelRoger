@@ -15,7 +15,7 @@ namespace Travel.Data.Interfaces
         string CheckBeforeSave(JObject frmdata, ref Notification _message, bool isUpdate);
         Response Gets();
 
-        Response Create(CreateCustomerViewModel input, string emailUser);
+        Response Create(CreateCustomerViewModel input);
         Response GetsHistory(Guid idCustomer);
         Task<Response> SendOTP(string email);
         Response GetCustomer(Guid idCustomer);

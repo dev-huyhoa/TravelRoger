@@ -186,7 +186,7 @@ namespace Travel.Data.Repositories
             }     
         }
 
-        public Response Create(CreateCustomerViewModel input, string emailUser)
+        public Response Create(CreateCustomerViewModel input)
         {
             try
             {
@@ -196,15 +196,9 @@ namespace Travel.Data.Repositories
                 customer.IsDelete = false;
                 string jsonContent = JsonSerializer.Serialize(customer);
                 CreateDatabase(customer);
-                bool result = _log.AddLog(content: jsonContent, type: "create", emailCreator: emailUser, classContent: "Customer");
-                if (result)
-                {                return Ultility.Responses("Đăng ký thành công !", Enums.TypeCRUD.Success.ToString());
+               
+                return Ultility.Responses("Đăng ký thành công !", Enums.TypeCRUD.Success.ToString());
 
-                }
-                else
-                {
-                    return Ultility.Responses("Lỗi log!", Enums.TypeCRUD.Error.ToString());
-                }
             }
             catch (Exception e)
             {

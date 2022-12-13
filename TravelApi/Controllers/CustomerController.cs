@@ -44,8 +44,7 @@ namespace TravelApi.Controllers
             if (message == null)
             {
                 var createObj = JsonSerializer.Deserialize<CreateCustomerViewModel>(result);
-                var emailUser = GetEmailUserLogin().Value;
-                res = customer.Create(createObj, emailUser);
+                res = customer.Create(createObj);
 
             }
             else

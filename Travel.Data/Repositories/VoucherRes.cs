@@ -279,13 +279,9 @@ namespace Travel.Data.Repositories
             {
 
                 var list = (from x in _db.Customer_Vouchers
-                            join pet in _db.Vouchers on x.VoucherId equals pet.IdVoucher
-                         
-                            select pet).ToList();
-
-               
-           
-                
+                            join v in _db.Vouchers on x.VoucherId equals v.IdVoucher              
+                            select v).ToList();
+    
                 return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), list);
             }
             catch (Exception e)

@@ -156,7 +156,10 @@ namespace Travel.Data.Repositories
                 var pincode = PrCommon.GetString("pincode", frmData);
                 if (String.IsNullOrEmpty(pincode))
                 { }
-
+                var voucherCode = PrCommon.GetString("voucherCode", frmData);
+                if (String.IsNullOrEmpty(voucherCode))
+                {
+                }
                 var totalPrice = PrCommon.GetString("totalPrice", frmData);
                 if (String.IsNullOrEmpty(totalPrice))
                 {
@@ -204,6 +207,7 @@ namespace Travel.Data.Repositories
                 createObj.Pincode = $"PIN{Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now)}";
                 createObj.BookingDetails = createDetailObj;
                 createObj.CustomerId = customerId;
+                createObj.VoucherCode = voucherCode;
                 if (!string.IsNullOrEmpty(valuePromotion))
                 {
                     createObj.ValuePromotion = Convert.ToInt16(valuePromotion);
