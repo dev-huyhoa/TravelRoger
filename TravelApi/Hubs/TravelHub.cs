@@ -26,13 +26,13 @@ namespace TravelApi.Hubs
                 {
                     var token = handler.ReadJwtToken(jwtToken);
                     var tokenS = token as JwtSecurityToken;
-                    var jti = tokenS.Claims.Where(x => x.Type == "RoleId").FirstOrDefault().Value;
+                    var jti = tokenS.Claims.Where(x => x.Type == "RoleId").FirstOrDefault();
 
                     // replace email with your claim name
                     
-                    if (jti != null && jti != "")
+                    if (jti != null && jti.Value != "")
                     {
-                        Groups.AddToGroupAsync(Context.ConnectionId, jti.ToUpper());
+                        Groups.AddToGroupAsync(Context.ConnectionId, jti.Value.ToUpper());
                     }
                 }
             }
