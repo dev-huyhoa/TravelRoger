@@ -315,10 +315,10 @@ namespace Travel.Data.Repositories
 
                     totalPrice = Math.Round(totalPriceVoucher);
                     totalPriceInput = Math.Round(input.TotalPrice); // đã qua tính vourcher
-                    if (totalPrice != totalPriceInput) // giá ko giống nhau
-                    {
-                        return Ultility.Responses("Hệ thống xảy ra lỗi, vui lòng thử lại !", Enums.TypeCRUD.Warning.ToString());
-                    }
+                    //if (totalPrice != totalPriceInput) // giá ko giống nhau
+                    //{
+                    //    return Ultility.Responses("Hệ thống xảy ra lỗi, vui lòng thử lại !", Enums.TypeCRUD.Warning.ToString());
+                    //}
                 }
 
                 #endregion

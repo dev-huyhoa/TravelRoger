@@ -22,12 +22,10 @@ namespace TravelApi.Helpers
         }
         public static async Task<Event> CreateGoogleCalendar(GoogleCalendar request)
         {
-            request.Start = DateTime.Now.AddMinutes(5);
-            request.End = DateTime.Now.AddMinutes(10);
             var EventAttendee = new List<EventAttendee>()
                 {
-                    new EventAttendee() { Email = "rotkbynbyn@gmail.com" ,Organizer = true,DisplayName="Ku mè",Comment= "Ma vương tới chơi"},
-                                        new EventAttendee() { Email = "longnghg100220@gmail.com" ,Organizer = true,DisplayName="Ku mè 2",Comment= "Ma vương tới chơi"},
+                    new EventAttendee() { Email = "driverhuyhoa@gmail.com" ,Organizer = true,DisplayName="Ku mè",Comment= "Ma vương tới chơi"},
+                                        new EventAttendee() { Email = "hoaphps13016@fpt.edu.vn" ,Organizer = true,DisplayName="Ku mè 2",Comment= "Ma vương tới chơi"},
 
                 };
             string[] Scopes = {"https://www.googleapis.com/auth/calendar"};
