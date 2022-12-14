@@ -293,12 +293,20 @@ namespace Travel.Data.Repositories
                                         where  x.DateBooking >= fromDate
                                         && x.DateBooking <= toDate
                                         select x);
+                var CountTotalTotalPaidTourBooking = (from x in queryTotalTourBooking
+                                                        where x.Status == Convert.ToInt16(Enums.StatusBooking.Paid)
+                                                        select x).Count();
+                var CountTotalTotalFinishedTourBooking = (from x in queryTotalTourBooking
+                                                      where x.Status == Convert.ToInt16(Enums.StatusBooking.Finished)
+                                                      select x).Count();
                 var CountTotalTotalCancelTourBooking = (from x in queryTotalTourBooking
                                                    where x.Status == Convert.ToInt16(Enums.StatusBooking.Cancel)
                                                    select x).Count();
                 var CountTotal = queryTotalTourBooking.Count();
                 var result = new 
                 {
+                    TotalPaid = CountTotalTotalPaidTourBooking,
+                    TotalFinished = CountTotalTotalFinishedTourBooking,
                     TotalCancel = CountTotalTotalCancelTourBooking,
                     Total = CountTotal
                 };
