@@ -8,6 +8,14 @@ namespace Travel.Shared.Ultilities
 {
     public  class Enums
     {
+        public enum ClassContent
+        {
+            Tour,
+            TourBooking,
+            Hotel,
+            Place,
+            Restaurant
+        }
         public enum StatusBooking
         {
             Pending = -2, // đã huỷu và đang chờ hoàn tiền

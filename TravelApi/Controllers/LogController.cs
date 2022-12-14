@@ -29,5 +29,13 @@ namespace TravelApi.Controllers
            res =  await _log.SearchLogByType(frmData);
             return Ok(res);
         }
+        [HttpGet]
+        [Authorize]
+        [Route("detail-log")]
+        public async Task<object> Get(Guid id)
+        {
+            res = await _log.GetDetail(id);
+            return Ok(res);
+        }
     }
 }

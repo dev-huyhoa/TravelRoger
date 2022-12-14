@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Travel.Context.Models;
 using Travel.Context.Models.Travel;
 using Travel.Data.Interfaces;
 using Travel.Shared.Ultilities;
@@ -31,6 +33,46 @@ namespace Travel.Data.Repositories
             log.ClassContent = classContent;
             _db.Logs.Add(log);
             return _db.SaveChanges() > 0;
+        }
+
+        public async Task<Response> GetDetail(Guid id)
+        {
+            try
+            {
+                var lsLog = await (from x in _db.Logs.AsNoTracking()
+                             where x.Id == id
+                             select x).FirstOrDefaultAsync();
+                string classContent = lsLog.ClassContent;
+                object resContent = new object();
+                if (Enums.ClassContent.Tour.ToString() == classContent)
+                {
+                    resContent = JsonSerializer.Deserialize<Tour>(lsLog.Content);
+                }
+                if (Enums.ClassContent.TourBooking.ToString() == classContent)
+                {
+                    resContent = JsonSerializer.Deserialize<TourBooking>(lsLog.Content);
+                }
+                if (Enums.ClassContent.Restaurant.ToString() == classContent)
+                {
+                    resContent = JsonSerializer.Deserialize<Restaurant>(lsLog.Content);
+                }
+                if (Enums.ClassContent.Hotel.ToString() == classContent)
+                {
+                    resContent = JsonSerializer.Deserialize<Hotel>(lsLog.Content);
+                }
+                if (Enums.ClassContent.Place.ToString() == classContent)
+                {
+                    resContent = JsonSerializer.Deserialize<Place>(lsLog.Content);
+                }
+
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), resContent);
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
         }
 
         public Response GetsList(long fromDate, long toDate, int pageIndex, int pageSize)
@@ -93,5 +135,6 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
     }
 }
