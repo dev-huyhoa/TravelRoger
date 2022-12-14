@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,6 @@ namespace Travel.Data.Interfaces
     {
        bool  AddLog(string content, string type,string emailCreator, string classContent);
         Response GetsList(long fromDate, long toDate, int pageIndex, int pageSize);
+        Task<Response> SearchLogByType(JObject frmData);
     }
 }
