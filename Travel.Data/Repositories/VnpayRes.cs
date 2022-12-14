@@ -82,25 +82,7 @@ namespace Travel.Data.Repositories
         {
            return await _db.SaveChangesAsync();
         }
-        //private async Task<PaymentResponse> PaymentExecuteNem(string paymentUrl)
-        //{
-        //    var pay = new VnPayLibrary();
-        //    var response = pay.GetFullResponseData(collections, _configuration["VnpaySetting:HashSecret"]);
-        //    if (response.Success == true)
-        //    {
-        //        var result = await (from x in _db.TourBookings.AsNoTracking()
-        //                            where idTourBooking == x.IdTourBooking
-        //                            select x).FirstOrDefaultAsync();
-        //        result.Status = (int)Enums.StatusBooking.Finished;
-        //        UpdateDatabase(result);
-        //        if (await SaveChangeAsync() > 0)
-        //        {
-        //            response.UrlReturnBill = $"{_configuration["VnpaySetting:UrlSuccessPayment"]}?idTourBooking={idTourBooking}";
-        //        };
-
-        //    }
-        //    return response;
-        //}
+      
         public static Dictionary<string, string> ParseQueryString(string queryString)
         {
             var nvc = HttpUtility.ParseQueryString(queryString);
@@ -110,36 +92,21 @@ namespace Travel.Data.Repositories
         {
             var pay = new VnPayLibrary();
             var response = pay.GetFullResponseData(collections, _configuration["VnpaySetting:HashSecret"]);
+            if (response.Success == false)
+            {
+                response.UrlReturnBill = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}";
+                return response;
+            }
             if (response.Success == true)
             {
                 if (response.VnPayResponseCode == "00")
                 {
-                    var res = await _tourbooking.DoPayment(idTourBooking);
-                    response.UrlReturnBill = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}";
+                   await _tourbooking.DoPayment(idTourBooking);
                 }
-                //if (await SaveChangeAsync() > 0)
-                //{
-                //    response.UrlReturnBill = $"{_configuration["VnpaySetting:UrlSuccessPayment"]}api/pay/update-status-tourbooking?idTourBooking={idTourBooking}";
-                //};
-
+                response.UrlReturnBill = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}";
             }
             return response;
         }
 
-        //public async Task<bool> UpdateStatusTourBooking(string idtourbooking)
-        //{
-        //    try
-        //    {
-        //        if (res.Notification.Type == Enums.TypeCRUD.Success.ToString())
-        //        {
-        //            return true;
-        //        }
-        //        return false;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return false;
-        //    }
-        //}
     }
 }
