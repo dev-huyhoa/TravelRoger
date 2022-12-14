@@ -609,6 +609,7 @@ namespace Travel.Data.Repositories
                 if (tourbooking != null)
                 {
                     var bookingNo = $"{tourbooking.IdTourBooking}NO";
+                    tourbooking.Deposit = tourbooking.TotalPrice;
                     tourbooking.Status = (int)Enums.StatusBooking.Paid;
                     tourbooking.BookingNo = bookingNo;
                     UpdateDatabase<TourBooking>(tourbooking);
@@ -1301,6 +1302,26 @@ namespace Travel.Data.Repositories
             catch(Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public async Task<bool> ChangePayment(string idTourBooking, int idPayment)
+        {
+            try
+            {
+               
+                var tourBooking = (from x in _db.TourBookings.AsNoTracking()
+                                   where x.IdTourBooking == idTourBooking
+                                   select x).FirstOrDefault();
+
+                tourBooking.PaymentId = idPayment;
+                UpdateDatabase(tourBooking);
+                await SaveChangeAsync();
+               return true;
+            }
+            catch (Exception e)
+            {
+                return false;   
             }
         }
     }

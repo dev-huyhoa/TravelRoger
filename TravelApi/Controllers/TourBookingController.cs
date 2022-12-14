@@ -109,6 +109,15 @@ namespace TravelApi.Controllers
             res = await _tourbooking.TourBookingById(idTourBooking);
             return Ok(res);
         }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("payment-changed")]
+        public async Task<object> ChangePayment(string idTourBooking,int idPayment)
+        {
+            var result =  await _tourbooking.ChangePayment(idTourBooking, idPayment);
+            return Ok(result);
+        }
+        
 
         [HttpGet]
         [AllowAnonymous]

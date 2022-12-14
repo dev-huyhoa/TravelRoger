@@ -35,6 +35,7 @@ namespace Travel.Shared.ViewModels.Travel
         private long modifyDate;
 
         private int status;
+        private int paymentId;
 
         private Schedule schedule;
         private TourBookingDetails tourBookingDetails;
@@ -65,5 +66,6 @@ namespace Travel.Shared.ViewModels.Travel
         public Payment Payment { get => payment; set => payment = value; }
         public float TotalPricePromotion { get => totalPricePromotion; set => totalPricePromotion = value; }
         public int Status { get => status; set => status = value; }
+        public int PaymentId { get => paymentId; set => paymentId = value; }
     }
 }
