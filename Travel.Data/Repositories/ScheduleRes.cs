@@ -44,7 +44,7 @@ namespace Travel.Data.Repositories
                     select x).FirstOrDefault();
         }
 
-        private long GetDateTimeNow(int addMinutes = -1)
+        private long GetDateTimeNow(int addMinutes = 0)
         {
             return Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(addMinutes));
         }
