@@ -36,6 +36,7 @@ namespace Travel.Shared.ViewModels.Travel
 
         private int status;
         private int paymentId;
+        private string toPlace;
 
         private Schedule schedule;
         private TourBookingDetails tourBookingDetails;
@@ -67,5 +68,6 @@ namespace Travel.Shared.ViewModels.Travel
         public float TotalPricePromotion { get => totalPricePromotion; set => totalPricePromotion = value; }
         public int Status { get => status; set => status = value; }
         public int PaymentId { get => paymentId; set => paymentId = value; }
+        public string ToPlace { get => toPlace; set => toPlace = value; }
     }
 }

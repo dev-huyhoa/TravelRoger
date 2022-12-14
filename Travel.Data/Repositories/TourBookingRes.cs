@@ -1045,7 +1045,7 @@ namespace Travel.Data.Repositories
                 }
               
                      listTourBooking = queryListTourBooking.AsNoTracking().Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
-                var result = listTourBooking;
+                var result = Mapper.MapTourBooking(listTourBooking);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
                 res.TotalResult = totalResult;
                 if (result.Count == 0)
