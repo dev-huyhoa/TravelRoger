@@ -167,7 +167,7 @@ namespace TravelApi.Controllers
                 {
                     //CancelUrl = _configuration["PaypalSettings:CancelUrl"],
                     CancelUrl = $"{_configuration["UrlClientCustomer"]}bill/{idTourBooking}",
-                    ReturnUrl = $"{_configuration["UrlClientCustomer"]}bill/{idTourBooking}"
+                    ReturnUrl = $"{_configuration["PaypalSettings:ReturnUrl"]}api/pay/check-paypal?idTourBooking={idTourBooking}"
                 },
                 Payer = new Payer()
                 {
@@ -211,12 +211,11 @@ namespace TravelApi.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("check-paypal")]
-        private async Task<object> UpdateStatusTourbooking(bool isSuccess,string idTourBooking)
+        public async Task<object> UpdateStatusTourbooking(string idTourBooking)
         {
-            if (isSuccess)
-            {
+        
               await  _tourbooking.DoPayment(idTourBooking);
-            }
+            
             return Redirect($"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}");
 
         }
