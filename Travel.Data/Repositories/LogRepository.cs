@@ -66,6 +66,22 @@ namespace Travel.Data.Repositories
                 var lsLog = (from x in _db.Logs.AsNoTracking()
                              where x.Type == kwType
                              select x);
+                if (kwFromDate != null)
+                {
+                    var fromDateUnix = long.Parse(kwFromDate);
+                    lsLog = from x in lsLog
+                            where x.CreationDate >= fromDateUnix
+                            select x;
+                }
+                if (kwToDate != null)
+                {
+                    var toDateUnix = long.Parse(kwToDate);
+                    lsLog = from x in lsLog
+                            where x.CreationDate <= toDateUnix
+                            select x;
+                }
+
+
                 totalResult = lsLog.Count();
                 var result = await lsLog.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToListAsync();
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
