@@ -10,6 +10,8 @@ using Travel.Shared.ViewModels;
 
 namespace TravelApi.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class LogController : Controller
     {
         private ILog _log;

@@ -106,16 +106,16 @@ namespace Travel.Data.Repositories
                 var kwToDate = PrCommon.GetString("toDate", frmData);
                 var kwType = PrCommon.GetString("type", frmData);
                 var lsLog = (from x in _db.Logs.AsNoTracking()
-                             where x.Type == kwType
+                             where x.ClassContent == kwType
                              select x);
-                if (kwFromDate != null)
+                if ( !string.IsNullOrEmpty(kwFromDate))
                 {
                     var fromDateUnix = long.Parse(kwFromDate);
                     lsLog = from x in lsLog
                             where x.CreationDate >= fromDateUnix
                             select x;
                 }
-                if (kwToDate != null)
+                if (!string.IsNullOrEmpty(kwToDate))
                 {
                     var toDateUnix = long.Parse(kwToDate);
                     lsLog = from x in lsLog
