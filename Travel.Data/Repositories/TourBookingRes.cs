@@ -1039,9 +1039,8 @@ namespace Travel.Data.Repositories
 
                 if (!string.IsNullOrEmpty(kwToPlace))
                 {
-                    var kwToPlaceNotSign = Ultility.removeVietnameseSign(kwToPlace.ToLower());
                     queryListTourBooking = (from x in queryListTourBooking
-                                            where Ultility.removeVietnameseSign(x.Schedule.Tour.ToPlace.ToLower()) == kwToPlaceNotSign
+                                            where x.Schedule.Tour.ToPlace == kwToPlace
                                             select x);
                 }
               
