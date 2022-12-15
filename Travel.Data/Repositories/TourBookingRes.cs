@@ -650,7 +650,17 @@ namespace Travel.Data.Repositories
                 {
                     tourbooking.Status = (int)Enums.StatusBooking.Cancel;
                     UpdateDatabase<TourBooking>(tourbooking);
+                    #region sendMail
+
+                    var emailSend = _config["emailSend"];
+                    var keySecurity = _config["keySecurity"];
+
+                    var stringHtml = Ultility.getHtmlBookingCancel(tourbooking.IdTourBooking, tourbooking.Email);
+
+                    Ultility.sendEmail(stringHtml, tourbooking.Email, "Thanh toán dịch vụ", emailSend, keySecurity);
+                    #endregion
                     SaveChange();
+
                     return Ultility.Responses("Đã hủy booking !", Enums.TypeCRUD.Success.ToString());
                 }
                 else
