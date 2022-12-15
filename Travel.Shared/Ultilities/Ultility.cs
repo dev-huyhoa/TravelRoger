@@ -582,6 +582,22 @@ namespace Travel.Shared.Ultilities
                 return null;
             }
         }
+
+        public static string getHtmlBookingCancel(string subjectBody, string textHead)
+        {
+            try
+            {
+                string body = $"{subjectBody} {textHead}";
+                return (body);
+
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public static string getHtmlBookingTicket(string content, string subjectBody, string textHead)
         {
             try
