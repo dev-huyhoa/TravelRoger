@@ -163,7 +163,7 @@ namespace TravelApi.Controllers
         private DateTime ConvertUnixTimeToDateTime(long utcExpireDate)
         {
             var dateinterval = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateinterval.AddSeconds(utcExpireDate).ToUniversalTime();
+            dateinterval = dateinterval.AddSeconds(utcExpireDate).ToUniversalTime();
             return dateinterval;
         }
         [HttpPost("refresh-token")]
@@ -209,7 +209,7 @@ namespace TravelApi.Controllers
                 var expireDate = ConvertUnixTimeToDateTime(utcExpireDate);
                 if (expireDate > DateTime.UtcNow)
                 {
-                    return Ok(new
+                    return (new
                     {
                         Success = false,
                         Message = "Token has not expired"
@@ -220,7 +220,7 @@ namespace TravelApi.Controllers
                 var storedToken = await authentication.GetRefreshToken(model.RefreshToken);
                 if (storedToken == null)
                 {
-                    return Ok(new
+                    return (new
                     {
                         Success = false,
                         Message = "Refresh token does not exist"
@@ -229,7 +229,7 @@ namespace TravelApi.Controllers
                 // check 5: check refreshToken is used/revoke
                 if (storedToken.IsUsed)
                 {
-                    return Ok(new
+                    return (new
                     {
                         Success = false,
                         Message = "Has been used"
@@ -237,7 +237,7 @@ namespace TravelApi.Controllers
                 }
                 if (storedToken.IsRevoked)
                 {
-                    return Ok(new
+                    return (new
                     {
                         Success = false,
                         Message = "Has been revoked"
@@ -248,7 +248,7 @@ namespace TravelApi.Controllers
                 var jti = tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
                 if (storedToken.JwtId != jti)
                 {
-                    return Ok(new
+                    return (new
                     {
                         Success = false,
                         Message = "Token not mapped"
@@ -261,7 +261,7 @@ namespace TravelApi.Controllers
 
                 var user = await authentication.GetCustomerById(storedToken.UserId);
                 var token = await GenerateTokenCustomer(user);
-                return Ok(new
+                return (new
                 {
                     Success = true,
                     Message = "Renew token success",
@@ -275,7 +275,7 @@ namespace TravelApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(new
+                return (new
                 {
                     Success = false,
                     Message = "Something wrong"
