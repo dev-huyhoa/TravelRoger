@@ -18,6 +18,8 @@ namespace Travel.Context.Models.Travel
             : base(options)
         {
         }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
         public DbSet<TourBooking> TourBookings { get; set; }
         public DbSet<TourBookingDetails> tourBookingDetails { get; set; }
         public DbSet<Payment> Payment { get; set; }
@@ -48,7 +50,14 @@ namespace Travel.Context.Models.Travel
         public DbSet<Logs> Logs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Seed();
+            //modelBuilder.Seed();
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.RefToken).HasMaxLength(150);
+                entity.Property(e => e.JwtId).HasMaxLength(100);
+            });
+
             modelBuilder.Entity<Payment>(entity =>
             {
                 entity.HasKey(e => e.IdPayment);
