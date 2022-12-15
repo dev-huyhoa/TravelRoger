@@ -113,7 +113,9 @@ namespace Travel.Shared.Ultilities
                     .ForMember(dto => dto.ModifyBy, opt => opt.MapFrom(src => src.ModifyBy))
                     .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
                     .ForMember(dto => dto.ModifyDate, opt => opt.MapFrom(src => src.ModifyDate))
+                    .ForMember(dto => dto.PaymentId, opt => opt.MapFrom(src => src.PaymentId))
                      .ForMember(dto => dto.Status, opt => opt.MapFrom(src => src.Status))
+                     .ForMember(dto => dto.ToPlace, opt => opt.MapFrom(src => src.Schedule.Tour.ToPlace))
                     //.ForMember(dto => dto.Note, opt => opt.MapFrom(src => src.TourbookingDetails.Note))
 
 

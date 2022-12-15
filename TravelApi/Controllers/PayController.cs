@@ -100,11 +100,8 @@ namespace TravelApi.Controllers
         [Route("checkout-paypal")]
         public async Task<object> PaypalCheckout(string idTourBooking)
         {
-
             var environment = new SandboxEnvironment(_clientIdPaypal, _secretKeyPaypal);
             var client = new PayPalHttpClient(environment);
-
-
             #region get schedule
             var tourBooking = await _tourbooking.GetTourBookingByIdForPayPal(idTourBooking);
 
@@ -168,10 +165,9 @@ namespace TravelApi.Controllers
                 },
                 RedirectUrls = new RedirectUrls()
                 {
-
                     //CancelUrl = _configuration["PaypalSettings:CancelUrl"],
-                    CancelUrl = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}",
-                    ReturnUrl = $"{_configuration["PaypalSettings:ReturnUrl"]}api/pay/update-status-tourbooking?idTourBooking={idTourBooking}"
+                    CancelUrl = $"{_configuration["UrlClientCustomer"]}bill/{idTourBooking}",
+                    ReturnUrl = $"{_configuration["PaypalSettings:ReturnUrl"]}api/pay/check-paypal?idTourBooking={idTourBooking}"
                 },
                 Payer = new Payer()
                 {
@@ -212,30 +208,17 @@ namespace TravelApi.Controllers
 
 
 
-        //[HttpGet]
-        //[AllowAnonymous]
-        //[Route("update-status-tourbooking")]
-        //public async Task<object> UpdateStatusTourbooking(string idTourBooking)
-        //{
-        //    var isSuccess = await _vnPayRes.UpdateStatusTourBooking(idTourBooking);
-        //    if (isSuccess)
-        //    {
-        //        return Redirect($"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}");
-        //        //return new
-        //        //{
-        //        //    status = 1,
-        //        //    url = $"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}",
-        //        //};
-        //    }
-        //    else
-        //    {
-        //        return new
-        //        {
-        //            status = 0,
-        //            url = "",
-        //        };
-        //    }
-        //}
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("check-paypal")]
+        public async Task<object> UpdateStatusTourbooking(string idTourBooking)
+        {
+        
+              await  _tourbooking.DoPayment(idTourBooking);
+            
+            return Redirect($"{_configuration["UrlClientCustomer"]}/bill/{idTourBooking}");
+
+        }
 
         [HttpGet]
         [AllowAnonymous]

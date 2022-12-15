@@ -21,5 +21,7 @@ namespace Travel.Data.Interfaces
         Task<string> Translate(string input, string fromLang, string toLang);
         Task<Datum> GetGoogleMapLocation(string address);
 
+        Response SearchBanner(JObject frmData);
+
     }
 }

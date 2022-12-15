@@ -16,6 +16,7 @@ namespace Travel.Data.Interfaces
 
         Response GetStatisticTourbookingByMonth(int Month, int year);
         Response GetListWeekOfYear(int year);
+        Response GetStatisticTotalTourBooking(long fromDate, long toDate);
         Task SaveReportWeek();
 
     }

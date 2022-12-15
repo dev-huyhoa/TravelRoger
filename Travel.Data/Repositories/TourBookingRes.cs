@@ -609,6 +609,7 @@ namespace Travel.Data.Repositories
                 if (tourbooking != null)
                 {
                     var bookingNo = $"{tourbooking.IdTourBooking}NO";
+                    tourbooking.Deposit = tourbooking.TotalPrice;
                     tourbooking.Status = (int)Enums.StatusBooking.Paid;
                     tourbooking.BookingNo = bookingNo;
                     UpdateDatabase<TourBooking>(tourbooking);
@@ -832,7 +833,6 @@ namespace Travel.Data.Repositories
                 Keywords keywords = new Keywords();
                 var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
                 var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
-
                 var kwId = PrCommon.GetString("IdTourBooking", frmData).Trim();
                 if (!String.IsNullOrEmpty(kwId))
                 {
@@ -974,9 +974,17 @@ namespace Travel.Data.Repositories
                                            where keywords.KwStatusList.Contains(x.Status)
                                            select x;
                 }
-
+                var kwPayment = PrCommon.GetString("Payment", frmData);
+                keywords.KwPayment = PrCommon.getListInt(kwPayment, ',', false);
+                if (keywords.KwPayment.Count > 0)
+                {
+                    queryListTourBooking = from x in queryListTourBooking
+                                           where keywords.KwPayment.Contains(x.PaymentId)
+                                           select x;
+                }
                 #endregion
-
+                var kwToPlace = PrCommon.GetString("ToPlace", frmData);
+               
                 totalResult = queryListTourBooking.Count();
                 queryListTourBooking = (from x in queryListTourBooking
                                         orderby x.DateBooking descending
@@ -1028,6 +1036,14 @@ namespace Travel.Data.Repositories
                                             Vat = x.Vat,
                                             VoucherCode = x.VoucherCode
                                         });
+
+                if (!string.IsNullOrEmpty(kwToPlace))
+                {
+                    queryListTourBooking = (from x in queryListTourBooking
+                                            where x.Schedule.Tour.ToPlace == kwToPlace
+                                            select x);
+                }
+              
                      listTourBooking = queryListTourBooking.AsNoTracking().Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
                 var result = Mapper.MapTourBooking(listTourBooking);
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
@@ -1285,6 +1301,26 @@ namespace Travel.Data.Repositories
             catch(Exception e)
             {
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
+        public async Task<bool> ChangePayment(string idTourBooking, int idPayment)
+        {
+            try
+            {
+               
+                var tourBooking = (from x in _db.TourBookings.AsNoTracking()
+                                   where x.IdTourBooking == idTourBooking
+                                   select x).FirstOrDefault();
+
+                tourBooking.PaymentId = idPayment;
+                UpdateDatabase(tourBooking);
+                await SaveChangeAsync();
+               return true;
+            }
+            catch (Exception e)
+            {
+                return false;   
             }
         }
     }

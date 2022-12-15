@@ -33,6 +33,7 @@ namespace Travel.Data.Interfaces
         Task<TourBooking> GetTourBookingByIdForVnPay(string idTourBooking);
 
         Task<bool> UpdateTourBookingFinished();
+        Task<bool> ChangePayment(string idTourBooking, int idPayment);
         Response CheckInBooking(string bookingNo);
 
         byte[] CreateByteQR(string qrCodeText);
