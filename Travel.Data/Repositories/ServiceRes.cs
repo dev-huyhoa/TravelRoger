@@ -24,12 +24,14 @@ namespace Travel.Data.Repositories
         private Notification message;
         private INotification _notification;
         private readonly ILog _log;
+        private Response res;
         public ServiceRes(TravelContext db, INotification notification, ILog log)
         {
             _db = db;
             _log = log;
             message = new Notification();
             _notification = notification;
+            res = new Response();
         }
         private void UpdateDatabase<T>(T input)
         {
@@ -97,11 +99,7 @@ namespace Travel.Data.Repositories
                 var phone = PrCommon.GetString("phone", frmData);
                 if (String.IsNullOrEmpty(phone))
                 {
-                }
-                var address = PrCommon.GetString("address", frmData);
-                if (String.IsNullOrEmpty(address))
-                {
-                }
+                }          
                 var name = PrCommon.GetString("name", frmData);
                 if (String.IsNullOrEmpty(name))
                 {
@@ -133,6 +131,37 @@ namespace Travel.Data.Repositories
                 var wardId = PrCommon.GetString("wardId", frmData);
                 if (String.IsNullOrEmpty(wardId))
                 {
+                }
+                var address = PrCommon.GetString("address", frmData);
+                if (!String.IsNullOrEmpty(address))
+                {
+                    if (type == TypeService.Hotel)
+                    {
+                        var check = CheckAddressHotel(address, provinceId, districtId, wardId);
+                        if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
+                        {
+                            _message = check.Notification;
+                            return string.Empty;
+                        }
+                    }else if(type == TypeService.Restaurant)
+                    {
+                        var check = CheckAddressRestaurant(address, provinceId, districtId, wardId);
+                        if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
+                        {
+                            _message = check.Notification;
+                            return string.Empty;
+                        }
+                        else
+                        {
+                            var checkplace = CheckAddressPlace(address, provinceId, districtId, wardId);
+                            if (checkplace.Notification.Type == "Validation" || check.Notification.Type == "Error")
+                            {
+                                _message = check.Notification;
+                                return string.Empty;
+                            }
+                        }
+                    }
+                  
                 }
                 if (isUpdate)
                 {
@@ -318,6 +347,86 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+        private Response CheckAddressHotel(string Address, string ProvinceId, string DistricId, string WardId)
+        {
+            try
+            {
+                var oriAddress = Address.Replace(" ", "");
+
+                var obj = (from x in _db.Hotels.AsNoTracking()
+                           where x.Address.Replace(" ", "") == oriAddress
+                           && x.ProvinceId == Guid.Parse(ProvinceId)
+                           && x.DistrictId == Guid.Parse(DistricId)
+                           && x.WardId == Guid.Parse(WardId)
+                           select x).FirstOrDefault();
+                if (obj != null)
+                {
+                    return Ultility.Responses("Địa chỉ ["+ Address + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString());
+                }
+                return res;
+
+            }
+            catch (Exception e)
+            {
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
+        private Response CheckAddressPlace(string Address, string ProvinceId, string DistricId, string WardId)
+        {
+            try
+            {
+                var oriAddress = Address.Replace(" ", "");
+
+                var obj = (from x in _db.Places.AsNoTracking()
+                           where x.Address.Replace(" ", "") == oriAddress
+                           && x.ProvinceId == Guid.Parse(ProvinceId)
+                           && x.DistrictId == Guid.Parse(DistricId)
+                           && x.WardId == Guid.Parse(WardId)
+                           select x).FirstOrDefault();
+                if (obj != null)
+                {
+                    return Ultility.Responses("Địa chỉ [" + Address + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString());
+                }
+                return res;
+
+            }
+            catch (Exception e)
+            {
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
+        private Response CheckAddressRestaurant(string Address, string ProvinceId, string DistricId, string WardId)
+        {
+            try
+            {
+                var oriAddress = Address.Replace(" ", "");
+
+                var obj = (from x in _db.Restaurants.AsNoTracking()
+                           where x.Address.Replace(" ", "") == oriAddress
+                           && x.ProvinceId == Guid.Parse(ProvinceId)
+                           && x.DistrictId == Guid.Parse(DistricId)
+                           && x.WardId == Guid.Parse(WardId)
+                           select x).FirstOrDefault();
+                if (obj != null)
+                {
+                    return Ultility.Responses("Địa chỉ [" + Address + "] này đã được đăng ký !", Enums.TypeCRUD.Validation.ToString());
+                }
+                return res;
+
+            }
+            catch (Exception e)
+            {
+
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
+
         public Response CreateHotel(CreateHotelViewModel input, string emailUser)
         {
             try
