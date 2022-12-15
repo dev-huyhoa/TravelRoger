@@ -12,6 +12,7 @@ namespace Travel.Data.Interfaces
     public interface IImage
     {
         Response GetImageByIdTour(string idTour);
+        Response GetImageByBanner(Guid idBanner);
 
         Response CreateImageTourDetail(ICollection<IFormFile> files, string idTour, string emailUser);
 

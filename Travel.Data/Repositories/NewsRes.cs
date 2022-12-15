@@ -140,6 +140,53 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response SearchBanner(JObject frmData)
+        {
+            try
+            {
+                var totalResult = 0;
+                Keywords keywords = new Keywords();
+                var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
+                var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
+
+                var kwName = PrCommon.GetString("nameBanner", frmData);
+                if (!String.IsNullOrEmpty(kwName))
+                {
+                    keywords.KwName = kwName.Trim().ToLower();
+                }
+                else
+                {
+                    keywords.KwName = "";
+                }
+
+
+                var listBanner = new List<Banner>();
+
+                var queryresultBanner = (from x in _db.Banners.AsNoTracking()
+                                         where x.NameBanner.ToLower().Contains(keywords.KwName)
+                                         select x);
+                totalResult = queryresultBanner.Count();
+                listBanner = queryresultBanner.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+
+
+                if (listBanner.Count() > 0)
+                {
+                    var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), listBanner);
+                    res.TotalResult = totalResult;
+                    return res;
+                }
+                else
+                {
+                    return Ultility.Responses($"Không có dữ liệu trả về !", Enums.TypeCRUD.Warning.ToString());
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
 
         public Response DeleteBanner(Guid idBanner)
         {
@@ -153,18 +200,15 @@ namespace Travel.Data.Repositories
                            where x.IdService == idBanner.ToString()
                            select x).ToList();
 
-                if (img != null)
-                {
-                    foreach (var item in img)
-                    {
-
-                    }
-                }
+                
 
                 if (result != null)
                 {
-                    banner.IsDelete = true;
-                    banner.IsActive = false;
+                    if (img.Count > 0) {
+                        _db.Images.RemoveRange(img);
+                        _db.SaveChanges();
+                    }
+                    _db.Banners.Remove(result);
                     _db.SaveChanges();
                     return Ultility.Responses("Xóa thành công !", Enums.TypeCRUD.Success.ToString());
                 }

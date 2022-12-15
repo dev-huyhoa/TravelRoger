@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -36,6 +37,15 @@ namespace TravelApi.Controllers
         public object GetImageByIdTour(string idTour)
         {
             res = _imageRes.GetImageByIdTour(idTour);
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("list-image-banner")]
+        public object GetImageByBanner(Guid idBanner)
+        {
+            res = _imageRes.GetImageByBanner(idBanner);
             return Ok(res);
         }
 

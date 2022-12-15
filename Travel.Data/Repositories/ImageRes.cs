@@ -50,6 +50,27 @@ namespace Travel.Data.Repositories
             }
         }
 
+        public Response GetImageByBanner(Guid idBanner)
+        {
+            try
+            {
+                var image = (from x in _db.Images
+                             where x.IdService == idBanner.ToString() &&
+                                   x.IsDelete == false
+                             select x).ToList();
+
+                if (image != null)
+                {
+                    res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), image);
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+
         public Response CreateImageTourDetail(ICollection<IFormFile> files, string idTour, string emailUser)
         {
             try

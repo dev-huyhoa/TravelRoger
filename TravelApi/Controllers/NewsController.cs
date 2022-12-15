@@ -100,5 +100,14 @@ namespace TravelApi.Controllers
             return Ok(map);
 
         }
+
+        [HttpPost]
+        [Authorize]
+        [Route("search-banner")]
+        public object SearchBanner(JObject frmData)
+        {
+            res = news.SearchBanner(frmData);
+            return Ok(res);
+        }
     }
 }
