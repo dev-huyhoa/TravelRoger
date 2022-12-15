@@ -9,6 +9,7 @@ namespace Travel.Shared.ViewModels
     public class Keywords: Pagination
     {
         public bool IsDelete { get; set; }
+        public bool IsBlock { get; set; }
         public string Keyword { get; set; }
         public string KwName { get; set; }
         public string KwId { get; set; }

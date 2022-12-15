@@ -497,10 +497,10 @@ namespace Travel.Data.Repositories
                 var pageSize = PrCommon.GetString("pageSize", frmData) == null ? 10 : Convert.ToInt16(PrCommon.GetString("pageSize", frmData));
                 var pageIndex = PrCommon.GetString("pageIndex", frmData) == null ? 1 : Convert.ToInt16(PrCommon.GetString("pageIndex", frmData));
 
-                var isDelete = PrCommon.GetString("isDelete", frmData);
-                if (!String.IsNullOrEmpty(isDelete))
+                var isBlock = PrCommon.GetString("isDelete", frmData);
+                if (!String.IsNullOrEmpty(isBlock))
                 {
-                    keywords.IsDelete = Boolean.Parse(isDelete);
+                    keywords.IsBlock = Boolean.Parse(isBlock);
                 }
 
                 var kwNameCustomer = PrCommon.GetString("nameCustomer", frmData);
@@ -558,7 +558,7 @@ namespace Travel.Data.Repositories
                 if(keywords.KwPoint > 0)
                 {
                     var querylistCustomer = (from c in _db.Customers
-                                             where c.IsDelete == keywords.IsDelete &&
+                                             where c.IsBlock == keywords.IsBlock &&
                                                    c.NameCustomer.ToLower().Contains(keywords.KwName) &&
                                                    c.Phone.ToLower().Contains(keywords.KwPhone) &&
                                                    c.Email.ToLower().Contains(keywords.KwEmail) &&
@@ -571,7 +571,7 @@ namespace Travel.Data.Repositories
                 else
                 {
                     var querylistCustomer = (from c in _db.Customers
-                                             where c.IsDelete == keywords.IsDelete &&
+                                             where c.IsBlock == keywords.IsBlock &&
                                                    c.NameCustomer.ToLower().Contains(keywords.KwName) &&
                                                    c.Phone.ToLower().Contains(keywords.KwPhone) &&
                                                    c.Email.ToLower().Contains(keywords.KwEmail) &&
