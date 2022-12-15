@@ -43,7 +43,7 @@ namespace TravelApi.Controllers
 
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         [Route("list-car")]
         public object Gets(bool isDelete)
         {
