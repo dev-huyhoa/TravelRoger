@@ -42,7 +42,7 @@ namespace Travel.Data.Repositories
                 if (!String.IsNullOrEmpty(nameRole))
                 {
                     var check = CheckSameRole(nameRole);
-                    if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
+                    if (check.Notification.Type == Enums.TypeCRUD.Validation.ToString() || check.Notification.Type == Enums.TypeCRUD.Error.ToString())
                     {
                         _message = check.Notification;
                         return string.Empty;
@@ -53,7 +53,7 @@ namespace Travel.Data.Repositories
                 if (!String.IsNullOrEmpty(description))
                 {
                     var check = CheckSameRole(description);
-                    if (check.Notification.Type == "Validation" || check.Notification.Type == "Error")
+                    if (check.Notification.Type == Enums.TypeCRUD.Validation.ToString() || check.Notification.Type == Enums.TypeCRUD.Error.ToString())
                     {
                         _message = check.Notification;
                         return string.Empty;
@@ -350,15 +350,18 @@ namespace Travel.Data.Repositories
         {
             try
             {
+                var description = "";
                 string oriRoleInput = Ultility.removeVietnameseSign(input.ToLower().Replace(" ", ""));
                 var obj = _db.Roles.Where(delegate (Role role)
                 {
                     if (Ultility.removeVietnameseSign(role.NameRole.ToLower().Replace(" ", "")).Contains(oriRoleInput))
                     {
+                        description = "nameRole";
                         return true;
                     }
                     if (Ultility.removeVietnameseSign(role.Description.ToLower().Replace(" ", "")).Contains(oriRoleInput))
                     {
+                        description = "description";
                         return true;
 
                     }
@@ -366,7 +369,7 @@ namespace Travel.Data.Repositories
                 });
                 if (obj.FirstOrDefault() != null)
                 {
-                    return Ultility.Responses("[" + input + "] này đã tồn tại !", Enums.TypeCRUD.Validation.ToString());
+                    return Ultility.Responses("[" + input + "] này đã tồn tại !", Enums.TypeCRUD.Validation.ToString(), description: description);
                 }
                 return res;
             }
