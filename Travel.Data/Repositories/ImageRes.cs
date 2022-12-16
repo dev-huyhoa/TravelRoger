@@ -78,6 +78,15 @@ namespace Travel.Data.Repositories
                 List<Image> imageDetail = new List<Image>();
                 if (files != null)
                 {
+                    foreach (var item in files)
+                    {
+                        if (item.Length > 2030346)
+                        {
+                            return Ultility.Responses("File ảnh quá lớn ! Ảnh không vượt quá 2mb ! ", Enums.TypeCRUD.Error.ToString());
+
+                        }
+                    }
+
                     imageDetail = Ultility.WriteFiles(files, "Tour", idTour, ref _message);
                     if (imageDetail.Count > 0)
                     {

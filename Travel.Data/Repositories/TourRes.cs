@@ -977,6 +977,7 @@ namespace Travel.Data.Repositories
                                       Alias = x.Alias,
                                       Rating = x.Rating,
                                       QuantityBooked = x.QuantityBooked,
+                                      CreateDate = x.CreateDate,
                                       Schedules = (from s in _db.Schedules.AsNoTracking()
                                                    where s.TourId == x.IdTour
                                                    && s.EndDate >= dateTimeNow
