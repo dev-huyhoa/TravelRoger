@@ -296,11 +296,15 @@ namespace Travel.Data.Repositories
                     }
 
                 }
-                foreach (var item in weatherRes.alerts)
+                if (weatherRes.alerts != null)
                 {
-                    item.description_vi = await Translate(item.description,"en","vi");
-                    item.event_vi = await Translate(item.@event, "en", "vi");
+                    foreach (var item in weatherRes.alerts)
+                    {
+                        item.description_vi = await Translate(item.description, "en", "vi");
+                        item.event_vi = await Translate(item.@event, "en", "vi");
+                    }
                 }
+                   
                 var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), weatherRes);
                 #region set cache
                 _cache.Set<Response>(res, $"GetApiWeather{location}");
