@@ -53,9 +53,9 @@ namespace Travel.Data.Repositories
                 #region kiểm tra size ảnh
                 foreach (var item in files)
                 {
-                    if (item.Length > 1)
+                    if (item.Length > 2030346)
                     {
-                        return Ultility.Responses("File hình quá lớn !", Enums.TypeCRUD.Error.ToString());
+                        return Ultility.Responses("File ảnh quá lớn ! Ảnh không vượt quá 2mb ! ", Enums.TypeCRUD.Error.ToString());
 
                     }
                 }
