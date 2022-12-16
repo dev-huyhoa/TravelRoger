@@ -50,6 +50,17 @@ namespace Travel.Data.Repositories
             
             try
              {
+                #region kiểm tra size ảnh
+                foreach (var item in files)
+                {
+                    if (item.Length > 1)
+                    {
+                        return Ultility.Responses("File hình quá lớn !", Enums.TypeCRUD.Error.ToString());
+
+                    }
+                }
+                #endregion
+
                 if (files.Count > 0)
                 {
 
@@ -80,7 +91,6 @@ namespace Travel.Data.Repositories
                     foreach (var file in files)
                     {
                         var image = Ultility.WriteFile(file, "Banners", Id.ToString(), ref _message, orderby);
-                        
                         if (_message != null)
                         {
                             err++;
