@@ -136,5 +136,16 @@ namespace TravelApi.Controllers
             res = await customer.UpdateBlockCustomer(idCustomer, isBlock);
             return Ok(res);
         }
+
+        #region service call
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("update-score")]
+        public async Task<bool> UpdateScoreToCustomer(Guid idCustomer, int point)
+        {
+            return await customer.UpdateScoreToCustomer(idCustomer, point);
+        }
+
+        #endregion
     }
 }

@@ -944,5 +944,14 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+
+        public async     Task<List<Employee>> ServiceGetEmployee()
+        {
+            var employee = await (from x in _db.Employees.AsNoTracking()
+                                  where x.IsActive == true
+                                  && x.IsDelete == false
+                                  select x).ToListAsync();
+            return employee;
+        }
     }
 }
