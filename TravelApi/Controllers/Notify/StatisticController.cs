@@ -43,6 +43,22 @@ namespace TravelApi.Controllers.Notify
             return Ok(res);
         }
         [HttpGet]
+        [AllowAnonymous]
+        [Route("list-statistic-total-cus")]
+        public object GetStatisticTotalCus()
+        {
+            res = _statistic.GetStatisticTotalCus();
+            return Ok(res);
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("list-statistic-total-emp")]
+        public object GetStatisticTotalEmp()
+        {
+            res = _statistic.GetStatisticTotalEmp();
+            return Ok(res);
+        }
+        [HttpGet]
         [Authorize]
         [Route("list-statistic-tourbooking-by-year")]
         public object GetStatisticTourbookingByYear(int year)

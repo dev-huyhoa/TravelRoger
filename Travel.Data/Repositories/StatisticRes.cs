@@ -319,3 +319,91 @@
 //        }
 //    }
 //}
+        public Response GetStatisticTotalTourBooking(long fromDate, long toDate)
+        {
+            try
+            {
+                var queryTotalTourBooking = (from x in _db.TourBookings.AsNoTracking()
+                                        where  x.DateBooking >= fromDate
+                                        && x.DateBooking <= toDate
+                                        select x);
+                var CountTotalTotalPaidTourBooking = (from x in queryTotalTourBooking
+                                                        where x.Status == Convert.ToInt16(Enums.StatusBooking.Paid)
+                                                        select x).Count();
+                var CountTotalTotalFinishedTourBooking = (from x in queryTotalTourBooking
+                                                      where x.Status == Convert.ToInt16(Enums.StatusBooking.Finished)
+                                                      select x).Count();
+                var CountTotalTotalCancelTourBooking = (from x in queryTotalTourBooking
+                                                   where x.Status == Convert.ToInt16(Enums.StatusBooking.Cancel)
+                                                   select x).Count();
+                var CountTotal = queryTotalTourBooking.Count();
+                var result = new 
+                {
+                    TotalPaid = CountTotalTotalPaidTourBooking,
+                    TotalFinished = CountTotalTotalFinishedTourBooking,
+                    TotalCancel = CountTotalTotalCancelTourBooking,
+                    Total = CountTotal
+                };
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+        public Response GetStatisticTotalCus()
+        {
+            try
+            {
+                var queryTotalCus = (from x in _db.Customers.AsNoTracking()                                             
+                                             select x);
+                var CountTotalIsBlock = (from x in queryTotalCus
+                                          where x.IsBlock == true
+                                                      select x).Count(); // danh sách cus block
+                var CountTotalIsBlackList = (from x in queryTotalCus
+                                                          where x.IsBlackList == true
+                                                          select x).Count();// danh sách cus đen
+                
+                var CountTotal = queryTotalCus.Count();
+                var result = new
+                {
+                    TotalBlock = CountTotalIsBlock,
+                    TotalBlack = CountTotalIsBlackList,
+                    Total = CountTotal
+                };
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+        public Response GetStatisticTotalEmp()
+        {
+            try
+            {
+                var queryTotalEmp = (from x in _db.Employees.AsNoTracking()
+                                     select x);
+                var CountTotalIsBlock = (from x in queryTotalEmp
+                                         where x.IsBlock == true
+                                         select x).Count(); // danh sách emp block
+                var CountTotalIsOnline = (from x in queryTotalEmp
+                                             where x.IsOnline == true
+                                             select x).Count();// danh sách cus đang hoạt động
+
+                var CountTotal = queryTotalEmp.Count();
+                var result = new
+                {
+                    TotalBlock = CountTotalIsBlock,
+                    TotalOnline = CountTotalIsOnline,
+                    Total = CountTotal
+                };
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
+    }
+}
