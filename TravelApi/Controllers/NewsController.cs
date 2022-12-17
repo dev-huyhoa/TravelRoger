@@ -97,9 +97,9 @@ namespace TravelApi.Controllers
         [Route("map-location")]
         public async Task<object> GetGoogleMapLocation(string locationString)
         {
-            var map = await news.GetGoogleMapLocation(locationString);
+            res = await news.GetGoogleMapLocationRes(locationString);
            
-            return Ok(map);
+            return Ok(res);
 
         }
 
