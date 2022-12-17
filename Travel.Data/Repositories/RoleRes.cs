@@ -41,7 +41,7 @@ namespace Travel.Data.Repositories
                 var nameRole = PrCommon.GetString("nameRole", frmData);
                 if (!String.IsNullOrEmpty(nameRole))
                 {
-                    var check = CheckSameRole(nameRole);
+                    var check = CheckSameRole(nameRole, "nameRole");
                     if (check.Notification.Type == Enums.TypeCRUD.Validation.ToString() || check.Notification.Type == Enums.TypeCRUD.Error.ToString())
                     {
                         _message = check.Notification;
@@ -52,7 +52,7 @@ namespace Travel.Data.Repositories
                 var description = PrCommon.GetString("description", frmData);
                 if (!String.IsNullOrEmpty(description))
                 {
-                    var check = CheckSameRole(description);
+                    var check = CheckSameRole(description, "description");
                     if (check.Notification.Type == Enums.TypeCRUD.Validation.ToString() || check.Notification.Type == Enums.TypeCRUD.Error.ToString())
                     {
                         _message = check.Notification;
@@ -346,24 +346,20 @@ namespace Travel.Data.Repositories
                     where x.IdRole == idRole
                     select x).Count() > 0;
         }
-        private Response CheckSameRole(string input)
+        private Response CheckSameRole(string input, string description)
         {
             try
             {
-                var description = "";
                 string oriRoleInput = Ultility.removeVietnameseSign(input.ToLower().Replace(" ", ""));
                 var obj = _db.Roles.Where(delegate (Role role)
                 {
                     if (Ultility.removeVietnameseSign(role.NameRole.ToLower().Replace(" ", "")).Contains(oriRoleInput))
                     {
-                        description = "nameRole";
                         return true;
                     }
                     if (Ultility.removeVietnameseSign(role.Description.ToLower().Replace(" ", "")).Contains(oriRoleInput))
                     {
-                        description = "description";
                         return true;
-
                     }
                     return false;
                 });
