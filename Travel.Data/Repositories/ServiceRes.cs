@@ -653,6 +653,9 @@ namespace Travel.Data.Repositories
                 hotel.QuantityDBR = input.QuantityDBR;
                 hotel.QuantitySR = input.QuantitySR;
                 hotel.Star = input.Star;
+                hotel.ProvinceId = input.ProvinceId;
+                hotel.WardId = input.WardId;
+                hotel.DistrictId = input.DistrictId;
                 #endregion
                 UpdateDatabase<Hotel>(hotel);
                 SaveChange();
@@ -1025,6 +1028,9 @@ namespace Travel.Data.Repositories
                 restaurant.NameRestaurant = input.Name;
                 restaurant.Phone = input.Phone;
                 restaurant.ComboPrice = input.ComboPrice;
+                restaurant.ProvinceId = input.ProvinceId;
+                restaurant.DistrictId = input.DistrictId;
+                restaurant.WardId = input.WardId;
                 #endregion
 
                 string jsonContent = JsonSerializer.Serialize(restaurant);
@@ -1440,6 +1446,9 @@ namespace Travel.Data.Repositories
                 place.NamePlace = input.Name;
                 place.Phone = input.Phone;
                 place.PriceTicket = input.PriceTicket;
+                place.ProvinceId = input.ProvinceId;
+                place.DistrictId = input.DistrictId;
+                place.WardId = input.IdPlace;
                 #endregion
                 UpdateDatabase<Place>(place);
                 SaveChange();

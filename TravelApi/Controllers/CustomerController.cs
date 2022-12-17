@@ -63,11 +63,11 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         [Route("list-history-booking-bycustomer")]
-        public object GetHistoryByIdCustomer(Guid idCustomer)
+        public async Task<object> GetHistoryByIdCustomer(Guid idCustomer)
         {
-            res = customer.GetsHistory(idCustomer);
+            res = await customer.GetsHistory(idCustomer);
             return Ok(res);
         }
         [HttpGet]
