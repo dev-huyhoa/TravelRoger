@@ -400,13 +400,13 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
-        public Response GetCustomer(Guid idCustomer)
+        public async Task<Response> GetCustomer(Guid idCustomer)
         {
             try
             {
-                var customer = (from x in _db.Customers.AsNoTracking()
+                var customer = await (from x in _db.Customers.AsNoTracking()
                                 where x.IdCustomer == idCustomer
-                                select x).First();
+                                select x).FirstOrDefaultAsync();
                 var result = Mapper.MapCustomer(customer);
                 if (result != null)
                 {

@@ -82,9 +82,9 @@ namespace TravelApi.Controllers
         [HttpGet]
         [Authorize]
         [Route("detail-customer")]
-        public object GetCustomer(Guid idCustomer)
+        public async Task<object> GetCustomer(Guid idCustomer)
         {
-            res = customer.GetCustomer(idCustomer);
+            res = await customer.GetCustomer(idCustomer);
             //_messageHub.Clients.All.Init();
             return Ok(res);
         }
