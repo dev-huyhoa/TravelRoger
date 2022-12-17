@@ -188,6 +188,13 @@ namespace TravelApi.Controllers
             return await employee.ServiceGetEmployee();
 
         }
-
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("list-statistic-total-emp")]
+        public object GetStatisticTotalEmp()
+        {
+            res = employee.GetStatisticTotalEmp();
+            return Ok(res);
+        }
     }
 }
