@@ -586,7 +586,7 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response CusGetsSchedulebyIdTour(string idTour)
+        public Response CusGetsSchedulebyIdTour(string idTour   )
         {
             try
             {

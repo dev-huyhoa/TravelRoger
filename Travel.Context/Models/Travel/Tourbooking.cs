@@ -42,7 +42,6 @@ namespace Travel.Context.Models
         public long ModifyDate{get;set;}
         public string UrlQR { get;set;}
         public bool IsSendFeedBack { get; set; }
-        [NotMapped]
 
         public Schedule Schedule { get; set; }
         public  Payment Payment { get; set; }

@@ -70,6 +70,8 @@ namespace TravelApi.Extensions
             .AddScoped<INotification, NotificationRes>();
             services
             .AddScoped<ILog, LogRepository>();
+            services
+.AddScoped<ICustomer, CustomerRes>();
 
 
             services
