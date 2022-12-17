@@ -33,5 +33,7 @@ namespace Travel.Data.Interfaces
         #region service call
         Task<List<Employee>> ServiceGetEmployee();
         #endregion
+        Response GetStatisticTotalEmp();
+
     }
 }

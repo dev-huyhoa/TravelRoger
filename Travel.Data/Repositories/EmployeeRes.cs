@@ -944,7 +944,33 @@ namespace Travel.Data.Repositories
                 return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
             }
         }
+        public Response GetStatisticTotalEmp()
+        {
+            try
+            {
+                var queryTotalEmp = (from x in _db.Employees.AsNoTracking()
+                                     select x);
+                var CountTotalIsBlock = (from x in queryTotalEmp
+                                         where x.IsBlock == true
+                                         select x).Count(); // danh sách emp block
+                var CountTotalIsOnline = (from x in queryTotalEmp
+                                          where x.IsOnline == true
+                                          select x).Count();// danh sách cus đang hoạt động
 
+                var CountTotal = queryTotalEmp.Count();
+                var result = new
+                {
+                    TotalBlock = CountTotalIsBlock,
+                    TotalOnline = CountTotalIsOnline,
+                    Total = CountTotal
+                };
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), result);
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+            }
+        }
         public async     Task<List<Employee>> ServiceGetEmployee()
         {
             var employee = await (from x in _db.Employees.AsNoTracking()
