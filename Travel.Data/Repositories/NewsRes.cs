@@ -400,5 +400,38 @@ namespace Travel.Data.Repositories
                 return null;
             }
         }
+
+        public async Task<Response> GetGoogleMapLocationRes(string address)
+        {
+            try
+            {
+                string urlLocation = _config["UrlLocationMap:Url"].ToString();
+                string accessKey = _config["UrlLocationMap:AccessKey"].ToString();
+                using (var client = new HttpClient())
+                {
+                    string uri = $"{urlLocation}?access_key={accessKey}&query={address}";
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(uri),
+                    };
+                    using (var response = await client.SendAsync(request))
+                    {
+                        response.EnsureSuccessStatusCode();
+                        var body = await response.Content.ReadAsStringAsync();
+                        var listLocation = JsonSerializer.Deserialize<GoogleMap>(body);
+                        var res = Ultility.Responses("", Enums.TypeCRUD.Success.ToString(), listLocation.data.FirstOrDefault());
+                        return res;
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        
     }
 }
