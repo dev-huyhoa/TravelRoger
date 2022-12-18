@@ -46,6 +46,7 @@ namespace TravelApi.Controllers
             authentication = _authentication;
             res = new Response();
             TimeExpiredInMinutes = Convert.ToInt16(configuration["Token:TimeExpired"]);
+            TimeExpiredInMinutes = Convert.ToInt16(configuration["Token:TimeExpired"]);
            
         }
         [NonAction]
@@ -60,6 +61,7 @@ namespace TravelApi.Controllers
                                         new Claim(ClaimTypes.Email, result.Email),
                                         new Claim(ClaimTypes.NameIdentifier, result.IdEmployee.ToString()),
                                         new Claim("RoleId", result.RoleId.ToString()),
+                                        new Claim(ClaimTypes.Role, result.RoleId.ToString()),
                                         new Claim("UserId", result.IdEmployee.ToString())
                                      };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:key"]));

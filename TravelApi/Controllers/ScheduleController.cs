@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
+using PayPal.v1.CustomerDisputes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace TravelApi.Controllers
     [ApiController]
     public class ScheduleController : ControllerBase
     {
+        private const string Merchant = "-2";
         private readonly ISchedule _schedule;
         private Notification message;
         private Response res;
@@ -140,7 +142,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = Merchant)]
         [Route("detail-schedule")]
         public async Task<object> Get(string idSchedule)
         {
@@ -187,7 +189,7 @@ namespace TravelApi.Controllers
 
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = Merchant)]
         [Route("cus-search-schedule")]
         public async Task<object> SearchSchedule(string from = null, string to = null,DateTime? departureDate = null, DateTime? returnDate = null)
         {
@@ -196,7 +198,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = Merchant)]
         [Route("cus-list-schedule-idtour")]
         public object CusGetsSchedulebyIdTour(string idtour)
         {
@@ -204,7 +206,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = Merchant)]
         [Route("cus-list-schedule")]
         public async Task<object> GetsSchedule(int pageIndex, int pageSize)
         {
@@ -213,7 +215,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = Merchant)]
         [Route("list-schedule-promotion")]
         public async Task<object> GetsSchedulePromotion(int pageIndex, int pageSize)
         {
@@ -221,7 +223,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = Merchant)]
         [Route("list-schedule-flash-sale")]
         public async Task<object> GetsScheduleFlashSale(int pageIndex, int pageSize)
         {
@@ -230,7 +232,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = Merchant)]
         [Route("list-schedule-relate")]
         public async Task<object> GetsScheduleRelate(string idSchedule, int pageIndex, int pageSize)
         {
@@ -257,7 +259,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = Merchant)]
         [Route("cus-search-schedule-filter")]
         public async Task<object> SearchSchedule([FromBody] JObject frmData)
         {

@@ -64,6 +64,7 @@ namespace Travel.Shared.ViewModels
         public int KwValue { get; set; }
 
         public int KwPoint { get; set; }
+
     }
     public class Pagination
     {
