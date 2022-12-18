@@ -84,7 +84,8 @@ namespace TravelApi.Extensions
                 .AddScoped<ICache, MemoryCache>();
             services
                 .AddScoped<IMessenger, MessengerRes>();
-
+            services
+                .AddScoped<IComment, CommentRes>();
 
             return services;
         
