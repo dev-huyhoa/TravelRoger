@@ -342,9 +342,15 @@ namespace Travel.Data.Repositories
 
         private bool CheckIsAdmin(int idRole)
         {
-            return (from x in _db.Roles.AsNoTracking()
-                    where x.IdRole == idRole
-                    select x).Count() > 0;
+            var currentRole = (from x in _db.Roles.AsNoTracking()
+                               where x.IdRole == idRole
+                               select x).FirstOrDefault();
+            bool isAdmin = currentRole.NameRole.ToLower() == "admin";
+            if (isAdmin)
+            {
+                return true;
+            }
+            return false;
         }
         private Response CheckSameRole(string input, string description)
         {

@@ -167,8 +167,18 @@ namespace TravelApi.Controllers
             res = await _schedule.AutomaticUpdatePromotionForSchedule();
             return Ok(res);
         }
+        [HttpPost]
+        [Authorize]
+        [Route("last-promotion-for-schedule")]
+        public async Task<object> AutomaticAddLastPromotionForSchedule()
+        {
+            res = await _schedule.AutomaticAddLastPromotionForSchedule();
+            return Ok(res);
+        }
 
-        [HttpGet]
+        
+
+       [HttpGet]
         [AllowAnonymous]
         [Route("list-schedule-idtour")]
         public object GetsSchedulebyIdTour(string idtour, bool isDelete)
@@ -268,14 +278,14 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("update-promotion-last-hour")]
-        public object UpdatePromotionTourLastHour(DateTime date)
-        {
-            res = _schedule.UpdatePromotionTourLastHour(date);
-            return Ok(res);
-        }
+        //[HttpGet]
+        //[AllowAnonymous]
+        //[Route("update-promotion-last-hour")]
+        //public object UpdatePromotionTourLastHour(DateTime date)
+        //{
+        //    res = _schedule.UpdatePromotionTourLastHour(date);
+        //    return Ok(res);
+        //}
 
 
         #region service call
