@@ -48,6 +48,10 @@ namespace Travel.Data.Repositories
         {
             return Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddMinutes(addMinutes));
         }
+        private long GetDateTimeDayConfig(int addDay = 0)
+        {
+            return Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(DateTime.Now.AddDays(addDay));
+        }
         private void UpdateDatabase(Schedule input)
         {
             _db.Entry(input).State = EntityState.Modified;
@@ -4077,32 +4081,32 @@ namespace Travel.Data.Repositories
             }
         }
 
-        public Response UpdatePromotionTourLastHour(DateTime datetime)
-        {
-            try
-            {
-                var promotion = (from x in _db.Promotions.AsNoTracking()
-                                 where x.IdPromotion == -2
-                                 select x.IdPromotion).FirstOrDefault();
+        //public Response UpdatePromotionTourLastHour(DateTime datetime)
+        //{
+        //    try
+        //    {
+        //        var promotion = (from x in _db.Promotions.AsNoTracking()
+        //                         where x.IdPromotion == -2
+        //                         select x.IdPromotion).FirstOrDefault();
 
-                var result = (from x in _db.Schedules.AsNoTracking()
-                              where x.EndDate <= Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(datetime)
-                              && x.QuantityCustomer < x.MaxCapacity
-                              select x).ToList();
-                foreach (var item in result)
-                {
-                    item.PromotionId = promotion;
-                }
-                SaveChange();
-                return Ultility.Responses($"Sửa thành công !", Enums.TypeCRUD.Success.ToString());
+        //        var result = (from x in _db.Schedules.AsNoTracking()
+        //                      where x.EndDate <= Ultility.ConvertDatetimeToUnixTimeStampMiliSecond(datetime)
+        //                      && x.QuantityCustomer < x.MaxCapacity
+        //                      select x).ToList();
+        //        foreach (var item in result)
+        //        {
+        //            item.PromotionId = promotion;
+        //        }
+        //        SaveChange();
+        //        return Ultility.Responses($"Sửa thành công !", Enums.TypeCRUD.Success.ToString());
 
-            }
-            catch (Exception e)
-            {
+        //    }
+        //    catch (Exception e)
+        //    {
 
-                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
-            }
-        }
+        //        return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+        //    }
+        //}
 
         public async Task<bool> IsScheduleInPromotion(string idSchedule)
         {
@@ -4161,5 +4165,34 @@ namespace Travel.Data.Repositories
                                                 select s.IdSchedule).ToListAsync();
             return listIdScheduleFinished;
         }
+
+
+        public async Task<Response> AutomaticAddLastPromotionForSchedule()
+        {
+            try
+            {
+                var dateTimeNowConfigMinutes = GetDateTimeNow();
+                var dateTimeNowConfigDay = GetDateTimeDayConfig(-3);
+                var lsScheduleInLastPromotion = await (from x in _db.Schedules.AsNoTracking()
+                                          where x.EndDate <= dateTimeNowConfigDay
+                                          && x.ReturnDate >= dateTimeNowConfigMinutes
+                                          && x.Isdelete == false
+                                          select x).ToListAsync();
+                 lsScheduleInLastPromotion.ForEach(x => x.PromotionId = -1);
+                foreach (var item in lsScheduleInLastPromotion)
+                {
+                    UpdateDatabase(item);
+                }
+                await SaveChangeAsync();
+                return Ultility.Responses("", Enums.TypeCRUD.Success.ToString());
+            }
+            catch (Exception e)
+            {
+                return Ultility.Responses("Có lỗi xảy ra !", Enums.TypeCRUD.Error.ToString(), description: e.Message);
+
+            }
+        }
+
+
     }
 }
