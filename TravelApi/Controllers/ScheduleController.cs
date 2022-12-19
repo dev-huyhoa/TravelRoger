@@ -134,7 +134,7 @@ namespace TravelApi.Controllers
             return Ok(res);
         }
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         [Route("list-schedule")]
         public object Gets()
         {
@@ -178,8 +178,8 @@ namespace TravelApi.Controllers
 
         
 
-       [HttpGet]
-        [AllowAnonymous]
+        [HttpGet]
+        [Authorize]
         [Route("list-schedule-idtour")]
         public object GetsSchedulebyIdTour(string idtour, bool isDelete)
         {
@@ -188,7 +188,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         [Route("list-schedule-idtour-waiting")]
         public object GetsSchedulebyIdTourWaiting(string idtour, Guid idUser,int pageIndex, int pageSize)
         {
