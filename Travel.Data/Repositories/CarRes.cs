@@ -224,7 +224,6 @@ namespace Travel.Data.Repositories
                 var unixTimeOneDay = 86400000;
                 var carOfSchedule = (from x in _db.Schedules.AsNoTracking()
                                      where x.IdSchedule == idSchedule
-                                     && x.Isdelete == false
                                      select x).FirstOrDefault();
                 var fromDateCurrentUpdate = carOfSchedule.DepartureDate;
                 var toDateCurrentUpdate = carOfSchedule.ReturnDate;
