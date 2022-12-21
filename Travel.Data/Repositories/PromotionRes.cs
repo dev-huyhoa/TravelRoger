@@ -770,7 +770,8 @@ namespace Travel.Data.Repositories
 
                 // value 0
                 var query = (from x in _db.Promotions.AsNoTracking()
-                             where x.Value == 0
+                             where x.IdPromotion == 1
+                                   
                              select x);
 
 
