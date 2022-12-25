@@ -4312,9 +4312,9 @@ namespace Travel.Data.Repositories
                 UpdateDatabase(schedule);
                 SaveChange();
 
-                return Ultility.Responses($"", Enums.TypeCRUD.Success.ToString());
+                return Ultility.Responses($"Xóa thành công", Enums.TypeCRUD.Success.ToString());
             }
-            return Ultility.Responses($"Lỗi khong thể xóa tourbooking", Enums.TypeCRUD.Error.ToString());
+            return Ultility.Responses($"Lỗi không thể xóa tourbooking", Enums.TypeCRUD.Error.ToString());
 
         }
         public List<string> GetListIdScheduleByIdTour(string idTour)
