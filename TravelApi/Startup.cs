@@ -76,8 +76,8 @@ namespace TravelApi
                     ValidAudience = Configuration["TokenEmployee:Audience"],
                     ValidIssuer = Configuration["TokenEmployee:Issuer"],
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
-                    //ClockSkew = TimeSpan.FromMinutes(Convert.ToInt16(Configuration["Token:TimeExpired"])),
+                    //ClockSkew = TimeSpan.Zero,
+                    ClockSkew = TimeSpan.FromMinutes(Convert.ToInt16(Configuration["TokenEmployee:TimeExpired"])),
                     //ClockSkew = TimeSpan.FromSeconds(2220),
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenEmployee:Key"])),
@@ -106,12 +106,9 @@ namespace TravelApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor)
         {
-            if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TravelApi v1"));
-            }
 
             app.UseHttpsRedirection();
 
